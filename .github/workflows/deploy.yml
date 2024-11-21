@@ -1,0 +1,42 @@
+name: Deploy to R2
+
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: ["Build and Push"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'push' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --no-fund
+
+      - name: Build Astro site
+        run: npm run build
+
+      - name: Install wrangler
+        run: npm install -g wrangler
+
+      - name: Deploy to R2
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          cd dist
+          wrangler r2 bulk put moldy-worldbuilding-assets \
+            --path=./* \
+            --account-id=$CLOUDFLARE_ACCOUNT_ID
