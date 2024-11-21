@@ -1,0 +1,7 @@
+# terraform/workers/wrangler.toml
+name = "moldy-worldbuilding-api"
+compatibility_date = "2024-01-01"
+main = "src/index.ts"
+
+[vars]
+ENVIRONMENT = "development"

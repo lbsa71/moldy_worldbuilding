@@ -2,11 +2,15 @@
   "name": "moldy-worldbuilding-worker",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "wrangler build"
+    "build": "esbuild src/index.ts --bundle --outdir=dist --format=esm --platform=browser",
+    "dev": "wrangler dev src/index.ts",
+    "deploy": "wrangler deploy src/index.ts"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240208.0",
+    "esbuild": "^0.19.12",
     "typescript": "^5.3.3",
     "wrangler": "^3.28.1"
   }
