@@ -7,9 +7,13 @@
     }
   },
   "scripts": {
+    "clean": "rm -rf ../../public/wasm/* || true",
+    "mkdirs": "mkdir -p ../../public/wasm",
     "asbuild:debug": "asc assembly/index.ts --target debug",
     "asbuild:release": "asc assembly/index.ts --target release",
-    "asbuild": "npm run asbuild:debug && npm run asbuild:release",
+    "asbuild": "npm run clean && npm run mkdirs && npm run asbuild:debug && npm run asbuild:release",
+    "postbuild": "node ./scripts/generate-loader.js",
+    "build": "npm run asbuild && npm run postbuild",
     "test": "node tests",
     "start": "npx serve ."
   },
