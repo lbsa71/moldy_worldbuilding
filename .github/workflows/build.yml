@@ -41,7 +41,7 @@ jobs:
           npm run build
 
       - name: Build WASM
-        working-directory: ./src/game
+        working-directory: ./src/game/wasm
         run: |
           npm ci --no-fund
           npm run asbuild
