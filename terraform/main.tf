@@ -70,6 +70,13 @@ resource "cloudflare_workers_script" "game_api" {
   compatibility_flags = ["nodejs_compat"]
 }
 
+# Enable workers.dev subdomain
+resource "cloudflare_workers_domain" "game_api" {
+  account_id = var.cloudflare_account_id
+  service    = cloudflare_workers_script.game_api.name
+  zone_id    = var.cloudflare_zone_id
+}
+
 resource "cloudflare_workers_route" "api_route" {
   count       = var.custom_domain != "" ? 1 : 0
   zone_id     = var.cloudflare_zone_id
