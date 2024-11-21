@@ -6,12 +6,15 @@
       "shrinkLevel": 1,
       "converge": false,
       "noAssert": true,
-      "importMemory": true
+      "importMemory": true,
+      "initialMemory": 1
     }
   },
   "options": {
     "bindings": "raw",
     "optimize": true,
-    "runtime": "minimal"
+    "runtime": "minimal",
+    "importMemory": true,
+    "noExportMemory": false
   }
 }
