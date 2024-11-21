@@ -39,45 +39,6 @@ resource "cloudflare_r2_bucket_public_access" "game_assets_public" {
   }
 }
 
-# Create a Worker to serve R2 content
-resource "cloudflare_workers_script" "assets_worker" {
-  account_id = var.cloudflare_account_id
-  name       = "${var.project_name}-assets"
-  content    = <<-EOF
-  export default {
-    async fetch(request, env) {
-      const url = new URL(request.url);
-      const key = url.pathname.slice(1);
-      
-      try {
-        const object = await env.GAME_ASSETS.get(key);
-        
-        if (object === null) {
-          return new Response('Not Found', { status: 404 });
-        }
-        
-        const headers = new Headers();
-        object.writeHttpMetadata(headers);
-        headers.set('etag', object.httpEtag);
-        
-        return new Response(object.body, {
-          headers,
-        });
-      } catch (error) {
-        return new Response('Internal Error', { status: 500 });
-      }
-    }
-  };
-  EOF
-
-  r2_bucket_binding {
-    name        = "GAME_ASSETS"
-    bucket_name = cloudflare_r2_bucket.game_assets.name
-  }
-
-  compatibility_date = "2024-01-01"
-}
-
 resource "cloudflare_workers_script" "game_api" {
   account_id = var.cloudflare_account_id
   name       = "${var.project_name}-api"
