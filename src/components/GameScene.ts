@@ -22,6 +22,7 @@ export class GameScene {
   private floatingObjects!: FloatingObjects;
   private centralObjects!: CentralObjects;
   private initialized = false;
+  private isWebGPU = false;
 
   constructor(private canvas: HTMLCanvasElement) {}
 
@@ -53,9 +54,11 @@ export class GameScene {
       const webGPUEngine = new WebGPUEngine(this.canvas);
       await webGPUEngine.initAsync();
       this.engine = webGPUEngine as unknown as Engine;
+      this.isWebGPU = true;
     } else {
       // Fallback to WebGL
       this.engine = new Engine(this.canvas, true);
+      this.isWebGPU = false;
     }
 
     this.scene = new Scene(this.engine);
@@ -95,5 +98,13 @@ export class GameScene {
     window.addEventListener("resize", () => {
       this.engine.resize();
     });
+  }
+
+  public getFps(): number {
+    return this.engine.getFps();
+  }
+
+  public getRendererType(): string {
+    return this.isWebGPU ? "WebGPU" : "WebGL";
   }
 }
