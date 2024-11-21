@@ -1,4 +1,4 @@
-import { Engine, Scene } from "@babylonjs/core";
+import { Engine, Scene, WebGPUEngine } from "@babylonjs/core";
 import { CameraSystem } from "./game/CameraSystem";
 import { LightingSystem } from "./game/LightingSystem";
 import { EnvironmentSystem } from "./game/EnvironmentSystem";
@@ -13,32 +13,55 @@ declare global {
 }
 
 export class GameScene {
-  private engine: Engine;
-  private scene: Scene;
+  private engine!: Engine;
+  private scene!: Scene;
   private cameraSystem!: CameraSystem;
   private lightingSystem!: LightingSystem;
   private environmentSystem!: EnvironmentSystem;
   private particleSystem!: ParticleSystemManager;
   private floatingObjects!: FloatingObjects;
   private centralObjects!: CentralObjects;
+  private initialized = false;
 
-  constructor(private canvas: HTMLCanvasElement) {
-    this.engine = new Engine(canvas, true);
-    this.scene = new Scene(this.engine);
+  constructor(private canvas: HTMLCanvasElement) {}
+
+  public async initialize(): Promise<void> {
+    await this.setupEngine();
 
     if (typeof window.calculatePhysics === "function") {
-      this.initialize();
+      this.initializeSystems();
     } else {
-      const checkWasm = setInterval(() => {
-        if (typeof window.calculatePhysics === "function") {
-          clearInterval(checkWasm);
-          this.initialize();
-        }
-      }, 100);
+      await new Promise<void>((resolve) => {
+        const checkWasm = setInterval(() => {
+          if (typeof window.calculatePhysics === "function") {
+            clearInterval(checkWasm);
+            this.initializeSystems();
+            resolve();
+          }
+        }, 100);
+      });
     }
+
+    this.initialized = true;
   }
 
-  private initialize(): void {
+  private async setupEngine(): Promise<void> {
+    // Check if WebGPU is available
+    const webGPUSupported = await WebGPUEngine.IsSupportedAsync;
+
+    if (webGPUSupported) {
+      const webGPUEngine = new WebGPUEngine(this.canvas);
+      await webGPUEngine.initAsync();
+      this.engine = webGPUEngine as unknown as Engine;
+    } else {
+      // Fallback to WebGL
+      this.engine = new Engine(this.canvas, true);
+    }
+
+    this.scene = new Scene(this.engine);
+  }
+
+  private initializeSystems(): void {
     // Initialize all systems
     this.cameraSystem = new CameraSystem(this.scene, this.canvas);
     this.lightingSystem = new LightingSystem(this.scene);
@@ -60,7 +83,11 @@ export class GameScene {
     );
   }
 
-  public render(): void {
+  public async run(): Promise<void> {
+    if (!this.initialized) {
+      await this.initialize();
+    }
+
     this.engine.runRenderLoop(() => {
       this.scene.render();
     });
