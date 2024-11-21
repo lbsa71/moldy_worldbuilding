@@ -10,30 +10,6 @@ import Game from '../components/Game.astro';
         <title>Moldy Worldbuilding</title>
     </head>
     <body>
-        <div>
-            <h1>WASM Test</h1>
-            <button id="calculate">Add numbers using WASM</button>
-            <div id="result"></div>
-        </div>
-
         <Game />
-
-        <script>
-            // TypeScript declarations
-            declare global {
-                interface Window {
-                    add: (a: number, b: number) => number;
-                }
-            }
-        </script>
-        <script>
-            document.getElementById('calculate')?.addEventListener('click', () => {
-                const resultElement = document.getElementById('result');
-                if (window.add && resultElement) {
-                    const result = window.add(40, 2);
-                    resultElement.textContent = `40 + 2 = ${result}`;
-                }
-            });
-        </script>
     </body>
 </html>
