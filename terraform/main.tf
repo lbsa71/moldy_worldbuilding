@@ -68,11 +68,3 @@ resource "cloudflare_workers_route" "api_route" {
   script_name = cloudflare_workers_script.game_api.name
 }
 
-# Output the R2 bucket name for CI/CD to use
-output "r2_bucket_name" {
-  value = cloudflare_r2_bucket.game_assets.name
-}
-
-output "cloudflare_account_id" {
-  value = var.cloudflare_account_id
-}

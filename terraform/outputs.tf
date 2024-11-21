@@ -13,3 +13,7 @@ output "worker_script_name" {
   value       = cloudflare_workers_script.game_api.name
   description = "Worker script name"
 }
+
+output "cloudflare_account_id" {
+  value = var.cloudflare_account_id
+}
