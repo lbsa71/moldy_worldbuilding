@@ -1,4 +1,25 @@
 // src/index.ts
+var MIME_TYPES = {
+  ".html": "text/html",
+  ".js": "application/javascript",
+  ".mjs": "application/javascript",
+  ".css": "text/css",
+  ".wasm": "application/wasm",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".gif": "image/gif",
+  ".svg": "image/svg+xml",
+  ".ico": "image/x-icon",
+  ".json": "application/json"
+};
+function getMimeType(path) {
+  if (path.includes("/_astro/") && path.endsWith(".js")) {
+    return "text/javascript; charset=utf-8";
+  }
+  const ext = "." + path.split(".").pop()?.toLowerCase() || "";
+  return MIME_TYPES[ext] || "application/octet-stream";
+}
 var src_default = {
   async fetch(request, env, ctx) {
     try {
@@ -29,8 +50,9 @@ var src_default = {
       const headers = new Headers();
       object.writeHttpMetadata(headers);
       headers.set("etag", object.httpEtag);
+      headers.set("Content-Type", getMimeType(key));
       headers.set("X-Deploy-Version", env.SOURCE_VERSION);
-      if (key.match(/\._astro\//)) {
+      if (key.includes("/_astro/")) {
         headers.set("Cache-Control", "public, max-age=31536000, immutable");
       } else if (key.match(/\.(js|css|wasm|jpg|png|gif|svg|ico)$/)) {
         headers.set("Cache-Control", "public, max-age=31536000");
