@@ -6,6 +6,32 @@ interface Env {
   SOURCE_VERSION: string;
 }
 
+// MIME type mapping
+const MIME_TYPES: Record<string, string> = {
+  ".html": "text/html",
+  ".js": "application/javascript",
+  ".mjs": "application/javascript",
+  ".css": "text/css",
+  ".wasm": "application/wasm",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".gif": "image/gif",
+  ".svg": "image/svg+xml",
+  ".ico": "image/x-icon",
+  ".json": "application/json",
+};
+
+function getMimeType(path: string): string {
+  // Handle JavaScript modules specifically
+  if (path.includes("/_astro/") && path.endsWith(".js")) {
+    return "text/javascript; charset=utf-8";
+  }
+
+  const ext = "." + path.split(".").pop()?.toLowerCase() || "";
+  return MIME_TYPES[ext] || "application/octet-stream";
+}
+
 export default {
   async fetch(
     request: Request,
@@ -51,11 +77,14 @@ export default {
       object.writeHttpMetadata(headers);
       headers.set("etag", object.httpEtag);
 
+      // Set correct content type
+      headers.set("Content-Type", getMimeType(key));
+
       // Add version header for debugging
       headers.set("X-Deploy-Version", env.SOURCE_VERSION);
 
       // Set cache control based on the file type and path
-      if (key.match(/\._astro\//)) {
+      if (key.includes("/_astro/")) {
         // Astro's hashed assets can be cached forever
         headers.set("Cache-Control", "public, max-age=31536000, immutable");
       } else if (key.match(/\.(js|css|wasm|jpg|png|gif|svg|ico)$/)) {
