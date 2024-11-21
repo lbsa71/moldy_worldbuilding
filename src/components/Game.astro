@@ -5,10 +5,28 @@
     <canvas id="gameCanvas"></canvas>
 </div>
 
+<!-- Load WASM module -->
+<script is:inline src="/wasm/release.js"></script>
+
 <script>
     import { GameScene } from './GameScene';
     
-    window.addEventListener('load', () => {
+    // Wait for both DOM and WASM to be ready
+    const waitForWasm = new Promise<void>(resolve => {
+        const check = () => {
+            if (window.calculatePhysics) {
+                resolve();
+            } else {
+                setTimeout(check, 100);
+            }
+        };
+        check();
+    });
+
+    Promise.all([
+        new Promise(resolve => window.addEventListener('load', resolve)),
+        waitForWasm
+    ]).then(() => {
         const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
         if (canvas) {
             const game = new GameScene(canvas);

@@ -7,25 +7,30 @@ import {
   HemisphericLight,
   MeshBuilder,
 } from "@babylonjs/core";
-import { instantiate } from "../game/wasm/build/release.js";
+
+declare global {
+  interface Window {
+    calculatePhysics: (x: number, y: number, z: number) => number;
+  }
+}
 
 export class GameScene {
   private engine: Engine;
   private scene: Scene;
-  private wasmModule: any;
 
   constructor(private canvas: HTMLCanvasElement) {
     this.engine = new Engine(canvas, true);
     this.scene = new Scene(this.engine);
-    this.initializeWasm();
-  }
-
-  private async initializeWasm(): Promise<void> {
-    try {
-      this.wasmModule = await instantiate();
+    // Wait for WASM to be ready before initializing
+    if (window.calculatePhysics) {
       this.initialize();
-    } catch (error) {
-      console.error("Failed to load WASM module:", error);
+    } else {
+      const checkWasm = setInterval(() => {
+        if (window.calculatePhysics) {
+          clearInterval(checkWasm);
+          this.initialize();
+        }
+      }, 100);
     }
   }
 
@@ -55,14 +60,12 @@ export class GameScene {
     box.position.y = 1;
 
     // Example of using WASM
-    if (this.wasmModule) {
-      const physics = this.wasmModule.calculatePhysics(
-        box.position.x,
-        box.position.y,
-        box.position.z
-      );
-      console.log("WASM physics result:", physics);
-    }
+    const physics = window.calculatePhysics(
+      box.position.x,
+      box.position.y,
+      box.position.z
+    );
+    console.log("WASM physics result:", physics);
   }
 
   public render(): void {
