@@ -10,9 +10,10 @@
 </div>
 
 <script>
-    // WASM module type definition
+    // WASM types
     interface WasmExports {
         calculatePhysics: (x: number, y: number, z: number) => number;
+        memory: WebAssembly.Memory;
     }
 
     // Simple WASM loader
@@ -20,9 +21,14 @@
         try {
             const response = await fetch('/wasm/release.wasm');
             const bytes = await response.arrayBuffer();
-            const { instance } = await WebAssembly.instantiate(bytes);
-            const exports = instance.exports as unknown as WasmExports;
-            window.calculatePhysics = exports.calculatePhysics;
+            const { instance } = await WebAssembly.instantiate(bytes, {
+                env: {
+                    memory: new WebAssembly.Memory({ initial: 256 }),
+                    abort: () => console.log('Aborted')
+                }
+            });
+            const wasmExports = instance.exports as unknown as WasmExports;
+            window.calculatePhysics = (x: number, y: number, z: number) => wasmExports.calculatePhysics(x, y, z);
             console.log('WASM loaded successfully');
             return true;
         } catch (error) {

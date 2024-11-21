@@ -5,11 +5,13 @@
       "optimizeLevel": 3,
       "shrinkLevel": 1,
       "converge": false,
-      "noAssert": true
+      "noAssert": true,
+      "importMemory": true
     }
   },
   "options": {
-    "bindings": "esm",
-    "optimize": true
+    "bindings": "raw",
+    "optimize": true,
+    "runtime": "minimal"
   }
 }
