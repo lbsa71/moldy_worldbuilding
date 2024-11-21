@@ -2,7 +2,22 @@
 var src_default = {
   async fetch(request, env, ctx) {
     try {
-      if (request.url.endsWith("/health")) {
+      const url = new URL(request.url);
+      if (url.pathname.startsWith("/assets/")) {
+        const key = url.pathname.replace("/assets/", "");
+        const object = await env.GAME_ASSETS.get(key);
+        if (object === null) {
+          return new Response("Not Found", { status: 404 });
+        }
+        const headers = new Headers();
+        object.writeHttpMetadata(headers);
+        headers.set("etag", object.httpEtag);
+        headers.set("Cache-Control", "public, max-age=31536000");
+        return new Response(object.body, {
+          headers
+        });
+      }
+      if (url.pathname === "/health") {
         return new Response(
           JSON.stringify({
             status: "ok",
