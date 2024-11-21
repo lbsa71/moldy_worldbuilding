@@ -1,11 +1,6 @@
 // src/index.ts
 var src_default = {
   async fetch(request, env, ctx) {
-    env.GAME_ANALYTICS.writeDataPoint({
-      indexes: ["request"],
-      blobs: [request.url, request.method],
-      doubles: [Date.now()]
-    });
     try {
       if (request.url.endsWith("/health")) {
         return new Response(
@@ -24,12 +19,11 @@ var src_default = {
         headers: { "content-type": "text/plain" }
       });
     } catch (error) {
-      env.GAME_ANALYTICS.writeDataPoint({
-        indexes: ["error"],
-        blobs: [error.message],
-        doubles: [Date.now()]
+      console.error("Error:", error);
+      return new Response("Error", {
+        status: 500,
+        headers: { "content-type": "text/plain" }
       });
-      return new Response("Error", { status: 500 });
     }
   }
 };
