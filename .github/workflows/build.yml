@@ -40,12 +40,19 @@ jobs:
           npm ci --no-fund
           npm run build
 
+      - name: Build WASM
+        working-directory: ./src/game
+        run: |
+          npm ci --no-fund
+          npm run asbuild
+
       - name: Commit changes
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add -f terraform/workers/dist
+          git add -f public/wasm
           git add terraform/workers/package*.json
           git commit -m "Update deps and built worker" || echo "No changes to commit"
           git push origin main
