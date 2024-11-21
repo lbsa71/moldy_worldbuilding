@@ -30,18 +30,27 @@ resource "cloudflare_r2_bucket" "game_assets" {
   location   = "WNAM"
 }
 
-# Add public access for the R2 bucket
+# Configure public access for the R2 bucket
 resource "cloudflare_r2_bucket_public_access" "game_assets_public" {
   account_id = var.cloudflare_account_id
   bucket     = cloudflare_r2_bucket.game_assets.name
+
   public_access {
     enabled = true
+    prefix  = "*"
   }
+}
+
+# Add custom domain for public R2 access
+resource "cloudflare_r2_bucket_domain" "game_assets_domain" {
+  account_id = var.cloudflare_account_id
+  bucket     = cloudflare_r2_bucket.game_assets.name
+  domain     = "${var.project_name}-assets.${var.cloudflare_account_id}.r2.dev"
 }
 
 resource "cloudflare_workers_script" "game_api" {
   account_id = var.cloudflare_account_id
-  name       = var.project_name # Removed -api suffix to match workers.dev URL format
+  name       = "${var.project_name}-api"
 
   module  = true
   content = file("${path.module}/workers/dist/index.js")
