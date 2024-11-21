@@ -36,7 +36,7 @@ jobs:
         run: |
           cd dist
           for file in $(find . -type f); do
-            wrangler r2 object put moldy-worldbuilding-assets/"${file#./}" \
-              --file="$file" \
-              --account-id=$CLOUDFLARE_ACCOUNT_ID
+            relative_path="${file#./}"
+            wrangler r2 object put "moldy-worldbuilding-assets/$relative_path" \
+              --file="$file"
           done
