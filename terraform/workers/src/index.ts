@@ -2,7 +2,6 @@
 interface Env {
   GAME_STATE: KVNamespace;
   GAME_ASSETS: R2Bucket;
-  GAME_ANALYTICS: AnalyticsEngineDataset;
   ENVIRONMENT: string;
   SOURCE_VERSION: string;
 }
@@ -13,13 +12,6 @@ export default {
     env: Env,
     ctx: ExecutionContext
   ): Promise<Response> {
-    // Log request for analytics
-    env.GAME_ANALYTICS.writeDataPoint({
-      indexes: ["request"],
-      blobs: [request.url, request.method],
-      doubles: [Date.now()],
-    });
-
     try {
       // Basic health check
       if (request.url.endsWith("/health")) {
@@ -42,14 +34,11 @@ export default {
         headers: { "content-type": "text/plain" },
       });
     } catch (error) {
-      // Log error
-      env.GAME_ANALYTICS.writeDataPoint({
-        indexes: ["error"],
-        blobs: [error.message],
-        doubles: [Date.now()],
+      console.error("Error:", error);
+      return new Response("Error", {
+        status: 500,
+        headers: { "content-type": "text/plain" },
       });
-
-      return new Response("Error", { status: 500 });
     }
   },
 };
