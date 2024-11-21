@@ -26,10 +26,6 @@ import Game from '../components/Game.astro';
                 }
             }
         </script>
-
-        <!-- Load WASM module -->
-        <script is:inline src="/wasm/release.js"></script>
-
         <script>
             document.getElementById('calculate')?.addEventListener('click', () => {
                 const resultElement = document.getElementById('result');
