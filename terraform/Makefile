@@ -1,11 +1,9 @@
 # ./terraform/Makefile
-.PHONY: build-worker
+.PHONY: build
 
-build-worker:
+# Build all assets that need to be available before terraform cloud runs
+build:
+	# Build the worker
 	cd workers && npm install && npm run build
-
-plan: build-worker
-	terraform plan
-
-apply: build-worker
-	terraform apply
+	# Build the site
+	cd .. && npm install && npm run build
