@@ -29,21 +29,24 @@ resource "cloudflare_workers_kv_namespace" "game_state" {
 resource "cloudflare_r2_bucket" "game_assets" {
   account_id = var.cloudflare_account_id
   name       = "${var.project_name}-assets"
-  location   = "WNAM" # North America
+  location   = "WNAM"
 }
 
-# Worker script
-resource "cloudflare_worker_script" "game_api" {
+resource "cloudflare_analytics_engine_dataset" "game_metrics" {
+  account_id = var.cloudflare_account_id
+  dataset    = "${var.project_name}-metrics"
+}
+
+resource "cloudflare_workers_script" "game_api" {
   account_id = var.cloudflare_account_id
   name       = "${var.project_name}-api"
 
-  # Now we need to provide the built JS content
+  module  = true
   content = file("${path.module}/workers/dist/index.js")
 
-  # Add source content for better visibility
-  plain_text_binding {
-    name = "SOURCE_VERSION"
-    text = filesha256("${path.module}/workers/src/index.ts")
+  analytics_engine_binding {
+    name    = "GAME_ANALYTICS"
+    dataset = cloudflare_analytics_engine_dataset.game_metrics.dataset
   }
 
   kv_namespace_binding {
@@ -56,13 +59,30 @@ resource "cloudflare_worker_script" "game_api" {
     bucket_name = cloudflare_r2_bucket.game_assets.name
   }
 
-  compatibility_date = "2024-01-01"
+  plain_text_binding {
+    name = "ENVIRONMENT"
+    text = var.environment
+  }
+
+  plain_text_binding {
+    name = "SOURCE_VERSION"
+    text = filesha256("${path.module}/workers/src/index.ts")
+  }
+
+  compatibility_date  = "2024-01-01"
+  compatibility_flags = ["nodejs_compat"]
 }
 
-# Optional: Custom domain for the worker
-resource "cloudflare_worker_route" "api_route" {
+# Worker route configuration
+resource "cloudflare_workers_route" "api_route" {
   count       = var.custom_domain != "" ? 1 : 0
   zone_id     = var.cloudflare_zone_id
   pattern     = "api.${var.custom_domain}/*"
-  script_name = cloudflare_worker_script.game_api.name
+  script_name = cloudflare_workers_script.game_api.name
+}
+
+# Analytics configuration (optional)
+resource "cloudflare_analytics_engine_dataset" "game_metrics" {
+  account_id = var.cloudflare_account_id
+  name       = "${var.project_name}-metrics"
 }
