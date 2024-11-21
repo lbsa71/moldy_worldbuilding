@@ -1,22 +1,15 @@
 {
   "targets": {
-    "debug": {
-      "outFile": "../../../public/wasm/debug.wasm",
-      "textFile": "../../../public/wasm/debug.wat",
-      "sourceMap": true,
-      "debug": true
-    },
     "release": {
       "outFile": "../../../public/wasm/release.wasm",
-      "textFile": "../../../public/wasm/release.wat",
-      "sourceMap": true,
       "optimizeLevel": 3,
-      "shrinkLevel": 0,
+      "shrinkLevel": 1,
       "converge": false,
-      "noAssert": false
+      "noAssert": true
     }
   },
   "options": {
-    "bindings": "js"
+    "bindings": "esm",
+    "optimize": true
   }
 }

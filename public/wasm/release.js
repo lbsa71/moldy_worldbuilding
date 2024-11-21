@@ -1,17 +1,15 @@
-(async function() {
-  try {
-    const response = await fetch('/wasm/release.wasm');
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    const bytes = await response.arrayBuffer();
-    const wasmModule = await WebAssembly.instantiate(bytes);
-    const exports = wasmModule.instance.exports;
-    
-    // Add exports to window object
-    window.add = exports.add;
-    window.calculatePhysics = exports.calculatePhysics;
-    
-    console.log('WASM module loaded successfully');
-  } catch (e) {
-    console.error('Failed to load WASM:', e);
+async function instantiate(module, imports = {}) {
+  const { exports } = await WebAssembly.instantiate(module, imports);
+  return exports;
+}
+export const {
+  memory,
+  calculatePhysics,
+} = await (async url => instantiate(
+  await (async () => {
+    const isNodeOrBun = typeof process != "undefined" && process.versions != null && (process.versions.node != null || process.versions.bun != null);
+    if (isNodeOrBun) { return globalThis.WebAssembly.compile(await (await import("node:fs/promises")).readFile(url)); }
+    else { return await globalThis.WebAssembly.compileStreaming(globalThis.fetch(url)); }
+  })(), {
   }
-})();
+))(new URL("release.wasm", import.meta.url));

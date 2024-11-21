@@ -3,11 +3,13 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "npm run build:wasm && astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build",
+    "build": "npm run clean && npm run build:wasm && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "build:wasm": "cd src/game/wasm && npx asc assembly/gameLogic.ts --target release --optimize",
+    "clean": "rm -rf public/wasm/* dist"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

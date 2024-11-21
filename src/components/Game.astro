@@ -9,35 +9,62 @@
     </div>
 </div>
 
-<!-- Load WASM module -->
-<script is:inline src="/wasm/release.js"></script>
-
 <script>
-    import { GameScene } from './GameScene';
-    
-    Promise.all([
-        new Promise(resolve => window.addEventListener('load', resolve))
-    ]).then(async () => {
-        const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
-        if (canvas) {
-            const game = new GameScene(canvas);
-            await game.run();
-            
-            // Update renderer type
-            const rendererType = document.getElementById('rendererType');
-            if (rendererType) {
-                rendererType.textContent = game.getRendererType();
-            }
+    // WASM module type definition
+    interface WasmExports {
+        calculatePhysics: (x: number, y: number, z: number) => number;
+    }
 
-            // Update FPS counter
-            const fpsCounter = document.getElementById('fpsCounter');
-            if (fpsCounter) {
-                setInterval(() => {
-                    fpsCounter.textContent = game.getFps().toFixed(0);
-                }, 1000);
-            }
+    // Simple WASM loader
+    async function loadWasm() {
+        try {
+            const response = await fetch('/wasm/release.wasm');
+            const bytes = await response.arrayBuffer();
+            const { instance } = await WebAssembly.instantiate(bytes);
+            const exports = instance.exports as unknown as WasmExports;
+            window.calculatePhysics = exports.calculatePhysics;
+            console.log('WASM loaded successfully');
+            return true;
+        } catch (error) {
+            console.error('Failed to load WASM:', error);
+            return false;
         }
-    });
+    }
+
+    // Import and initialize game
+    const initGame = async () => {
+        try {
+            const { GameScene } = await import('./GameScene');
+            
+            // Load WASM first
+            await loadWasm();
+            
+            const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
+            if (canvas) {
+                const game = new GameScene(canvas);
+                await game.run();
+                
+                // Update renderer type
+                const rendererType = document.getElementById('rendererType');
+                if (rendererType) {
+                    rendererType.textContent = game.getRendererType();
+                }
+
+                // Update FPS counter
+                const fpsCounter = document.getElementById('fpsCounter');
+                if (fpsCounter) {
+                    setInterval(() => {
+                        fpsCounter.textContent = game.getFps().toFixed(0);
+                    }, 1000);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to initialize game:', error);
+        }
+    };
+
+    // Wait for window load before initializing
+    window.addEventListener('load', initGame);
 </script>
 
 <style>
