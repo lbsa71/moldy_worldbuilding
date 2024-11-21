@@ -10,6 +10,6 @@ output "r2_bucket_name" {
 }
 
 output "worker_script_name" {
-  value       = cloudflare_worker_script.game_api.name
+  value       = cloudflare_workers_script.game_api.name
   description = "Worker script name"
 }

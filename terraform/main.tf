@@ -19,22 +19,15 @@ provider "cloudflare" {
   api_token = var.cloudflare_api_token
 }
 
-# KV namespace for game state
 resource "cloudflare_workers_kv_namespace" "game_state" {
   account_id = var.cloudflare_account_id
   title      = "${var.project_name}-game-state"
 }
 
-# R2 bucket for assets
 resource "cloudflare_r2_bucket" "game_assets" {
   account_id = var.cloudflare_account_id
   name       = "${var.project_name}-assets"
   location   = "WNAM"
-}
-
-resource "cloudflare_analytics_engine_dataset" "game_metrics" {
-  account_id = var.cloudflare_account_id
-  dataset    = "${var.project_name}-metrics"
 }
 
 resource "cloudflare_workers_script" "game_api" {
@@ -43,11 +36,6 @@ resource "cloudflare_workers_script" "game_api" {
 
   module  = true
   content = file("${path.module}/workers/dist/index.js")
-
-  analytics_engine_binding {
-    name    = "GAME_ANALYTICS"
-    dataset = cloudflare_analytics_engine_dataset.game_metrics.dataset
-  }
 
   kv_namespace_binding {
     name         = "GAME_STATE"
@@ -73,7 +61,6 @@ resource "cloudflare_workers_script" "game_api" {
   compatibility_flags = ["nodejs_compat"]
 }
 
-# Worker route configuration
 resource "cloudflare_workers_route" "api_route" {
   count       = var.custom_domain != "" ? 1 : 0
   zone_id     = var.cloudflare_zone_id
