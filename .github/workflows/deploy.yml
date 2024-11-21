@@ -1,8 +1,6 @@
 name: Deploy to R2
 
 on:
-  push:
-    branches: [main]
   workflow_run:
     workflows: ["Build and Push"]
     types:
