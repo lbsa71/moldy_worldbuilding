@@ -41,7 +41,7 @@ resource "cloudflare_r2_bucket_public_access" "game_assets_public" {
 
 resource "cloudflare_workers_script" "game_api" {
   account_id = var.cloudflare_account_id
-  name       = "${var.project_name}-api"
+  name       = var.project_name # Removed -api suffix to match workers.dev URL format
 
   module  = true
   content = file("${path.module}/workers/dist/index.js")
