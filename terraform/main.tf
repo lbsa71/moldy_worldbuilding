@@ -80,9 +80,3 @@ resource "cloudflare_workers_route" "api_route" {
   pattern     = "api.${var.custom_domain}/*"
   script_name = cloudflare_workers_script.game_api.name
 }
-
-# Analytics configuration (optional)
-resource "cloudflare_analytics_engine_dataset" "game_metrics" {
-  account_id = var.cloudflare_account_id
-  name       = "${var.project_name}-metrics"
-}
