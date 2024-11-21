@@ -27,17 +27,25 @@ jobs:
           cache: "npm"
           cache-dependency-path: "./terraform/workers/package-lock.json"
 
+      - name: Update Dependencies
+        working-directory: ./terraform/workers
+        run: |
+          npm install -g npm@latest
+          npm update
+          npm audit fix || true
+
       - name: Build Worker
         working-directory: ./terraform/workers
         run: |
-          npm ci
+          npm ci --no-fund
           npm run build
 
-      - name: Commit built worker
+      - name: Commit changes
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add terraform/workers/dist -f
-          git commit -m "Update built worker" || echo "No changes to commit"
+          git add -f terraform/workers/dist
+          git add terraform/workers/package*.json
+          git commit -m "Update deps and built worker" || echo "No changes to commit"
           git push origin main
