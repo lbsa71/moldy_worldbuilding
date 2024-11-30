@@ -4,55 +4,48 @@ import {
   Vector3,
   WebGPUEngine,
   ArcRotateCamera,
-  HemisphericLight,
-  PointLight,
-  MeshBuilder,
-  StandardMaterial,
-  Color3,
   Color4,
-  GroundMesh,
-  Mesh,
-  Animation,
-  SceneLoader,
-  AbstractMesh,
-  Ray,
-  PickingInfo,
-  Path3D,
-  TransformNode,
-  KeyboardEventTypes,
-  PointerEventTypes,
   Matrix,
-  VertexData,
-  GlowLayer,
-  Texture,
-  ParticleSystem,
+  PointerEventTypes,
+  Ray,
+  HavokPlugin,
 } from "@babylonjs/core";
-// Import loaders
 import "@babylonjs/loaders/glTF";
+import HavokPhysics from "@babylonjs/havok";
+
+import { TerrainSystem } from "./game/TerrainSystem";
+import { AtmosphereSystem } from "./game/AtmosphereSystem";
+import { EnvironmentSystem } from "./game/EnvironmentSystem";
+import { Character } from "./game/Character";
 
 export class GameScene {
   private engine!: Engine;
   private scene!: Scene;
   private camera!: ArcRotateCamera;
-  private terrain!: Mesh;
-  private character?: AbstractMesh;
-  private characterRoot?: TransformNode;
-  private characterLight?: PointLight;
-  private targetPoint?: Vector3;
+  private terrain!: TerrainSystem;
+  private atmosphere!: AtmosphereSystem;
+  private environment!: EnvironmentSystem;
+  private character!: Character;
   private initialized = false;
   private isWebGPU = false;
-  private trees: Mesh[] = [];
-  private rocks: Mesh[] = [];
+  private cameraTarget = Vector3.Zero();
+  private havokPlugin?: HavokPlugin;
 
   constructor(private canvas: HTMLCanvasElement) {}
 
   public async initialize(): Promise<void> {
-    await this.setupEngine();
-    this.initializeScene();
-    await this.loadCharacter();
-    this.setupInteraction();
-    this.createEnvironmentObjects();
-    this.initialized = true;
+    try {
+      await this.setupEngine();
+      await this.setupPhysics();
+      this.setupCamera();
+      await this.initializeSystems();
+      this.setupInteraction();
+      this.initialized = true;
+      console.log("Game initialization complete");
+    } catch (error) {
+      console.error("Failed to initialize game:", error);
+      throw error;
+    }
   }
 
   private async setupEngine(): Promise<void> {
@@ -70,278 +63,118 @@ export class GameScene {
 
     this.scene = new Scene(this.engine);
     this.scene.clearColor = new Color4(0.05, 0.05, 0.05, 1);
+
+    // Enable collision detection
+    this.scene.collisionsEnabled = true;
+    this.scene.gravity = new Vector3(0, -9.81, 0);
   }
 
-  private initializeScene(): void {
-    // Camera setup
+  private async setupPhysics(): Promise<void> {
+    try {
+      // Load Havok WASM
+      const havokInstance = await HavokPhysics({
+        locateFile: () => "/HavokPhysics.wasm",
+      });
+
+      // Create and initialize the physics plugin with continuous collision detection
+      // Set the last parameter to false to disable debug visualization
+      this.havokPlugin = new HavokPlugin(false, havokInstance); // Changed from true to false
+
+      // Enable physics in the scene with increased gravity
+      this.scene.enablePhysics(new Vector3(0, -9.81 * 2, 0), this.havokPlugin);
+
+      // Set physics timestep for better stability
+      this.havokPlugin.setTimeStep(1 / 120);
+
+      console.log("Physics initialized successfully");
+    } catch (error) {
+      console.error("Failed to initialize physics:", error);
+      throw error;
+    }
+  }
+
+  private setupCamera(): void {
+    // More dramatic initial angle
     this.camera = new ArcRotateCamera(
       "camera",
-      Math.PI / 2,
-      Math.PI / 3,
-      30,
+      Math.PI * 0.75, // More side view
+      Math.PI * 0.35, // Lower angle
+      25,
       Vector3.Zero(),
       this.scene
     );
     this.camera.attachControl(this.canvas, true);
-    this.camera.lowerRadiusLimit = 10;
+    this.camera.lowerRadiusLimit = 15;
     this.camera.upperRadiusLimit = 50;
+    this.camera.wheelDeltaPercentage = 0.01;
 
-    // Ambient lighting (very dim)
-    const light = new HemisphericLight(
-      "light",
-      new Vector3(0.5, 1, 0.8),
-      this.scene
-    );
-    light.intensity = 0.2;
-    light.groundColor = new Color3(0.02, 0.02, 0.02);
+    // Limit vertical rotation for better views
+    this.camera.upperBetaLimit = Math.PI / 2.2;
+    this.camera.lowerBetaLimit = Math.PI / 4;
 
-    // Create procedural terrain
-    this.createTerrain();
-
-    // Add volumetric fog
-    this.scene.fogMode = Scene.FOGMODE_EXP2;
-    this.scene.fogDensity = 0.015;
-    this.scene.fogColor = new Color3(0.05, 0.05, 0.05);
-
-    // Add ground mist particle system
-    this.createGroundMist();
-
-    // Add glow layer for the character light
-    const gl = new GlowLayer("glow", this.scene, {
-      mainTextureFixedSize: 1024,
-      blurKernelSize: 64,
-    });
-    gl.intensity = 0.5;
+    // Smoother camera movement
+    this.camera.inertia = 0.7;
+    this.camera.angularSensibilityX = 500;
+    this.camera.angularSensibilityY = 500;
   }
 
-  private createGroundMist(): void {
-    const mistSystem = new ParticleSystem("mist", 2000, this.scene);
-    mistSystem.particleTexture = new Texture(
-      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
-      this.scene
-    );
+  private async initializeSystems(): Promise<void> {
+    try {
+      // Initialize atmosphere first for proper rendering order
+      this.atmosphere = new AtmosphereSystem(this.scene);
 
-    mistSystem.minEmitBox = new Vector3(-50, 0, -50);
-    mistSystem.maxEmitBox = new Vector3(50, 0.5, 50);
+      // Create terrain and wait for it to be ready
+      console.log("Creating terrain...");
+      this.terrain = new TerrainSystem(this.scene);
+      await this.terrain.waitForReady();
+      console.log("Terrain ready");
 
-    mistSystem.color1 = new Color4(0.1, 0.1, 0.1, 0.1);
-    mistSystem.color2 = new Color4(0.1, 0.1, 0.1, 0.2);
-    mistSystem.colorDead = new Color4(0.1, 0.1, 0.1, 0);
+      // Add environmental objects
+      console.log("Setting up environment...");
+      this.environment = new EnvironmentSystem(this.scene);
+      this.environment.populate(this.terrain.terrain);
 
-    mistSystem.minSize = 5.0;
-    mistSystem.maxSize = 10.0;
+      // Create character
+      console.log("Creating character...");
+      this.character = new Character(this.scene);
 
-    mistSystem.minLifeTime = 2.0;
-    mistSystem.maxLifeTime = 3.0;
+      // Position character above ground and update its height
+      const startPos = new Vector3(0, 50, 0); // Start high to ensure ray hits terrain
+      this.character.setPosition(startPos);
 
-    mistSystem.emitRate = 100;
-
-    mistSystem.blendMode = ParticleSystem.BLENDMODE_STANDARD;
-
-    mistSystem.gravity = new Vector3(0, 0.05, 0);
-
-    mistSystem.direction1 = new Vector3(-0.1, 0, -0.1);
-    mistSystem.direction2 = new Vector3(0.1, 0.1, 0.1);
-
-    mistSystem.minAngularSpeed = 0;
-    mistSystem.maxAngularSpeed = 0.1;
-
-    mistSystem.minEmitPower = 0.1;
-    mistSystem.maxEmitPower = 0.3;
-
-    mistSystem.start();
-  }
-
-  private createTerrain(): void {
-    const size = 100;
-    const subdivisions = 100;
-
-    // Create custom vertex data
-    const vertexData = new VertexData();
-    const positions: number[] = [];
-    const indices: number[] = [];
-    const normals: number[] = [];
-    const uvs: number[] = [];
-
-    // Create vertices with more dramatic height variation
-    for (let row = 0; row <= subdivisions; row++) {
-      for (let col = 0; col <= subdivisions; col++) {
-        const x = (col * size) / subdivisions - size / 2;
-        const z = (row * size) / subdivisions - size / 2;
-
-        // Create more dramatic mold-like terrain
-        const freq1 = 0.03;
-        const freq2 = 0.08;
-        const freq3 = 0.15;
-        const y =
-          Math.sin(x * freq1) * Math.cos(z * freq1) * 8 +
-          Math.sin(x * freq2) * Math.cos(z * freq2) * 4 +
-          Math.sin(x * freq3) * Math.cos(z * freq3) * 2 +
-          (Math.sin(Math.sqrt(x * x + z * z) * 0.05) + 1) * 3;
-
-        positions.push(x, y, z);
-        uvs.push(col / subdivisions, row / subdivisions);
-      }
-    }
-
-    // Create indices
-    for (let row = 0; row < subdivisions; row++) {
-      for (let col = 0; col < subdivisions; col++) {
-        const baseIdx = row * (subdivisions + 1) + col;
-        indices.push(
-          baseIdx,
-          baseIdx + 1,
-          baseIdx + subdivisions + 1,
-          baseIdx + 1,
-          baseIdx + subdivisions + 2,
-          baseIdx + subdivisions + 1
-        );
-      }
-    }
-
-    // Compute normals
-    VertexData.ComputeNormals(positions, indices, normals);
-
-    // Apply vertex data to mesh
-    vertexData.positions = positions;
-    vertexData.indices = indices;
-    vertexData.normals = normals;
-    vertexData.uvs = uvs;
-
-    // Create the terrain mesh
-    this.terrain = new Mesh("terrain", this.scene);
-    vertexData.applyToMesh(this.terrain);
-
-    // Create a darker material for the terrain
-    const terrainMaterial = new StandardMaterial("terrainMaterial", this.scene);
-    terrainMaterial.diffuseColor = new Color3(0.1, 0.15, 0.05);
-    terrainMaterial.specularColor = new Color3(0.05, 0.05, 0.05);
-    terrainMaterial.ambientColor = new Color3(0.05, 0.07, 0.05);
-    terrainMaterial.emissiveColor = new Color3(0.01, 0.015, 0.01);
-    this.terrain.material = terrainMaterial;
-  }
-
-  private createEnvironmentObjects(): void {
-    // Create tree material
-    const treeMaterial = new StandardMaterial("treeMaterial", this.scene);
-    treeMaterial.diffuseColor = new Color3(0.1, 0.15, 0.05);
-    treeMaterial.specularColor = new Color3(0, 0, 0);
-
-    // Create rock material
-    const rockMaterial = new StandardMaterial("rockMaterial", this.scene);
-    rockMaterial.diffuseColor = new Color3(0.2, 0.2, 0.2);
-    rockMaterial.specularColor = new Color3(0.1, 0.1, 0.1);
-
-    // Create trees and rocks
-    for (let i = 0; i < 50; i++) {
-      // Random position within terrain bounds
-      const x = Math.random() * 80 - 40;
-      const z = Math.random() * 80 - 40;
-
-      // Get height at position
-      const ray = new Ray(new Vector3(x, 100, z), new Vector3(0, -1, 0), 200);
-      const hit = this.scene.pickWithRay(ray, (mesh) => mesh === this.terrain);
-
+      // Cast ray to find ground height
+      const ray = new Ray(startPos, new Vector3(0, -1, 0), 100);
+      const hit = this.scene.pickWithRay(
+        ray,
+        (mesh) => mesh === this.terrain.terrain
+      );
       if (hit?.pickedPoint) {
-        // Create tree
-        if (Math.random() > 0.3) {
-          const height = 3 + Math.random() * 2;
-          const trunk = MeshBuilder.CreateCylinder(
-            "trunk",
-            {
-              height: height,
-              diameter: 0.3,
-              tessellation: 8,
-            },
-            this.scene
-          );
-          const foliage = MeshBuilder.CreateCylinder(
-            "foliage",
-            {
-              height: height * 2,
-              diameterTop: 0.1,
-              diameterBottom: 2,
-              tessellation: 8,
-            },
-            this.scene
-          );
-
-          trunk.material = treeMaterial;
-          foliage.material = treeMaterial;
-
-          trunk.position = new Vector3(x, hit.pickedPoint.y + height / 2, z);
-          foliage.position = new Vector3(
-            x,
-            hit.pickedPoint.y + height * 1.5,
-            z
-          );
-
-          trunk.rotation.y = Math.random() * Math.PI;
-          foliage.rotation.y = Math.random() * Math.PI;
-
-          this.trees.push(trunk, foliage);
-        }
-        // Create rock
-        else {
-          const size = 1 + Math.random() * 2;
-          const rock = MeshBuilder.CreatePolyhedron(
-            "rock",
-            {
-              type: 1,
-              size: size,
-            },
-            this.scene
-          );
-
-          rock.material = rockMaterial;
-          rock.position = new Vector3(x, hit.pickedPoint.y + size / 2, z);
-          rock.rotation = new Vector3(
-            Math.random() * Math.PI,
-            Math.random() * Math.PI,
-            Math.random() * Math.PI
-          );
-
-          this.rocks.push(rock);
-        }
+        this.character.setPosition(
+          new Vector3(
+            hit.pickedPoint.x,
+            hit.pickedPoint.y + 1,
+            hit.pickedPoint.z
+          )
+        );
+        this.cameraTarget = hit.pickedPoint.clone();
       }
+
+      // Smooth camera follow
+      this.scene.registerBeforeRender(() => {
+        const charPos = this.character.getPosition();
+        // Smoothly interpolate camera target
+        this.cameraTarget = Vector3.Lerp(this.cameraTarget, charPos, 0.1);
+        this.camera.target = this.cameraTarget;
+      });
+
+      console.log("Systems initialization complete");
+    } catch (error) {
+      console.error("Failed to initialize systems:", error);
+      throw error;
     }
-  }
-
-  private async loadCharacter(): Promise<void> {
-    // Create a root node for the character
-    this.characterRoot = new TransformNode("characterRoot", this.scene);
-
-    // Load character model
-    const result = await SceneLoader.ImportMeshAsync(
-      "",
-      "https://assets.babylonjs.com/meshes/",
-      "HVGirl.glb",
-      this.scene
-    );
-
-    this.character = result.meshes[0];
-    this.character.parent = this.characterRoot;
-    this.character.scaling = new Vector3(0.1, 0.1, 0.1);
-
-    // Add point light to character
-    this.characterLight = new PointLight(
-      "characterLight",
-      new Vector3(0, 2, 0),
-      this.scene
-    );
-    this.characterLight.parent = this.characterRoot;
-    this.characterLight.intensity = 8;
-    this.characterLight.radius = 10;
-    this.characterLight.diffuse = new Color3(0.5, 0.7, 0.3);
-    this.characterLight.specular = new Color3(0.3, 0.5, 0.1);
-
-    // Position the character on the terrain
-    this.characterRoot.position = new Vector3(0, 0, 0);
-    this.updateCharacterHeight();
   }
 
   private setupInteraction(): void {
-    // Handle click/tap for navigation
     this.scene.onPointerObservable.add((pointerInfo) => {
       if (pointerInfo.type === PointerEventTypes.POINTERDOWN) {
         const ray = this.scene.createPickingRay(
@@ -352,79 +185,12 @@ export class GameScene {
         );
 
         const hit = this.scene.pickWithRay(ray);
-        if (hit?.pickedPoint && hit.pickedMesh === this.terrain) {
-          this.moveCharacterTo(hit.pickedPoint);
+        if (hit?.pickedPoint && hit.pickedMesh === this.terrain.terrain) {
+          console.log("Moving to:", hit.pickedPoint);
+          this.character.moveTo(hit.pickedPoint, this.terrain.terrain);
         }
       }
     });
-  }
-
-  private moveCharacterTo(target: Vector3): void {
-    if (!this.characterRoot) return;
-
-    this.targetPoint = target;
-
-    // Calculate direction and rotation
-    const direction = target.subtract(this.characterRoot.position);
-    direction.y = 0; // Keep character upright
-
-    // Rotate character to face target
-    const angle = Math.atan2(direction.x, direction.z);
-    this.characterRoot.rotation.y = angle;
-
-    // Create animation
-    const anim = new Animation(
-      "moveAnim",
-      "position",
-      30,
-      Animation.ANIMATIONTYPE_VECTOR3,
-      Animation.ANIMATIONLOOPMODE_CONSTANT
-    );
-
-    const keys = [];
-    keys.push({
-      frame: 0,
-      value: this.characterRoot.position.clone(),
-    });
-    keys.push({
-      frame: 30,
-      value: target,
-    });
-    anim.setKeys(keys);
-
-    // Stop any current animation and start new one
-    this.scene.stopAnimation(this.characterRoot);
-    this.scene.beginDirectAnimation(
-      this.characterRoot,
-      [anim],
-      0,
-      30,
-      false,
-      1,
-      () => {
-        this.updateCharacterHeight();
-      }
-    );
-  }
-
-  private updateCharacterHeight(): void {
-    if (!this.characterRoot || !this.terrain) return;
-
-    // Ray cast to find ground height
-    const ray = new Ray(
-      new Vector3(
-        this.characterRoot.position.x,
-        100,
-        this.characterRoot.position.z
-      ),
-      new Vector3(0, -1, 0),
-      1000
-    );
-
-    const hit = this.scene.pickWithRay(ray, (mesh) => mesh === this.terrain);
-    if (hit?.pickedPoint) {
-      this.characterRoot.position.y = hit.pickedPoint.y;
-    }
   }
 
   public async run(): Promise<void> {
