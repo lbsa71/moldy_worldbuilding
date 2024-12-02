@@ -33,7 +33,7 @@ export class TerrainSystem {
       // Wait for the next frame to ensure mesh is fully created
       scene.executeWhenReady(() => {
         // Now set up physics
-        this.setupPhysics();
+        // this.setupPhysics();
         resolve();
       });
     });
