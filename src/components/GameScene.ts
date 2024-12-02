@@ -30,8 +30,18 @@ export class GameScene {
   private isWebGPU = false;
   private cameraTarget = Vector3.Zero();
   private havokPlugin?: HavokPlugin;
+  private cameraOffset: Vector3;
+  private cameraSmoothingFactor = 0.1;
+  private cameraHeightOffset = 5;
+  private cameraDistanceFromCharacter = 25;
 
-  constructor(private canvas: HTMLCanvasElement) {}
+  constructor(private canvas: HTMLCanvasElement) {
+    this.cameraOffset = new Vector3(
+      0,
+      this.cameraHeightOffset,
+      -this.cameraDistanceFromCharacter
+    );
+  }
 
   public async initialize(): Promise<void> {
     try {
@@ -71,19 +81,12 @@ export class GameScene {
 
   private async setupPhysics(): Promise<void> {
     try {
-      // Load Havok WASM
       const havokInstance = await HavokPhysics({
         locateFile: () => "/HavokPhysics.wasm",
       });
 
-      // Create and initialize the physics plugin with continuous collision detection
-      // Set the last parameter to false to disable debug visualization
-      this.havokPlugin = new HavokPlugin(false, havokInstance); // Changed from true to false
-
-      // Enable physics in the scene with increased gravity
+      this.havokPlugin = new HavokPlugin(false, havokInstance);
       this.scene.enablePhysics(new Vector3(0, -9.81 * 2, 0), this.havokPlugin);
-
-      // Set physics timestep for better stability
       this.havokPlugin.setTimeStep(1 / 120);
 
       console.log("Physics initialized successfully");
@@ -94,60 +97,78 @@ export class GameScene {
   }
 
   private setupCamera(): void {
-    // More dramatic initial angle
     this.camera = new ArcRotateCamera(
       "camera",
-      Math.PI * 0.75, // More side view
-      Math.PI * 0.35, // Lower angle
-      25,
-      Vector3.Zero(),
+      Math.PI * 0.75,
+      Math.PI * 0.35,
+      this.cameraDistanceFromCharacter,
+      this.cameraTarget,
       this.scene
     );
+
     this.camera.attachControl(this.canvas, true);
     this.camera.lowerRadiusLimit = 15;
     this.camera.upperRadiusLimit = 50;
     this.camera.wheelDeltaPercentage = 0.01;
 
-    // Limit vertical rotation for better views
     this.camera.upperBetaLimit = Math.PI / 2.2;
     this.camera.lowerBetaLimit = Math.PI / 4;
 
-    // Smoother camera movement
     this.camera.inertia = 0.7;
     this.camera.angularSensibilityX = 500;
     this.camera.angularSensibilityY = 500;
+
+    this.camera.panningSensibility = 0;
+  }
+
+  private updateCameraPosition(): void {
+    const characterPos = this.character.getPosition();
+
+    this.cameraTarget = Vector3.Lerp(
+      this.cameraTarget,
+      new Vector3(
+        characterPos.x,
+        characterPos.y + this.cameraHeightOffset,
+        characterPos.z
+      ),
+      this.cameraSmoothingFactor
+    );
+
+    this.camera.target = this.cameraTarget;
+  }
+
+  private lerpAngle(start: number, end: number, factor: number): number {
+    let difference = end - start;
+    while (difference < -Math.PI) difference += Math.PI * 2;
+    while (difference > Math.PI) difference -= Math.PI * 2;
+    return start + difference * factor;
   }
 
   private async initializeSystems(): Promise<void> {
     try {
-      // Initialize atmosphere first for proper rendering order
       this.atmosphere = new AtmosphereSystem(this.scene);
 
-      // Create terrain and wait for it to be ready
       console.log("Creating terrain...");
       this.terrain = new TerrainSystem(this.scene);
       await this.terrain.waitForReady();
       console.log("Terrain ready");
 
-      // Add environmental objects
       console.log("Setting up environment...");
       this.environment = new EnvironmentSystem(this.scene);
       this.environment.populate(this.terrain.terrain);
 
-      // Create character
       console.log("Creating character...");
       this.character = new Character(this.scene);
 
-      // Position character above ground and update its height
-      const startPos = new Vector3(0, 50, 0); // Start high to ensure ray hits terrain
+      const startPos = new Vector3(0, 50, 0);
       this.character.setPosition(startPos);
 
-      // Cast ray to find ground height
       const ray = new Ray(startPos, new Vector3(0, -1, 0), 100);
       const hit = this.scene.pickWithRay(
         ray,
         (mesh) => mesh === this.terrain.terrain
       );
+
       if (hit?.pickedPoint) {
         this.character.setPosition(
           new Vector3(
@@ -159,12 +180,8 @@ export class GameScene {
         this.cameraTarget = hit.pickedPoint.clone();
       }
 
-      // Smooth camera follow
       this.scene.registerBeforeRender(() => {
-        const charPos = this.character.getPosition();
-        // Smoothly interpolate camera target
-        this.cameraTarget = Vector3.Lerp(this.cameraTarget, charPos, 0.1);
-        this.camera.target = this.cameraTarget;
+        this.updateCameraPosition();
       });
 
       console.log("Systems initialization complete");
