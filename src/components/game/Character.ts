@@ -37,6 +37,7 @@ export class Character {
   private moveSpeed = 5; // Units per second
   private lastGroundY = 0;
   private debugSphere?: Mesh;
+  private terrain?: AbstractMesh;
 
   constructor(private scene: Scene) {
     // Create root node for character
@@ -322,7 +323,7 @@ export class Character {
   }
 
   public async moveTo(target: Vector3, terrain: Mesh): Promise<void> {
-    if (this.isMoving) return;
+    this.terrain = terrain;
 
     console.log("Moving to target:", target);
     this.isMoving = true;
