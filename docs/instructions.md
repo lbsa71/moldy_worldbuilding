@@ -18,13 +18,11 @@ Astro Integration:
 There's an astro app in src/pages/index.astro and src/components/Game.astro
 
 All interactivity (dialogue, avatar movement, etc.) should occur within the Babylon.js scene.
-Minimal Ink Script Example:
 
 Each Ink knot defines:
 Dialogue text.
 Choices for progression.
 A position tag indicating the avatar’s next location on the ground mesh (see example script).
-
 
 Key Features to Implement:
 Load the Ink script using inkjs and parse its contents.

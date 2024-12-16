@@ -1,3 +1,5 @@
+-> knot_1
+
 === knot_1 ===
 This is the first dialogue. Where do you want to go?
 
