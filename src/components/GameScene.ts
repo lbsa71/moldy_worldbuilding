@@ -74,7 +74,7 @@ export class GameScene {
 
     private async loadInkStory(): Promise<void> {
         try {
-            this.currentStory = await loadInkFile("/ink/simple.ink");
+            this.currentStory = await loadInkFile("/ink/demo.ink");
             this.progressStory();
         } catch (error) {
             console.error("Failed to load ink story:", error);
