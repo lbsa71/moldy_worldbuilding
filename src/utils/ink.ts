@@ -12,14 +12,29 @@ export async function loadInkFile(path: string): Promise<Story> {
 }
 
 export function getCurrentDialogue(story: inkjs.Story): { text: string; choices: Choice[] } {
-  if (story.canContinue) {
-    const text = story.Continue()!;
-    const choices = story.currentChoices;
+    let choices : Choice[] = [];
+    let text = "";
+    let i = 0;
+
+    while (story.canContinue) {
+        if(i++ > 10) {
+            console.log("Max iterations reached in getCurrentDialogue");
+            break;
+        }
+
+        const continuation = story.Continue();
+        text += continuation;
+
+        choices = story.currentChoices;
+
+        console.log("Continue:" + continuation);
+        console.log(" canContinue:" + story.canContinue);
+        console.log("choises:" + choices?.map((c) => { c.text }).join(','));
+       
+        if(choices && choices.length > 0) break;
+    }
+    console.log("Current dialogue:", text, "choices:", choices);
     return { text, choices };
-  } else {
-      const choices = story.currentChoices;
-      return { text: "", choices };
-  }
 }
 
 export function choose(story: inkjs.Story, choiceIndex: number) {
@@ -30,9 +45,10 @@ export function getPositionTag(story: inkjs.Story): { x: number, z: number } | n
     const tags = story.currentTags;
     if (tags) {
         for (const tag of tags) {
-            if (tag.startsWith("position:")) {
+            const match = tag.match(/position:\s*({.*})/);
+            if (match) {
                 try {
-                    const positionString = tag.substring("position:".length).trim();
+                    const positionString = match[1].trim();
                     const position = JSON.parse(positionString);
                     if (typeof position === 'object' && position !== null && 'x' in position && 'z' in position) {
                         return { x: parseFloat(position.x), z: parseFloat(position.z) };
