@@ -7,11 +7,12 @@
     "strict": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "types": ["vite/client"],
+    "types": ["vite/client", "astro/client"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
-    }
+      "src/*": ["src/*"]
+    },
+    "outDir": "dist"
   },
   "exclude": ["node_modules", "src/game/wasm/assembly/**/*"]
 }

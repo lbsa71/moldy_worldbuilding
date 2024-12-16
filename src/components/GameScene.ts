@@ -9,14 +9,23 @@ import {
   PointerEventTypes,
   Ray,
   HavokPlugin,
+  AbstractMesh,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import HavokPhysics from "@babylonjs/havok";
+import {
+    AdvancedDynamicTexture,
+    Button,
+    Control,
+    TextBlock,
+} from "@babylonjs/gui";
 
 import { TerrainSystem } from "./game/TerrainSystem";
 import { AtmosphereSystem } from "./game/AtmosphereSystem";
 import { EnvironmentSystem } from "./game/EnvironmentSystem";
 import { Character } from "./game/Character";
+import { loadInkFile, getCurrentDialogue, choose, getPositionTag } from "../utils/ink";
+import { Choice } from "inkjs/engine/Choice";
 
 export class GameScene {
   private engine!: Engine;
@@ -34,6 +43,9 @@ export class GameScene {
   private cameraSmoothingFactor = 0.1;
   private cameraHeightOffset = 5;
   private cameraDistanceFromCharacter = 25;
+  private guiTexture!: any;
+  private dialogueText!: any;
+  private currentStory: any;
 
   constructor(private canvas: HTMLCanvasElement) {
     this.cameraOffset = new Vector3(
@@ -50,6 +62,8 @@ export class GameScene {
       this.setupCamera();
       await this.initializeSystems();
       this.setupInteraction();
+      this.setupGUI();
+      await this.loadInkStory();
       this.initialized = true;
       console.log("Game initialization complete");
     } catch (error) {
@@ -57,6 +71,72 @@ export class GameScene {
       throw error;
     }
   }
+
+    private async loadInkStory(): Promise<void> {
+        try {
+            this.currentStory = await loadInkFile("/ink/demo.ink");
+            this.progressStory();
+        } catch (error) {
+            console.error("Failed to load ink story:", error);
+        }
+    }
+
+    private progressStory(): void {
+        if (!this.currentStory) return;
+
+        const { text, choices } = getCurrentDialogue(this.currentStory);
+        this.dialogueText.text = text;
+
+        // Remove existing buttons
+        if( this.guiTexture.children) {
+          this.guiTexture.children
+          .filter((child: Control) => child instanceof Button)
+          .forEach((child: Control) => this.guiTexture.removeControl(child));
+        }
+
+        choices.forEach((choice, index) => {
+            const button = Button.CreateSimpleButton(`choice${index}`, choice.text);
+            button.width = "30%";
+            button.height = "40px";
+            button.color = "white";
+            button.background = "black";
+            button.top = `${(index + 1) * 50 + 50}px`;
+            button.left = "20px";
+            button.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
+            button.onPointerUpObservable.add(() => this.handleChoiceClick(index));
+            this.guiTexture.addControl(button);
+        });
+
+
+        const position = getPositionTag(this.currentStory);
+        if (position) {
+            this.character.moveTo(new Vector3(position.x, 0, position.z), this.terrain.terrain);
+        }
+    }
+
+    private setupGUI(): void {
+        this.guiTexture = AdvancedDynamicTexture.CreateFullscreenUI("gui");
+
+        this.dialogueText = new TextBlock();
+        this.dialogueText.color = "white";
+        this.dialogueText.fontSize = 24;
+        this.dialogueText.textWrapping = true;
+        this.dialogueText.width = "80%";
+        this.dialogueText.height = "auto";
+        this.dialogueText.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
+        this.dialogueText.textVerticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+        this.dialogueText.paddingTop = "20px";
+        this.dialogueText.paddingLeft = "20px";
+        this.guiTexture.addControl(this.dialogueText);
+    }
+
+
+    private handleChoiceClick(choiceIndex: number): void {
+        if (!this.currentStory) return;
+        choose(this.currentStory, choiceIndex);
+        this.progressStory();
+    }
+
 
   private async setupEngine(): Promise<void> {
     const webGPUSupported = await WebGPUEngine.IsSupportedAsync;
@@ -166,7 +246,7 @@ export class GameScene {
       const ray = new Ray(startPos, new Vector3(0, -1, 0), 100);
       const hit = this.scene.pickWithRay(
         ray,
-        (mesh) => mesh === this.terrain.terrain
+        (mesh: AbstractMesh) => mesh === this.terrain.terrain
       );
 
       if (hit?.pickedPoint) {

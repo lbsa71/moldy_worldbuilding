@@ -7,6 +7,7 @@ import {
   CircleEase,
   Mesh,
   Ray,
+  AbstractMesh,
 } from "@babylonjs/core";
 
 export class CharacterController {
@@ -21,7 +22,7 @@ export class CharacterController {
     private root: TransformNode
   ) {}
 
-  public async moveTo(target: Vector3, terrain: Mesh): Promise<void> {
+  public async moveTo(target: Vector3, terrain: AbstractMesh): Promise<void> {
     if (this.isMoving) return;
 
     // Calculate direction to target
@@ -104,7 +105,7 @@ export class CharacterController {
     });
   }
 
-  private async moveToPosition(target: Vector3, terrain: Mesh): Promise<void> {
+  private async moveToPosition(target: Vector3, terrain: AbstractMesh): Promise<void> {
     return new Promise((resolve) => {
       this.isMoving = true;
 
@@ -155,7 +156,7 @@ export class CharacterController {
     });
   }
 
-  private updateHeight(terrain: Mesh): void {
+  private updateHeight(terrain: AbstractMesh): void {
     const ray = new Ray(
       new Vector3(this.root.position.x, 100, this.root.position.z),
       new Vector3(0, -1, 0),

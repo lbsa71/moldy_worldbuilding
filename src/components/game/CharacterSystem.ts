@@ -20,6 +20,7 @@ import {
   Nullable,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
+import { CharacterController } from "./CharacterController";
 
 export class CharacterSystem {
   public characterRoot?: TransformNode;
@@ -29,6 +30,7 @@ export class CharacterSystem {
   private animationGroups: AnimationGroup[] = [];
   private currentAnimation?: AnimationGroup;
   private isMoving = false;
+  private characterController?: CharacterController;
 
   constructor(private scene: Scene) {
     this.setupLighting();
@@ -113,6 +115,9 @@ export class CharacterSystem {
 
       // Position the character
       this.characterRoot.position = new Vector3(0, 0, 0);
+
+      // Create character controller
+      this.characterController = new CharacterController(this.scene, this.characterRoot);
     }
   }
 
@@ -230,8 +235,8 @@ export class CharacterSystem {
     });
   }
 
-  public async moveCharacterTo(target: Vector3, terrain: Mesh): Promise<void> {
-    if (!this.characterRoot || this.isMoving) return;
+  public async moveCharacterTo(target: Vector3, terrain: AbstractMesh): Promise<void> {
+    if (!this.characterRoot || this.isMoving || !this.characterController) return;
 
     this.isMoving = true;
 
@@ -250,51 +255,19 @@ export class CharacterSystem {
       this.playAnimation(walkAnim, true);
     }
 
-    // Create movement animation
-    const moveAnim = new Animation(
-      "moveAnim",
-      "position",
-      30,
-      Animation.ANIMATIONTYPE_VECTOR3,
-      Animation.ANIMATIONLOOPMODE_CONSTANT
+    // Move to target using character controller
+    if (this.characterController) {
+        await this.characterController.moveTo(target, terrain);
+    }
+
+    // Switch back to idle animation
+    const idleAnim = this.animationGroups.find((a) =>
+      a.name.toLowerCase().includes("idle")
     );
-
-    // Add easing
-    const ease = new CircleEase();
-    ease.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
-    moveAnim.setEasingFunction(ease);
-
-    const keys = [];
-    keys.push({
-      frame: 0,
-      value: this.characterRoot.position.clone(),
-    });
-    keys.push({
-      frame: 30,
-      value: target,
-    });
-    moveAnim.setKeys(keys);
-
-    // Play the movement animation
-    this.scene.beginDirectAnimation(
-      this.characterRoot,
-      [moveAnim],
-      0,
-      30,
-      false,
-      1,
-      () => {
-        // Switch back to idle animation
-        const idleAnim = this.animationGroups.find((a) =>
-          a.name.toLowerCase().includes("idle")
-        );
-        if (idleAnim) {
-          this.playAnimation(idleAnim, true);
-        }
-        this.updateCharacterHeight(terrain);
-        this.isMoving = false;
-      }
-    );
+    if (idleAnim) {
+      this.playAnimation(idleAnim, true);
+    }
+    this.isMoving = false;
   }
 
   public updateCharacterHeight(terrain: Mesh): void {
