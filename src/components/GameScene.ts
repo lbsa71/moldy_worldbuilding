@@ -24,7 +24,7 @@ import { TerrainSystem } from "./game/TerrainSystem";
 import { AtmosphereSystem } from "./game/AtmosphereSystem";
 import { EnvironmentSystem } from "./game/EnvironmentSystem";
 import { Character } from "./game/Character";
-import { loadInkFile, getCurrentDialogue, choose, getPositionTag } from "../utils/ink";
+import { loadInkFile, getCurrentDialogue, choose } from "../utils/ink";
 import { Choice } from "inkjs/engine/Choice";
 
 export class GameScene {
@@ -61,7 +61,6 @@ export class GameScene {
       await this.setupPhysics();
       this.setupCamera();
       await this.initializeSystems();
-      this.setupInteraction();
       this.setupGUI();
       await this.loadInkStory();
       this.initialized = true;
@@ -84,7 +83,8 @@ export class GameScene {
     private progressStory(): void {
         if (!this.currentStory) return;
 
-        const { text, choices } = getCurrentDialogue(this.currentStory);
+        const { text, choices, position } = getCurrentDialogue(this.currentStory);
+        console.log("Dialogue text:", text);
         this.dialogueText.text = text;
 
         // Remove existing buttons
@@ -108,7 +108,7 @@ export class GameScene {
         });
 
 
-        const position = getPositionTag(this.currentStory);
+        console.log("Position tag:", position);
         if (position) {
             this.character.moveTo(new Vector3(position.x, 0, position.z), this.terrain.terrain);
         }
@@ -271,24 +271,6 @@ export class GameScene {
     }
   }
 
-  private setupInteraction(): void {
-    this.scene.onPointerObservable.add((pointerInfo) => {
-      if (pointerInfo.type === PointerEventTypes.POINTERDOWN) {
-        const ray = this.scene.createPickingRay(
-          this.scene.pointerX,
-          this.scene.pointerY,
-          Matrix.Identity(),
-          this.camera
-        );
-
-        const hit = this.scene.pickWithRay(ray);
-        if (hit?.pickedPoint && hit.pickedMesh === this.terrain.terrain) {
-          console.log("Moving to:", hit.pickedPoint);
-          this.character.moveTo(hit.pickedPoint, this.terrain.terrain);
-        }
-      }
-    });
-  }
 
   public async run(): Promise<void> {
     if (!this.initialized) {

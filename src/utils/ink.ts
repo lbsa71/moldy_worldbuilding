@@ -11,53 +11,42 @@ export async function loadInkFile(path: string): Promise<Story> {
   return story;
 }
 
-export function getCurrentDialogue(story: inkjs.Story): { text: string; choices: Choice[] } {
+export function getCurrentDialogue(story: inkjs.Story): { text: string; choices: Choice[]; position: { x: number, z: number } | null } {
     let choices : Choice[] = [];
     let text = "";
-    let i = 0;
+    let position: { x: number, z: number } | null = null;
 
-    while (story.canContinue) {
-        if(i++ > 10) {
-            console.log("Max iterations reached in getCurrentDialogue");
-            break;
-        }
-
+    if (story.canContinue) {
         const continuation = story.Continue();
         text += continuation;
-
         choices = story.currentChoices;
 
-        console.log("Continue:" + continuation);
-        console.log(" canContinue:" + story.canContinue);
-        console.log("choises:" + choices?.map((c) => { c.text }).join(','));
-       
-        if(choices && choices.length > 0) break;
-    }
-    console.log("Current dialogue:", text, "choices:", choices);
-    return { text, choices };
-}
-
-export function choose(story: inkjs.Story, choiceIndex: number) {
-  story.ChooseChoiceIndex(choiceIndex);
-}
-
-export function getPositionTag(story: inkjs.Story): { x: number, z: number } | null {
-    const tags = story.currentTags;
-    if (tags) {
-        for (const tag of tags) {
-            const match = tag.match(/position:\s*({.*})/);
-            if (match) {
-                try {
-                    const positionString = match[1].trim();
-                    const position = JSON.parse(positionString);
-                    if (typeof position === 'object' && position !== null && 'x' in position && 'z' in position) {
-                        return { x: parseFloat(position.x), z: parseFloat(position.z) };
+        const tags = story.currentTags;
+        if (tags) {
+            for (const tag of tags) {
+                const match = tag.match(/position:\s*(.*)/);
+                if (match) {
+                    try {
+                        const splits = match[1].split(',');
+                      const positions = splits.map((s)=>parseFloat(s));
+                      
+                            position = { x: positions[0], z: positions[1] };
+                        
+                    } catch (e) {
+                        console.error("Error parsing position tag:", e);
                     }
-                } catch (e) {
-                    console.error("Error parsing position tag:", e);
+                }
+                else
+                {
+                    console.log("Found no position in", tag)
                 }
             }
         }
     }
-    return null;
+    console.log("Current dialogue:", text, "choices:", choices, "position:", position);
+    return { text, choices, position };
+}
+
+export function choose(story: inkjs.Story, choiceIndex: number) {
+  story.ChooseChoiceIndex(choiceIndex);
 }

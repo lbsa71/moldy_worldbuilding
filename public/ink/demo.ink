@@ -4,7 +4,7 @@ VAR visited_east = false
 VAR visited_west = false
 VAR all_visited = false
 
-# position: { "x": 0, "z": 0 }
+# position: 0, 0
 -> center
 
 === function check_all_visited ===
@@ -15,7 +15,8 @@ VAR all_visited = false
 }
 
 === center ===
-You are at the center of the crossroads.
+You are at the center of the crossroads. # position: 0, 5
+
 {check_all_visited()}
 
 * Head north. -> north
@@ -26,9 +27,8 @@ You are at the center of the crossroads.
     * Return home and end your journey. -> ending
 }
 
-# position: { "x": 0, "z": 5 }
 === north ===
-You've arrived at the northern point.
+You've arrived at the northern point. # position: 0,-5 
 ~ visited_north = true
 {check_all_visited()}
 
@@ -37,9 +37,8 @@ You've arrived at the northern point.
 * Travel west. -> west
 * Travel further south. -> south
 
-# position: { "x": 0, "z": -5 }
 === south ===
-You've reached the southern point.
+You've reached the southern point. # position: 5,0
 ~ visited_south = true
 {check_all_visited()}
 
@@ -48,9 +47,9 @@ You've reached the southern point.
 * Travel west. -> west
 * Travel further north. -> north
 
-# position: { "x": 5, "z": 0 }
+
 === east ===
-You've arrived at the eastern point.
+You've arrived at the eastern point. # position: -5, 0
 ~ visited_east = true
 {check_all_visited()}
 
@@ -59,9 +58,8 @@ You've arrived at the eastern point.
 * Travel south. -> south
 * Travel further west. -> west
 
-# position: { "x": -5, "z": 0 }
 === west ===
-You've reached the western point.
+You've reached the western point. # position:  0,5
 ~ visited_west = true
 {check_all_visited()}
 

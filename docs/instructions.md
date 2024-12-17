@@ -4,7 +4,7 @@ Requirements:
 Integrate Ink Support:
 
 Use src/utils/ink.ts to load a minimal Ink script src/ink/demo.ink.
-Parse and manage dialogue progression and choices using inkjs.
+Parse and manage dialogue progression , choices and new avatar coords using inkjs.
 
 Babylon.js Integration:
 
@@ -19,7 +19,7 @@ There's an astro app in src/pages/index.astro and src/components/Game.astro
 
 All interactivity (dialogue, avatar movement, etc.) should occur within the Babylon.js scene.
 
-Each Ink knot defines:
+Each Ink knot defines one or more:
 Dialogue text.
 Choices for progression.
 A position tag indicating the avatar’s next location on the ground mesh (see example script).
@@ -27,10 +27,17 @@ A position tag indicating the avatar’s next location on the ground mesh (see e
 Key Features to Implement:
 Load the Ink script using inkjs and parse its contents.
 Display dialogue and choices using Babylon.js GUI (text overlays and buttons).
-On choice selection:
-Progress to the next knot.
+
+On dialog item:
+Show the item.
 Read the position tag to determine the new 2D location.
+if there is a position, move to that position before continuing to the next dialog item.
 Use the existing character movement to animate the avatar moving to the new position on the ground mesh.
+
+On choice selection:
+Clear all dialog items.
+Progress to the next knot.
+
 Keep all interactions within the Babylon.js scene.
 Deliverables:
 A single Astro project with:
