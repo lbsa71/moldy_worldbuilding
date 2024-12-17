@@ -27,6 +27,7 @@ A position tag indicating the avatar’s next location on the ground mesh (see e
 Key Features to Implement:
 Load the Ink script using inkjs and parse its contents.
 Display dialogue and choices using Babylon.js GUI (text overlays and buttons).
+Make sure visible buttons always reflect current choices.
 
 On dialog item:
 Show the item.
@@ -35,7 +36,7 @@ if there is a position, move to that position before continuing to the next dial
 Use the existing character movement to animate the avatar moving to the new position on the ground mesh.
 
 On choice selection:
-Clear all dialog items.
+Clear all dialog items and buttons.
 Progress to the next knot.
 
 Keep all interactions within the Babylon.js scene.

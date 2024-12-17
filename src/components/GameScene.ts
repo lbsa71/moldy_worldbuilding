@@ -46,6 +46,7 @@ export class GameScene {
   private guiTexture!: any;
   private dialogueText!: any;
   private currentStory: any;
+  private currentButtonNames: string[] = [];
 
   constructor(private canvas: HTMLCanvasElement) {
     this.cameraOffset = new Vector3(
@@ -88,14 +89,18 @@ export class GameScene {
         this.dialogueText.text = text;
 
         // Remove existing buttons
-        if( this.guiTexture.children) {
-          this.guiTexture.children
-          .filter((child: Control) => child instanceof Button)
-          .forEach((child: Control) => this.guiTexture.removeControl(child));
-        }
+        this.currentButtonNames.forEach(buttonName => {
+            const button = this.guiTexture.getControlByName(buttonName);
+            if (button) {
+                this.guiTexture.removeControl(button);
+            }
+        });
+        this.currentButtonNames = [];
+
 
         choices.forEach((choice, index) => {
-            const button = Button.CreateSimpleButton(`choice${index}`, choice.text);
+            const buttonName = `choice${index}`;
+            const button = Button.CreateSimpleButton(buttonName, choice.text);
             button.width = "30%";
             button.height = "40px";
             button.color = "white";
@@ -105,6 +110,7 @@ export class GameScene {
             button.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
             button.onPointerUpObservable.add(() => this.handleChoiceClick(index));
             this.guiTexture.addControl(button);
+            this.currentButtonNames.push(buttonName);
         });
 
 
@@ -122,11 +128,13 @@ export class GameScene {
         this.dialogueText.fontSize = 24;
         this.dialogueText.textWrapping = true;
         this.dialogueText.width = "80%";
-        this.dialogueText.height = "auto";
+        this.dialogueText.height = "100px";
         this.dialogueText.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
         this.dialogueText.textVerticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
         this.dialogueText.paddingTop = "20px";
         this.dialogueText.paddingLeft = "20px";
+        this.dialogueText.background = "rgba(0, 0, 0, 0.5)";
+        this.dialogueText.zIndex = 10;
         this.guiTexture.addControl(this.dialogueText);
     }
 
