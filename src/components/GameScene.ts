@@ -44,9 +44,9 @@ export class GameScene {
   private dialogueText!: any;
   private currentStory: any;
   private currentButtonNames: string[] = [];
-  private enableAtmosphere = true; // Toggle for atmosphere
-  private enableEnvironment = true; // Toggle for environment
-  private enableInk = true; // Toggle for Ink
+  private enableAtmosphere = false; // Toggle for atmosphere
+  private enableEnvironment = false; // Toggle for environment
+  private enableInk = false; // Toggle for Ink
 
   constructor(private canvas: HTMLCanvasElement) {
     this.cameraOffset = new Vector3(
