@@ -59,7 +59,7 @@ export class GameScene {
   public async initialize(): Promise<void> {
     try {
       await this.setupEngine();
-      await this.setupPhysics();
+      // await this.setupPhysics();
       this.setupCamera();
       await this.initializeSystems();
       this.setupGUI();
