@@ -47,6 +47,7 @@ export class GameScene {
   private dialogueText!: any;
   private currentStory: any;
   private currentButtonNames: string[] = [];
+  private enablePhysics = false; // Toggle for physics
 
   constructor(private canvas: HTMLCanvasElement) {
     this.cameraOffset = new Vector3(
@@ -59,7 +60,9 @@ export class GameScene {
   public async initialize(): Promise<void> {
     try {
       await this.setupEngine();
-      // await this.setupPhysics();
+      if (this.enablePhysics) {
+        await this.setupPhysics();
+      }
       this.setupCamera();
       await this.initializeSystems();
       this.setupGUI();
@@ -246,7 +249,7 @@ export class GameScene {
       this.environment.populate(this.terrain.terrain);
 
       console.log("Creating character...");
-      this.character = new Character(this.scene);
+      this.character = new Character(this.scene, this.enablePhysics);
 
       const startPos = new Vector3(0, 50, 0);
       this.character.setPosition(startPos);

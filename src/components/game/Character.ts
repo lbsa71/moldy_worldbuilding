@@ -38,8 +38,12 @@ export class Character {
   private lastGroundY = 0;
   private debugSphere?: Mesh;
   private terrain?: AbstractMesh;
+  private enablePhysics: boolean; // Add enablePhysics property
 
-  constructor(private scene: Scene) {
+  constructor(private scene: Scene, enablePhysics: boolean = true) {
+    // Set enablePhysics property
+    this.enablePhysics = enablePhysics;
+
     // Create root node for character
     this.root = new TransformNode("characterRoot", scene);
 
@@ -77,7 +81,9 @@ export class Character {
         this.mesh.rotate(Vector3.Up(), Math.PI); // Face forward
 
         // Set up physics on the character mesh
-        this.setupPhysics(this.mesh);
+        if (this.enablePhysics) {
+          this.setupPhysics(this.mesh);
+        }
 
         // Create debug sphere after physics is set up
         // this.createDebugSphere();
@@ -125,7 +131,9 @@ export class Character {
     this.mesh = mesh;
 
     // Set up physics on the fallback mesh
-    this.setupPhysics(mesh);
+    if (this.enablePhysics) {
+      this.setupPhysics(mesh);
+    }
 
     // Create debug sphere after physics is set up
     this.createDebugSphere();
