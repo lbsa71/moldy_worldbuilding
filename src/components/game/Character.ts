@@ -9,13 +9,9 @@ import {
   Mesh,
   SpotLight,
   SceneLoader,
-  PhysicsAggregate,
-  PhysicsShapeType,
-  PhysicsMotionType,
   AbstractMesh,
   AnimationGroup,
   Ray,
-  PhysicsBody,
   Quaternion,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
@@ -27,7 +23,6 @@ export class Character {
   private mainLight: PointLight;
   private spotLight: SpotLight;
   private controller: CharacterController;
-  private physicsAggregate?: PhysicsAggregate;
   private animationGroups: AnimationGroup[] = [];
   private currentAnimation?: AnimationGroup;
   private isMoving = false;
@@ -38,12 +33,8 @@ export class Character {
   private lastGroundY = 0;
   private debugSphere?: Mesh;
   private terrain?: AbstractMesh;
-  private enablePhysics: boolean; // Add enablePhysics property
 
-  constructor(private scene: Scene, enablePhysics: boolean = true) {
-    // Set enablePhysics property
-    this.enablePhysics = enablePhysics;
-
+  constructor(private scene: Scene) {
     // Create root node for character
     this.root = new TransformNode("characterRoot", scene);
 
@@ -79,11 +70,6 @@ export class Character {
         this.mesh.parent = this.root;
         this.mesh.scaling = new Vector3(0.1, 0.1, 0.1);
         this.mesh.rotate(Vector3.Up(), Math.PI); // Face forward
-
-        // Set up physics on the character mesh
-        if (this.enablePhysics) {
-          this.setupPhysics(this.mesh);
-        }
 
         // Create debug sphere after physics is set up
         // this.createDebugSphere();
@@ -130,11 +116,6 @@ export class Character {
     mesh.parent = this.root;
     this.mesh = mesh;
 
-    // Set up physics on the fallback mesh
-    if (this.enablePhysics) {
-      this.setupPhysics(mesh);
-    }
-
     // Create debug sphere after physics is set up
     this.createDebugSphere();
   }
@@ -157,35 +138,8 @@ export class Character {
     this.debugSphere.parent = this.root;
   }
 
-  private setupPhysics(mesh: AbstractMesh): void {
-    console.log("Starting physics setup...");
-
-    if (this.mesh) {
-      this.mesh.parent = this.root;
-      this.mesh.position = Vector3.Zero();
-    }
-
-    this.physicsAggregate = new PhysicsAggregate(
-      this.root,
-      PhysicsShapeType.SPHERE,
-      {
-        mass: 1,
-        restitution: 0.0,
-        friction: 0.3,
-      },
-      this.scene
-    );
-
-    const body = this.physicsAggregate.body;
-    body.setMotionType(PhysicsMotionType.ANIMATED); // Changed to ANIMATED
-    body.disablePreStep = false;
-
-    console.log("Character physics initialized");
-  }
-
   private update(): void {
     if (
-      !this.physicsAggregate?.body ||
       !this.targetPosition ||
       !this.startPosition ||
       !this.isMoving
@@ -240,15 +194,6 @@ export class Character {
 
       // Update position
       this.root.position = newPosition;
-
-      // Update physics body
-      if (this.physicsAggregate?.body) {
-        const uprightQuaternion = Quaternion.FromEulerAngles(0, newRotation, 0);
-        this.physicsAggregate.body.setTargetTransform(
-          newPosition,
-          uprightQuaternion
-        );
-      }
     }
   }
 
@@ -357,10 +302,6 @@ export class Character {
     console.log("Setting position:", position);
     this.root.position = position;
     this.lastGroundY = position.y;
-    if (this.physicsAggregate?.body) {
-      this.physicsAggregate.body.setLinearVelocity(Vector3.Zero());
-      this.physicsAggregate.body.setAngularVelocity(Vector3.Zero());
-    }
   }
 
   public getPosition(): Vector3 {
@@ -372,7 +313,6 @@ export class Character {
     this.mainLight.dispose();
     this.spotLight.dispose();
     this.root.dispose();
-    this.physicsAggregate?.dispose();
     this.debugSphere?.dispose();
   }
 }
