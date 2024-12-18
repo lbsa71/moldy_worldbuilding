@@ -44,9 +44,11 @@ export class GameScene {
   private dialogueText!: any;
   private currentStory: any;
   private currentButtonNames: string[] = [];
-  private enableAtmosphere = true; // Toggle for atmosphere
-  private enableEnvironment = true; // Toggle for environment
-  private enableInk = true; // Toggle for Ink
+  private enableAtmosphere = false; // Toggle for atmosphere
+  private enableEnvironment = false; // Toggle for environment
+  private enableInk = false; // Toggle for Ink
+  private enableTerrain = false; // Toggle for terrain
+  private enableCharacter = false; // Toggle for character
 
   constructor(private canvas: HTMLCanvasElement) {
     this.cameraOffset = new Vector3(
@@ -194,6 +196,8 @@ export class GameScene {
   }
 
   private updateCameraPosition(): void {
+    if (!this.character) return;
+
     const characterPos = this.character.getPosition();
 
     this.cameraTarget = Vector3.Lerp(
@@ -222,38 +226,44 @@ export class GameScene {
         this.atmosphere = new AtmosphereSystem(this.scene);
       }
 
-      console.log("Creating terrain...");
-      this.terrain = new TerrainSystem(this.scene);
-      await this.terrain.waitForReady();
-      console.log("Terrain ready");
+      if (this.enableTerrain) {
+        console.log("Creating terrain...");
+        this.terrain = new TerrainSystem(this.scene);
+        await this.terrain.waitForReady();
+        console.log("Terrain ready");
+      }
 
-      if (this.enableEnvironment) {
+      if (this.enableEnvironment && this.terrain) {
         console.log("Setting up environment...");
         this.environment = new EnvironmentSystem(this.scene);
         this.environment.populate(this.terrain.terrain);
       }
 
-      console.log("Creating character...");
-      this.character = new Character(this.scene);
+      if (this.enableCharacter) {
+        console.log("Creating character...");
+        this.character = new Character(this.scene);
 
-      const startPos = new Vector3(0, 50, 0);
-      this.character.setPosition(startPos);
+        if (this.terrain) {
+          const startPos = new Vector3(0, 50, 0);
+          this.character.setPosition(startPos);
 
-      const ray = new Ray(startPos, new Vector3(0, -1, 0), 100);
-      const hit = this.scene.pickWithRay(
-        ray,
-        (mesh: AbstractMesh) => mesh === this.terrain.terrain
-      );
+          const ray = new Ray(startPos, new Vector3(0, -1, 0), 100);
+          const hit = this.scene.pickWithRay(
+            ray,
+            (mesh: AbstractMesh) => mesh === this.terrain.terrain
+          );
 
-      if (hit?.pickedPoint) {
-        this.character.setPosition(
-          new Vector3(
-            hit.pickedPoint.x,
-            hit.pickedPoint.y + 1,
-            hit.pickedPoint.z
-          )
-        );
-        this.cameraTarget = hit.pickedPoint.clone();
+          if (hit?.pickedPoint) {
+            this.character.setPosition(
+              new Vector3(
+                hit.pickedPoint.x,
+                hit.pickedPoint.y + 1,
+                hit.pickedPoint.z
+              )
+            );
+            this.cameraTarget = hit.pickedPoint.clone();
+          }
+        }
       }
 
       this.scene.registerBeforeRender(() => {

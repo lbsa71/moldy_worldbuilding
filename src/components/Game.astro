@@ -19,6 +19,8 @@
     // Simple WASM loader
     async function loadWasm() {
         try {
+            console.log('loading wasm');
+
             const response = await fetch('/wasm/release.wasm');
             const bytes = await response.arrayBuffer();
             
@@ -53,14 +55,18 @@
     // Import and initialize game
     const initGame = async () => {
         try {
+            console.log('initGame');
             const { GameScene } = await import('./GameScene');
-            
+            console.log('after import of initGame');
             // Load WASM first
             await loadWasm();
             
             const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
             if (canvas) {
+                console.log("init GameScene");
                 const game = new GameScene(canvas);
+                console.log("GameScene initialized");
+
                 await game.run();
                 
                 // Update renderer type
