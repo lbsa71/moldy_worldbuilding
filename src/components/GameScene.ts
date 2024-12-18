@@ -122,6 +122,12 @@ export class GameScene {
         this.terrain.terrain
       );
     }
+
+    // Get trust value and update atmosphere
+    if (this.enableAtmosphere) {
+      const trust = this.currentStory.variablesState.trust || 0;
+      this.atmosphere.updateFog(trust);
+    }
   }
 
   private setupGUI(): void {

@@ -13,6 +13,9 @@ export class AtmosphereSystem {
   private atmosphericMist!: ParticleSystem;
   private ambientLight!: HemisphericLight;
   private mistTexture: Texture;
+  private initialFogDensity: number;
+  private initialGroundMistEmitRate: number;
+  private initialAtmosphericMistEmitRate: number;
 
   constructor(private scene: Scene) {
     this.mistTexture = this.createMistTexture();
@@ -20,6 +23,9 @@ export class AtmosphereSystem {
     this.setupFog();
     this.groundMist = this.createGroundMist();
     this.atmosphericMist = this.createAtmosphericMist();
+    this.initialFogDensity = this.scene.fogDensity;
+    this.initialGroundMistEmitRate = this.groundMist.emitRate;
+    this.initialAtmosphericMistEmitRate = this.atmosphericMist.emitRate;
   }
 
   private createMistTexture(): Texture {
@@ -173,5 +179,24 @@ export class AtmosphereSystem {
     atmosphericSystem.start();
 
     return atmosphericSystem;
+  }
+
+  public updateFog(trust: number): void {
+    // Map trust (0-8) to fog density (0.002 - 0.012)
+    const minFogDensity = 0.002;
+    const maxFogDensity = this.initialFogDensity;
+    const fogDensity =
+      minFogDensity + (maxFogDensity - minFogDensity) * (1 - Math.min(1, trust / 8));
+    this.scene.fogDensity = fogDensity;
+
+    // Map trust to particle emission rates
+    const minEmitRate = 20;
+    const maxGroundEmitRate = this.initialGroundMistEmitRate;
+    const maxAtmosphericEmitRate = this.initialAtmosphericMistEmitRate;
+
+    this.groundMist.emitRate =
+      minEmitRate + (maxGroundEmitRate - minEmitRate) * Math.min(1, trust / 8);
+    this.atmosphericMist.emitRate =
+      minEmitRate + (maxAtmosphericEmitRate - minEmitRate) * Math.min(1, trust / 8);
   }
 }
