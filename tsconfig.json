@@ -5,6 +5,7 @@
     "moduleResolution": "node",
     "allowJs": true,
     "strict": true,
+    "esModuleInterop": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "types": ["vite/client", "astro/client"],

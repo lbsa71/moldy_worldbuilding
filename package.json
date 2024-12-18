@@ -1,6 +1,6 @@
 {
   "name": "moldy_worldbuilding",
-  "type": "module",
+  "type": "commonjs",
   "version": "0.0.1",
   "scripts": {
     "dev": "npm run build:wasm && astro dev",

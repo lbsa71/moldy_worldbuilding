@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from "astro/config";
+import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -8,9 +9,14 @@ export default defineConfig({
     assets: "assets",
   },
   vite: {
+    plugins: [viteCommonjs()],
     build: {
       // Increase chunk size limit
       chunkSizeWarningLimit: 2000,
+      commonjsOptions: {
+        include: [/node_modules/, /inkjs/],
+        transformMixedEsModules: true,
+      },
       rollupOptions: {
         output: {
           manualChunks(id) {
@@ -24,6 +30,7 @@ export default defineConfig({
     },
     optimizeDeps: {
       exclude: ["@babylonjs/core"],
+      include: ["inkjs"],
     },
     server: {
       watch: {
