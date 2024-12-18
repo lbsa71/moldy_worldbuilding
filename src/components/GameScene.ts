@@ -23,7 +23,6 @@ import { AtmosphereSystem } from "./game/AtmosphereSystem";
 import { EnvironmentSystem } from "./game/EnvironmentSystem";
 import { Character } from "./game/Character";
 import { loadInkFile, getCurrentDialogue, choose } from "../utils/ink";
-import { Choice } from "inkjs/engine/Choice";
 
 export class GameScene {
   private engine!: Engine;
@@ -88,7 +87,7 @@ export class GameScene {
     if (!this.currentStory) return;
 
     const { text, choices, position } = getCurrentDialogue(this.currentStory);
-    console.log("Dialogue text:", text);
+
     this.dialogueText.text = text;
 
     // Remove existing buttons
@@ -115,7 +114,6 @@ export class GameScene {
       this.currentButtonNames.push(buttonName);
     });
 
-    console.log("Position tag:", position);
     if (position) {
       this.character.moveTo(
         new Vector3(position.x, 0, position.z),
@@ -137,8 +135,9 @@ export class GameScene {
     this.dialogueText.color = "white";
     this.dialogueText.fontSize = 24;
     this.dialogueText.textWrapping = true;
+    this.dialogueText.top = "0px";
     this.dialogueText.width = "80%";
-    this.dialogueText.height = "100px";
+    this.dialogueText.height = "200px";
     this.dialogueText.textHorizontalAlignment =
       Control.HORIZONTAL_ALIGNMENT_LEFT;
     this.dialogueText.textVerticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
