@@ -12,10 +12,10 @@ import {
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import {
-    AdvancedDynamicTexture,
-    Button,
-    Control,
-    TextBlock,
+  AdvancedDynamicTexture,
+  Button,
+  Control,
+  TextBlock,
 } from "@babylonjs/gui";
 
 import { TerrainSystem } from "./game/TerrainSystem";
@@ -44,9 +44,9 @@ export class GameScene {
   private dialogueText!: any;
   private currentStory: any;
   private currentButtonNames: string[] = [];
-  private enableAtmosphere = false; // Toggle for atmosphere
-  private enableEnvironment = false; // Toggle for environment
-  private enableInk = false; // Toggle for Ink
+  private enableAtmosphere = true; // Toggle for atmosphere
+  private enableEnvironment = true; // Toggle for environment
+  private enableInk = true; // Toggle for Ink
 
   constructor(private canvas: HTMLCanvasElement) {
     this.cameraOffset = new Vector3(
@@ -73,79 +73,79 @@ export class GameScene {
     }
   }
 
-    private async loadInkStory(): Promise<void> {
-        try {
-            this.currentStory = await loadInkFile("/ink/demo.ink");
-            this.progressStory();
-        } catch (error) {
-            console.error("Failed to load ink story:", error);
-        }
+  private async loadInkStory(): Promise<void> {
+    try {
+      this.currentStory = await loadInkFile("/ink/demo.ink");
+      this.progressStory();
+    } catch (error) {
+      console.error("Failed to load ink story:", error);
     }
+  }
 
-    private progressStory(): void {
-        if (!this.currentStory) return;
+  private progressStory(): void {
+    if (!this.currentStory) return;
 
-        const { text, choices, position } = getCurrentDialogue(this.currentStory);
-        console.log("Dialogue text:", text);
-        this.dialogueText.text = text;
+    const { text, choices, position } = getCurrentDialogue(this.currentStory);
+    console.log("Dialogue text:", text);
+    this.dialogueText.text = text;
 
-        // Remove existing buttons
-        this.currentButtonNames.forEach(buttonName => {
-            const button = this.guiTexture.getControlByName(buttonName);
-            if (button) {
-                this.guiTexture.removeControl(button);
-            }
-        });
-        this.currentButtonNames = [];
+    // Remove existing buttons
+    this.currentButtonNames.forEach((buttonName) => {
+      const button = this.guiTexture.getControlByName(buttonName);
+      if (button) {
+        this.guiTexture.removeControl(button);
+      }
+    });
+    this.currentButtonNames = [];
 
+    choices.forEach((choice, index) => {
+      const buttonName = `choice${index}`;
+      const button = Button.CreateSimpleButton(buttonName, choice.text);
+      button.width = "30%";
+      button.height = "40px";
+      button.color = "white";
+      button.background = "black";
+      button.top = `${(index + 1) * 50 + 50}px`;
+      button.left = "20px";
+      button.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
+      button.onPointerUpObservable.add(() => this.handleChoiceClick(index));
+      this.guiTexture.addControl(button);
+      this.currentButtonNames.push(buttonName);
+    });
 
-        choices.forEach((choice, index) => {
-            const buttonName = `choice${index}`;
-            const button = Button.CreateSimpleButton(buttonName, choice.text);
-            button.width = "30%";
-            button.height = "40px";
-            button.color = "white";
-            button.background = "black";
-            button.top = `${(index + 1) * 50 + 50}px`;
-            button.left = "20px";
-            button.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
-            button.onPointerUpObservable.add(() => this.handleChoiceClick(index));
-            this.guiTexture.addControl(button);
-            this.currentButtonNames.push(buttonName);
-        });
-
-
-        console.log("Position tag:", position);
-        if (position) {
-            this.character.moveTo(new Vector3(position.x, 0, position.z), this.terrain.terrain);
-        }
+    console.log("Position tag:", position);
+    if (position) {
+      this.character.moveTo(
+        new Vector3(position.x, 0, position.z),
+        this.terrain.terrain
+      );
     }
+  }
 
-    private setupGUI(): void {
-        this.guiTexture = AdvancedDynamicTexture.CreateFullscreenUI("gui");
+  private setupGUI(): void {
+    this.guiTexture = AdvancedDynamicTexture.CreateFullscreenUI("gui");
 
-        this.dialogueText = new TextBlock();
-        this.dialogueText.color = "white";
-        this.dialogueText.fontSize = 24;
-        this.dialogueText.textWrapping = true;
-        this.dialogueText.width = "80%";
-        this.dialogueText.height = "100px";
-        this.dialogueText.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
-        this.dialogueText.textVerticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
-        this.dialogueText.paddingTop = "20px";
-        this.dialogueText.paddingLeft = "20px";
-        this.dialogueText.background = "rgba(0, 0, 0, 0.5)";
-        this.dialogueText.zIndex = 10;
-        this.guiTexture.addControl(this.dialogueText);
-    }
+    this.dialogueText = new TextBlock();
+    this.dialogueText.color = "white";
+    this.dialogueText.fontSize = 24;
+    this.dialogueText.textWrapping = true;
+    this.dialogueText.width = "80%";
+    this.dialogueText.height = "100px";
+    this.dialogueText.textHorizontalAlignment =
+      Control.HORIZONTAL_ALIGNMENT_LEFT;
+    this.dialogueText.textVerticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+    this.dialogueText.paddingTop = "20px";
+    this.dialogueText.paddingLeft = "20px";
+    this.dialogueText.background = "rgba(0, 0, 0, 0.5)";
+    this.dialogueText.zIndex = 10;
+    this.guiTexture.addControl(this.dialogueText);
+  }
 
-
-    private handleChoiceClick(choiceIndex: number): void {
-        if (!this.currentStory) return;
-        choose(this.currentStory, choiceIndex);
-        this.progressStory();
-    }
-
+  private handleChoiceClick(choiceIndex: number): void {
+    if (!this.currentStory) return;
+    choose(this.currentStory, choiceIndex);
+    this.progressStory();
+  }
 
   private async setupEngine(): Promise<void> {
     const webGPUSupported = await WebGPUEngine.IsSupportedAsync;
@@ -266,7 +266,6 @@ export class GameScene {
       throw error;
     }
   }
-
 
   public async run(): Promise<void> {
     if (!this.initialized) {
