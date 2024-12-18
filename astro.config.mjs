@@ -28,7 +28,6 @@ export default defineConfig({
     },
     optimizeDeps: {
       exclude: ["@babylonjs/core"],
-      include: ["inkjs"],
     },
     server: {
       watch: {
