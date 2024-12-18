@@ -1,7 +1,6 @@
-import * as inkjs from "inkjs";
-import { Choice } from "inkjs/engine/Choice";
-import { Compiler } from "inkjs/compiler/Compiler";
-import { Story } from "inkjs";
+import { Choice } from "../inkjs/engine/Choice";
+import { Compiler } from "../inkjs/compiler/Compiler";
+import { Story } from "../inkjs/ink";
 
 export async function loadInkFile(path: string): Promise<Story> {
   const response = await fetch(path);
@@ -11,7 +10,7 @@ export async function loadInkFile(path: string): Promise<Story> {
   return story;
 }
 
-export function getCurrentDialogue(story: inkjs.Story): {
+export function getCurrentDialogue(story: Story): {
   text: string;
   choices: Choice[];
   position: { x: number; z: number } | null;
@@ -55,6 +54,6 @@ export function getCurrentDialogue(story: inkjs.Story): {
   return { text, choices, position };
 }
 
-export function choose(story: inkjs.Story, choiceIndex: number) {
+export function choose(story: Story, choiceIndex: number) {
   story.ChooseChoiceIndex(choiceIndex);
 }
