@@ -20,7 +20,7 @@ export class Lamp {
     // Create pole
     this.pole = MeshBuilder.CreateCylinder(
       "lampPole",
-      { height: 3, diameter: 0.2 },
+      { height: 6, diameter: 0.2 },
       scene
     );
     this.pole.position = position.clone();

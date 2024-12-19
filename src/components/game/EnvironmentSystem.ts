@@ -215,7 +215,7 @@ export class EnvironmentSystem {
     if (!this.terrain) return;
 
     const objectPositions = [
-      { class: Lamp, positions: [new Vector3(0, 0, 0), new Vector3(90, 20, 0)] },
+      { class: Lamp, positions: [new Vector3(0, 0, 1), new Vector3(90, 20, 0)] },
       { class: HandMotif, positions: [new Vector3(10, 2, 0), new Vector3(40, 8, 0), new Vector3(60, 12, 0), new Vector3(100, 22, 0)] },
       { class: GeometricShape, positions: [new Vector3(20, 4, 0), new Vector3(30, 6, 0)] },
       { class: HospitalElement, positions: [new Vector3(70, 14, 0), new Vector3(40, 8, 0), new Vector3(100, 22, 0)] },

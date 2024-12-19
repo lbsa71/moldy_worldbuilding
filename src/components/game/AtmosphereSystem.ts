@@ -68,7 +68,7 @@ export class AtmosphereSystem {
   private setupFog(): void {
     // Less dense exponential fog
     this.scene.fogMode = Scene.FOGMODE_EXP2;
-    this.scene.fogDensity = 0.2;
+    this.scene.fogDensity = 0.0002;
     this.scene.fogColor = new Color3(0.04, 0.06, 0.04);
     this.scene.fogStart = 20;
     this.scene.fogEnd = 60;

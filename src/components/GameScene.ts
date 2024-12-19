@@ -44,7 +44,7 @@ export class GameScene {
   private dialogueText!: any;
   private currentStory: any;
   private currentButtonNames: string[] = [];
-  private enableAtmosphere = false; // Toggle for atmosphere
+  private enableAtmosphere = true; // Toggle for atmosphere
   private enableEnvironment = true; // Toggle for environment
   private enableInk = true; // Toggle for Ink
   private enableTerrain = true; // Toggle for terrain
