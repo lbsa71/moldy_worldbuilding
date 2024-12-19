@@ -46,7 +46,8 @@ export class Lamp {
     this.directionalLight = new DirectionalLight("lampDirectionalLight", new Vector3(0, -1, 0), scene);
     this.directionalLight.intensity = 0.5;
     this.directionalLight.diffuse = new Color3(1, 0.8, 0.6);
-    this.directionalLight.parent = this.mesh;
+    this.directionalLight.position = this.mesh.position.add(new Vector3(2, 2, 0));
+    this.directionalLight.setDirectionToTarget(this.mesh.position);
   }
 
   setVisibility(value: number): void {
@@ -70,5 +71,7 @@ export class Lamp {
     this.mesh.position = position.clone();
     this.mesh.position.y += 3;
     this.light.position = this.mesh.position;
+    this.directionalLight.position = this.mesh.position.add(new Vector3(2, 2, 0));
+    this.directionalLight.setDirectionToTarget(this.mesh.position);
   }
 }

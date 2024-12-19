@@ -112,12 +112,14 @@ export class GeometricShape {
     this.directionalLight = new DirectionalLight("geometricShapeDirectionalLight", new Vector3(0, -1, 0), scene);
     this.directionalLight.intensity = 0.5;
     this.directionalLight.diffuse = new Color3(1, 1, 1);
-    this.directionalLight.parent = this.mesh;
+    this.directionalLight.position = this.mesh.position.add(new Vector3(2, 2, 0));
+    this.directionalLight.setDirectionToTarget(this.mesh.position);
   }
 
   setVisibility(value: number): void {
     this.material.alpha = value;
     this.directionalLight.intensity = value > 0 ? 0.5 : 0;
+    this.mesh.visibility = value > 0 ? 1 : 0;
   }
 
   dispose(): void {
@@ -128,5 +130,7 @@ export class GeometricShape {
 
   updatePosition(position: Vector3): void {
     this.mesh.position = position;
+    this.directionalLight.position = this.mesh.position.add(new Vector3(2, 2, 0));
+    this.directionalLight.setDirectionToTarget(this.mesh.position);
   }
 }

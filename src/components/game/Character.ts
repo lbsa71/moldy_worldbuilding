@@ -238,6 +238,7 @@ export class Character {
     ambient.radius = 70;
     ambient.diffuse = new Color3(0.1, 0.15, 0.05);
     ambient.specular = new Color3(0, 0, 0);
+    ambient.setEnabled(true);
 
     return light;
   }

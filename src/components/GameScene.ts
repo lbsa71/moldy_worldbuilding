@@ -9,6 +9,7 @@ import {
   PointerEventTypes,
   Ray,
   AbstractMesh,
+  KeyboardEventTypes,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import {
@@ -38,12 +39,12 @@ export class GameScene {
   private cameraOffset: Vector3;
   private cameraSmoothingFactor = 0.1;
   private cameraHeightOffset = 5;
-  private cameraDistanceFromCharacter = 25;
+  private cameraDistanceFromCharacter = 15;
   private guiTexture!: any;
   private dialogueText!: any;
   private currentStory: any;
   private currentButtonNames: string[] = [];
-  private enableAtmosphere = true; // Toggle for atmosphere
+  private enableAtmosphere = false; // Toggle for atmosphere
   private enableEnvironment = true; // Toggle for environment
   private enableInk = true; // Toggle for Ink
   private enableTerrain = true; // Toggle for terrain
@@ -141,7 +142,7 @@ export class GameScene {
     this.dialogueText.color = "white";
     this.dialogueText.fontSize = 24;
     this.dialogueText.textWrapping = true;
-    this.dialogueText.top = "40px";
+    this.dialogueText.top = "60px";
     this.dialogueText.width = "100%";
     this.dialogueText.height = "200px";
     this.dialogueText.left = "0px";
@@ -300,6 +301,15 @@ export class GameScene {
 
     window.addEventListener("resize", () => {
       this.engine.resize();
+    });
+
+    this.scene.onKeyboardObservable.add((kbInfo) => {
+      if (kbInfo.type === KeyboardEventTypes.KEYDOWN) {
+        if (kbInfo.event.key === "d") {
+          this.environment.toggleDebug();
+          this.atmosphere.toggleDebug();
+        }
+      }
     });
   }
 

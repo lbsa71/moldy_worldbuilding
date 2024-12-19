@@ -20,9 +20,10 @@ export class HandMotif {
   constructor(scene: Scene, position: Vector3) {
     this.material = new StandardMaterial("handMotifMaterial", scene);
     this.material.diffuseTexture = new Texture("assets/hand_motif.png", scene);
-    this.material.useAlphaFromDiffuseTexture = true;
+    this.material.useAlphaFromDiffuseTexture = false;
     this.material.specularColor = Color3.Black();
     this.material.ambientColor = Color3.White();
+    this.material.backFaceCulling = false;
 
     this.mesh = MeshBuilder.CreatePlane("handMotif", { size: 2 }, scene);
     this.mesh.position = position;
@@ -48,12 +49,14 @@ export class HandMotif {
     this.directionalLight = new DirectionalLight("handMotifDirectionalLight", new Vector3(0, -1, 0), scene);
     this.directionalLight.intensity = 0.5;
     this.directionalLight.diffuse = new Color3(1, 1, 1);
-    this.directionalLight.parent = this.mesh;
+    this.directionalLight.position = this.mesh.position.add(new Vector3(2, 2, 0));
+    this.directionalLight.setDirectionToTarget(this.mesh.position);
   }
 
   setVisibility(value: number): void {
     this.material.alpha = value;
     this.directionalLight.intensity = value > 0 ? 0.5 : 0;
+    this.mesh.visibility = value > 0 ? 1 : 0;
   }
 
   dispose(): void {
@@ -64,5 +67,7 @@ export class HandMotif {
 
   updatePosition(position: Vector3): void {
     this.mesh.position = position;
+    this.directionalLight.position = this.mesh.position.add(new Vector3(2, 2, 0));
+    this.directionalLight.setDirectionToTarget(this.mesh.position);
   }
 }

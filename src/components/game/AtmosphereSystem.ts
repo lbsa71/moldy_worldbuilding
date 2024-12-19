@@ -16,6 +16,7 @@ export class AtmosphereSystem {
   private initialFogDensity: number;
   private initialGroundMistEmitRate: number;
   private initialAtmosphericMistEmitRate: number;
+  private debug: boolean = false;
 
   constructor(private scene: Scene) {
     this.mistTexture = this.createMistTexture();
@@ -182,6 +183,11 @@ export class AtmosphereSystem {
   }
 
   public updateFog(fog: number | null): void {
+    if (this.debug) {
+      this.scene.fogDensity = 0;
+      return;
+    }
+
     if (fog === null) {
       this.scene.fogDensity = this.initialFogDensity;
       this.groundMist.emitRate = this.initialGroundMistEmitRate;
@@ -200,5 +206,11 @@ export class AtmosphereSystem {
       minEmitRate + (maxGroundEmitRate - minEmitRate) * fog;
     this.atmosphericMist.emitRate =
       minEmitRate + (maxAtmosphericEmitRate - minEmitRate) * fog;
+  }
+
+  public toggleDebug(): void {
+    this.debug = !this.debug;
+    console.log("Fog debug mode:", this.debug);
+    this.updateFog(null);
   }
 }

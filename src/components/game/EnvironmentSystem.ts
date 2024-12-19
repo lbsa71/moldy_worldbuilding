@@ -9,6 +9,7 @@ import {
   TransformNode,
   InstancedMesh,
   Nullable,
+  AbstractMesh,
 } from "@babylonjs/core";
 import { Lamp } from "./Lamp";
 import { HandMotif } from "./HandMotif";
@@ -27,6 +28,8 @@ export class EnvironmentSystem {
   private geometricShapeInstances: GeometricShape[] = [];
   private hospitalElementInstances: HospitalElement[] = [];
   private environmentalLightElementInstances: EnvironmentalLightElement[] = [];
+  private debug: boolean = false;
+  private terrain: AbstractMesh | null = null;
 
   constructor(private scene: Scene) {
     this.treeMaterial = this.createTreeMaterial();
@@ -112,6 +115,7 @@ export class EnvironmentSystem {
 
   public populate(terrain: Mesh): void {
     if (!this.treeTemplate || !this.rockTemplate) return;
+    this.terrain = terrain;
 
     // Create fewer but more strategically placed objects
     const numObjects = 30;
@@ -208,60 +212,70 @@ export class EnvironmentSystem {
   }
 
   private createObjectInstances(): void {
-    // Lamp
-    this.lampInstances.push(new Lamp(this.scene, new Vector3(0, 0, 0)));
-    this.lampInstances.push(new Lamp(this.scene, new Vector3(90, 20, 0)));
+    if (!this.terrain) return;
 
-    // HandMotif
-    this.handMotifInstances.push(new HandMotif(this.scene, new Vector3(10, 2, 0)));
-    this.handMotifInstances.push(new HandMotif(this.scene, new Vector3(40, 8, 0)));
-    this.handMotifInstances.push(new HandMotif(this.scene, new Vector3(60, 12, 0)));
-    this.handMotifInstances.push(new HandMotif(this.scene, new Vector3(100, 22, 0)));
+    const objectPositions = [
+      { class: Lamp, positions: [new Vector3(0, 0, 0), new Vector3(90, 20, 0)] },
+      { class: HandMotif, positions: [new Vector3(10, 2, 0), new Vector3(40, 8, 0), new Vector3(60, 12, 0), new Vector3(100, 22, 0)] },
+      { class: GeometricShape, positions: [new Vector3(20, 4, 0), new Vector3(30, 6, 0)] },
+      { class: HospitalElement, positions: [new Vector3(70, 14, 0), new Vector3(40, 8, 0), new Vector3(100, 22, 0)] },
+      { class: EnvironmentalLightElement, positions: [new Vector3(30, 6, 0), new Vector3(60, 12, 0), new Vector3(80, 16, 0)] },
+    ];
 
-    // GeometricShape
-    this.geometricShapeInstances.push(new GeometricShape(this.scene, new Vector3(20, 4, 0)));
-    this.geometricShapeInstances.push(new GeometricShape(this.scene, new Vector3(30, 6, 0)));
+    objectPositions.forEach(({ class: ObjectClass, positions }) => {
+      positions.forEach(position => {
+        const ray = new Ray(new Vector3(position.x, 100, position.z), new Vector3(0, -1, 0), 200);
+        const hit = this.scene.pickWithRay(ray, (mesh) => mesh === this.terrain);
 
-    // HospitalElement
-    this.hospitalElementInstances.push(new HospitalElement(this.scene, new Vector3(70, 14, 0)));
-    this.hospitalElementInstances.push(new HospitalElement(this.scene, new Vector3(40, 8, 0)));
-    this.hospitalElementInstances.push(new HospitalElement(this.scene, new Vector3(100, 22, 0)));
-
-    // EnvironmentalLightElement
-    this.environmentalLightElementInstances.push(new EnvironmentalLightElement(this.scene, new Vector3(30, 6, 0)));
-    this.environmentalLightElementInstances.push(new EnvironmentalLightElement(this.scene, new Vector3(60, 12, 0)));
-    this.environmentalLightElementInstances.push(new EnvironmentalLightElement(this.scene, new Vector3(80, 16, 0)));
+        if (hit?.pickedPoint) {
+          const adjustedPosition = hit.pickedPoint.add(new Vector3(0, 1, 0));
+          if (ObjectClass === Lamp) this.lampInstances.push(new Lamp(this.scene, adjustedPosition));
+          if (ObjectClass === HandMotif) this.handMotifInstances.push(new HandMotif(this.scene, adjustedPosition));
+          if (ObjectClass === GeometricShape) this.geometricShapeInstances.push(new GeometricShape(this.scene, adjustedPosition));
+          if (ObjectClass === HospitalElement) this.hospitalElementInstances.push(new HospitalElement(this.scene, adjustedPosition));
+          if (ObjectClass === EnvironmentalLightElement) this.environmentalLightElementInstances.push(new EnvironmentalLightElement(this.scene, adjustedPosition));
+        }
+      });
+    });
   }
 
   public updateObjectVisibilities(trust: number, hospital_clarity: boolean): void {
     // Lamp
     this.lampInstances.forEach((lamp) => {
-      lamp.setVisibility(1); // Always visible
+      lamp.setVisibility(this.debug ? 1 : 1); // Always visible
     });
 
     // HandMotif
     this.handMotifInstances.forEach((handMotif, index) => {
         let visibility = 0;
-        if (index === 0) visibility = Math.min(1, trust * 2);
-        if (index === 1) visibility = Math.min(1, trust * 3);
-        if (index === 2) visibility = Math.min(1, trust * 4);
-        if (index === 3) visibility = Math.max(0, 1 - (trust * 2));
+        if (this.debug) visibility = 1;
+        else {
+          if (index === 0) visibility = Math.min(1, trust * 2);
+          if (index === 1) visibility = Math.min(1, trust * 3);
+          if (index === 2) visibility = Math.min(1, trust * 4);
+          if (index === 3) visibility = Math.max(0, 1 - (trust * 2));
+        }
         handMotif.setVisibility(visibility);
     });
 
     // GeometricShape
     this.geometricShapeInstances.forEach((geometricShape) => {
-      geometricShape.setVisibility(Math.min(1, trust * 2));
+      geometricShape.setVisibility(this.debug ? 1 : Math.min(1, trust * 2));
     });
 
     // HospitalElement
     this.hospitalElementInstances.forEach((hospitalElement) => {
-      hospitalElement.setVisibility(hospital_clarity ? Math.min(1, trust * 3) : 0);
+      hospitalElement.setVisibility(this.debug ? 1 : (hospital_clarity ? Math.min(1, trust * 3) : 0));
     });
 
     // EnvironmentalLightElement
     this.environmentalLightElementInstances.forEach((lightElement) => {
-      lightElement.setVisibility(Math.min(1, trust * 2));
+      lightElement.setVisibility(this.debug ? 1 : Math.min(1, trust * 2));
     });
+  }
+
+  public toggleDebug(): void {
+    this.debug = !this.debug;
+    console.log("Debug mode:", this.debug);
   }
 }
