@@ -125,6 +125,12 @@ export class GameScene {
     if (this.enableAtmosphere) {
       const trust = this.currentStory.variablesState.trust || 0;
       this.atmosphere.updateFog(trust);
+      
+      // Get hospital clarity and update environment
+      const hospital_clarity = this.currentStory.variablesState.hospital_clarity || false;
+      if (this.enableEnvironment) {
+        this.environment.updateObjectVisibilities(trust, hospital_clarity);
+      }
     }
   }
 

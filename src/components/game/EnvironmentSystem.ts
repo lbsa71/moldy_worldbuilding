@@ -10,6 +10,11 @@ import {
   InstancedMesh,
   Nullable,
 } from "@babylonjs/core";
+import { Lamp } from "./Lamp";
+import { HandMotif } from "./HandMotif";
+import { GeometricShape } from "./GeometricShape";
+import { HospitalElement } from "./HospitalElement";
+import { EnvironmentalLightElement } from "./EnvironmentalLightElement";
 
 export class EnvironmentSystem {
   private instances: (Mesh | InstancedMesh)[] = [];
@@ -17,6 +22,11 @@ export class EnvironmentSystem {
   private rockMaterial: StandardMaterial;
   private treeTemplate?: Mesh;
   private rockTemplate?: Mesh;
+  private lampInstances: Lamp[] = [];
+  private handMotifInstances: HandMotif[] = [];
+  private geometricShapeInstances: GeometricShape[] = [];
+  private hospitalElementInstances: HospitalElement[] = [];
+  private environmentalLightElementInstances: EnvironmentalLightElement[] = [];
 
   constructor(private scene: Scene) {
     this.treeMaterial = this.createTreeMaterial();
@@ -114,6 +124,8 @@ export class EnvironmentSystem {
         this.createRockInstance(position);
       }
     });
+
+    this.createObjectInstances();
   }
 
   private generatePositions(count: number, terrain: Mesh): Vector3[] {
@@ -193,5 +205,63 @@ export class EnvironmentSystem {
       1 + Math.random() * 1.5
     );
     this.instances.push(instance);
+  }
+
+  private createObjectInstances(): void {
+    // Lamp
+    this.lampInstances.push(new Lamp(this.scene, new Vector3(0, 0, 0)));
+    this.lampInstances.push(new Lamp(this.scene, new Vector3(90, 20, 0)));
+
+    // HandMotif
+    this.handMotifInstances.push(new HandMotif(this.scene, new Vector3(10, 2, 0)));
+    this.handMotifInstances.push(new HandMotif(this.scene, new Vector3(40, 8, 0)));
+    this.handMotifInstances.push(new HandMotif(this.scene, new Vector3(60, 12, 0)));
+    this.handMotifInstances.push(new HandMotif(this.scene, new Vector3(100, 22, 0)));
+
+    // GeometricShape
+    this.geometricShapeInstances.push(new GeometricShape(this.scene, new Vector3(20, 4, 0)));
+    this.geometricShapeInstances.push(new GeometricShape(this.scene, new Vector3(30, 6, 0)));
+
+    // HospitalElement
+    this.hospitalElementInstances.push(new HospitalElement(this.scene, new Vector3(70, 14, 0)));
+    this.hospitalElementInstances.push(new HospitalElement(this.scene, new Vector3(40, 8, 0)));
+    this.hospitalElementInstances.push(new HospitalElement(this.scene, new Vector3(100, 22, 0)));
+
+    // EnvironmentalLightElement
+    this.environmentalLightElementInstances.push(new EnvironmentalLightElement(this.scene, new Vector3(30, 6, 0)));
+    this.environmentalLightElementInstances.push(new EnvironmentalLightElement(this.scene, new Vector3(60, 12, 0)));
+    this.environmentalLightElementInstances.push(new EnvironmentalLightElement(this.scene, new Vector3(80, 16, 0)));
+  }
+
+  public updateObjectVisibilities(trust: number, hospital_clarity: boolean): void {
+    // Lamp
+    this.lampInstances.forEach((lamp) => {
+      lamp.setVisibility(1); // Always visible
+    });
+
+    // HandMotif
+    this.handMotifInstances.forEach((handMotif, index) => {
+        let visibility = 0;
+        if (index === 0) visibility = Math.min(1, trust * 2);
+        if (index === 1) visibility = Math.min(1, trust * 3);
+        if (index === 2) visibility = Math.min(1, trust * 4);
+        if (index === 3) visibility = Math.max(0, 1 - (trust * 2));
+        handMotif.setVisibility(visibility);
+    });
+
+    // GeometricShape
+    this.geometricShapeInstances.forEach((geometricShape) => {
+      geometricShape.setVisibility(Math.min(1, trust * 2));
+    });
+
+    // HospitalElement
+    this.hospitalElementInstances.forEach((hospitalElement) => {
+      hospitalElement.setVisibility(hospital_clarity ? Math.min(1, trust * 3) : 0);
+    });
+
+    // EnvironmentalLightElement
+    this.environmentalLightElementInstances.forEach((lightElement) => {
+      lightElement.setVisibility(Math.min(1, trust * 2));
+    });
   }
 }
