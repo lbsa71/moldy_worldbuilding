@@ -58,29 +58,24 @@ export class GameScene {
     );
   }
 
+  public setStory(story: any): void {
+    this.currentStory = story;
+  }
+
   public async initialize(): Promise<void> {
     try {
       await this.setupEngine();
       this.setupCamera();
       await this.initializeSystems();
       this.setupGUI();
-      if (this.enableInk) {
-        await this.loadInkStory();
+      if (this.enableInk && this.currentStory) {
+        this.progressStory();
       }
       this.initialized = true;
       console.log("Game initialization complete");
     } catch (error) {
       console.error("Failed to initialize game:", error);
       throw error;
-    }
-  }
-
-  private async loadInkStory(): Promise<void> {
-    try {
-      this.currentStory = await loadInkFile("/ink/demo.ink");
-      this.progressStory();
-    } catch (error) {
-      console.error("Failed to load ink story:", error);
     }
   }
 
@@ -245,7 +240,7 @@ export class GameScene {
         await this.terrain.waitForReady();
         console.log("Terrain ready");
       }
-
+      
       if (this.enableEnvironment && this.terrain) {
         console.log("Setting up environment...");
         this.environment = new EnvironmentSystem(this.scene);

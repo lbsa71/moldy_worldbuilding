@@ -10,6 +10,14 @@
 </div>
 
 <script>
+    import { Compiler } from "../inkjs/compiler/Compiler";
+    import { Story } from "../inkjs/ink";
+    import inkFile from '../ink/demo.ink?raw';
+
+    const inkFileContents = inkFile;
+    const compiler = new Compiler(inkFileContents);
+    const compiledStory = compiler.Compile();
+    let story = compiledStory;
     // WASM types
     interface WasmExports {
         calculatePhysics: (x: number, y: number, z: number) => number;
@@ -65,6 +73,7 @@
             if (canvas) {
                 console.log("init GameScene");
                 const game = new GameScene(canvas);
+                game.setStory(story);
                 console.log("GameScene initialized");
 
                 await game.run();

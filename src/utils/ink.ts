@@ -1,12 +1,7 @@
 import { Choice } from "../inkjs/engine/Choice";
-import { Compiler } from "../inkjs/compiler/Compiler";
 import { Story } from "../inkjs/ink";
 
-export async function loadInkFile(path: string): Promise<Story> {
-  const response = await fetch(path);
-  const inkFileContents = await response.text();
-  const compiler = new Compiler(inkFileContents);
-  const story = compiler.Compile();
+export function loadInkFile(story: Story): Story {
   return story;
 }
 
