@@ -201,6 +201,7 @@ export class Character {
     if (!this.isMoving) return;
 
     console.log("Stopping movement");
+    console.log("Avatar mesh position:", this.root.position);
     this.targetPosition = undefined;
     this.startPosition = undefined;
     this.isMoving = false;

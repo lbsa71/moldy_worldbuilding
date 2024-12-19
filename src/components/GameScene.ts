@@ -135,12 +135,13 @@ export class GameScene {
     this.dialogueText.color = "white";
     this.dialogueText.fontSize = 24;
     this.dialogueText.textWrapping = true;
-    this.dialogueText.top = "0px";
-    this.dialogueText.width = "80%";
+    this.dialogueText.top = "40px";
+    this.dialogueText.width = "100%";
     this.dialogueText.height = "200px";
+    this.dialogueText.left = "0px";
     this.dialogueText.textHorizontalAlignment =
       Control.HORIZONTAL_ALIGNMENT_LEFT;
-    this.dialogueText.textVerticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+    this.dialogueText.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
     this.dialogueText.paddingTop = "20px";
     this.dialogueText.paddingLeft = "20px";
     this.dialogueText.background = "rgba(0, 0, 0, 0.5)";

@@ -67,7 +67,7 @@ export class AtmosphereSystem {
   private setupFog(): void {
     // Less dense exponential fog
     this.scene.fogMode = Scene.FOGMODE_EXP2;
-    this.scene.fogDensity = 0.05;
+    this.scene.fogDensity = 0.2;
     this.scene.fogColor = new Color3(0.04, 0.06, 0.04);
     this.scene.fogStart = 20;
     this.scene.fogEnd = 60;
@@ -181,25 +181,24 @@ export class AtmosphereSystem {
     return atmosphericSystem;
   }
 
-  public updateFog(trust: number): void {
-    // Map trust (0-8) to fog density (0.002 - 0.012)
-    const minFogDensity = 0.002;
-    const maxFogDensity = this.initialFogDensity;
-    const fogDensity =
-      minFogDensity + (maxFogDensity - minFogDensity) * (1 - Math.min(1, trust / 8));
-    
-      console.log("fogDensity:", fogDensity);
+  public updateFog(fog: number | null): void {
+    if (fog === null) {
+      this.scene.fogDensity = this.initialFogDensity;
+      this.groundMist.emitRate = this.initialGroundMistEmitRate;
+      this.atmosphericMist.emitRate = this.initialAtmosphericMistEmitRate;
+      return;
+    }
 
-    this.scene.fogDensity = fogDensity;
+    this.scene.fogDensity = this.initialFogDensity * fog;
 
-    // Map trust to particle emission rates
+    // Map fog to particle emission rates
     const minEmitRate = 20;
     const maxGroundEmitRate = this.initialGroundMistEmitRate;
     const maxAtmosphericEmitRate = this.initialAtmosphericMistEmitRate;
 
     this.groundMist.emitRate =
-      minEmitRate + (maxGroundEmitRate - minEmitRate) * Math.min(1, trust / 8);
+      minEmitRate + (maxGroundEmitRate - minEmitRate) * fog;
     this.atmosphericMist.emitRate =
-      minEmitRate + (maxAtmosphericEmitRate - minEmitRate) * Math.min(1, trust / 8);
+      minEmitRate + (maxAtmosphericEmitRate - minEmitRate) * fog;
   }
 }
