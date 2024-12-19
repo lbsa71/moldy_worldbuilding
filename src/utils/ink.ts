@@ -10,14 +10,18 @@ export async function loadInkFile(path: string): Promise<Story> {
   return story;
 }
 
-export function getCurrentDialogue(story: Story): {
+export type Dialogue = {
   text: string;
   choices: Choice[];
   position: { x: number; z: number } | null;
-} {
+  fog: number | null;
+};
+
+export function getCurrentDialogue(story: Story): Dialogue {
   let choices: Choice[] = [];
   let text = "";
   let position: { x: number; z: number } | null = null;
+  let fog: number | null = null;
 
   while (story.canContinue) {
     const continuation = story.Continue();
@@ -27,18 +31,23 @@ export function getCurrentDialogue(story: Story): {
     const tags = story.currentTags;
     if (tags) {
       for (const tag of tags) {
-        const match = tag.match(/position:\s*\((.*)\)/);
-        if (match) {
+        const positionMatch = tag.match(/position:\s*\((.*)\)/);
+        if (positionMatch) {
           try {
-            const splits = match[1].split(",");
+            const splits = positionMatch[1].split(",");
             const positions = splits.map((s) => parseFloat(s));
-
             position = { x: positions[0], z: positions[1] };
           } catch (e) {
             console.error("Error parsing position tag:", e);
           }
-        } else {
-          console.log("Found no position in", tag);
+        }
+        const fogMatch = tag.match(/fog:\s*([0-9.]+)/);
+        if (fogMatch) {
+          try {
+            fog = parseFloat(fogMatch[1]);
+          } catch (e) {
+            console.error("Error parsing fog tag:", e);
+          }
         }
       }
     }
@@ -49,9 +58,11 @@ export function getCurrentDialogue(story: Story): {
     "choices:",
     choices,
     "position:",
-    position
+    position,
+    "fog:",
+    fog
   );
-  return { text, choices, position };
+  return { text, choices, position, fog };
 }
 
 export function choose(story: Story, choiceIndex: number) {
