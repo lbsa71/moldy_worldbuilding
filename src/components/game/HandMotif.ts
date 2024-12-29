@@ -20,9 +20,10 @@ export class HandMotif {
   constructor(scene: Scene, position: Vector3) {
     this.material = new StandardMaterial("handMotifMaterial", scene);
     this.material.diffuseTexture = new Texture("assets/hand_motif.png", scene);
-    this.material.useAlphaFromDiffuseTexture = false;
+    this.material.useAlphaFromDiffuseTexture = true;
     this.material.specularColor = Color3.Black();
     this.material.ambientColor = Color3.White();
+    this.material.emissiveColor = Color3.White();
     this.material.backFaceCulling = false;
 
     this.mesh = MeshBuilder.CreatePlane("handMotif", { size: 2 }, scene);
