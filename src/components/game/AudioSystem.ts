@@ -13,7 +13,10 @@ export class AudioSystem {
   }
 
   public async playAudio(audioFile: string): Promise<void> {
+    console.log("considering playing", audioFile);
+
     if (this.currentAudio?.src.endsWith(audioFile)) {
+        console.log("already doing that");
       return; // Already playing this audio
     }
 
@@ -31,8 +34,12 @@ export class AudioSystem {
     this.currentAudio = this.nextAudio;
     this.nextAudio = null;
     this.currentAudio.volume = 1;
-    await this.currentAudio.play();
+    await this.play();
   }
+
+    public async play() {
+        await this.currentAudio?.play();
+    }
 
   private fadeOutCurrentAudio(): Promise<void> {
     return new Promise((resolve) => {

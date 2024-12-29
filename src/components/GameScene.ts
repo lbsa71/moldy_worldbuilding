@@ -86,7 +86,9 @@ export class GameScene {
 
     const { text, choices, position, audio } = getCurrentDialogue(this.currentStory);
 
-    // Handle audio changes
+    // Handle audio 
+    this.audioSystem.play();
+
     if (audio) {
       this.audioSystem.playAudio(audio);
     }
