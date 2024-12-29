@@ -6,11 +6,12 @@ VAR hospital_clarity = false
 --> start
 
 === start ===
+# audio soundtrack_1.mp3
 # position: (0, 0)
 # fog: 1.0
 You are at the center of a dimly lit crossroads. A lamp glows softly, cutting through shifting fog. The environment feels like a threshold between places—part memory, part possibility.
 
-A distant voice, unnamed yet gentle, whispers:  
+A distant voice, unnamed yet gentle, whispers:
 "The light... it holds more than empty space. I can sense you."
 
 * [Stand steady, letting your calm presence acknowledge the light]
@@ -39,7 +40,8 @@ The lamp now behind you, the fog ahead reveals subtle silhouettes of hands, as i
 === scene_2 ===
 # position: (20, 4)
 # fog: 0.7
-The fog thins slightly, revealing vague geometric shapes hovering in the distance. The voice grows closer: "Your presence shapes this place. In those old rooms, there were murmurs of concern, hands adjusting something above me..."
+The fog thins slightly, revealing vague geometric shapes hovering in the distance. The voice grows closer:
+"Your presence shapes this place. In those old rooms, there were murmurs of concern, hands adjusting something above me..."
 
 * [Your understanding radiates warmth toward those remembered hands]
     ~ trust += 1
@@ -106,6 +108,7 @@ The light and shadow form subtle gradients, each step defined by the quality of 
     -> scene_6
 
 === scene_6 ===
+# audio soundtrack_2.mp3
 # position: (60, 12)
 # fog: 0.3
 The fog forms gentle patterns. The hand motifs are clearer, almost like companions rather than mere shapes.
@@ -176,22 +179,29 @@ The fog is thin, the lamp a distant memory. The voice is clear, yet gentle.
 }
 
 === ending_warm ===
-# position: (100, 22)
+# position: (90, 20)
 # fog: 0.05
 The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth. The voice sighs contentedly.
 "Some moments don't need names or clear shapes. Thank you for sharing this one."
 -> END
 
 === ending_reflective ===
-# position: (100, 22)
+# position: (-90, -20)
 # fog: 0.08
 The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
 "Not all memories resolve neatly, but you saw enough to make it matter. May your journey carry quiet understanding forward."
 -> END
 
 === ending_distant ===
-# position: (100, 22)
+# position: (-90, 20)
 # fog: 0.15
 The environment dims slightly, but not coldly. Just a respectful distance.
 "We existed here briefly, touched by curiosity. Perhaps that's enough."
+-> END
+
+=== ending_unfolding ===
+# position: (90, -20)
+# fog: 0.03
+The environment becomes expansive, the fog dissipating entirely. Gentle shapes merge into the horizon.
+"You allowed this place to unfold, unhurried. It means more than you know."
 -> END
