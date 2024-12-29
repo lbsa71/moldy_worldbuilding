@@ -23,6 +23,7 @@ import { TerrainSystem } from "./game/TerrainSystem";
 import { AtmosphereSystem } from "./game/AtmosphereSystem";
 import { EnvironmentSystem } from "./game/EnvironmentSystem";
 import { Character } from "./game/Character";
+import { AudioSystem } from "./game/AudioSystem";
 import { loadInkFile, getCurrentDialogue, choose } from "../utils/ink";
 
 export class GameScene {
@@ -49,6 +50,7 @@ export class GameScene {
   private enableInk = true; // Toggle for Ink
   private enableTerrain = true; // Toggle for terrain
   private enableCharacter = true; // Toggle for character
+  private audioSystem!: AudioSystem;
 
   constructor(private canvas: HTMLCanvasElement) {
     this.cameraOffset = new Vector3(
@@ -82,7 +84,12 @@ export class GameScene {
   private progressStory(): void {
     if (!this.currentStory) return;
 
-    const { text, choices, position } = getCurrentDialogue(this.currentStory);
+    const { text, choices, position, audio } = getCurrentDialogue(this.currentStory);
+
+    // Handle audio changes
+    if (audio) {
+      this.audioSystem.playAudio(audio);
+    }
 
     this.dialogueText.text = text;
 
@@ -230,6 +237,9 @@ export class GameScene {
 
   private async initializeSystems(): Promise<void> {
     try {
+      // Initialize audio system first
+      this.audioSystem = new AudioSystem(this.scene);
+      
       if (this.enableAtmosphere) {
         this.atmosphere = new AtmosphereSystem(this.scene);
       }

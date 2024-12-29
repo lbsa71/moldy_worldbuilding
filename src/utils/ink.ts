@@ -10,6 +10,7 @@ export type Dialogue = {
   choices: Choice[];
   position: { x: number; z: number } | null;
   fog: number | null;
+  audio: string | null;
 };
 
 export function getCurrentDialogue(story: Story): Dialogue {
@@ -17,6 +18,7 @@ export function getCurrentDialogue(story: Story): Dialogue {
   let text = "";
   let position: { x: number; z: number } | null = null;
   let fog: number | null = null;
+  let audio: string | null = null;
 
   while (story.canContinue) {
     const continuation = story.Continue();
@@ -44,6 +46,10 @@ export function getCurrentDialogue(story: Story): Dialogue {
             console.error("Error parsing fog tag:", e);
           }
         }
+        const audioMatch = tag.match(/audio\s+(.+)/);
+        if (audioMatch) {
+          audio = audioMatch[1].trim();
+        }
       }
     }
   }
@@ -57,7 +63,7 @@ export function getCurrentDialogue(story: Story): Dialogue {
     "fog:",
     fog
   );
-  return { text, choices, position, fog };
+  return { text, choices, position, fog, audio };
 }
 
 export function choose(story: Story, choiceIndex: number) {
