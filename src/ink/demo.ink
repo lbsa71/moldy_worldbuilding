@@ -42,12 +42,17 @@ You shift toward the faint glow to your right. The voice follows, reflecting you
 
 * [Stand steady, letting your calm presence acknowledge the light]
     ~ trust += 1
-    -> trust_path_2
+    -> trust_path_1_still
 * [Step forward, testing the boundaries of the haze]
     -> trust_path_2
 * [Remain still momentarily, becoming one with the silence]
     ~ acknowledged_silence = true
-    -> trust_path_2
+    -> trust_path_1_still
+
+=== trust_path_1_still ===
+The lamp glimmers gently in your peripheral vision as you hold your ground, neither pressing forward nor retreating.  
+A subtle current of fog swirls around your feet, acknowledging your motionless presence.
+-> trust_path_2
 
 === trust_path_2 ===
 # position: (40,0)
@@ -58,12 +63,16 @@ The whisper returns:
 
 * [Your understanding radiates warmth toward those remembered hands]
     ~ trust += 1
-    -> trust_path_3
+    -> trust_path_2a
 * [Encourage the memory to unfold naturally]
-    -> trust_path_3
+    -> trust_path_2a
 * [Your stillness creates space for the memory to breathe]
     ~ acknowledged_silence = true
-    -> trust_path_3
+    -> trust_path_2a
+
+=== trust_path_2a ===
+You remain present in this moment. The shapes in the fog seem to respond to your patient attention.  
+-> trust_path_3
 
 === trust_path_3 ===
 # position: (60,0)
@@ -73,12 +82,16 @@ The fog patterns stabilize at your approach:
 
 * [Follow the steady, warm glow that feels like trust]
     ~ trust += 1
-    -> trust_path_4
+    -> trust_path_3a
 * [Choose the path where light cuts clear lines through space]
-    -> trust_path_4
+    -> trust_path_3a
 * [Let yourself drift toward the uncertain, but remain on this track]
     ~ trust -= 1
-    -> trust_path_4
+    -> trust_path_3a
+
+=== trust_path_3a ===
+You sense the environment shifting in subtle response to your choice.  
+-> trust_path_4
 
 === trust_path_4 ===
 # position: (80,0)
@@ -96,12 +109,16 @@ As you near an unseen horizon, the voice clarifies:
 
 * [Embrace the reality of this nameless connection]
     ~ trust += 1
-    -> trust_path_5
+    -> trust_path_4a
 * [Contemplate the layers of what was and what is]
-    -> trust_path_5
+    -> trust_path_4a
 * [Rest in the warmth of wordless understanding]
     ~ acknowledged_silence = true
-    -> trust_path_5
+    -> trust_path_4a
+
+=== trust_path_4a ===
+The soft glow ahead feels closer, as though welcoming you onward.  
+-> trust_path_5
 
 === trust_path_5 ===
 # position: (90,0)
@@ -172,12 +189,16 @@ The voice softly continues:
 
 * [The clinical familiarity stirs recognition: "Was it a hospital?"]
     ~ hospital_clarity = true
-    -> memory_path_2
+    -> memory_path_1a
 * [Let the memory unfold, your presence encouraging more]
-    -> memory_path_2
+    -> memory_path_1a
 * [Your stillness invites deeper recollection]
     ~ acknowledged_silence = true
-    -> memory_path_2
+    -> memory_path_1a
+
+=== memory_path_1a ===
+A faint stirring of memory grows in the air, as if responding to your invitation.  
+-> memory_path_2
 
 === memory_path_2 ===
 # position: (0,40)
@@ -187,27 +208,35 @@ Vague geometric shapes hover above, reminiscent of rails or distant doorways.
 
 * [Acknowledge how these shapes might be hospital elements]
     ~ hospital_clarity = true
-    -> memory_path_3
+    -> memory_path_2a
 * [Draw closer to the geometry, seeking more details]
-    -> memory_path_3
+    -> memory_path_2a
 * [Encourage the memory gently with your silent attention]
     ~ acknowledged_silence = true
-    -> memory_path_3
+    -> memory_path_2a
+
+=== memory_path_2a ===
+The shapes shift slightly, as though revealing glimpses of a long-ago reality.  
+-> memory_path_3
 
 === memory_path_3 ===
 # position: (0,60)
-# fog: 0.6
+# fog: 0.05
 The fog thins, revealing the shifting outlines of reaching hands.
 "There's meaning in how you respond. Silence, words... each shapes how I remember."
 
 * [Steady your presence, radiating warmth toward the memory]
     ~ trust += 1
-    -> memory_path_4
+    -> memory_path_3a
 * [Move closer to the shapes, drawn by their significance]
-    -> memory_path_4
+    -> memory_path_3a
 * [Let the rhythm of the memory set its own pace]
     ~ acknowledged_silence = true
-    -> memory_path_4
+    -> memory_path_3a
+
+=== memory_path_3a ===
+Your surroundings feel more stable, as though memory and presence intertwine.  
+-> memory_path_4
 
 === memory_path_4 ===
 # position: (0,80)
@@ -225,12 +254,16 @@ Hints of medical equipment echo through the space, dreamlike. The voice grows cl
 
 * [Let your presence anchor this recollection]
     ~ trust += 1
-    -> memory_path_5
+    -> memory_path_4a
 * [Quietly share the weight of memory]
     ~ acknowledged_silence = true
-    -> memory_path_5
+    -> memory_path_4a
 * [Observe the hospital-like shapes intently]
-    -> memory_path_5
+    -> memory_path_4a
+
+=== memory_path_4a ===
+You sense a softening in the air, as though acknowledging your role in this memory.  
+-> memory_path_5
 
 === memory_path_5 ===
 # position: (0,90)
@@ -300,12 +333,16 @@ You drift left, where an enveloping hush seems to deepen. The voice seems intrig
 
 * [Continue in silence, letting the environment respond]
     ~ acknowledged_silence = true
-    -> silence_path_2
+    -> silence_path_1a
 * [Step on quietly, encouraging the voice to reveal more]
     -> silence_path_2
 * ["Tell me about that buzzing light you mentioned?"]
     ~ trust += 1
     -> silence_path_2
+
+=== silence_path_1a ===
+The stillness is almost tangible. Soft currents in the fog seem to swirl around you, noticing your peaceful stance.  
+-> silence_path_2
 
 === silence_path_2 ===
 # position: (-40,0)
@@ -315,13 +352,17 @@ Fog swirls in layers, as though listening with you. The voice returns:
 
 * [Let the memory surface in stillness]
     ~ acknowledged_silence = true
-    -> silence_path_3
+    -> silence_path_2a
 * [Reach out quietly, offering warmth]
     ~ trust += 1
-    -> silence_path_3
+    -> silence_path_2a
 * [Ask about who was adjusting the equipment]
     ~ hospital_clarity = true
-    -> silence_path_3
+    -> silence_path_2a
+
+=== silence_path_2a ===
+A distant echo of gentle footsteps crosses your awareness, as though memory is awakening.  
+-> silence_path_3
 
 === silence_path_3 ===
 # position: (-60,0)
@@ -331,12 +372,16 @@ The environment shifts in subtle, rhythmic patterns:
 
 * [Embrace the quiet, focusing on the environment’s changes]
     ~ acknowledged_silence = true
-    -> silence_path_4
+    -> silence_path_3a
 * [Offer a small reassurance that you are present]
     ~ trust += 1
-    -> silence_path_4
+    -> silence_path_3a
 * [Keep listening for hospital clues]
-    -> silence_path_4
+    -> silence_path_3a
+
+=== silence_path_3a ===
+A soft hush envelops you, acknowledging your choice.  
+-> silence_path_4
 
 === silence_path_4 ===
 # position: (-80,0)
@@ -354,12 +399,16 @@ A faint glow still hints behind you; the voice grows calm:
 
 * [Rest in the warmth of wordless understanding]
     ~ acknowledged_silence = true
-    -> silence_path_5
+    -> silence_path_4a
 * [Embrace the intangible connection forming here]
     ~ trust += 1
-    -> silence_path_5
+    -> silence_path_4a
 * [Remain quietly observant, seeing how the environment responds]
-    -> silence_path_5
+    -> silence_path_4a
+
+=== silence_path_4a ===
+The path ahead seems gently illuminated, beckoning you onward.  
+-> silence_path_5
 
 === silence_path_5 ===
 # position: (-90,0)
@@ -433,7 +482,11 @@ You feel a subtle pull downward, drawing you into denser fog. The voice wavers, 
     -> uncertain_path_2
 * [Say nothing, simply continuing]
     ~ acknowledged_silence = true
-    -> uncertain_path_2
+    -> uncertain_path_1a
+
+=== uncertain_path_1a ===
+You hold your silence, neither resisting nor fully yielding to the pull, until the fog gently ushers you forward.  
+-> uncertain_path_2
 
 === uncertain_path_2 ===
 # position: (0,-40)
@@ -442,13 +495,17 @@ Shadows of reaching hands flicker through the haze:
 "There were footsteps. Adjustments. Maybe a hospital, maybe not. It's all uncertain, yet meaningful."
 
 * [Slow your movements, letting the environment settle]
-    -> uncertain_path_3
+    -> uncertain_path_2a
 * [Embrace the hush of not knowing]
     ~ acknowledged_silence = true
-    -> uncertain_path_3
+    -> uncertain_path_2a
 * [Ask softly if it was a hospital]
     ~ hospital_clarity = true
-    -> uncertain_path_3
+    -> uncertain_path_2a
+
+=== uncertain_path_2a ===
+The haze shifts slightly, as if acknowledging your openness—or your questions.  
+-> uncertain_path_3
 
 === uncertain_path_3 ===
 # position: (0,-60)
@@ -458,13 +515,17 @@ The voice draws nearer, as though gathering courage in your presence:
 "There's meaning in how you respond. Silence, words... each shapes how I remember."
 
 * [Choose to let the environment lead, uncertain but present]
-    -> uncertain_path_4
+    -> uncertain_path_3a
 * [Whisper a gentle reassurance]
     ~ trust += 1
-    -> uncertain_path_4
+    -> uncertain_path_3a
 * [Observe quietly, letting the memory form on its own]
     ~ acknowledged_silence = true
-    -> uncertain_path_4
+    -> uncertain_path_3a
+
+=== uncertain_path_3a ===
+A subtle warmth stirs in the fog, responding to your presence.  
+-> uncertain_path_4
 
 === uncertain_path_4 ===
 # position: (0,-80)
@@ -480,12 +541,16 @@ The surrounding shapes remain indistinct, yet a subtle warmth begins to form:
 }
 
 * [Encourage the unseen shapes to emerge]
-    -> uncertain_path_5
+    -> uncertain_path_4a
 * [Reflect quietly on the mention of care]
     ~ acknowledged_silence = true
-    -> uncertain_path_5
+    -> uncertain_path_4a
 * [Acknowledge that not all is meant to be clear]
-    -> uncertain_path_5
+    -> uncertain_path_4a
+
+=== uncertain_path_4a ===
+A gentle pulse resonates in the gloom, as though affirming your acceptance of what remains undefined.  
+-> uncertain_path_5
 
 === uncertain_path_5 ===
 # position: (0,-90)
