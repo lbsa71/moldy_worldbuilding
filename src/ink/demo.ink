@@ -2,14 +2,19 @@ VAR trust = 0
 VAR visited_memory = false
 VAR acknowledged_silence = false
 VAR hospital_clarity = false
+VAR reborn = false
 
---> start
+-> start
 
 === start ===
 # audio soundtrack_1.mp3
 # position: (0, 0)
 # fog: 1.0
-You are at the center of a dimly lit crossroads. A lamp glows softly, cutting through shifting fog. The environment feels like a threshold between places—part memory, part possibility.
+{
+    - reborn: You make your way back to the center of a dimly lit crossroads.
+    - else: You are at the center of a dimly lit crossroads.
+}
+ A lamp glows softly, cutting through shifting fog. The environment feels like a threshold between places—part memory, part possibility.
 
 A distant voice, unnamed yet gentle, whispers:
 "The light... it holds more than empty space. I can sense you."
@@ -93,6 +98,7 @@ You stand at a junction where faint hand motifs emerge and recede.
     -> scene_5
 
 === scene_5 ===
+# audio soundtrack_2.mp3
 # position: (50, 10)
 # fog: 0.4
 The light and shadow form subtle gradients, each step defined by the quality of your attention.
@@ -108,7 +114,6 @@ The light and shadow form subtle gradients, each step defined by the quality of 
     -> scene_6
 
 === scene_6 ===
-# audio soundtrack_2.mp3
 # position: (60, 12)
 # fog: 0.3
 The fog forms gentle patterns. The hand motifs are clearer, almost like companions rather than mere shapes.
@@ -181,27 +186,51 @@ The fog is thin, the lamp a distant memory. The voice is clear, yet gentle.
 === ending_warm ===
 # position: (90, 20)
 # fog: 0.05
+# audio soundtrack_3.mp3
 The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth. The voice sighs contentedly.
 "Some moments don't need names or clear shapes. Thank you for sharing this one."
--> END
+* [Dream]
+    ~ reborn = true
+    -> start
+* [Wake Up]	-> end_credits
 
 === ending_reflective ===
 # position: (-90, -20)
 # fog: 0.08
+# audio soundtrack_3.mp3
 The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
 "Not all memories resolve neatly, but you saw enough to make it matter. May your journey carry quiet understanding forward."
--> END
+* [Dream]
+    ~ reborn = true
+    -> start
+* [Wake Up]	-> end_credits
 
 === ending_distant ===
 # position: (-90, 20)
 # fog: 0.15
+# audio soundtrack_3.mp3
 The environment dims slightly, but not coldly. Just a respectful distance.
 "We existed here briefly, touched by curiosity. Perhaps that's enough."
--> END
+* [Dream]
+    ~ reborn = true
+    -> start
+* [Wake Up]	-> end_credits
 
 === ending_unfolding ===
 # position: (90, -20)
 # fog: 0.03
+# audio soundtrack_3.mp3
 The environment becomes expansive, the fog dissipating entirely. Gentle shapes merge into the horizon.
 "You allowed this place to unfold, unhurried. It means more than you know."
+* [Dream]
+    ~ reborn = true
+    -> start
+* [Wake Up]	-> end_credits
+
+=== end_credits ===
+# fog: 0.1
+# audio end_credits.mp3
+"The journey is not the answer, nor is the destination. It is the act of seeking that shapes who we are."
+"Perhaps you are waking from a dream, or perhaps you are only now beginning to dream. Who you are—man, butterfly, or something beyond labels—need not be decided. What matters is that you live. To see, to feel, to wonder: this is the essence of your being."
+"Wake up. Your life is waiting."
 -> END
