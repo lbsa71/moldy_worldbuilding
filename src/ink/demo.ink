@@ -31,7 +31,7 @@ A distant, unnamed voice whispers, gentle but present:
     -> uncertain_path_1
 
 ////////////////////////////////////////////////////////
-// TRUST PATH: moves from (0,0) to (90,0)
+// TRUST PATH: from (0,0) to (90,0)
 ////////////////////////////////////////////////////////
 
 === trust_path_1 ===
@@ -52,7 +52,7 @@ You shift toward the faint glow to your right. The voice follows, reflecting you
 === trust_path_2 ===
 # position: (40,0)
 # fog: 0.8
-The path continues in a gentle line, with silhouettes of hands emerging in the fog.  
+The path continues in a gentle line, with silhouettes of hands emerging in the fog.
 The whisper returns:
 "In those old rooms, there were murmurs of concern... hands adjusting something above me."
 
@@ -110,25 +110,63 @@ A gentle clearing opens in the fog. The lamp is far behind, though its glow ling
 "I sense a resolution. Not an end, but a gentle release. You followed, listened, questioned. I can feel your trust..."
 
 {
-    - trust > 2:
-        "Your presence was like a gentle hand. We needed no names, no definitions. We created a softness here together."
-        -> ending_warm
+    - (trust > 2):
+        -> trust_ending_warm
     - hospital_clarity:
-        "You gave me space to recall that old room, that gentle care. Maybe not all questions were answered, but we found understanding."
-        -> ending_reflective
+        -> trust_ending_reflective
     - else:
-        "We stood in possibility, yet remained apart. Still, this moment mattered."
-        -> ending_distant
+        -> trust_ending_distant
 }
 
+=== trust_ending_warm ===
+# position: (90,2)
+# fog: 0.05
+# audio soundtrack_3.mp3
+The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth.  
+The voice sighs contentedly:
+"Some moments don't need names or clear shapes. Thank you for sharing this one."
+
+* [Dream]
+    ~ reborn = true
+    -> start
+* [Wake Up]
+    -> end_credits
+
+=== trust_ending_reflective ===
+# position: (90,2)
+# fog: 0.08
+# audio soundtrack_3.mp3
+The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
+"Not all memories resolve neatly, but you saw enough to make it matter. May your journey carry quiet understanding forward."
+
+* [Dream]
+    ~ reborn = true
+    -> start
+* [Wake Up]
+    -> end_credits
+
+=== trust_ending_distant ===
+# position: (90,2)
+# fog: 0.15
+# audio soundtrack_3.mp3
+The environment dims slightly, but not coldly—just a respectful distance.
+"We existed here briefly, touched by curiosity. Perhaps that's enough."
+
+* [Dream]
+    ~ reborn = true
+    -> start
+* [Wake Up]
+    -> end_credits
+
+
 ////////////////////////////////////////////////////////
-// MEMORY PATH: moves from (0,0) to (0,90)
+// MEMORY PATH: from (0,0) to (0,90)
 ////////////////////////////////////////////////////////
 
 === memory_path_1 ===
 # position: (0,20)
 # fog: 0.95
-You step forward, drawn by a stirring in the haze that seems to carry faint echoes of distant recollections.  
+You step forward, drawn by a stirring in the haze that seems to carry faint echoes of distant recollections.
 The voice softly continues:
 "The light... it stays. But everything else shifts... I recall a buzzing overhead, and soft footsteps."
 
@@ -144,7 +182,7 @@ The voice softly continues:
 === memory_path_2 ===
 # position: (0,40)
 # fog: 0.8
-Vague geometric shapes hover above, reminiscent of rails or distant doorways.  
+Vague geometric shapes hover above, reminiscent of rails or distant doorways.
 "In that old place, I recall beeping machines. Someone checked on me... I never saw their face, but they seemed kind."
 
 * [Acknowledge how these shapes might be hospital elements]
@@ -159,7 +197,7 @@ Vague geometric shapes hover above, reminiscent of rails or distant doorways.
 === memory_path_3 ===
 # position: (0,60)
 # fog: 0.6
-The fog thins, revealing the shifting outlines of reaching hands.  
+The fog thins, revealing the shifting outlines of reaching hands.
 "There's meaning in how you respond. Silence, words... each shapes how I remember."
 
 * [Steady your presence, radiating warmth toward the memory]
@@ -201,19 +239,57 @@ A softly-lit point opens in the haze, where clinical geometry and gentle calm mi
 "I sense a resolution. Not an end, but a gentle release. You followed, listened, questioned. I can feel your trust..."
 
 {
-    - trust > 2:
-        "Your presence was like a gentle hand. We needed no names, no definitions. We created a softness here together."
-        -> ending_warm
+    - (trust > 2):
+        -> memory_ending_warm
     - hospital_clarity:
-        "You gave me space to recall that old room, that gentle care. Maybe not all questions were answered, but we found understanding."
-        -> ending_reflective
+        -> memory_ending_reflective
     - else:
-        "We stood in possibility, yet remained apart. Still, this moment mattered."
-        -> ending_distant
+        -> memory_ending_distant
 }
 
+=== memory_ending_warm ===
+# position: (0,92)
+# fog: 0.05
+# audio soundtrack_3.mp3
+The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth.  
+The voice sighs contentedly:
+"Some moments don't need names or clear shapes. Thank you for sharing this one."
+
+* [Dream]
+    ~ reborn = true
+    -> start
+* [Wake Up]
+    -> end_credits
+
+=== memory_ending_reflective ===
+# position: (0,92)
+# fog: 0.08
+# audio soundtrack_3.mp3
+The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
+"Not all memories resolve neatly, but you saw enough to make it matter. May your journey carry quiet understanding forward."
+
+* [Dream]
+    ~ reborn = true
+    -> start
+* [Wake Up]
+    -> end_credits
+
+=== memory_ending_distant ===
+# position: (0,92)
+# fog: 0.15
+# audio soundtrack_3.mp3
+The environment dims slightly, though not coldly—just a respectful distance.
+"We existed here briefly, touched by curiosity. Perhaps that's enough."
+
+* [Dream]
+    ~ reborn = true
+    -> start
+* [Wake Up]
+    -> end_credits
+
+
 ////////////////////////////////////////////////////////
-// SILENCE PATH: moves from (0,0) to (-90,0)
+// SILENCE PATH: from (0,0) to (-90,0)
 ////////////////////////////////////////////////////////
 
 === silence_path_1 ===
@@ -288,30 +364,68 @@ A faint glow still hints behind you; the voice grows calm:
 === silence_path_5 ===
 # position: (-90,0)
 # fog: 0.15
-You arrive at a serene open space, the fog thinning to reveal gentle shapes.  
+You arrive at a serene open space, the fog thinning to reveal gentle shapes.
 "I sense a resolution. Not an end, but a gentle release. You followed, listened, questioned. I can feel your trust..."
 
 {
-    - trust > 2:
-        "Your presence was like a gentle hand. We needed no names, no definitions. We created a softness here together."
-        -> ending_warm
+    - (trust > 2):
+        -> silence_ending_warm
     - hospital_clarity:
-        "You gave me space to recall that old room, that gentle care. Maybe not all questions were answered, but we found understanding."
-        -> ending_reflective
+        -> silence_ending_reflective
     - else:
-        "We stood in possibility, yet remained apart. Still, this moment mattered."
-        -> ending_distant
+        -> silence_ending_distant
 }
 
+=== silence_ending_warm ===
+# position: (-90,2)
+# fog: 0.05
+# audio soundtrack_3.mp3
+The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth.
+The voice sighs contentedly:
+"Some moments don't need names or clear shapes. Thank you for sharing this one."
+
+* [Dream]
+    ~ reborn = true
+    -> start
+* [Wake Up]
+    -> end_credits
+
+=== silence_ending_reflective ===
+# position: (-90,2)
+# fog: 0.08
+# audio soundtrack_3.mp3
+The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
+"Not all memories resolve neatly, but you saw enough to make it matter. May your journey carry quiet understanding forward."
+
+* [Dream]
+    ~ reborn = true
+    -> start
+* [Wake Up]
+    -> end_credits
+
+=== silence_ending_distant ===
+# position: (-90,2)
+# fog: 0.15
+# audio soundtrack_3.mp3
+The environment dims slightly, but not coldly—just a respectful distance.
+"We existed here briefly, touched by curiosity. Perhaps that's enough."
+
+* [Dream]
+    ~ reborn = true
+    -> start
+* [Wake Up]
+    -> end_credits
+
+
 ////////////////////////////////////////////////////////
-// UNCERTAINTY PATH: moves from (0,0) to (0,-90)
+// UNCERTAINTY PATH: from (0,0) to (0,-90)
 ////////////////////////////////////////////////////////
 
 === uncertain_path_1 ===
 # position: (0,-20)
 # fog: 0.95
 You feel a subtle pull downward, drawing you into denser fog. The voice wavers, curious about your choice:
-"The light remains behind us. But let’s see what else emerges... Everything else shifts."
+"The light remains behind us. But let's see what else emerges... Everything else shifts."
 
 * [Let yourself be guided by this uncertain pull, curious yet cautious]
     -> uncertain_path_2
@@ -380,26 +494,20 @@ The fog here is thin, though the lamp is far behind. The voice is calm, almost r
 "I sense a resolution. Not an end, but a gentle release. You followed, listened, questioned. I can feel your trust..."
 
 {
-    - trust > 2:
-        "Your presence was like a gentle hand. We needed no names, no definitions. We created a softness here together."
-        -> ending_warm
+    - (trust > 2):
+        -> uncertain_ending_warm
     - hospital_clarity:
-        "You gave me space to recall that old room, that gentle care. Maybe not all questions were answered, but we found understanding."
-        -> ending_reflective
+        -> uncertain_ending_reflective
     - else:
-        "We stood in possibility, yet remained apart. Still, this moment mattered."
-        -> ending_distant
+        -> uncertain_ending_distant
 }
 
-////////////////////////////////////////////////////////
-// ENDINGS
-////////////////////////////////////////////////////////
-
-=== ending_warm ===
-# position: (90, 10)
+=== uncertain_ending_warm ===
+# position: (0,-92)
 # fog: 0.05
 # audio soundtrack_3.mp3
-The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth. The voice sighs contentedly.
+The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth.
+The voice sighs contentedly:
 "Some moments don't need names or clear shapes. Thank you for sharing this one."
 
 * [Dream]
@@ -408,8 +516,8 @@ The environment settles into soft light. The hand motifs slowly fade, leaving a 
 * [Wake Up]
     -> end_credits
 
-=== ending_reflective ===
-# position: (0, 100)
+=== uncertain_ending_reflective ===
+# position: (0,-92)
 # fog: 0.08
 # audio soundtrack_3.mp3
 The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
@@ -421,11 +529,11 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
 * [Wake Up]
     -> end_credits
 
-=== ending_distant ===
-# position: (-90, 10)
+=== uncertain_ending_distant ===
+# position: (0,-92)
 # fog: 0.15
 # audio soundtrack_3.mp3
-The environment dims slightly, but not coldly. Just a respectful distance.
+The environment dims slightly, but not coldly—just a respectful distance.
 "We existed here briefly, touched by curiosity. Perhaps that's enough."
 
 * [Dream]
@@ -434,26 +542,19 @@ The environment dims slightly, but not coldly. Just a respectful distance.
 * [Wake Up]
     -> end_credits
 
-=== ending_unfolding ===
-# position: (0, -100)
-# fog: 0.03
-# audio soundtrack_3.mp3
-The environment becomes expansive, the fog dissipating entirely. Gentle shapes merge into the horizon.
-"You allowed this place to unfold, unhurried. It means more than you know."
-
-* [Dream]
-    ~ reborn = true
-    -> start
-* [Wake Up]
-    -> end_credits
+////////////////////////////////////////////////////////
+// END CREDITS
+////////////////////////////////////////////////////////
 
 === end_credits ===
 # fog: 0.1
 # audio end_credits.mp3
-"The journey is not the answer, nor is the destination. It is the act of seeking that shapes who we are.
+The journey is not the answer, nor is the destination. 
+It is the act of seeking that shapes who we are.
 Perhaps you are waking from a dream, or perhaps you are only now beginning to dream.
-Who you are—man, butterfly, or something beyond labels—need not be decided. What matters is that you live.
+Who you are—man, butterfly, or something beyond labels—need not be decided.
+What matters is that you live.
 To see, to feel, to wonder: this is the essence of your being.
 
-Wake up. Your life is waiting."
+Wake up. Your life is waiting.
 -> END

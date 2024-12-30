@@ -84,9 +84,11 @@ export class GameScene {
   private progressStory(): void {
     if (!this.currentStory) return;
 
-    const { text, choices, position, audio } = getCurrentDialogue(this.currentStory);
+    const { text, choices, position, audio } = getCurrentDialogue(
+      this.currentStory
+    );
 
-    // Handle audio 
+    // Handle audio
     this.audioSystem.play();
 
     if (audio) {
@@ -130,9 +132,10 @@ export class GameScene {
     if (this.enableAtmosphere) {
       const trust = this.currentStory.variablesState.trust || 0;
       this.atmosphere.updateFog(trust);
-      
+
       // Get hospital clarity and update environment
-      const hospital_clarity = this.currentStory.variablesState.hospital_clarity || false;
+      const hospital_clarity =
+        this.currentStory.variablesState.hospital_clarity || false;
       if (this.enableEnvironment) {
         this.environment.updateObjectVisibilities(trust, hospital_clarity);
       }
@@ -148,7 +151,7 @@ export class GameScene {
     this.dialogueText.textWrapping = true;
     this.dialogueText.top = "60px";
     this.dialogueText.width = "100%";
-    this.dialogueText.height = "200px";
+    this.dialogueText.height = "300px";
     this.dialogueText.left = "0px";
     this.dialogueText.textHorizontalAlignment =
       Control.HORIZONTAL_ALIGNMENT_LEFT;
@@ -241,7 +244,7 @@ export class GameScene {
     try {
       // Initialize audio system first
       this.audioSystem = new AudioSystem(this.scene);
-      
+
       if (this.enableAtmosphere) {
         this.atmosphere = new AtmosphereSystem(this.scene);
       }
@@ -252,7 +255,7 @@ export class GameScene {
         await this.terrain.waitForReady();
         console.log("Terrain ready");
       }
-      
+
       if (this.enableEnvironment && this.terrain) {
         console.log("Setting up environment...");
         this.environment = new EnvironmentSystem(this.scene);
