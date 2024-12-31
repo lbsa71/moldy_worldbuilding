@@ -11,6 +11,7 @@ export type Dialogue = {
   position: { x: number; z: number } | null;
   fog: number | null;
   audio: string | null;
+  objects: string[] | null;
 };
 
 export function getCurrentDialogue(story: Story): Dialogue {
@@ -19,6 +20,7 @@ export function getCurrentDialogue(story: Story): Dialogue {
   let position: { x: number; z: number } | null = null;
   let fog: number | null = null;
   let audio: string | null = null;
+  let objects: string[] | null = null;
 
   while (story.canContinue) {
     const continuation = story.Continue();
@@ -50,6 +52,11 @@ export function getCurrentDialogue(story: Story): Dialogue {
         if (audioMatch) {
           audio = audioMatch[1].trim();
         }
+
+        const objectsMatch = tag.match(/objects:?\s*(.+)?/);
+        if (objectsMatch) {
+          objects = objectsMatch[1] ? objectsMatch[1].split(",").map(s => s.trim()).filter(s => s) : [];
+        }
       }
     }
   }
@@ -61,9 +68,11 @@ export function getCurrentDialogue(story: Story): Dialogue {
     "position:",
     position,
     "fog:",
-    fog
+    fog,
+    "objects:",
+    objects
   );
-  return { text, choices, position, fog, audio };
+  return { text, choices, position, fog, audio, objects: objects };
 }
 
 export function choose(story: Story, choiceIndex: number) {

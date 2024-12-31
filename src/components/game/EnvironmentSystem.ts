@@ -37,6 +37,80 @@ export class EnvironmentSystem {
     this.createTemplates();
   }
 
+  public createObjectsFromTag(objectNames: string[], terrain: AbstractMesh, position?: { x: number, z: number }): void {
+    console.log("Creating objects from tag:", objectNames, "at position:", position);
+    
+    if (!terrain) {
+      console.error("No terrain provided to createObjectsFromTag");
+      return;
+    }
+    this.terrain = terrain;
+    
+    // Clear previous instances
+    console.log("Clearing previous instances");
+    // this.lampInstances.forEach(lamp => lamp.dispose());
+    // this.handMotifInstances.forEach(hand => hand.dispose());
+    // this.geometricShapeInstances.forEach(shape => shape.dispose());
+    // this.hospitalElementInstances.forEach(hospital => hospital.dispose());
+    
+    // this.lampInstances = [];
+    // this.handMotifInstances = [];
+    // this.geometricShapeInstances = [];
+    // this.hospitalElementInstances = [];
+
+    // If no objects to create, return early
+    if (!objectNames?.length) {
+      console.log("No objects to create");
+      return;
+    }
+
+    // Calculate spread positions around the target position
+    const radius = 3; // Smaller spread radius
+    const angleStep = (2 * Math.PI) / objectNames.length;
+    const centerX = position?.x || 0;
+    const centerZ = position?.z || 0;
+    
+    objectNames.forEach((objectName, index) => {
+      // Calculate spread position around the center point
+      const angle = angleStep * index;
+      const offsetX = centerX + (radius * Math.cos(angle));
+      const offsetZ = centerZ + (radius * Math.sin(angle));
+      const position = new Vector3(offsetX, 0, offsetZ);
+      
+      // Raycast to find ground height
+      const ray = new Ray(new Vector3(position.x, 100, position.z), new Vector3(0, -1, 0), 200);
+      const hit = this.scene.pickWithRay(ray, (mesh) => mesh === this.terrain);
+
+      if (hit?.pickedPoint) {
+        const adjustedPosition = hit.pickedPoint.add(new Vector3(0, 2, 0));
+        console.log(`Creating ${objectName} at position:`, adjustedPosition);
+        
+        try {
+          if (objectName === 'lamp') {
+            const lamp = new Lamp(this.scene, adjustedPosition);
+            this.lampInstances.push(lamp);
+          }
+          if (objectName === 'hand') {
+            const hand = new HandMotif(this.scene, adjustedPosition);
+            this.handMotifInstances.push(hand);
+          }
+          if (objectName === 'geometric') {
+            const shape = new GeometricShape(this.scene, adjustedPosition);
+            this.geometricShapeInstances.push(shape);
+          }
+          if (objectName === 'hospital') {
+            const hospital = new HospitalElement(this.scene, adjustedPosition);
+            this.hospitalElementInstances.push(hospital);
+          }
+        } catch (error) {
+          console.error(`Failed to create ${objectName}:`, error);
+        }
+      } else {
+        console.error(`Failed to find ground position for ${objectName} at`, position);
+      }
+    });
+  }
+
   private createTreeMaterial(): StandardMaterial {
     const material = new StandardMaterial("treeMaterial", this.scene);
     material.diffuseColor = new Color3(0.1, 0.15, 0.05);
@@ -113,7 +187,7 @@ export class EnvironmentSystem {
     this.rockTemplate.isVisible = false;
   }
 
-  public populate(terrain: Mesh): void {
+  public populate(terrain: Mesh, objectNames: string[]): void {
     if (!this.treeTemplate || !this.rockTemplate) return;
     this.terrain = terrain;
 
@@ -128,8 +202,6 @@ export class EnvironmentSystem {
         this.createRockInstance(position);
       }
     });
-
-    this.createObjectInstances();
   }
 
   private generatePositions(count: number, terrain: Mesh): Vector3[] {

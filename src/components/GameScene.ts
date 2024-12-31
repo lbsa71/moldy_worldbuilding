@@ -84,9 +84,9 @@ export class GameScene {
   private progressStory(): void {
     if (!this.currentStory) return;
 
-    const { text, choices, position, audio } = getCurrentDialogue(this.currentStory);
+    const { text, choices, position, audio, objects } = getCurrentDialogue(this.currentStory);
 
-    // Handle audio 
+    // Handle audio
     this.audioSystem.play();
 
     if (audio) {
@@ -134,6 +134,10 @@ export class GameScene {
       // Get hospital clarity and update environment
       const hospital_clarity = this.currentStory.variablesState.hospital_clarity || false;
       if (this.enableEnvironment) {
+        // Convert objects to array, defaulting to empty if null/undefined
+        const objectsArray = objects || [];
+        // Convert null to undefined for position parameter
+        this.environment.createObjectsFromTag(objectsArray, this.terrain.terrain, position || undefined);
         this.environment.updateObjectVisibilities(trust, hospital_clarity);
       }
     }
@@ -256,7 +260,7 @@ export class GameScene {
       if (this.enableEnvironment && this.terrain) {
         console.log("Setting up environment...");
         this.environment = new EnvironmentSystem(this.scene);
-        this.environment.populate(this.terrain.terrain);
+        this.environment.populate(this.terrain.terrain, []);  // Pass empty array as initial objects
       }
 
       if (this.enableCharacter) {
