@@ -7,6 +7,7 @@ VAR reborn = false
 -> start
 
 === start ===
+# objects: lamp
 # audio soundtrack_1.mp3
 # position: (0, 0)
 # fog: 1.0
@@ -29,6 +30,7 @@ A distant voice, unnamed yet gentle, whispers:
     -> scene_1
 
 === scene_1 ===
+# objects: hand, hospital
 # position: (10, 2)
 # fog: 0.8
 The lamp now behind you, the fog ahead reveals subtle silhouettes of hands, as if trying to guide you. The whispered words drift through the mist: "I remember a place with a buzzing light overhead... and soft footsteps."
@@ -43,6 +45,7 @@ The lamp now behind you, the fog ahead reveals subtle silhouettes of hands, as i
     -> scene_2
 
 === scene_2 ===
+# objects: hand, geometric, hospital
 # position: (20, 4)
 # fog: 0.7
 The fog thins slightly, revealing vague geometric shapes hovering in the distance. The voice grows closer:
@@ -79,6 +82,7 @@ You are near outlines of shifting pathways, each lit differently.
     -> scene_4
 
 === scene_4 ===
+# objects: hand, hand, hospital
 # position: (40, 8)
 # fog: 0.5
 You stand at a junction where faint hand motifs emerge and recede.
@@ -114,6 +118,7 @@ The light and shadow form subtle gradients, each step defined by the quality of 
     -> scene_6
 
 === scene_6 ===
+# objects: hand, hand, hand
 # position: (60, 12)
 # fog: 0.3
 The fog forms gentle patterns. The hand motifs are clearer, almost like companions rather than mere shapes.
@@ -134,6 +139,7 @@ The fog forms gentle patterns. The hand motifs are clearer, almost like companio
     -> scene_7
 
 === scene_7 ===
+# objects: hand, hand, hand, geometric, hospital
 # position: (70, 14)
 # fog: 0.2
 {visited_memory || hospital_clarity:
@@ -152,6 +158,7 @@ The fog forms gentle patterns. The hand motifs are clearer, almost like companio
     -> scene_8
 
 === scene_8 ===
+# objects: hand, geometric, hand
 # position: (80, 16)
 # fog: 0.15
 The environment grows stable, and you feel a gentle upward lift, as if approaching a horizon of meaning.
@@ -173,12 +180,15 @@ The fog is thin, the lamp a distant memory. The voice is clear, yet gentle.
 
 {
     - trust > 2:
+        # objects: hand
         "Your presence was like a gentle hand. We needed no names, no definitions. We created a softness here together."
         -> ending_warm
     - hospital_clarity:
+        # objects: hospital
         "You gave me space to recall that old room, that gentle care. Maybe not all questions were answered, but we found understanding."
         -> ending_reflective
     - else:
+        # objects: geometric
         "We stood in possibility, yet remained apart. Still, this moment mattered."
         -> ending_distant
 }
@@ -195,6 +205,7 @@ The environment settles into soft light. The hand motifs slowly fade, leaving a 
 * [Wake Up]	-> end_credits
 
 === ending_reflective ===
+# objects: hospital
 # position: (-90, -20)
 # fog: 0.08
 # audio soundtrack_3.mp3
@@ -206,6 +217,7 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
 * [Wake Up]	-> end_credits
 
 === ending_distant ===
+# objects: geometric
 # position: (-90, 20)
 # fog: 0.15
 # audio soundtrack_3.mp3
