@@ -36,6 +36,7 @@ A distant, unnamed voice whispers, gentle but present:
 ////////////////////////////////////////////////////////
 
 === trust_path_1 ===
+# objects: hand
 # position: (20,0)
 # fog: 0.95
 You shift toward the faint glow to your right. The voice follows, reflecting your resolute presence:
@@ -51,11 +52,13 @@ You shift toward the faint glow to your right. The voice follows, reflecting you
     -> trust_path_1_still
 
 === trust_path_1_still ===
-The lamp glimmers gently in your peripheral vision as you hold your ground, neither pressing forward nor retreating.  
+# objects:
+The lamp glimmers gently in your peripheral vision as you hold your ground, neither pressing forward nor retreating.
 A subtle current of fog swirls around your feet, acknowledging your motionless presence.
 -> trust_path_2
 
 === trust_path_2 ===
+# objects: hand, hand
 # position: (40,0)
 # fog: 0.8
 The path continues in a gentle line, with silhouettes of hands emerging in the fog.
@@ -72,10 +75,12 @@ The whisper returns:
     -> trust_path_2a
 
 === trust_path_2a ===
-You remain present in this moment. The shapes in the fog seem to respond to your patient attention.  
+# objects:
+You remain present in this moment. The shapes in the fog seem to respond to your patient attention.
 -> trust_path_3
 
 === trust_path_3 ===
+# objects: hand
 # position: (60,0)
 # fog: 0.6
 The fog patterns stabilize at your approach:
@@ -91,10 +96,12 @@ The fog patterns stabilize at your approach:
     -> trust_path_3a
 
 === trust_path_3a ===
-You sense the environment shifting in subtle response to your choice.  
+# objects:
+You sense the environment shifting in subtle response to your choice.
 -> trust_path_4
 
 === trust_path_4 ===
+# objects: hand, hand, hand
 # position: (80,0)
 # fog: 0.3
 # audio soundtrack_2.mp3
@@ -118,10 +125,12 @@ As you near an unseen horizon, the voice clarifies:
     -> trust_path_4a
 
 === trust_path_4a ===
-The soft glow ahead feels closer, as though welcoming you onward.  
+# objects:
+The soft glow ahead feels closer, as though welcoming you onward.
 -> trust_path_5
 
 === trust_path_5 ===
+# objects:
 # position: (90,0)
 # fog: 0.15
 A gentle clearing opens in the fog. The lamp is far behind, though its glow lingers in memory.
@@ -137,10 +146,11 @@ A gentle clearing opens in the fog. The lamp is far behind, though its glow ling
 }
 
 === trust_ending_warm ===
+# objects: hand
 # position: (90,2)
 # fog: 0.05
 # audio soundtrack_3.mp3
-The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth.  
+The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth.
 The voice sighs contentedly:
 "Some moments don't need names or clear shapes. Thank you for sharing this one."
 
@@ -151,6 +161,7 @@ The voice sighs contentedly:
     -> end_credits
 
 === trust_ending_reflective ===
+# objects: hospital
 # position: (90,2)
 # fog: 0.08
 # audio soundtrack_3.mp3
@@ -164,6 +175,7 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
     -> end_credits
 
 === trust_ending_distant ===
+# objects:
 # position: (90,2)
 # fog: 0.15
 # audio soundtrack_3.mp3
@@ -176,12 +188,12 @@ The environment dims slightly, but not coldly—just a respectful distance.
 * [Wake Up]
     -> end_credits
 
-
 ////////////////////////////////////////////////////////
 // MEMORY PATH: from (0,0) to (0,90)
 ////////////////////////////////////////////////////////
 
 === memory_path_1 ===
+# objects: geometric
 # position: (0,20)
 # fog: 0.95
 You step forward, drawn by a stirring in the haze that seems to carry faint echoes of distant recollections.
@@ -198,10 +210,12 @@ The voice softly continues:
     -> memory_path_1a
 
 === memory_path_1a ===
-A faint stirring of memory grows in the air, as if responding to your invitation.  
+# objects:
+A faint stirring of memory grows in the air, as if responding to your invitation.
 -> memory_path_2
 
 === memory_path_2 ===
+# objects: hospital, geometric
 # position: (0,40)
 # fog: 0.8
 Vague geometric shapes hover above, reminiscent of rails or distant doorways.
@@ -217,10 +231,12 @@ Vague geometric shapes hover above, reminiscent of rails or distant doorways.
     -> memory_path_2a
 
 === memory_path_2a ===
-The shapes shift slightly, as though revealing glimpses of a long-ago reality.  
+# objects:
+The shapes shift slightly, as though revealing glimpses of a long-ago reality.
 -> memory_path_3
 
 === memory_path_3 ===
+# objects: hand, hand
 # position: (0,60)
 # fog: 0.05
 The fog thins, revealing the shifting outlines of reaching hands.
@@ -236,10 +252,12 @@ The fog thins, revealing the shifting outlines of reaching hands.
     -> memory_path_3a
 
 === memory_path_3a ===
-Your surroundings feel more stable, as though memory and presence intertwine.  
+# objects:
+Your surroundings feel more stable, as though memory and presence intertwine.
 -> memory_path_4
 
 === memory_path_4 ===
+# objects: hospital
 # position: (0,80)
 # fog: 0.3
 # audio soundtrack_2.mp3
@@ -263,10 +281,12 @@ Hints of medical equipment echo through the space, dreamlike. The voice grows cl
     -> memory_path_4a
 
 === memory_path_4a ===
-You sense a softening in the air, as though acknowledging your role in this memory.  
+# objects:
+You sense a softening in the air, as though acknowledging your role in this memory.
 -> memory_path_5
 
 === memory_path_5 ===
+# objects: geometric, hospital
 # position: (0,90)
 # fog: 0.15
 A softly-lit point opens in the haze, where clinical geometry and gentle calm mingle.
@@ -282,10 +302,11 @@ A softly-lit point opens in the haze, where clinical geometry and gentle calm mi
 }
 
 === memory_ending_warm ===
+# objects: hand
 # position: (0,92)
 # fog: 0.05
 # audio soundtrack_3.mp3
-The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth.  
+The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth.
 The voice sighs contentedly:
 "Some moments don't need names or clear shapes. Thank you for sharing this one."
 
@@ -296,6 +317,7 @@ The voice sighs contentedly:
     -> end_credits
 
 === memory_ending_reflective ===
+# objects: hospital
 # position: (0,92)
 # fog: 0.08
 # audio soundtrack_3.mp3
@@ -309,6 +331,7 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
     -> end_credits
 
 === memory_ending_distant ===
+# objects:
 # position: (0,92)
 # fog: 0.15
 # audio soundtrack_3.mp3
@@ -321,12 +344,12 @@ The environment dims slightly, though not coldly—just a respectful distance.
 * [Wake Up]
     -> end_credits
 
-
 ////////////////////////////////////////////////////////
 // SILENCE PATH: from (0,0) to (-90,0)
 ////////////////////////////////////////////////////////
 
 === silence_path_1 ===
+# objects:
 # position: (-20,0)
 # fog: 0.95
 You drift left, where an enveloping hush seems to deepen. The voice seems intrigued by your quiet approach:
@@ -342,10 +365,12 @@ You drift left, where an enveloping hush seems to deepen. The voice seems intrig
     -> silence_path_2
 
 === silence_path_1a ===
-The stillness is almost tangible. Soft currents in the fog seem to swirl around you, noticing your peaceful stance.  
+# objects:
+The stillness is almost tangible. Soft currents in the fog seem to swirl around you, noticing your peaceful stance.
 -> silence_path_2
 
 === silence_path_2 ===
+# objects: hand, geometric
 # position: (-40,0)
 # fog: 0.8
 Fog swirls in layers, as though listening with you. The voice returns:
@@ -362,10 +387,12 @@ Fog swirls in layers, as though listening with you. The voice returns:
     -> silence_path_2a
 
 === silence_path_2a ===
-A distant echo of gentle footsteps crosses your awareness, as though memory is awakening.  
+# objects:
+A distant echo of gentle footsteps crosses your awareness, as though memory is awakening.
 -> silence_path_3
 
 === silence_path_3 ===
+# objects:
 # position: (-60,0)
 # fog: 0.6
 The environment shifts in subtle, rhythmic patterns:
@@ -381,10 +408,12 @@ The environment shifts in subtle, rhythmic patterns:
     -> silence_path_3a
 
 === silence_path_3a ===
-A soft hush envelops you, acknowledging your choice.  
+# objects:
+A soft hush envelops you, acknowledging your choice.
 -> silence_path_4
 
 === silence_path_4 ===
+# objects: hand
 # position: (-80,0)
 # fog: 0.3
 # audio soundtrack_2.mp3
@@ -408,10 +437,12 @@ A faint glow still hints behind you; the voice grows calm:
     -> silence_path_4a
 
 === silence_path_4a ===
-The path ahead seems gently illuminated, beckoning you onward.  
+# objects:
+The path ahead seems gently illuminated, beckoning you onward.
 -> silence_path_5
 
 === silence_path_5 ===
+# objects: geometric
 # position: (-90,0)
 # fog: 0.15
 You arrive at a serene open space, the fog thinning to reveal gentle shapes.
@@ -427,6 +458,7 @@ You arrive at a serene open space, the fog thinning to reveal gentle shapes.
 }
 
 === silence_ending_warm ===
+# objects: hand
 # position: (-90,2)
 # fog: 0.05
 # audio soundtrack_3.mp3
@@ -441,6 +473,7 @@ The voice sighs contentedly:
     -> end_credits
 
 === silence_ending_reflective ===
+# objects: hospital
 # position: (-90,2)
 # fog: 0.08
 # audio soundtrack_3.mp3
@@ -454,6 +487,7 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
     -> end_credits
 
 === silence_ending_distant ===
+# objects:
 # position: (-90,2)
 # fog: 0.15
 # audio soundtrack_3.mp3
@@ -466,12 +500,12 @@ The environment dims slightly, but not coldly—just a respectful distance.
 * [Wake Up]
     -> end_credits
 
-
 ////////////////////////////////////////////////////////
 // UNCERTAINTY PATH: from (0,0) to (0,-90)
 ////////////////////////////////////////////////////////
 
 === uncertain_path_1 ===
+# objects:
 # position: (0,-20)
 # fog: 0.95
 You feel a subtle pull downward, drawing you into denser fog. The voice wavers, curious about your choice:
@@ -486,10 +520,12 @@ You feel a subtle pull downward, drawing you into denser fog. The voice wavers, 
     -> uncertain_path_1a
 
 === uncertain_path_1a ===
-You hold your silence, neither resisting nor fully yielding to the pull, until the fog gently ushers you forward.  
+# objects:
+You hold your silence, neither resisting nor fully yielding to the pull, until the fog gently ushers you forward.
 -> uncertain_path_2
 
 === uncertain_path_2 ===
+# objects: hand
 # position: (0,-40)
 # fog: 0.8
 Shadows of reaching hands flicker through the haze:
@@ -505,10 +541,12 @@ Shadows of reaching hands flicker through the haze:
     -> uncertain_path_2a
 
 === uncertain_path_2a ===
-The haze shifts slightly, as if acknowledging your openness—or your questions.  
+# objects:
+The haze shifts slightly, as if acknowledging your openness—or your questions.
 -> uncertain_path_3
 
 === uncertain_path_3 ===
+# objects: geometric
 # position: (0,-60)
 # fog: 0.6
 # audio soundtrack_2.mp3
@@ -525,10 +563,12 @@ The voice draws nearer, as though gathering courage in your presence:
     -> uncertain_path_3a
 
 === uncertain_path_3a ===
-A subtle warmth stirs in the fog, responding to your presence.  
+# objects:
+A subtle warmth stirs in the fog, responding to your presence.
 -> uncertain_path_4
 
 === uncertain_path_4 ===
+# objects: hand, hospital
 # position: (0,-80)
 # fog: 0.3
 The surrounding shapes remain indistinct, yet a subtle warmth begins to form:
@@ -550,10 +590,12 @@ The surrounding shapes remain indistinct, yet a subtle warmth begins to form:
     -> uncertain_path_4a
 
 === uncertain_path_4a ===
-A gentle pulse resonates in the gloom, as though affirming your acceptance of what remains undefined.  
+# objects:
+A gentle pulse resonates in the gloom, as though affirming your acceptance of what remains undefined.
 -> uncertain_path_5
 
 === uncertain_path_5 ===
+# objects: geometric
 # position: (0,-90)
 # fog: 0.15
 The fog here is thin, though the lamp is far behind. The voice is calm, almost resolute:
@@ -569,6 +611,7 @@ The fog here is thin, though the lamp is far behind. The voice is calm, almost r
 }
 
 === uncertain_ending_warm ===
+# objects: hand
 # position: (0,-92)
 # fog: 0.05
 # audio soundtrack_3.mp3
@@ -583,6 +626,7 @@ The voice sighs contentedly:
     -> end_credits
 
 === uncertain_ending_reflective ===
+# objects: hospital
 # position: (0,-92)
 # fog: 0.08
 # audio soundtrack_3.mp3
@@ -596,6 +640,7 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
     -> end_credits
 
 === uncertain_ending_distant ===
+# objects:
 # position: (0,-92)
 # fog: 0.15
 # audio soundtrack_3.mp3
@@ -613,9 +658,10 @@ The environment dims slightly, but not coldly—just a respectful distance.
 ////////////////////////////////////////////////////////
 
 === end_credits ===
+# objects:
 # fog: 0.1
 # audio end_credits.mp3
-The journey is not the answer, nor is the destination. 
+The journey is not the answer, nor is the destination.
 It is the act of seeking that shapes who we are.
 Perhaps you are waking from a dream, or perhaps you are only now beginning to dream.
 Who you are—man, butterfly, or something beyond labels—need not be decided.
