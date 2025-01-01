@@ -152,7 +152,7 @@ export class GameScene {
     this.dialogueText.textWrapping = true;
     this.dialogueText.top = "60px";
     this.dialogueText.width = "100%";
-    this.dialogueText.height = "200px";
+    this.dialogueText.height = "300px";
     this.dialogueText.left = "0px";
     this.dialogueText.textHorizontalAlignment =
       Control.HORIZONTAL_ALIGNMENT_LEFT;
