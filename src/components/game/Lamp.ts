@@ -30,7 +30,7 @@ export class Lamp {
     // Create lamp mesh
     this.mesh = MeshBuilder.CreateSphere("lampMesh", { diameter: 1 }, scene);
     this.mesh.parent = this.pole;
-    this.mesh.position = new Vector3(0, 2.5, 0.5); // Position relative to pole (2 units up)
+    this.mesh.position = new Vector3(0, 2.5, -0.5); // Position relative to pole (2 units up)
 
     // Create light
     this.light = new PointLight("lampLight", this.mesh.position, scene);

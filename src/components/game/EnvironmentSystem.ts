@@ -88,27 +88,27 @@ export class EnvironmentSystem {
         console.log(`Creating ${objectName} at position:`, adjustedPosition);
         
         try {
-          // Create random rotation for variety
-          const randomRotation = new Vector3(
+          // Calculate rotation to face center while maintaining slight tilt
+          const rotation = new Vector3(
             Math.random() * Math.PI * 0.2 - Math.PI * 0.1, // Slight tilt on X (-0.1π to 0.1π)
-            Math.random() * Math.PI * 2,                    // Full rotation on Y (0 to 2π)
+            angle + Math.PI / 2,                           // Y rotation to face center
             Math.random() * Math.PI * 0.2 - Math.PI * 0.1  // Slight tilt on Z (-0.1π to 0.1π)
           );
 
           if (objectName === 'lamp') {
-            const lamp = new Lamp(this.scene, adjustedPosition, randomRotation);
+            const lamp = new Lamp(this.scene, adjustedPosition, rotation);
             this.lampInstances.push(lamp);
           }
           if (objectName === 'hand') {
-            const hand = new HandMotif(this.scene, adjustedPosition, randomRotation);
+            const hand = new HandMotif(this.scene, adjustedPosition, rotation);
             this.handMotifInstances.push(hand);
           }
           if (objectName === 'geometric') {
-            const shape = new GeometricShape(this.scene, adjustedPosition, randomRotation);
+            const shape = new GeometricShape(this.scene, adjustedPosition, rotation);
             this.geometricShapeInstances.push(shape);
           }
           if (objectName === 'hospital') {
-            const hospital = new HospitalElement(this.scene, adjustedPosition, randomRotation);
+            const hospital = new HospitalElement(this.scene, adjustedPosition, rotation);
             this.hospitalElementInstances.push(hospital);
           }
         } catch (error) {
@@ -308,16 +308,18 @@ export class EnvironmentSystem {
 
         if (hit?.pickedPoint) {
           const adjustedPosition = hit.pickedPoint.add(new Vector3(0, 1, 0));
-          const randomRotation = new Vector3(
-            Math.random() * Math.PI * 0.2 - Math.PI * 0.1,
-            Math.random() * Math.PI * 2,
-            Math.random() * Math.PI * 0.2 - Math.PI * 0.1
+          // Calculate angle to face origin (0,0,0)
+          const angle = Math.atan2(adjustedPosition.z, adjustedPosition.x);
+          const rotation = new Vector3(
+            Math.random() * Math.PI * 0.2 - Math.PI * 0.1, // Slight tilt on X
+            angle + Math.PI / 2,                           // Y rotation to face origin
+            Math.random() * Math.PI * 0.2 - Math.PI * 0.1  // Slight tilt on Z
           );
 
-          if (ObjectClass === Lamp) this.lampInstances.push(new Lamp(this.scene, adjustedPosition, randomRotation));
-          if (ObjectClass === HandMotif) this.handMotifInstances.push(new HandMotif(this.scene, adjustedPosition, randomRotation));
-          if (ObjectClass === GeometricShape) this.geometricShapeInstances.push(new GeometricShape(this.scene, adjustedPosition, randomRotation));
-          if (ObjectClass === HospitalElement) this.hospitalElementInstances.push(new HospitalElement(this.scene, adjustedPosition, randomRotation));
+          if (ObjectClass === Lamp) this.lampInstances.push(new Lamp(this.scene, adjustedPosition, rotation));
+          if (ObjectClass === HandMotif) this.handMotifInstances.push(new HandMotif(this.scene, adjustedPosition, rotation));
+          if (ObjectClass === GeometricShape) this.geometricShapeInstances.push(new GeometricShape(this.scene, adjustedPosition, rotation));
+          if (ObjectClass === HospitalElement) this.hospitalElementInstances.push(new HospitalElement(this.scene, adjustedPosition, rotation));
           if (ObjectClass === EnvironmentalLightElement) this.environmentalLightElementInstances.push(new EnvironmentalLightElement(this.scene, adjustedPosition));
         }
       });
