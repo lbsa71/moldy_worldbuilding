@@ -75,11 +75,11 @@ The whisper returns:
     -> trust_path_2a
 
 === trust_path_2a ===
-# objects:
 You remain present in this moment. The shapes in the fog seem to respond to your patient attention.
 -> trust_path_3
 
 === trust_path_3 ===
+# audio soundtrack_2.mp3
 # objects: hand
 # position: (60,0)
 # fog: 0.6
@@ -96,7 +96,6 @@ The fog patterns stabilize at your approach:
     -> trust_path_3a
 
 === trust_path_3a ===
-# objects:
 You sense the environment shifting in subtle response to your choice.
 -> trust_path_4
 
@@ -209,11 +208,11 @@ The voice softly continues:
     -> memory_path_1a
 
 === memory_path_1a ===
-# objects:
 A faint stirring of memory grows in the air, as if responding to your invitation.
 -> memory_path_2
 
 === memory_path_2 ===
+# audio soundtrack_2.mp3
 # objects: hospital, geometric
 # position: (0,40)
 # fog: 0.8
@@ -251,7 +250,6 @@ The fog thins, revealing the shifting outlines of reaching hands.
     -> memory_path_3a
 
 === memory_path_3a ===
-# objects:
 Your surroundings feel more stable, as though memory and presence intertwine.
 -> memory_path_4
 
@@ -259,7 +257,6 @@ Your surroundings feel more stable, as though memory and presence intertwine.
 # objects: hospital
 # position: (0,80)
 # fog: 0.3
-# audio soundtrack_2.mp3
 Hints of medical equipment echo through the space, dreamlike. The voice grows closer:
 "I think... someone was caring for me. Maybe you’re doing something similar now."
 
@@ -524,7 +521,7 @@ You hold your silence, neither resisting nor fully yielding to the pull, until t
 -> uncertain_path_2
 
 === uncertain_path_2 ===
-# objects: hand
+# objects: hand, hand, hand
 # position: (0,-40)
 # fog: 0.8
 Shadows of reaching hands flicker through the haze:
