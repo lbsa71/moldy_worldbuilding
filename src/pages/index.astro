@@ -22,11 +22,20 @@ import Game from '../components/Game.astro';
         <Game />
         <script>
             const startButton = document.getElementById('start-button');
-            const titleScreen = document.getElementById('title-screen');
 
-            if (startButton && titleScreen) {
+            if (startButton) {
+
                 startButton.addEventListener('click', () => {
+                    const titleScreen = document.getElementById('title-screen');
+                    const gameContainer = document.getElementById('game-container');
+
+                    console.log("Removing title screen");
+                    if(titleScreen && gameContainer)
+                {
                     titleScreen.style.display = 'none';
+                    gameContainer.style.display = 'flex';
+                }
+                 
                 });
 
          

@@ -47,7 +47,7 @@ export class EnvironmentSystem {
     this.terrain = terrain;
     
     // Clear previous instances
-    console.log("Clearing previous instances");
+    // console.log("Clearing previous instances");
     // this.lampInstances.forEach(lamp => lamp.dispose());
     // this.handMotifInstances.forEach(hand => hand.dispose());
     // this.geometricShapeInstances.forEach(shape => shape.dispose());
@@ -81,8 +81,10 @@ export class EnvironmentSystem {
       const ray = new Ray(new Vector3(position.x, 100, position.z), new Vector3(0, -1, 0), 200);
       const hit = this.scene.pickWithRay(ray, (mesh) => mesh === this.terrain);
 
-      if (hit?.pickedPoint) {
-        const adjustedPosition = hit.pickedPoint.add(new Vector3(0, 2, 0));
+      const pickedPoint = hit?.pickedPoint;
+      const adjustedPosition = (pickedPoint ? pickedPoint : position).add(new Vector3(0, 2, 0));
+
+
         console.log(`Creating ${objectName} at position:`, adjustedPosition);
         
         try {
@@ -105,9 +107,7 @@ export class EnvironmentSystem {
         } catch (error) {
           console.error(`Failed to create ${objectName}:`, error);
         }
-      } else {
-        console.error(`Failed to find ground position for ${objectName} at`, position);
-      }
+   
     });
   }
 
