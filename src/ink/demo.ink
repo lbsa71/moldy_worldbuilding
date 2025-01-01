@@ -280,7 +280,7 @@ Hints of medical equipment echo through the space, dreamlike. The voice grows cl
     -> memory_path_4a
 
 === memory_path_4a ===
-# objects:
+# objects: geometric, hospital
 You sense a softening in the air, as though acknowledging your role in this memory.
 -> memory_path_5
 
