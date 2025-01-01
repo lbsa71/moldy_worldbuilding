@@ -16,7 +16,7 @@ export class Lamp {
   private pole: Mesh;
   private directionalLight: DirectionalLight;
 
-  constructor(scene: Scene, position: Vector3) {
+  constructor(scene: Scene, position: Vector3, rotation: Vector3 = new Vector3(0, 0, 0)) {
     // Create pole
     this.pole = MeshBuilder.CreateCylinder(
       "lampPole",
@@ -25,6 +25,7 @@ export class Lamp {
     );
     this.pole.position = position.clone();
     this.pole.position.y += 1;
+    this.pole.rotation = rotation.clone();
 
     // Create lamp mesh
     this.mesh = MeshBuilder.CreateSphere("lampMesh", { diameter: 1 }, scene);

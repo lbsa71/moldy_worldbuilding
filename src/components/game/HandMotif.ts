@@ -17,7 +17,7 @@ export class HandMotif {
   private material: StandardMaterial;
   private directionalLight: DirectionalLight;
 
-  constructor(scene: Scene, position: Vector3) {
+  constructor(scene: Scene, position: Vector3, rotation: Vector3 = new Vector3(0, 0, 0)) {
     this.material = new StandardMaterial("handMotifMaterial", scene);
     this.material.diffuseTexture = new Texture("assets/hand_motif.png", scene);
     this.material.useAlphaFromDiffuseTexture = true;
@@ -28,6 +28,7 @@ export class HandMotif {
 
     this.mesh = MeshBuilder.CreatePlane("handMotif", { size: 2 }, scene);
     this.mesh.position = position;
+    this.mesh.rotation = rotation;
     this.mesh.material = this.material;
 
     this.animation = new Animation(

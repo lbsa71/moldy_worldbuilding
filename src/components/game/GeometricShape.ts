@@ -19,9 +19,10 @@ export class GeometricShape {
   private material: StandardMaterial;
   private directionalLight: DirectionalLight;
 
-  constructor(scene: Scene, position: Vector3) {
+  constructor(scene: Scene, position: Vector3, rotation: Vector3 = new Vector3(0, 0, 0)) {
     this.rootNode = new TransformNode("geometricShapeRoot", scene);
     this.rootNode.position = position;
+    this.rootNode.rotation = rotation;
 
     // Create primary shape
     const primaryShapeOptions = [

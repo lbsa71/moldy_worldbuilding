@@ -88,20 +88,27 @@ export class EnvironmentSystem {
         console.log(`Creating ${objectName} at position:`, adjustedPosition);
         
         try {
+          // Create random rotation for variety
+          const randomRotation = new Vector3(
+            Math.random() * Math.PI * 0.2 - Math.PI * 0.1, // Slight tilt on X (-0.1π to 0.1π)
+            Math.random() * Math.PI * 2,                    // Full rotation on Y (0 to 2π)
+            Math.random() * Math.PI * 0.2 - Math.PI * 0.1  // Slight tilt on Z (-0.1π to 0.1π)
+          );
+
           if (objectName === 'lamp') {
-            const lamp = new Lamp(this.scene, adjustedPosition);
+            const lamp = new Lamp(this.scene, adjustedPosition, randomRotation);
             this.lampInstances.push(lamp);
           }
           if (objectName === 'hand') {
-            const hand = new HandMotif(this.scene, adjustedPosition);
+            const hand = new HandMotif(this.scene, adjustedPosition, randomRotation);
             this.handMotifInstances.push(hand);
           }
           if (objectName === 'geometric') {
-            const shape = new GeometricShape(this.scene, adjustedPosition);
+            const shape = new GeometricShape(this.scene, adjustedPosition, randomRotation);
             this.geometricShapeInstances.push(shape);
           }
           if (objectName === 'hospital') {
-            const hospital = new HospitalElement(this.scene, adjustedPosition);
+            const hospital = new HospitalElement(this.scene, adjustedPosition, randomRotation);
             this.hospitalElementInstances.push(hospital);
           }
         } catch (error) {
@@ -301,10 +308,16 @@ export class EnvironmentSystem {
 
         if (hit?.pickedPoint) {
           const adjustedPosition = hit.pickedPoint.add(new Vector3(0, 1, 0));
-          if (ObjectClass === Lamp) this.lampInstances.push(new Lamp(this.scene, adjustedPosition));
-          if (ObjectClass === HandMotif) this.handMotifInstances.push(new HandMotif(this.scene, adjustedPosition));
-          if (ObjectClass === GeometricShape) this.geometricShapeInstances.push(new GeometricShape(this.scene, adjustedPosition));
-          if (ObjectClass === HospitalElement) this.hospitalElementInstances.push(new HospitalElement(this.scene, adjustedPosition));
+          const randomRotation = new Vector3(
+            Math.random() * Math.PI * 0.2 - Math.PI * 0.1,
+            Math.random() * Math.PI * 2,
+            Math.random() * Math.PI * 0.2 - Math.PI * 0.1
+          );
+
+          if (ObjectClass === Lamp) this.lampInstances.push(new Lamp(this.scene, adjustedPosition, randomRotation));
+          if (ObjectClass === HandMotif) this.handMotifInstances.push(new HandMotif(this.scene, adjustedPosition, randomRotation));
+          if (ObjectClass === GeometricShape) this.geometricShapeInstances.push(new GeometricShape(this.scene, adjustedPosition, randomRotation));
+          if (ObjectClass === HospitalElement) this.hospitalElementInstances.push(new HospitalElement(this.scene, adjustedPosition, randomRotation));
           if (ObjectClass === EnvironmentalLightElement) this.environmentalLightElementInstances.push(new EnvironmentalLightElement(this.scene, adjustedPosition));
         }
       });

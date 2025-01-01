@@ -20,9 +20,10 @@ export class HospitalElement {
   private directionalLight: DirectionalLight;
   private pointLight: PointLight;
 
-  constructor(scene: Scene, position: Vector3) {
+  constructor(scene: Scene, position: Vector3, rotation: Vector3 = new Vector3(0, 0, 0)) {
     this.mainNode = new TransformNode("hospitalElement", scene);
     this.mainNode.position = position;
+    this.mainNode.rotation = rotation;
 
     // Main building material
     const buildingMaterial = new StandardMaterial("hospitalBuildingMaterial", scene);
