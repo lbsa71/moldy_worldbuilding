@@ -47,16 +47,16 @@ export class EnvironmentSystem {
     this.terrain = terrain;
     
     // Clear previous instances
-    // console.log("Clearing previous instances");
-    // this.lampInstances.forEach(lamp => lamp.dispose());
-    // this.handMotifInstances.forEach(hand => hand.dispose());
-    // this.geometricShapeInstances.forEach(shape => shape.dispose());
-    // this.hospitalElementInstances.forEach(hospital => hospital.dispose());
+    console.log("Clearing previous instances");
+    this.lampInstances.forEach(lamp => lamp.dispose());
+    this.handMotifInstances.forEach(hand => hand.dispose());
+    this.geometricShapeInstances.forEach(shape => shape.dispose());
+    this.hospitalElementInstances.forEach(hospital => hospital.dispose());
     
-    // this.lampInstances = [];
-    // this.handMotifInstances = [];
-    // this.geometricShapeInstances = [];
-    // this.hospitalElementInstances = [];
+    this.lampInstances = [];
+    this.handMotifInstances = [];
+    this.geometricShapeInstances = [];
+    this.hospitalElementInstances = [];
 
     // If no objects to create, return early
     if (!objectNames?.length) {
@@ -332,17 +332,17 @@ export class EnvironmentSystem {
 
     // GeometricShape
     this.geometricShapeInstances.forEach((geometricShape) => {
-      geometricShape.setVisibility(this.debug ? 1 : Math.min(1, trust * 2));
+      geometricShape.setVisibility(0.5);
     });
 
     // HospitalElement
     this.hospitalElementInstances.forEach((hospitalElement) => {
-      hospitalElement.setVisibility(this.debug ? 1 : (hospital_clarity ? Math.min(1, trust * 3) : 0));
+      hospitalElement.setVisibility(0.5);
     });
 
     // EnvironmentalLightElement
     this.environmentalLightElementInstances.forEach((lightElement) => {
-      lightElement.setVisibility(this.debug ? 1 : Math.min(1, trust * 2));
+      lightElement.setVisibility(0.5);
     });
   }
 

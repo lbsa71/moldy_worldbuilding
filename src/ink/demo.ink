@@ -175,7 +175,6 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
     -> end_credits
 
 === trust_ending_distant ===
-# objects:
 # position: (90,2)
 # fog: 0.15
 # audio soundtrack_3.mp3

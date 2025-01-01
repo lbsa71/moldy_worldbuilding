@@ -10,7 +10,7 @@ import Game from '../components/Game.astro';
         <title>Moldy Worldbuilding</title>
     </head>
     <body>
-        <div id="title-screen" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #f0e68c;">
+        <div id="title-screen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f0e68c; z-index: 10;">
             <cite style="max-width: 50%;">"Once, a philosopher dreamt he was a butterfly, drifting effortlessly on the wind. In his dream, he knew no care, no burden, only the joy of being. But when he awoke, he was no longer certain: was he a man who had dreamt he was a butterfly, or a butterfly now dreaming he was a man?"
                 </cite>
                 <p/>
@@ -27,14 +27,10 @@ import Game from '../components/Game.astro';
 
                 startButton.addEventListener('click', () => {
                     const titleScreen = document.getElementById('title-screen');
-                    const gameContainer = document.getElementById('game-container');
-
                     console.log("Removing title screen");
-                    if(titleScreen && gameContainer)
-                {
-                    titleScreen.style.display = 'none';
-                    gameContainer.style.display = 'flex';
-                }
+                    if(titleScreen) {
+                        titleScreen.style.display = 'none';
+                    }
                  
                 });
 
