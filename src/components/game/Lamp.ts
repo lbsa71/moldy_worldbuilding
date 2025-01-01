@@ -24,12 +24,11 @@ export class Lamp {
       scene
     );
     this.pole.position = position.clone();
-    this.pole.position.y += 1.5;
+    this.pole.position.y += 1;
 
     // Create lamp mesh
     this.mesh = MeshBuilder.CreateSphere("lampMesh", { diameter: 1 }, scene);
-    this.mesh.position = position.clone();
-    this.mesh.position.y += 3;
+    this.mesh.position = this.pole.position.clone();
     this.mesh.parent = this.pole;
 
     // Create light

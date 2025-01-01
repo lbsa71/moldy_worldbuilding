@@ -50,7 +50,7 @@ export class HospitalElement {
       diameter: 2.2,
       tessellation: 4,
     }, scene);
-    roof.rotation.z = Math.PI / 4;
+    roof.rotation.y = Math.PI / 4;
     roof.position.y = 0.9;
     roof.material = roofMaterial;
     roof.parent = this.mainNode;

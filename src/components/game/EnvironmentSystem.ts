@@ -319,15 +319,7 @@ export class EnvironmentSystem {
 
     // HandMotif
     this.handMotifInstances.forEach((handMotif, index) => {
-        let visibility = 0;
-        if (this.debug) visibility = 1;
-        else {
-          if (index === 0) visibility = Math.min(1, trust * 2);
-          if (index === 1) visibility = Math.min(1, trust * 3);
-          if (index === 2) visibility = Math.min(1, trust * 4);
-          if (index === 3) visibility = Math.max(0, 1 - (trust * 2));
-        }
-        handMotif.setVisibility(visibility);
+        handMotif.setVisibility(0.5);
     });
 
     // GeometricShape
