@@ -108,10 +108,10 @@ export class GameScene {
       const buttonName = `choice${index}`;
       const button = Button.CreateSimpleButton(buttonName, choice.text);
       button.width = "30%";
-      button.height = "40px";
+      button.height = "55px";
       button.color = "white";
       button.background = "black";
-      button.top = `${(index + 1) * 50 + 50}px`;
+      button.top = `${(index + 1) * 65 + 30}px`;
       button.left = "20px";
       button.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
       button.onPointerUpObservable.add(() => this.handleChoiceClick(index));
