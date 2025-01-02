@@ -22,13 +22,13 @@ VAR reborn = false
 A distant, unnamed voice whispers, gentle but present:
 "The light... it holds more than empty space. I can sense you."
 
-* [A subtle glow on your right calls to you, like a gentle invitation...]
+* [A subtle glow on calls to you, like a gentle invitation.]
     -> trust_path_1
-* [Something stirs in the haze beyond, carrying faint echoes of memory...]
+* [Something stirs in the haze beyond, carrying faint echoes of memory.]
     -> memory_path_1
-* [An enveloping hush extends to the left, inviting a deeper silence...]
+* [An enveloping hush extends, inviting a deeper silence.]
     -> silence_path_1
-* [A soft pull below tugs at your curiosity, uncertain but compelling...]
+* [A soft pull below tugs at your curiosity, uncertain but compelling.]
     -> uncertain_path_1
 
 ////////////////////////////////////////////////////////
@@ -366,6 +366,7 @@ The stillness is almost tangible. Soft currents in the fog seem to swirl around 
 -> silence_path_2
 
 === silence_path_2 ===
+# audio soundtrack_2.mp3
 # objects: hand, geometric
 # position: (-40,0)
 # fog: 0.8
@@ -433,12 +434,10 @@ A faint glow still hints behind you; the voice grows calm:
     -> silence_path_4a
 
 === silence_path_4a ===
-# objects:
 The path ahead seems gently illuminated, beckoning you onward.
 -> silence_path_5
 
 === silence_path_5 ===
-# objects: geometric
 # position: (-90,0)
 # fog: 0.15
 You arrive at a serene open space, the fog thinning to reveal gentle shapes.
@@ -454,7 +453,6 @@ You arrive at a serene open space, the fog thinning to reveal gentle shapes.
 }
 
 === silence_ending_warm ===
-# objects: hand
 # position: (-90,2)
 # fog: 0.05
 # audio soundtrack_3.mp3
