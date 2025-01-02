@@ -58,7 +58,7 @@ A subtle current of fog swirls around your feet, acknowledging your motionless p
 -> trust_path_2
 
 === trust_path_2 ===
-# objects: hand, hand
+# objects: geometric, hand, hand
 # position: (40,0)
 # fog: 0.8
 The path continues in a gentle line, with silhouettes of hands emerging in the fog.

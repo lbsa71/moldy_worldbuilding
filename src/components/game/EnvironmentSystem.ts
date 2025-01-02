@@ -30,6 +30,7 @@ export class EnvironmentSystem {
   private environmentalLightElementInstances: EnvironmentalLightElement[] = [];
   private debug: boolean = false;
   private terrain: AbstractMesh | null = null;
+  private firstObjectPosition: Vector3 | null = null;
 
   constructor(private scene: Scene) {
     this.treeMaterial = this.createTreeMaterial();
@@ -48,6 +49,7 @@ export class EnvironmentSystem {
     
     // Clear previous instances
     console.log("Clearing previous instances");
+
     this.lampInstances.forEach(lamp => lamp.dispose());
     this.handMotifInstances.forEach(hand => hand.dispose());
     this.geometricShapeInstances.forEach(shape => shape.dispose());
@@ -70,6 +72,8 @@ export class EnvironmentSystem {
     const centerX = position?.x || 0;
     const centerZ = position?.z || 0;
     
+    this.clearFirstObjectPosition();
+
     objectNames.forEach((objectName, index) => {
       // Calculate spread position around the center point
       const angle = angleStep * index;
@@ -86,6 +90,11 @@ export class EnvironmentSystem {
 
 
         console.log(`Creating ${objectName} at position:`, adjustedPosition);
+        
+        // Store the first object's position
+        if (!this.firstObjectPosition) {
+          this.firstObjectPosition = adjustedPosition.clone();
+        }
         
         try {
           // Calculate rotation to face center while maintaining slight tilt
@@ -320,5 +329,13 @@ export class EnvironmentSystem {
   public toggleDebug(): void {
     this.debug = !this.debug;
     console.log("Debug mode:", this.debug);
+  }
+
+  public getFirstObjectPosition(): Vector3 | null {
+    return this.firstObjectPosition;
+  }
+
+  public clearFirstObjectPosition(): void {
+    this.firstObjectPosition = null;
   }
 }

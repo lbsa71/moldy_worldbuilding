@@ -13,6 +13,7 @@ export class CameraSystem {
   private cameraHeightOffset = 5;
   private cameraDistanceFromCharacter = 15;
   private cameraSmoothingFactor = 0.1;
+  private cameraFocus? : Vector3;
 
   constructor(scene: Scene, canvas: HTMLCanvasElement) {
     this.camera = new ArcRotateCamera(
@@ -111,5 +112,9 @@ export class CameraSystem {
   public setCameraTarget(target: Vector3): void {
     this.cameraTarget = target;
     this.camera.target = target;
+  }
+
+  public setCameraFocus(target?: Vector3): void {
+    this.cameraFocus = target;
   }
 }
