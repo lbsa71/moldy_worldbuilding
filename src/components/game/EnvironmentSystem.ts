@@ -65,7 +65,7 @@ export class EnvironmentSystem {
     }
 
     // Calculate spread positions around the target position
-    const radius = 3; // Smaller spread radius
+    const radius = 5; // Smaller spread radius
     const angleStep = (2 * Math.PI) / objectNames.length;
     const centerX = position?.x || 0;
     const centerZ = position?.z || 0;
@@ -288,42 +288,6 @@ export class EnvironmentSystem {
       1 + Math.random() * 1.5
     );
     this.instances.push(instance);
-  }
-
-  private createObjectInstances(): void {
-    if (!this.terrain) return;
-
-    const objectPositions = [
-      { class: Lamp, positions: [new Vector3(0, 0, 1), new Vector3(90, 20, 0)] },
-      { class: HandMotif, positions: [new Vector3(10, 2, 0), new Vector3(40, 8, 0), new Vector3(60, 12, 0), new Vector3(100, 22, 0)] },
-      { class: GeometricShape, positions: [new Vector3(20, 4, 0), new Vector3(30, 6, 0)] },
-      { class: HospitalElement, positions: [new Vector3(70, 14, 0), new Vector3(40, 8, 0), new Vector3(100, 22, 0)] },
-      { class: EnvironmentalLightElement, positions: [new Vector3(30, 6, 0), new Vector3(60, 12, 0), new Vector3(80, 16, 0)] },
-    ];
-
-    objectPositions.forEach(({ class: ObjectClass, positions }) => {
-      positions.forEach(position => {
-        const ray = new Ray(new Vector3(position.x, 100, position.z), new Vector3(0, -1, 0), 200);
-        const hit = this.scene.pickWithRay(ray, (mesh) => mesh === this.terrain);
-
-        if (hit?.pickedPoint) {
-          const adjustedPosition = hit.pickedPoint.add(new Vector3(0, 1, 0));
-          // Calculate angle to face origin (0,0,0)
-          const angle = Math.atan2(adjustedPosition.z, adjustedPosition.x);
-          const rotation = new Vector3(
-            Math.random() * Math.PI * 0.2 - Math.PI * 0.1, // Slight tilt on X
-            angle + Math.PI / 2,                           // Y rotation to face origin
-            Math.random() * Math.PI * 0.2 - Math.PI * 0.1  // Slight tilt on Z
-          );
-
-          if (ObjectClass === Lamp) this.lampInstances.push(new Lamp(this.scene, adjustedPosition, rotation));
-          if (ObjectClass === HandMotif) this.handMotifInstances.push(new HandMotif(this.scene, adjustedPosition, rotation));
-          if (ObjectClass === GeometricShape) this.geometricShapeInstances.push(new GeometricShape(this.scene, adjustedPosition, rotation));
-          if (ObjectClass === HospitalElement) this.hospitalElementInstances.push(new HospitalElement(this.scene, adjustedPosition, rotation));
-          if (ObjectClass === EnvironmentalLightElement) this.environmentalLightElementInstances.push(new EnvironmentalLightElement(this.scene, adjustedPosition));
-        }
-      });
-    });
   }
 
   public updateObjectVisibilities(trust: number, hospital_clarity: boolean): void {

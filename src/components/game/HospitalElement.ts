@@ -21,6 +21,9 @@ export class HospitalElement {
   private pointLight: PointLight;
 
   constructor(scene: Scene, position: Vector3, rotation: Vector3 = new Vector3(0, 0, 0)) {
+    
+    rotation = rotation.add(new Vector3(0,-60,0));
+    
     this.mainNode = new TransformNode("hospitalElement", scene);
     this.mainNode.position = position;
     this.mainNode.rotation = rotation;
