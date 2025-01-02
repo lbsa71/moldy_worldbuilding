@@ -3,10 +3,7 @@ import {
   Scene,
   Vector3,
   WebGPUEngine,
-  ArcRotateCamera,
   Color4,
-  Matrix,
-  PointerEventTypes,
   Ray,
   AbstractMesh,
   KeyboardEventTypes,
@@ -24,23 +21,19 @@ import { AtmosphereSystem } from "./game/AtmosphereSystem";
 import { EnvironmentSystem } from "./game/EnvironmentSystem";
 import { Character } from "./game/Character";
 import { AudioSystem } from "./game/AudioSystem";
+import { CameraSystem } from "./game/CameraSystem";
 import { loadInkFile, getCurrentDialogue, choose } from "../utils/ink";
 
 export class GameScene {
   private engine!: Engine;
   private scene!: Scene;
-  private camera!: ArcRotateCamera;
   private terrain!: TerrainSystem;
   private atmosphere!: AtmosphereSystem;
   private environment!: EnvironmentSystem;
   private character!: Character;
+  private cameraSystem!: CameraSystem;
   private initialized = false;
   private isWebGPU = false;
-  private cameraTarget = Vector3.Zero();
-  private cameraOffset: Vector3;
-  private cameraSmoothingFactor = 0.1;
-  private cameraHeightOffset = 5;
-  private cameraDistanceFromCharacter = 15;
   private guiTexture!: any;
   private dialogueText!: any;
   private currentStory: any;
@@ -52,13 +45,7 @@ export class GameScene {
   private enableCharacter = true; // Toggle for character
   private audioSystem!: AudioSystem;
 
-  constructor(private canvas: HTMLCanvasElement) {
-    this.cameraOffset = new Vector3(
-      0,
-      this.cameraHeightOffset,
-      -this.cameraDistanceFromCharacter
-    );
-  }
+  constructor(private canvas: HTMLCanvasElement) {}
 
   public setStory(story: any): void {
     this.currentStory = story;
@@ -67,7 +54,7 @@ export class GameScene {
   public async initialize(): Promise<void> {
     try {
       await this.setupEngine();
-      this.setupCamera();
+      this.cameraSystem = new CameraSystem(this.scene, this.canvas);
       await this.initializeSystems();
       this.setupGUI();
       if (this.enableInk && this.currentStory) {
@@ -191,56 +178,6 @@ export class GameScene {
     this.scene.gravity = new Vector3(0, -9.81, 0);
   }
 
-  private setupCamera(): void {
-    this.camera = new ArcRotateCamera(
-      "camera",
-      Math.PI * 0.75,
-      Math.PI * 0.35,
-      this.cameraDistanceFromCharacter,
-      this.cameraTarget,
-      this.scene
-    );
-
-    this.camera.attachControl(this.canvas, true);
-    this.camera.lowerRadiusLimit = 15;
-    this.camera.upperRadiusLimit = 50;
-    this.camera.wheelDeltaPercentage = 0.01;
-
-    this.camera.upperBetaLimit = Math.PI / 2.2;
-    this.camera.lowerBetaLimit = Math.PI / 4;
-
-    this.camera.inertia = 0.7;
-    this.camera.angularSensibilityX = 500;
-    this.camera.angularSensibilityY = 500;
-
-    this.camera.panningSensibility = 0;
-  }
-
-  private updateCameraPosition(): void {
-    if (!this.character) return;
-
-    const characterPos = this.character.getPosition();
-
-    this.cameraTarget = Vector3.Lerp(
-      this.cameraTarget,
-      new Vector3(
-        characterPos.x,
-        characterPos.y + this.cameraHeightOffset,
-        characterPos.z
-      ),
-      this.cameraSmoothingFactor
-    );
-
-    this.camera.target = this.cameraTarget;
-  }
-
-  private lerpAngle(start: number, end: number, factor: number): number {
-    let difference = end - start;
-    while (difference < -Math.PI) difference += Math.PI * 2;
-    while (difference > Math.PI) difference -= Math.PI * 2;
-    return start + difference * factor;
-  }
-
   private async initializeSystems(): Promise<void> {
     try {
       // Initialize audio system first
@@ -285,13 +222,15 @@ export class GameScene {
                 hit.pickedPoint.z
               )
             );
-            this.cameraTarget = hit.pickedPoint.clone();
+            this.cameraSystem.setCameraTarget(hit.pickedPoint.clone());
           }
         }
       }
 
       this.scene.registerBeforeRender(() => {
-        this.updateCameraPosition();
+        if (this.character) {
+          this.cameraSystem.updatePosition(this.character.getPosition());
+        }
       });
 
       console.log("Systems initialization complete");

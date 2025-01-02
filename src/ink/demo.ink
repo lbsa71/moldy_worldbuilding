@@ -36,7 +36,7 @@ A distant, unnamed voice whispers, gentle but present:
 ////////////////////////////////////////////////////////
 
 === trust_path_1 ===
-# objects: hand
+# objects: lamp
 # position: (20,0)
 # fog: 0.95
 You shift toward the faint glow to your right. The voice follows, reflecting your resolute presence:
@@ -52,7 +52,7 @@ You shift toward the faint glow to your right. The voice follows, reflecting you
     -> trust_path_1_still
 
 === trust_path_1_still ===
-# objects:
+# objects: lamp
 The lamp glimmers gently in your peripheral vision as you hold your ground, neither pressing forward nor retreating.
 A subtle current of fog swirls around your feet, acknowledging your motionless presence.
 -> trust_path_2
