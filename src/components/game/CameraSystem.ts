@@ -1,108 +1,59 @@
-import {
-  Scene,
-  Vector3,
-  ArcRotateCamera,
-  Animation,
-  EasingFunction,
-  CubicEase,
-} from "@babylonjs/core";
+import { Scene, Vector3, ArcRotateCamera } from "@babylonjs/core";
 
 export class CameraSystem {
   private camera: ArcRotateCamera;
-  private cameraTarget = Vector3.Zero();
-  private cameraHeightOffset = 5;
-  private cameraDistanceFromCharacter = 15;
-  private cameraSmoothingFactor = 0.1;
-  private cameraFocus? : Vector3;
+  private heightOffset = 10; // Fixed height above avatar
+  private maxRadius = 10; // Maximum distance in x/z plane
+  private adjustmentSpeed = 0.05; // How quickly to adjust position/rotation
 
   constructor(scene: Scene, canvas: HTMLCanvasElement) {
+    // Start behind and above the character
     this.camera = new ArcRotateCamera(
       "camera",
-      Math.PI * 0.75,
-      Math.PI * 0.35,
-      this.cameraDistanceFromCharacter,
-      this.cameraTarget,
+      Math.PI, // Start facing forward (behind character)
+      Math.PI / 4, // 45 degree angle down
+      this.maxRadius,
+      Vector3.Zero(),
       scene
     );
 
-    this.setupCamera(canvas);
-  }
-
-  private setupCamera(canvas: HTMLCanvasElement): void {
+    // Basic camera setup
     this.camera.attachControl(canvas, true);
-    this.camera.lowerRadiusLimit = 15;
-    this.camera.upperRadiusLimit = 50;
-    this.camera.wheelDeltaPercentage = 0.01;
-
+    this.camera.panningSensibility = 0; // Disable panning
+    
+    // Limit camera angle to prevent weird views
     this.camera.upperBetaLimit = Math.PI / 2.2;
     this.camera.lowerBetaLimit = Math.PI / 4;
-
-    this.camera.inertia = 0.7;
-    this.camera.angularSensibilityX = 500;
-    this.camera.angularSensibilityY = 500;
-
-    this.camera.panningSensibility = 0;
   }
 
   public updatePosition(characterPosition: Vector3): void {
-    this.cameraTarget = Vector3.Lerp(
-      this.cameraTarget,
-      new Vector3(
-        characterPosition.x,
-        characterPosition.y + this.cameraHeightOffset,
-        characterPosition.z
-      ),
-      this.cameraSmoothingFactor
-    );
-
-    this.camera.target = this.cameraTarget;
-  }
-
-  public animateToPosition(
-    targetPosition: Vector3,
-    targetAlpha: number,
-    targetBeta: number,
-    frameRate = 30,
-    duration = 120
-  ): void {
-    const ease = new CubicEase();
-    ease.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
-
-    Animation.CreateAndStartAnimation(
-      "cameraPosition",
-      this.camera,
-      "position",
-      frameRate,
-      duration,
-      this.camera.position,
-      targetPosition,
-      0,
-      ease
-    );
-
-    Animation.CreateAndStartAnimation(
-      "cameraAlpha",
-      this.camera,
-      "alpha",
-      frameRate,
-      duration,
-      this.camera.alpha,
-      targetAlpha,
-      0,
-      ease
-    );
-
-    Animation.CreateAndStartAnimation(
-      "cameraBeta",
-      this.camera,
-      "beta",
-      frameRate,
-      duration,
-      this.camera.beta,
-      targetBeta,
-      0,
-      ease
-    );
+    // Calculate ideal camera height
+    const targetHeight = characterPosition.y + this.heightOffset;
+    
+    // Get current camera position in x/z plane
+    const currentPos = this.camera.position;
+    const characterXZ = new Vector3(characterPosition.x, 0, characterPosition.z);
+    const cameraXZ = new Vector3(currentPos.x, 0, currentPos.z);
+    
+    // Calculate distance in x/z plane
+    const xzOffset = cameraXZ.subtract(characterXZ);
+    const xzDistance = xzOffset.length();
+    
+    // If outside max radius, move closer
+    if (xzDistance > this.maxRadius) {
+      const direction = xzOffset.normalize();
+      const targetXZ = characterXZ.add(direction.scale(this.maxRadius));
+      
+      // Smoothly move camera in x/z plane
+      this.camera.position.x += (targetXZ.x - currentPos.x) * this.adjustmentSpeed;
+      this.camera.position.z += (targetXZ.z - currentPos.z) * this.adjustmentSpeed;
+    }
+    
+    // Smoothly adjust height
+    this.camera.position.y += (targetHeight - currentPos.y) * this.adjustmentSpeed;
+    
+    // Update target to look at character
+    this.camera.target = characterPosition;
   }
 
   public getCamera(): ArcRotateCamera {
@@ -110,11 +61,6 @@ export class CameraSystem {
   }
 
   public setCameraTarget(target: Vector3): void {
-    this.cameraTarget = target;
     this.camera.target = target;
-  }
-
-  public setCameraFocus(target?: Vector3): void {
-    this.cameraFocus = target;
   }
 }

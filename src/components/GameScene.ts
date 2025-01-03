@@ -128,11 +128,7 @@ export class GameScene {
         this.environment.createObjectsFromTag(objectsArray, this.terrain.terrain, position || undefined);
         this.environment.updateObjectVisibilities(trust, hospital_clarity);
 
-        // If we have objects, set camera focus to first object
-        const firstObjectPosition = this.environment.getFirstObjectPosition();
-        if (firstObjectPosition) {
-          this.cameraSystem.setCameraFocus(firstObjectPosition);
-        }
+        // Camera always follows character smoothly now
       }
     }
   }
