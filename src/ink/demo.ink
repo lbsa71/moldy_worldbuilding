@@ -2,7 +2,7 @@ VAR trust = 0
 VAR visited_memory = false
 VAR acknowledged_silence = false
 VAR hospital_clarity = false
-VAR reborn = false
+VAR reborn = 0
 
 -> start
 
@@ -13,7 +13,7 @@ VAR reborn = false
 # fog: 1.0
 
 {
-    - reborn:
+    - reborn > 0:
         You find yourself returning to a dimly lit crossroads, the soft glow of a single lamp familiar yet renewed.
     - else:
         You stand at a dimly lit crossroads, where a single lamp glows softly through shifting fog.
@@ -135,6 +135,8 @@ The soft glow ahead feels closer, as though welcoming you onward.
 A gentle clearing opens in the fog. The lamp is far behind, though its glow lingers in memory.
 "I sense a resolution. Not an end, but a gentle release. You followed, listened, questioned. I can feel your trust..."
 
+~ reborn = reborn + 1
+
 {
     - (trust > 2):
         -> trust_ending_warm
@@ -153,11 +155,7 @@ The environment settles into soft light. The hand motifs slowly fade, leaving a 
 The voice sighs contentedly:
 "Some moments don't need names or clear shapes. Thank you for sharing this one."
 
-* [Dream]
-    ~ reborn = true
-    -> start
-* [Wake Up]
-    -> end_credits
+-> dream_or_wake_up
 
 === trust_ending_reflective ===
 # objects: hospital
@@ -167,11 +165,7 @@ The voice sighs contentedly:
 The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
 "Not all memories resolve neatly, but you saw enough to make it matter. May your journey carry quiet understanding forward."
 
-* [Dream]
-    ~ reborn = true
-    -> start
-* [Wake Up]
-    -> end_credits
+-> dream_or_wake_up
 
 === trust_ending_distant ===
 # position: (90,2)
@@ -180,11 +174,7 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
 The environment dims slightly, but not coldly—just a respectful distance.
 "We existed here briefly, touched by curiosity. Perhaps that's enough."
 
-* [Dream]
-    ~ reborn = true
-    -> start
-* [Wake Up]
-    -> end_credits
+-> dream_or_wake_up
 
 ////////////////////////////////////////////////////////
 // MEMORY PATH: from (0,0) to (0,90)
@@ -288,6 +278,8 @@ You sense a softening in the air, as though acknowledging your role in this memo
 A softly-lit point opens in the haze, where clinical geometry and gentle calm mingle.
 "I sense a resolution. Not an end, but a gentle release. You followed, listened, questioned. I can feel your trust..."
 
+~ reborn = reborn + 1
+
 {
     - (trust > 2):
         -> memory_ending_warm
@@ -306,11 +298,7 @@ The environment settles into soft light. The hand motifs slowly fade, leaving a 
 The voice sighs contentedly:
 "Some moments don't need names or clear shapes. Thank you for sharing this one."
 
-* [Dream]
-    ~ reborn = true
-    -> start
-* [Wake Up]
-    -> end_credits
+-> dream_or_wake_up
 
 === memory_ending_reflective ===
 # objects: hospital
@@ -320,11 +308,7 @@ The voice sighs contentedly:
 The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
 "Not all memories resolve neatly, but you saw enough to make it matter. May your journey carry quiet understanding forward."
 
-* [Dream]
-    ~ reborn = true
-    -> start
-* [Wake Up]
-    -> end_credits
+-> dream_or_wake_up
 
 === memory_ending_distant ===
 # objects:
@@ -334,11 +318,7 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
 The environment dims slightly, though not coldly—just a respectful distance.
 "We existed here briefly, touched by curiosity. Perhaps that's enough."
 
-* [Dream]
-    ~ reborn = true
-    -> start
-* [Wake Up]
-    -> end_credits
+-> dream_or_wake_up
 
 ////////////////////////////////////////////////////////
 // SILENCE PATH: from (0,0) to (-90,0)
@@ -443,6 +423,8 @@ The path ahead seems gently illuminated, beckoning you onward.
 You arrive at a serene open space, the fog thinning to reveal gentle shapes.
 "I sense a resolution. Not an end, but a gentle release. You followed, listened, questioned. I can feel your trust..."
 
+~ reborn = reborn + 1
+
 {
     - (trust > 2):
         -> silence_ending_warm
@@ -460,11 +442,7 @@ The environment settles into soft light. The hand motifs slowly fade, leaving a 
 The voice sighs contentedly:
 "Some moments don't need names or clear shapes. Thank you for sharing this one."
 
-* [Dream]
-    ~ reborn = true
-    -> start
-* [Wake Up]
-    -> end_credits
+-> dream_or_wake_up
 
 === silence_ending_reflective ===
 # objects: hospital
@@ -474,11 +452,7 @@ The voice sighs contentedly:
 The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
 "Not all memories resolve neatly, but you saw enough to make it matter. May your journey carry quiet understanding forward."
 
-* [Dream]
-    ~ reborn = true
-    -> start
-* [Wake Up]
-    -> end_credits
+-> dream_or_wake_up
 
 === silence_ending_distant ===
 # objects:
@@ -488,11 +462,7 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
 The environment dims slightly, but not coldly—just a respectful distance.
 "We existed here briefly, touched by curiosity. Perhaps that's enough."
 
-* [Dream]
-    ~ reborn = true
-    -> start
-* [Wake Up]
-    -> end_credits
+-> dream_or_wake_up
 
 ////////////////////////////////////////////////////////
 // UNCERTAINTY PATH: from (0,0) to (0,-90)
@@ -595,6 +565,8 @@ A gentle pulse resonates in the gloom, as though affirming your acceptance of wh
 The fog here is thin, though the lamp is far behind. The voice is calm, almost resolute:
 "I sense a resolution. Not an end, but a gentle release. You followed, listened, questioned. I can feel your trust..."
 
+~ reborn = reborn + 1
+
 {
     - (trust > 2):
         -> uncertain_ending_warm
@@ -613,11 +585,7 @@ The environment settles into soft light. The hand motifs slowly fade, leaving a 
 The voice sighs contentedly:
 "Some moments don't need names or clear shapes. Thank you for sharing this one."
 
-* [Dream]
-    ~ reborn = true
-    -> start
-* [Wake Up]
-    -> end_credits
+-> dream_or_wake_up
 
 === uncertain_ending_reflective ===
 # objects: hospital
@@ -627,11 +595,7 @@ The voice sighs contentedly:
 The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
 "Not all memories resolve neatly, but you saw enough to make it matter. May your journey carry quiet understanding forward."
 
-* [Dream]
-    ~ reborn = true
-    -> start
-* [Wake Up]
-    -> end_credits
+-> dream_or_wake_up
 
 === uncertain_ending_distant ===
 # objects:
@@ -641,11 +605,15 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
 The environment dims slightly, but not coldly—just a respectful distance.
 "We existed here briefly, touched by curiosity. Perhaps that's enough."
 
-* [Dream]
-    ~ reborn = true
-    -> start
-* [Wake Up]
-    -> end_credits
+-> dream_or_wake_up
+
+=== dream_or_wake_up ===
+{
+    - (reborn < 4):
+        + [Dream] -> start
+    - else:
+        * [Wake Up] -> end_credits
+}
 
 ////////////////////////////////////////////////////////
 // END CREDITS

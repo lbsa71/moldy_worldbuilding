@@ -2,15 +2,15 @@ import { Scene, Vector3, ArcRotateCamera } from "@babylonjs/core";
 
 export class CameraSystem {
   private camera: ArcRotateCamera;
-  private heightOffset = 10; // Fixed height above avatar
-  private maxRadius = 10; // Maximum distance in x/z plane
+  private heightOffset = 12; // Fixed height above avatar
+  private maxRadius = 20; // Maximum distance in x/z plane
   private adjustmentSpeed = 0.05; // How quickly to adjust position/rotation
 
   constructor(scene: Scene, canvas: HTMLCanvasElement) {
     // Start behind and above the character
     this.camera = new ArcRotateCamera(
       "camera",
-      Math.PI, // Start facing forward (behind character)
+      Math.PI / 3, // Start facing forward (behind character)
       Math.PI / 4, // 45 degree angle down
       this.maxRadius,
       Vector3.Zero(),
