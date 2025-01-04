@@ -13,7 +13,12 @@ VAR reborn = 0
 # fog: 1.0
 
 {
-    - reborn > 0:
+    - reborn == 3:
+        As you once again thread the path, this time feels different. A notion that this might be the end.
+    - reborn == 2:
+        Once again you return to the familiarity of that single lamp at the crossroads. 
+        Where will your dreams take you this time?
+    - reborn == 1:
         You find yourself returning to a dimly lit crossroads, the soft glow of a single lamp familiar yet renewed.
     - else:
         You stand at a dimly lit crossroads, where a single lamp glows softly through shifting fog.
@@ -129,7 +134,6 @@ The soft glow ahead feels closer, as though welcoming you onward.
 -> trust_path_5
 
 === trust_path_5 ===
-# objects:
 # position: (90,0)
 # fog: 0.15
 A gentle clearing opens in the fog. The lamp is far behind, though its glow lingers in memory.
@@ -610,10 +614,10 @@ The environment dims slightly, but not coldly—just a respectful distance.
 === dream_or_wake_up ===
 {
     - (reborn < 4):
-        + [Dream] -> start
-    - else:
-        * [Wake Up] -> end_credits
+        + [Dream On] -> start
 }
+
+* [Wake Up] -> end_credits
 
 ////////////////////////////////////////////////////////
 // END CREDITS
