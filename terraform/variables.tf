@@ -15,14 +15,12 @@ variable "cloudflare_api_token" {
 variable "cloudflare_account_id" {
   description = "Cloudflare Account ID"
   type        = string
-  default     = "9c653f9fe8d125ea14e33f3f82894614"
   validation {
     condition     = can(regex("^[0-9a-fA-F]{32}$", var.cloudflare_account_id))
     error_message = "Cloudflare Account ID must be a 32-character hex string"
   }
 }
 
-# Optional variables with defaults
 variable "project_name" {
   description = "Project name used for resource naming"
   type        = string
