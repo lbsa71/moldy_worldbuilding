@@ -1,4 +1,5 @@
 import { Scene, Vector3, ArcRotateCamera } from "@babylonjs/core";
+import type { WorldTreatment } from "../../game/content/worldZones";
 
 export class CameraSystem {
   private camera: ArcRotateCamera;
@@ -62,5 +63,11 @@ export class CameraSystem {
 
   public setCameraTarget(target: Vector3): void {
     this.camera.target = target;
+  }
+
+  public applyWorldTreatment(treatment: WorldTreatment["camera"]): void {
+    this.heightOffset = treatment.heightOffset;
+    this.maxRadius = treatment.radius;
+    this.adjustmentSpeed = treatment.adjustmentSpeed;
   }
 }

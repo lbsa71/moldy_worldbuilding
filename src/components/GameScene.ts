@@ -31,6 +31,7 @@ import {
   type DialogueHorizontalAlignment,
   type DialoguePresentation,
 } from "../game/experience/dialoguePresentation";
+import { createWorldTreatment } from "../game/content/worldZones";
 
 export class GameScene {
   private engine!: Engine;
@@ -84,7 +85,8 @@ export class GameScene {
   private progressStory(): void {
     if (!this.currentStory) return;
 
-    const { text, choices, position, audio, objects } = getCurrentDialogue(this.currentStory);
+    const { text, choices, position, fog, audio, objects } =
+      getCurrentDialogue(this.currentStory);
 
     if (audio) {
       void this.audioSystem.playAudio(audio);
@@ -107,12 +109,13 @@ export class GameScene {
       );
     }
 
-    // Get trust value and update atmosphere
+    // Get route state and update atmosphere
     if (this.enableAtmosphere) {
       const trust = this.currentStory.variablesState.trust || 0;
-      this.atmosphere.updateFog(trust);
-      
-      // Get hospital clarity and update environment
+      const worldTreatment = createWorldTreatment(position);
+      this.atmosphere.updateFog(fog, position, worldTreatment);
+      this.cameraSystem.applyWorldTreatment(worldTreatment.camera);
+
       const hospital_clarity = this.currentStory.variablesState.hospital_clarity || false;
       if (this.enableEnvironment) {
         // Convert objects to array, defaulting to empty if null/undefined
