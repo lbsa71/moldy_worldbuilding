@@ -1,73 +1,8 @@
-# Object Implementation Requirements for Story Scenes
+# Object Implementation Requirements
 
-Please implement the following objects for our Babylon.js scene. Each object should be defined in its own class file.
+These objects are the scene vocabulary for the current Ink script. They should remain simple enough to compose quickly, but polished enough that every appearance feels intentional.
 
-## Required Objects and Their Locations
-
-### 1. Lamp (Lamp.ts)
-
-Locations:
-
-- (0, 0): Primary lamp in starting crossroads
-- Referenced as "distant memory" at (90, 20)
-  Properties:
-- Emits soft light
-- Glows through fog
-- Should be visible at a distance
-
-### 2. Guiding Hands (HandMotif.ts)
-
-Locations:
-
-- (10, 2): First appearance as "subtle silhouettes of hands"
-- (40, 8): "faint hand motifs emerge and recede"
-- (60, 12): Clearer hand motifs "almost like companions"
-- (100, 22): Final appearance where they "slowly fade" in ending_warm
-  Properties:
-- Fade in/out capability
-- Gentle floating animation
-- Should be visible through fog
-- Varying levels of transparency based on scene
-
-### 3. Geometric Shapes (GeometricShape.ts)
-
-Locations:
-
-- (20, 4): First appearance as "vague geometric shapes hovering in the distance"
-- (30, 6): "outlines of shifting pathways"
-- Throughout later scenes as background elements
-  Properties:
-- Various basic geometric forms
-- Subtle rotation/hover movement
-- Semi-transparent
-- Should become more defined as fog decreases
-
-### 4. Hospital Elements (HospitalElement.ts)
-
-Locations:
-
-- (70, 14): When hospital_clarity is true, "faint murmurs and gentle beeps"
-- (40, 8): References to "beeping machines"
-- (100, 22): In ending_reflective, "hints of hospital memory"
-  Properties:
-- Semi-transparent/ethereal appearance
-- Basic hospital equipment shapes (IV stands, monitors, etc.)
-- Only visible when hospital_clarity is true
-- Intensity varies based on scene context
-
-### 5. Environmental Light Elements
-
-Locations:
-
-- (30, 6): "pathways, each lit differently"
-- (60, 12): Where "fog forms gentle patterns"
-- (80, 16): "gentle upward lift" effect
-  Properties:
-- Different types of lighting effects
-- Should interact with fog
-- Varying intensities and colors
-
-Each class should have a standard interface:
+Each object class should expose:
 
 ```typescript
 class ObjectName {
@@ -78,4 +13,76 @@ class ObjectName {
 }
 ```
 
-Note: Objects should be able to fade in/out smoothly based on scene transitions and fog density. Some objects appear in multiple scenes with varying levels of clarity/visibility.
+## Lamp
+
+Role:
+- The fixed point of the dream.
+- The first evidence that the world can hold still.
+
+Production requirements:
+- Warm falloff and visible glow through fog.
+- Strong silhouette from a distance.
+- Should feel handmade or old, not sterile.
+
+Narrative usage:
+- Appears at the crossroads and trust beats.
+- Should remain emotionally present even when not physically visible.
+
+## Hand Motif
+
+Role:
+- Care, touch, interruption, reaching, and release.
+
+Production requirements:
+- Fade and hover smoothly.
+- Multiple instances should feel like an orbit or memory trace rather than clutter.
+- Alpha and light intensity should be controllable per beat.
+
+Narrative usage:
+- Trust route: hands become safe.
+- Memory route: handprints and care gestures.
+- Silence route: a single dimming/resting hand.
+- Uncertainty route: conflicting guide/warning hands.
+
+## Geometric Shape
+
+Role:
+- Unstable architecture of memory: frames, corridors, rails, ceiling panels.
+
+Production requirements:
+- Slow rotation and hover.
+- Semi-transparent material with clear silhouettes.
+- Variants should avoid looking like placeholder primitives.
+
+Narrative usage:
+- Memory route: clinical geometry and corridors.
+- Uncertainty route: ambiguous frames and doorways.
+
+## Hospital Element
+
+Role:
+- The medical memory made visible without literalizing the whole scene.
+
+Production requirements:
+- Suggest IV stands, monitors, bed rails, and chairs.
+- Ethereal material treatment; never bright white plastic.
+- Visibility should respond to `hospital_clarity`.
+
+Narrative usage:
+- Reflective endings should make hospital forms feel like evidence of care.
+- Uncertainty route can overlap hospital and hand imagery.
+
+## Environmental Light Element
+
+Role:
+- Mood transition and route identity.
+
+Production requirements:
+- Warm soft light for trust.
+- Sparse pulse or monitor-light for memory and silence.
+- Unstable low light for uncertainty.
+- Must interact believably with fog and avoid washing out dialogue.
+
+## Spatial Note
+
+Objects can appear near positions beyond the 100x100 terrain. That liminal band is intentional: route endings should feel like the player has crossed past ordinary ground.

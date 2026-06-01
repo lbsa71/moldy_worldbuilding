@@ -14,26 +14,27 @@ VAR reborn = 0
 
 {
     - reborn == 3:
-        As you once again thread the path, this time feels different. A notion that this might be the end.
+        The crossroads returns almost before you ask for it. The lamp is waiting, patient as a held breath.
     - reborn == 2:
-        Once again you return to the familiarity of that single lamp at the crossroads. 
-        Where will your dreams take you this time?
+        Again, the dream folds you back to the lamp. Its light knows the shape of your shadow now.
     - reborn == 1:
-        You find yourself returning to a dimly lit crossroads, the soft glow of a single lamp familiar yet renewed.
+        You wake inside the same dim clearing, though the fog has learned your name without speaking it.
     - else:
-        You stand at a dimly lit crossroads, where a single lamp glows softly through shifting fog.
+        You stand where four paths meet. A single lamp burns in the fog, too steady for this place.
 }
 
-A distant, unnamed voice whispers, gentle but present:
-"The light... it holds more than empty space. I can sense you."
+A voice gathers at the edge of hearing.
 
-* [A subtle glow on calls to you, like a gentle invitation.]
+"You came through the dark. I felt the air change when you arrived."
+
+* [Step into the lamp's circle.]
     -> trust_path_1
-* [Something stirs in the haze beyond, carrying faint echoes of memory.]
+* [Follow the metallic pulse in the mist.]
     -> memory_path_1
-* [An enveloping hush extends, inviting a deeper silence.]
+* [Stay quiet until the fog answers.]
+    ~ acknowledged_silence = true
     -> silence_path_1
-* [A soft pull below tugs at your curiosity, uncertain but compelling.]
+* [Walk away from the lamp and into uncertainty.]
     -> uncertain_path_1
 
 ////////////////////////////////////////////////////////
@@ -44,43 +45,47 @@ A distant, unnamed voice whispers, gentle but present:
 # objects: lamp
 # position: (20,0)
 # fog: 0.95
-You shift toward the faint glow to your right. The voice follows, reflecting your resolute presence:
-"I remember a place with a buzzing light overhead... and soft footsteps. Everything else shifts, but this... this remains."
+You step closer to the lamp. Its light does not brighten, but it begins to feel less alone.
 
-* [Stand steady, letting your calm presence acknowledge the light]
+The voice follows carefully:
+
+"There was another light once. White, buzzing, always above me. This one is kinder."
+
+* [Tell the voice you will stay near the light.]
     ~ trust += 1
     -> trust_path_1_still
-* [Step forward, testing the boundaries of the haze]
+* [Ask what made the other light cruel.]
     -> trust_path_2
-* [Remain still momentarily, becoming one with the silence]
+* [Answer by standing still inside the glow.]
     ~ acknowledged_silence = true
     -> trust_path_1_still
 
 === trust_path_1_still ===
 # objects: lamp
-The lamp glimmers gently in your peripheral vision as you hold your ground, neither pressing forward nor retreating.
-A subtle current of fog swirls around your feet, acknowledging your motionless presence.
+The lamp hums through the soles of your feet. The voice takes your stillness as permission, not refusal.
+
 -> trust_path_2
 
 === trust_path_2 ===
 # objects: geometric, hand, hand
 # position: (40,0)
 # fog: 0.8
-The path continues in a gentle line, with silhouettes of hands emerging in the fog.
-The whisper returns:
-"In those old rooms, there were murmurs of concern... hands adjusting something above me."
+Two pale hands surface in the fog, not reaching for you so much as remembering how to reach.
 
-* [Your understanding radiates warmth toward those remembered hands]
+"Someone kept adjusting things above me. Tubes, maybe. Straps. I remember their fingers before I remember their face."
+
+* [Treat the remembered hands as careful, not threatening.]
     ~ trust += 1
     -> trust_path_2a
-* [Encourage the memory to unfold naturally]
+* [Look for the face the voice cannot keep.]
     -> trust_path_2a
-* [Your stillness creates space for the memory to breathe]
+* [Let the hands pass without naming them.]
     ~ acknowledged_silence = true
     -> trust_path_2a
 
 === trust_path_2a ===
-You remain present in this moment. The shapes in the fog seem to respond to your patient attention.
+The hands dissolve into thin green light. The path ahead steadies under your attention.
+
 -> trust_path_3
 
 === trust_path_3 ===
@@ -88,20 +93,22 @@ You remain present in this moment. The shapes in the fog seem to respond to your
 # objects: hand
 # position: (60,0)
 # fog: 0.6
-The fog patterns stabilize at your approach:
-"There's meaning in how you respond. Silence, words... each shapes how I remember."
+The fog thins enough to show your own footsteps behind you.
 
-* [Follow the steady, warm glow that feels like trust]
+"When you choose gently, the room in me becomes less sharp."
+
+* [Offer the gentleness on purpose.]
     ~ trust += 1
     -> trust_path_3a
-* [Choose the path where light cuts clear lines through space]
+* [Follow the clearer ground without speaking.]
     -> trust_path_3a
-* [Let yourself drift toward the uncertain, but remain on this track]
+* [Pull back before the voice depends on you.]
     ~ trust -= 1
     -> trust_path_3a
 
 === trust_path_3a ===
-You sense the environment shifting in subtle response to your choice.
+A warm current moves outward from the lamp, touching each marker you have passed.
+
 -> trust_path_4
 
 === trust_path_4 ===
@@ -109,35 +116,36 @@ You sense the environment shifting in subtle response to your choice.
 # position: (80,0)
 # fog: 0.3
 # audio soundtrack_2.mp3
-As you near an unseen horizon, the voice clarifies:
-"I think... I was watched over. Maybe cared for. Now, you're here doing something similar—holding space."
+The hands return in a slow orbit, three soft signs around a body neither of you can see.
 
 {
     - trust > 2:
-        "I feel your intent deeply. The trust we've built gives shape to this space."
+        "I think I was held together by people who were afraid to lose me. You feel different, but you are holding something too."
     - else:
-        "I sense your intent. Perhaps names limit what we can become. Here, we are free to just be."
+        "I cannot tell whether care saved me or only delayed the leaving. Still, your attention makes a shape I can stand inside."
 }
 
-* [Embrace the reality of this nameless connection]
+* [Accept the fragile bond without trying to own it.]
     ~ trust += 1
     -> trust_path_4a
-* [Contemplate the layers of what was and what is]
+* [Ask what the voice wants you to carry forward.]
     -> trust_path_4a
-* [Rest in the warmth of wordless understanding]
+* [Let the orbit continue in silence.]
     ~ acknowledged_silence = true
     -> trust_path_4a
 
 === trust_path_4a ===
 # objects:
-The soft glow ahead feels closer, as though welcoming you onward.
+The last hand fades. What remains is not emptiness; it is room.
+
 -> trust_path_5
 
 === trust_path_5 ===
 # position: (90,0)
 # fog: 0.15
-A gentle clearing opens in the fog. The lamp is far behind, though its glow lingers in memory.
-"I sense a resolution. Not an end, but a gentle release. You followed, listened, questioned. I can feel your trust..."
+The path opens into a clearing where the lamp is only a memory of warmth behind you.
+
+"If I am fading, then perhaps this is how fading should feel: witnessed, but not trapped."
 
 ~ reborn = reborn + 1
 
@@ -155,9 +163,9 @@ A gentle clearing opens in the fog. The lamp is far behind, though its glow ling
 # position: (90,2)
 # fog: 0.05
 # audio soundtrack_3.mp3
-The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth.
-The voice sighs contentedly:
-"Some moments don't need names or clear shapes. Thank you for sharing this one."
+A single hand of light unfolds above the clearing, palm open, asking for nothing.
+
+"You did not fix me. You stayed long enough for me to stop being afraid of vanishing."
 
 -> dream_or_wake_up
 
@@ -166,8 +174,9 @@ The voice sighs contentedly:
 # position: (90,2)
 # fog: 0.08
 # audio soundtrack_3.mp3
-The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
-"Not all memories resolve neatly, but you saw enough to make it matter. May your journey carry quiet understanding forward."
+A bedrail shape glints in the grass, then softens until it could be moonlight.
+
+"The room was real, then. So was the care. So is this strange mercy of being seen after it."
 
 -> dream_or_wake_up
 
@@ -175,8 +184,9 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
 # position: (90,2)
 # fog: 0.15
 # audio soundtrack_3.mp3
-The environment dims slightly, but not coldly—just a respectful distance.
-"We existed here briefly, touched by curiosity. Perhaps that's enough."
+The clearing keeps its distance, gentle but wide.
+
+"Maybe we were only two lights passing through fog. Even that is more than nothing."
 
 -> dream_or_wake_up
 
@@ -188,21 +198,25 @@ The environment dims slightly, but not coldly—just a respectful distance.
 # objects: geometric
 # position: (0,20)
 # fog: 0.95
-You step forward, drawn by a stirring in the haze that seems to carry faint echoes of distant recollections.
-The voice softly continues:
-"The light... it stays. But everything else shifts... I recall a buzzing overhead, and soft footsteps."
+You follow the metallic pulse. Rectangles gather in the vapor, then tilt away before they become walls.
 
-* [The clinical familiarity stirs recognition: "Was it a hospital?"]
+"The sound came in pieces. A machine keeping count. Shoes stopping outside a door."
+
+* [Name the room as a hospital.]
     ~ hospital_clarity = true
+    ~ visited_memory = true
     -> memory_path_1a
-* [Let the memory unfold, your presence encouraging more]
+* [Let the room remain unfinished.]
+    ~ visited_memory = true
     -> memory_path_1a
-* [Your stillness invites deeper recollection]
+* [Listen for the machine beneath the fog.]
     ~ acknowledged_silence = true
+    ~ visited_memory = true
     -> memory_path_1a
 
 === memory_path_1a ===
-A faint stirring of memory grows in the air, as if responding to your invitation.
+The pulse answers with a faint click, like a latch opening somewhere too far away.
+
 -> memory_path_2
 
 === memory_path_2 ===
@@ -210,77 +224,84 @@ A faint stirring of memory grows in the air, as if responding to your invitation
 # objects: hospital, geometric
 # position: (0,40)
 # fog: 0.8
-Vague geometric shapes hover above, reminiscent of rails or distant doorways.
-"In that old place, I recall beeping machines. Someone checked on me... I never saw their face, but they seemed kind."
+Clinical shapes rise from the ground: a rail, a hanging bag, a square of cold ceiling.
 
-* [Acknowledge how these shapes might be hospital elements]
+"No face stays. Only gestures. Someone checked the numbers and touched my wrist before leaving."
+
+* [Say that the touch mattered.]
+    ~ trust += 1
     ~ hospital_clarity = true
     -> memory_path_2a
-* [Draw closer to the geometry, seeking more details]
+* [Search the shapes for what they are hiding.]
     -> memory_path_2a
-* [Encourage the memory gently with your silent attention]
+* [Stand beside the bed-shape without judgment.]
     ~ acknowledged_silence = true
     -> memory_path_2a
 
 === memory_path_2a ===
 # objects:
-The shapes shift slightly, as though revealing glimpses of a long-ago reality.
+The rail lowers itself into the fog, no longer a barrier, not quite a bridge.
+
 -> memory_path_3
 
 === memory_path_3 ===
 # objects: hand, hand
 # position: (0,60)
-# fog: 0.05
-The fog thins, revealing the shifting outlines of reaching hands.
-"There's meaning in how you respond. Silence, words... each shapes how I remember."
+# fog: 0.5
+Two handprints appear on the invisible glass between then and now.
 
-* [Steady your presence, radiating warmth toward the memory]
+"I kept trying to wake into a room that would not keep still."
+
+* [Press your palm to the nearest handprint.]
     ~ trust += 1
     -> memory_path_3a
-* [Move closer to the shapes, drawn by their significance]
+* [Ask what waking felt like.]
     -> memory_path_3a
-* [Let the rhythm of the memory set its own pace]
+* [Breathe slowly until the handprints stop shaking.]
     ~ acknowledged_silence = true
     -> memory_path_3a
 
 === memory_path_3a ===
-Your surroundings feel more stable, as though memory and presence intertwine.
+The glass is gone when you look again. Your palm is cold, but not empty.
+
 -> memory_path_4
 
 === memory_path_4 ===
 # objects: hospital
 # position: (0,80)
 # fog: 0.3
-Hints of medical equipment echo through the space, dreamlike. The voice grows closer:
-"I think... someone was caring for me. Maybe you’re doing something similar now."
+The hospital symbols lose their edges. They become weather, then architecture, then almost kindness.
 
 {
     - trust > 2:
-        "I feel your intent deeply. The trust we've built gives shape to this space."
+        "I know now that I was not abandoned. Fear made the room look empty."
     - else:
-        "Perhaps names limit what we can become, but your presence shapes these memories."
+        "I cannot prove anyone stayed. But the memory of touch keeps arguing with the fear."
 }
 
-* [Let your presence anchor this recollection]
+* [Anchor the memory to care instead of terror.]
     ~ trust += 1
+    ~ hospital_clarity = true
     -> memory_path_4a
-* [Quietly share the weight of memory]
+* [Admit that memory can be incomplete and still true.]
+    -> memory_path_4a
+* [Keep watch until the shapes settle.]
     ~ acknowledged_silence = true
-    -> memory_path_4a
-* [Observe the hospital-like shapes intently]
     -> memory_path_4a
 
 === memory_path_4a ===
 # objects: geometric, hospital
-You sense a softening in the air, as though acknowledging your role in this memory.
+The ceiling square opens into sky. The machine-count becomes part of the music.
+
 -> memory_path_5
 
 === memory_path_5 ===
 # objects: geometric, hospital
 # position: (0,90)
 # fog: 0.15
-A softly-lit point opens in the haze, where clinical geometry and gentle calm mingle.
-"I sense a resolution. Not an end, but a gentle release. You followed, listened, questioned. I can feel your trust..."
+A pale corridor stretches ahead, but it no longer insists on being entered.
+
+"Some doors are remembered only because someone kept opening them for us."
 
 ~ reborn = reborn + 1
 
@@ -298,9 +319,9 @@ A softly-lit point opens in the haze, where clinical geometry and gentle calm mi
 # position: (0,92)
 # fog: 0.05
 # audio soundtrack_3.mp3
-The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth.
-The voice sighs contentedly:
-"Some moments don't need names or clear shapes. Thank you for sharing this one."
+The handprints become small lights along the corridor floor.
+
+"If I had to be carried, then let me remember the carrying. Let that be the final room."
 
 -> dream_or_wake_up
 
@@ -309,8 +330,9 @@ The voice sighs contentedly:
 # position: (0,92)
 # fog: 0.08
 # audio soundtrack_3.mp3
-The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
-"Not all memories resolve neatly, but you saw enough to make it matter. May your journey carry quiet understanding forward."
+The corridor folds into a quiet ward with no walls, only breathable space.
+
+"A hospital is not only pain. Sometimes it is the shape care takes when time is running out."
 
 -> dream_or_wake_up
 
@@ -319,8 +341,9 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
 # position: (0,92)
 # fog: 0.15
 # audio soundtrack_3.mp3
-The environment dims slightly, though not coldly—just a respectful distance.
-"We existed here briefly, touched by curiosity. Perhaps that's enough."
+The corridor dims before it can offer certainty.
+
+"I wanted the past to become clear. Perhaps it is enough that it became softer."
 
 -> dream_or_wake_up
 
@@ -332,21 +355,23 @@ The environment dims slightly, though not coldly—just a respectful distance.
 # objects:
 # position: (-20,0)
 # fog: 0.95
-You drift left, where an enveloping hush seems to deepen. The voice seems intrigued by your quiet approach:
-"I can feel your presence even if you don't speak. There's a gentle focus to silence..."
+You do not answer the voice. The fog shifts anyway, slow and attentive.
 
-* [Continue in silence, letting the environment respond]
+"There. That is different. Most things in dreams demand a name. You let me remain unfinished."
+
+* [Keep the silence open.]
     ~ acknowledged_silence = true
     -> silence_path_1a
-* [Step on quietly, encouraging the voice to reveal more]
+* [Move quietly, careful not to break the hush.]
     -> silence_path_2
-* ["Tell me about that buzzing light you mentioned?"]
+* [Ask one small question about the buzzing light.]
     ~ trust += 1
     -> silence_path_2
 
 === silence_path_1a ===
 # objects:
-The stillness is almost tangible. Soft currents in the fog seem to swirl around you, noticing your peaceful stance.
+The hush gathers around you like a room with all the furniture removed.
+
 -> silence_path_2
 
 === silence_path_2 ===
@@ -354,43 +379,47 @@ The stillness is almost tangible. Soft currents in the fog seem to swirl around 
 # objects: hand, geometric
 # position: (-40,0)
 # fog: 0.8
-Fog swirls in layers, as though listening with you. The voice returns:
-"In that old place... there were hands adjusting something, a gentle hum. Maybe it was a hospital, maybe just a memory of care."
+Shapes appear only at the edge of vision. A hand. A frame. The suggestion of a monitor.
 
-* [Let the memory surface in stillness]
+"Silence was not empty there either. It had machines in it. Breathing. Shoes. A pause before bad news."
+
+* [Let the machines become part of the quiet.]
     ~ acknowledged_silence = true
     -> silence_path_2a
-* [Reach out quietly, offering warmth]
+* [Offer warmth without adding words.]
     ~ trust += 1
     -> silence_path_2a
-* [Ask about who was adjusting the equipment]
+* [Look for the person behind the pause.]
     ~ hospital_clarity = true
     -> silence_path_2a
 
 === silence_path_2a ===
 # objects:
-A distant echo of gentle footsteps crosses your awareness, as though memory is awakening.
+For a moment the whole world seems to inhale with you.
+
 -> silence_path_3
 
 === silence_path_3 ===
 # objects:
 # position: (-60,0)
 # fog: 0.6
-The environment shifts in subtle, rhythmic patterns:
-"Sometimes words only disturb the understanding. There's meaning in how you simply remain."
+The ground beneath the fog pulses in a rhythm too slow to be a heartbeat, too tender to be weather.
 
-* [Embrace the quiet, focusing on the environment’s changes]
+"I thought silence meant no one was coming. But you are here, and you are quiet, and I am less alone."
+
+* [Stay until the rhythm steadies.]
     ~ acknowledged_silence = true
     -> silence_path_3a
-* [Offer a small reassurance that you are present]
+* [Say only that you are here.]
     ~ trust += 1
     -> silence_path_3a
-* [Keep listening for hospital clues]
+* [Listen for the room beyond the rhythm.]
     -> silence_path_3a
 
 === silence_path_3a ===
 # objects:
-A soft hush envelops you, acknowledging your choice.
+The rhythm settles into the path ahead.
+
 -> silence_path_4
 
 === silence_path_4 ===
@@ -398,34 +427,35 @@ A soft hush envelops you, acknowledging your choice.
 # position: (-80,0)
 # fog: 0.3
 # audio soundtrack_2.mp3
-A faint glow still hints behind you; the voice grows calm:
-"Your silence tells me you're willing to share space without defining it. Your words tell me you're searching."
+A single hand rises, palm down, like someone dimming a lamp for rest.
 
 {
     - trust > 2:
-        "I feel your intent deeply. The trust we've built gives shape to this space."
+        "You have taught the quiet to hold me instead of erase me."
     - else:
-        "Perhaps names limit what we can become. Here, we are free to just be."
+        "I still do not know what I am, but I know the quiet can have company."
 }
 
-* [Rest in the warmth of wordless understanding]
+* [Rest beside the hand until it lowers.]
     ~ acknowledged_silence = true
     -> silence_path_4a
-* [Embrace the intangible connection forming here]
+* [Let the shared quiet become trust.]
     ~ trust += 1
     -> silence_path_4a
-* [Remain quietly observant, seeing how the environment responds]
+* [Watch without deciding what the hand means.]
     -> silence_path_4a
 
 === silence_path_4a ===
-The path ahead seems gently illuminated, beckoning you onward.
+The hand lowers into the mist. The path remains, clean and narrow.
+
 -> silence_path_5
 
 === silence_path_5 ===
 # position: (-90,0)
 # fog: 0.15
-You arrive at a serene open space, the fog thinning to reveal gentle shapes.
-"I sense a resolution. Not an end, but a gentle release. You followed, listened, questioned. I can feel your trust..."
+The quiet opens into a wide basin of dim light.
+
+"You did not fill the silence. You stayed with it until it stopped being a threat."
 
 ~ reborn = reborn + 1
 
@@ -442,9 +472,9 @@ You arrive at a serene open space, the fog thinning to reveal gentle shapes.
 # position: (-90,2)
 # fog: 0.05
 # audio soundtrack_3.mp3
-The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth.
-The voice sighs contentedly:
-"Some moments don't need names or clear shapes. Thank you for sharing this one."
+The basin glows from below, each ripple answering the next.
+
+"If there is a last sound, I hope it is like this: someone breathing nearby, unafraid."
 
 -> dream_or_wake_up
 
@@ -453,8 +483,9 @@ The voice sighs contentedly:
 # position: (-90,2)
 # fog: 0.08
 # audio soundtrack_3.mp3
-The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
-"Not all memories resolve neatly, but you saw enough to make it matter. May your journey carry quiet understanding forward."
+A monitor-light blinks once under the water, then becomes a star.
+
+"The machines were counting down, maybe. But they were also proof that someone was still counting me."
 
 -> dream_or_wake_up
 
@@ -463,8 +494,9 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
 # position: (-90,2)
 # fog: 0.15
 # audio soundtrack_3.mp3
-The environment dims slightly, but not coldly—just a respectful distance.
-"We existed here briefly, touched by curiosity. Perhaps that's enough."
+The basin keeps its secrets, but it no longer feels hostile.
+
+"I cannot follow you past this quiet. I can only be grateful that you crossed it with me."
 
 -> dream_or_wake_up
 
@@ -476,41 +508,45 @@ The environment dims slightly, but not coldly—just a respectful distance.
 # objects:
 # position: (0,-20)
 # fog: 0.95
-You feel a subtle pull downward, drawing you into denser fog. The voice wavers, curious about your choice:
-"The light remains behind us. But let's see what else emerges... Everything else shifts."
+You leave the lamp behind. The fog thickens, but the dark has texture now.
 
-* [Let yourself be guided by this uncertain pull, curious yet cautious]
+"I do not know whether this is memory or invention. I only know it hurts less when we look at it."
+
+* [Keep walking without demanding an answer.]
     -> uncertain_path_2
-* [Move carefully, letting the environment show its secrets]
+* [Invite the fog to show whatever it can.]
     -> uncertain_path_2
-* [Say nothing, simply continuing]
+* [Say nothing and accept the unfinished path.]
     ~ acknowledged_silence = true
     -> uncertain_path_1a
 
 === uncertain_path_1a ===
 # objects:
-You hold your silence, neither resisting nor fully yielding to the pull, until the fog gently ushers you forward.
+Your silence does not clear the fog. It makes the fog honest.
+
 -> uncertain_path_2
 
 === uncertain_path_2 ===
 # objects: hand, hand, hand
 # position: (0,-40)
 # fog: 0.8
-Shadows of reaching hands flicker through the haze:
-"There were footsteps. Adjustments. Maybe a hospital, maybe not. It's all uncertain, yet meaningful."
+Three hands flicker in different directions, each one almost a guide and almost a warning.
 
-* [Slow your movements, letting the environment settle]
+"There were footsteps. There were adjustments. There was a smell like clean metal. None of it agrees with itself."
+
+* [Slow down so the fragments can catch up.]
     -> uncertain_path_2a
-* [Embrace the hush of not knowing]
+* [Let not-knowing be part of the care.]
     ~ acknowledged_silence = true
     -> uncertain_path_2a
-* [Ask softly if it was a hospital]
+* [Ask whether the clean metal belonged to a hospital.]
     ~ hospital_clarity = true
     -> uncertain_path_2a
 
 === uncertain_path_2a ===
 # objects:
-The haze shifts slightly, as if acknowledging your openness—or your questions.
+The hands turn translucent. Their disagreement becomes a kind of map.
+
 -> uncertain_path_3
 
 === uncertain_path_3 ===
@@ -518,56 +554,60 @@ The haze shifts slightly, as if acknowledging your openness—or your questions.
 # position: (0,-60)
 # fog: 0.6
 # audio soundtrack_2.mp3
-The voice draws nearer, as though gathering courage in your presence:
-"There's meaning in how you respond. Silence, words... each shapes how I remember."
+A tilted frame hangs in the air. It could be a window, a doorway, or the edge of a bed.
 
-* [Choose to let the environment lead, uncertain but present]
-    -> uncertain_path_3a
-* [Whisper a gentle reassurance]
+"If I choose the wrong memory, do I become less real?"
+
+* [Tell the voice that uncertainty is not failure.]
     ~ trust += 1
     -> uncertain_path_3a
-* [Observe quietly, letting the memory form on its own]
+* [Step through the frame before it decides what it is.]
+    -> uncertain_path_3a
+* [Wait for the question to stop shaking.]
     ~ acknowledged_silence = true
     -> uncertain_path_3a
 
 === uncertain_path_3a ===
 # objects:
-A subtle warmth stirs in the fog, responding to your presence.
+The frame opens onto more fog, but the fog is warmer than before.
+
 -> uncertain_path_4
 
 === uncertain_path_4 ===
 # objects: hand, hospital
 # position: (0,-80)
 # fog: 0.3
-The surrounding shapes remain indistinct, yet a subtle warmth begins to form:
-"I think... I was watched over. Maybe cared for. Now, you're here, doing something similar—holding space."
+A hand and a hospital shape overlap until neither can be trusted alone.
 
 {
     - trust > 2:
-        "I feel your intent deeply. The trust we've built gives shape to this space."
+        "Maybe care is not certainty. Maybe it is the hand that stays even when the story is broken."
     - else:
-        "I sense your intent. Perhaps names limit what we can become."
+        "I wanted one clean answer. The dream keeps giving me fragments with fingerprints on them."
 }
 
-* [Encourage the unseen shapes to emerge]
+* [Choose compassion over certainty.]
+    ~ trust += 1
     -> uncertain_path_4a
-* [Reflect quietly on the mention of care]
+* [Let the fragments remain unfinished.]
     ~ acknowledged_silence = true
     -> uncertain_path_4a
-* [Acknowledge that not all is meant to be clear]
+* [Study where the hand and hospital meet.]
     -> uncertain_path_4a
 
 === uncertain_path_4a ===
 # objects:
-A gentle pulse resonates in the gloom, as though affirming your acceptance of what remains undefined.
+The overlap loosens. Neither image wins, and both remain.
+
 -> uncertain_path_5
 
 === uncertain_path_5 ===
 # objects: geometric
 # position: (0,-90)
 # fog: 0.15
-The fog here is thin, though the lamp is far behind. The voice is calm, almost resolute:
-"I sense a resolution. Not an end, but a gentle release. You followed, listened, questioned. I can feel your trust..."
+At the end of the path, uncertainty becomes a dark room with an open door.
+
+"I may never know what part of me is memory. But I know what your presence changed."
 
 ~ reborn = reborn + 1
 
@@ -585,9 +625,9 @@ The fog here is thin, though the lamp is far behind. The voice is calm, almost r
 # position: (0,-92)
 # fog: 0.05
 # audio soundtrack_3.mp3
-The environment settles into soft light. The hand motifs slowly fade, leaving a gentle imprint of warmth.
-The voice sighs contentedly:
-"Some moments don't need names or clear shapes. Thank you for sharing this one."
+The open door fills with a hand-shaped glow.
+
+"You let the broken pieces remain broken, and still you treated them as worth holding."
 
 -> dream_or_wake_up
 
@@ -596,8 +636,9 @@ The voice sighs contentedly:
 # position: (0,-92)
 # fog: 0.08
 # audio soundtrack_3.mp3
-The environment holds a gentle hum, hints of hospital memory mixed with natural calm.
-"Not all memories resolve neatly, but you saw enough to make it matter. May your journey carry quiet understanding forward."
+The room reveals a hospital chair beside an empty bed, its vinyl cracked with age.
+
+"If the memory is incomplete, then let the missing parts be honored instead of solved."
 
 -> dream_or_wake_up
 
@@ -606,8 +647,9 @@ The environment holds a gentle hum, hints of hospital memory mixed with natural 
 # position: (0,-92)
 # fog: 0.15
 # audio soundtrack_3.mp3
-The environment dims slightly, but not coldly—just a respectful distance.
-"We existed here briefly, touched by curiosity. Perhaps that's enough."
+The door remains open, but no light chooses to cross it.
+
+"Some answers keep their backs turned. I can still thank you for walking this far."
 
 -> dream_or_wake_up
 
@@ -627,12 +669,12 @@ The environment dims slightly, but not coldly—just a respectful distance.
 # objects:
 # fog: 0.1
 # audio end_credits.mp3
-The journey is not the answer, nor is the destination.
-It is the act of seeking that shapes who we are.
-Perhaps you are waking from a dream, or perhaps you are only now beginning to dream.
-Who you are—man, butterfly, or something beyond labels—need not be decided.
-What matters is that you live.
-To see, to feel, to wonder: this is the essence of your being.
+The lamp goes out without drama.
+
+For a moment there is only the afterimage: a hand, a room, a corridor, a breath.
+
+Then even the afterimage becomes yours to carry or release.
 
 Wake up. Your life is waiting.
+
 -> END
