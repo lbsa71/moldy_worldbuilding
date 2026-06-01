@@ -1,5 +1,5 @@
-import { Choice } from "../inkjs/engine/Choice";
-import { Story } from "../inkjs/ink";
+import type { Choice } from "../inkjs/engine/Choice";
+import type { Story } from "../inkjs/ink";
 
 export function loadInkFile(story: Story): Story {
   return story;
@@ -12,6 +12,13 @@ export type Dialogue = {
   fog: number | null;
   audio: string | null;
   objects: string[] | null;
+};
+
+type DialogueTagState = {
+  audio?: string;
+  fog?: number;
+  objects?: string[];
+  position?: { x: number; z: number };
 };
 
 export function getCurrentDialogue(story: Story): Dialogue {
@@ -27,54 +34,54 @@ export function getCurrentDialogue(story: Story): Dialogue {
     text += continuation;
     choices = story.currentChoices;
 
-    const tags = story.currentTags;
-    if (tags) {
-      for (const tag of tags) {
-        const positionMatch = tag.match(/position:\s*\((.*)\)/);
-        if (positionMatch) {
-          try {
-            const splits = positionMatch[1].split(",");
-            const positions = splits.map((s) => parseFloat(s));
-            position = { x: positions[0], z: positions[1] };
-          } catch (e) {
-            console.error("Error parsing position tag:", e);
-          }
-        }
-        const fogMatch = tag.match(/fog:\s*([0-9.]+)/);
-        if (fogMatch) {
-          try {
-            fog = parseFloat(fogMatch[1]);
-          } catch (e) {
-            console.error("Error parsing fog tag:", e);
-          }
-        }
-        const audioMatch = tag.match(/audio\s+(.+)/);
-        if (audioMatch) {
-          audio = audioMatch[1].trim();
-        }
-
-        const objectsMatch = tag.match(/objects:?\s*(.+)?/);
-        if (objectsMatch) {
-          objects = objectsMatch[1] ? objectsMatch[1].split(",").map(s => s.trim()).filter(s => s) : [];
-        }
-      }
-    }
+    const parsedTags = parseDialogueTags(story.currentTags);
+    if (parsedTags.position) position = parsedTags.position;
+    if (parsedTags.fog !== undefined) fog = parsedTags.fog;
+    if (parsedTags.audio !== undefined) audio = parsedTags.audio;
+    if (parsedTags.objects !== undefined) objects = parsedTags.objects;
   }
-  console.log(
-    "Current dialogue:",
-    text,
-    "choices:",
-    choices,
-    "position:",
-    position,
-    "fog:",
-    fog,
-    "objects:",
-    objects
-  );
-  return { text, choices, position, fog, audio, objects: objects };
+  return { text, choices, position, fog, audio, objects };
 }
 
 export function choose(story: Story, choiceIndex: number) {
   story.ChooseChoiceIndex(choiceIndex);
+}
+
+export function parseDialogueTags(
+  tags: string[] | null | undefined
+): DialogueTagState {
+  const parsed: DialogueTagState = {};
+
+  for (const tag of tags ?? []) {
+    const position = parsePositionTag(tag);
+    if (position) parsed.position = position;
+
+    const fogMatch = tag.match(/fog:\s*([0-9.]+)/);
+    if (fogMatch) parsed.fog = Number(fogMatch[1]);
+
+    const audioMatch = tag.match(/audio\s+(.+)/);
+    if (audioMatch) parsed.audio = audioMatch[1].trim();
+
+    const objectsMatch = tag.match(/objects:?\s*(.*)$/);
+    if (objectsMatch) {
+      parsed.objects = objectsMatch[1]
+        .split(",")
+        .map((objectName) => objectName.trim())
+        .filter(Boolean);
+    }
+  }
+
+  return parsed;
+}
+
+function parsePositionTag(tag: string): { x: number; z: number } | undefined {
+  const positionMatch = tag.match(
+    /position:\s*\((-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)\)/
+  );
+  if (!positionMatch) return undefined;
+
+  return {
+    x: Number(positionMatch[1]),
+    z: Number(positionMatch[2]),
+  };
 }
