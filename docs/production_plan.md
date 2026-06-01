@@ -86,20 +86,35 @@ Quality checks:
 - Off-map treatment tests prove `+92` increases fog density, atmospheric mist, camera radius, and camera height.
 - Browser QA covers a route progression with clean console logs and visible scene continuity.
 
+## Iteration 7 - Route-Specific Object Polish
+
+Status: PR opened.
+
+Highest-value improvement:
+- Turn object tags into authored presentation cues: primary versus echo roles, stable variants, scale, vertical offsets, and light emphasis.
+- Make repeated route motifs stage as readable clusters instead of overlapping copies.
+- Remove random geometric prop selection so the same story beat renders consistently across runs.
+
+Quality checks:
+- Planner tests prove repeated tags produce primary/echo staging and vertical separation.
+- Off-map object tests prove liminal beats amplify scale and light intensity.
+- Stable-variant tests ensure deterministic visual selection for implemented object tags.
+- Browser QA covers a route beat with repeated hand props and clean console logs.
+
 ## Next Iteration Candidates
 
-### Scene Composition and Object Polish
+### Character and Movement Polish
 
-Improve mesh-level object polish with smoother fades, stronger silhouettes, and route-specific composition beats.
-
-Reliable assessment:
-- Unit-test tag-to-object planning separately from Babylon mesh creation.
-- Browser QA: first route choice creates visible, non-overlapping objects near the character.
-
-### Route-Specific Object Polish
-
-Improve silhouettes, fades, and object staging for the route props now that object placement is deterministic.
+Improve avatar locomotion, route movement pacing, and camera follow smoothing so transitions between story beats feel performed rather than teleported.
 
 Reliable assessment:
-- Unit-test route-to-object emphasis rules.
-- Browser QA each route's second beat for readable prop placement and no visual overlap.
+- Unit-test pure movement timing/classification helpers.
+- Browser QA route transitions for character/camera continuity and no visual snapping.
+
+### Asset and Bundle Polish
+
+Reduce production bundle warnings and replace remaining placeholder materials with authored palettes/textures where they matter most.
+
+Reliable assessment:
+- Build-size checks around Babylon chunking.
+- Browser QA first route and off-map ending for material readability.
