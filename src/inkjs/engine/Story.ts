@@ -1592,6 +1592,9 @@ export class Story extends InkObject {
               listEnumerator.next();
             }
             let value = listEnumerator.next().value;
+            if (value === undefined) {
+              throw new StoryException("Expected list item for LIST_RANDOM");
+            }
             let randomItem: KeyValuePair<InkListItem, number> = {
               Key: InkListItem.fromSerializedKey(value[0]),
               Value: value[1],
