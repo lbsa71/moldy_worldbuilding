@@ -7,6 +7,11 @@ import {
   Texture,
   HemisphericLight,
 } from "@babylonjs/core";
+import {
+  createWorldTreatment,
+  type WorldPoint,
+  type WorldTreatment,
+} from "../../game/content/worldZones";
 
 export class AtmosphereSystem {
   private groundMist!: ParticleSystem;
@@ -182,30 +187,81 @@ export class AtmosphereSystem {
     return atmosphericSystem;
   }
 
-  public updateFog(fog: number | null): void {
+  public updateFog(
+    fog: number | null,
+    position?: WorldPoint | null,
+    worldTreatment: WorldTreatment = createWorldTreatment(position)
+  ): void {
     if (this.debug) {
       this.scene.fogDensity = 0;
       return;
     }
 
-    if (fog === null) {
-      this.scene.fogDensity = this.initialFogDensity;
-      this.groundMist.emitRate = this.initialGroundMistEmitRate;
-      this.atmosphericMist.emitRate = this.initialAtmosphericMistEmitRate;
-      return;
-    }
+    this.updateMistField(position, worldTreatment);
 
-    this.scene.fogDensity = this.initialFogDensity * fog;
+    const authoredFog = fog ?? 1;
+    const fogIntensity = clamp(authoredFog, 0, 1.5);
+
+    this.scene.fogDensity =
+      this.initialFogDensity *
+      fogIntensity *
+      worldTreatment.fogDensityMultiplier;
+    this.scene.fogColor = new Color3(
+      worldTreatment.fogColor.r,
+      worldTreatment.fogColor.g,
+      worldTreatment.fogColor.b
+    );
 
     // Map fog to particle emission rates
     const minEmitRate = 20;
     const maxGroundEmitRate = this.initialGroundMistEmitRate;
     const maxAtmosphericEmitRate = this.initialAtmosphericMistEmitRate;
+    const groundMistIntensity = clamp(
+      fogIntensity * worldTreatment.groundMistMultiplier,
+      0,
+      1.75
+    );
+    const atmosphericMistIntensity = clamp(
+      fogIntensity * worldTreatment.atmosphericMistMultiplier,
+      0,
+      1.9
+    );
 
     this.groundMist.emitRate =
-      minEmitRate + (maxGroundEmitRate - minEmitRate) * fog;
+      minEmitRate + (maxGroundEmitRate - minEmitRate) * groundMistIntensity;
     this.atmosphericMist.emitRate =
-      minEmitRate + (maxAtmosphericEmitRate - minEmitRate) * fog;
+      minEmitRate +
+      (maxAtmosphericEmitRate - minEmitRate) * atmosphericMistIntensity;
+  }
+
+  private updateMistField(
+    position: WorldPoint | null | undefined,
+    worldTreatment: WorldTreatment
+  ): void {
+    const centerX = position?.x ?? 0;
+    const centerZ = position?.z ?? 0;
+    const extent = worldTreatment.mistExtent;
+
+    this.groundMist.minEmitBox = new Vector3(
+      centerX - extent,
+      0,
+      centerZ - extent
+    );
+    this.groundMist.maxEmitBox = new Vector3(
+      centerX + extent,
+      0.5,
+      centerZ + extent
+    );
+    this.atmosphericMist.minEmitBox = new Vector3(
+      centerX - extent,
+      2,
+      centerZ - extent
+    );
+    this.atmosphericMist.maxEmitBox = new Vector3(
+      centerX + extent,
+      15,
+      centerZ + extent
+    );
   }
 
   public toggleDebug(): void {
@@ -213,4 +269,8 @@ export class AtmosphereSystem {
     console.log("Fog debug mode:", this.debug);
     this.updateFog(null);
   }
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
 }

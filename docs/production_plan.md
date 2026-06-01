@@ -72,6 +72,20 @@ Quality checks:
 - Runtime audio tests cover duplicate suppression, crossfade disposal, and autoplay failure handling without requiring real playback.
 - Browser QA confirms launch and the first route choice run without audio-related console warnings or errors.
 
+## Iteration 6 - Off-Map Atmosphere
+
+Status: PR opened.
+
+Highest-value improvement:
+- Make the intentional off-map coordinates, including `+92`, drive atmosphere and camera treatment instead of merely passing content validation.
+- Restore authored `# fog` tags as the fog input and layer world-zone intensity on top.
+- Move the mist field with the current story position so liminal/off-map route beats remain enveloped by fog.
+
+Quality checks:
+- World-zone tests distinguish grounded terrain, intentional off-map space, and positions outside the liminal envelope.
+- Off-map treatment tests prove `+92` increases fog density, atmospheric mist, camera radius, and camera height.
+- Browser QA covers a route progression with clean console logs and visible scene continuity.
+
 ## Next Iteration Candidates
 
 ### Scene Composition and Object Polish
@@ -82,10 +96,10 @@ Reliable assessment:
 - Unit-test tag-to-object planning separately from Babylon mesh creation.
 - Browser QA: first route choice creates visible, non-overlapping objects near the character.
 
-### Terrain and Off-Map Treatment
+### Route-Specific Object Polish
 
-Make the terrain edge feel intentional: fog, lighting, and camera behavior should communicate the player leaving the reliable world.
+Improve silhouettes, fades, and object staging for the route props now that object placement is deterministic.
 
 Reliable assessment:
-- Add a pure position classifier for grounded versus liminal coordinates.
-- Browser QA a late route node and inspect framing/ground contact.
+- Unit-test route-to-object emphasis rules.
+- Browser QA each route's second beat for readable prop placement and no visual overlap.
