@@ -1,15 +1,35 @@
-I’m building a demo for a narrative-driven web game using Astro, Babylon.js, and Ink (via inkjs). The goal is to load an Ink script, display its dialogues using Babylon.js's GUI system, and move an avatar to a specific position on the ground mesh for each Ink knot (where each knot corresponds to a unique 2D position). 
-My ink parser src/utils/ink.ts loads a minimal Ink script src/ink/demo.ink using inkjs.
+# Current Production Direction
 
-There is already a Babylon.js scene in src/components/GameScene.ts with:
-A ground mesh representing a 2D plane.
-A simple avatar in src/components/game/Character.ts with a src/components/game/CharacterController.ts and a  src/components/game/CharacterSystem.ts
-- this should change to move to specified positions based on the current Ink knot.
-Use Babylon.js GUI for displaying dialogue text and rendering interactive choice buttons.
-Astro Integration:
+## Experience Goal
 
-There's an astro app in src/pages/index.astro and src/components/Game.astro
+Fading is a short contemplative 3D narrative about staying present with a fading consciousness. The player should feel as if they are moving through memory, not solving a puzzle tree.
 
-All interactivity (dialogue, avatar movement, etc.) should occur within the Babylon.js scene.
+The first production bar is not content volume. It is coherence: every line of dialogue, object tag, fog value, and audio transition should feel like part of the same ritual.
 
-Since the audio can't start before the user has interacted with the scene, I need a title screen with the game name and a 'start my journey' button; preferrably designed giving the same pensive melancholic mystical vibe as the world and dialog itdelf. 
+## Interaction Rules
+
+- The game starts only after the player chooses to wake into the scene.
+- Dialogue choices should read as embodied actions, not menu commands.
+- Silence is a first-class response. Silent choices should change tone, trust, or environmental stability.
+- Choices accumulate emotional tendency rather than announce explicit stats.
+- Repetition is allowed only when it is ritualistic and intentional; copied filler lines are not acceptable.
+
+## Spatial Rules
+
+- The terrain is a grounded 100x100 space centered on the lamp.
+- Story positions may intentionally exceed the terrain edge.
+- Positions beyond the terrain are the liminal band: the player is leaving reliable ground, which supports the feeling of going off the map.
+- Liminal positions must stay inside the authored envelope documented in `src/game/content/worldDesign.ts`.
+
+## Narrative Voice
+
+- Concrete sensory images first: lamp, wrist, rail, breath, monitor, corridor, hand.
+- Philosophy should emerge from the situation rather than explain itself.
+- The voice is intimate, careful, and unfinished. It should not sound like a quest giver.
+- Avoid generic phrases such as "the environment responds" unless the sentence names the specific visible or audible response.
+
+## Technical Quality Gates
+
+- `npm run test` must pass before content lands.
+- `npm run validate` must pass before pushing a production iteration.
+- Browser QA should include launch, click-through into the scene, and at least one route choice after narrative or scene changes.

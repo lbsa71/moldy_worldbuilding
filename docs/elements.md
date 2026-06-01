@@ -1,81 +1,63 @@
 # Fading - Core Design Elements
 
-### Universal Constants
+## Universal Motifs
 
-- Single lamp in darkness
-- Presence seeking understanding
-- Hospital memory thread
-- Hand in darkness motif
+- Lamp: a fixed point that makes return possible.
+- Hand: care, interruption, touch, and the fear of being handled.
+- Hospital geometry: rails, monitors, door frames, ceiling panels, empty chairs.
+- Fog: uncertainty made visible.
+- Off-map movement: the player crossing from grounded terrain into liminal memory.
 
-### Three Core Paths
+## Route Identities
 
-Each path reinterprets these constants distinctly:
+### Trust Route
 
-#### Unity Path
+Light is warm and relational. Hands become less threatening as the player treats them with care.
 
-```
-Light: Soft, blending, warm
-Sound: Merged, harmonious
-Form: Diffuse, expanding
-Memory: Hand as connection
-Crisis: Fear of dissolution
-Resolution: Transcendence through connection
-```
+Primary question: can attention hold something without claiming ownership of it?
 
-#### Knowledge/Agency Path
+Scene vocabulary:
+- Lamp remains visible longest.
+- Hands orbit, open, and fade.
+- Fog gradually thins toward a witnessed release.
 
-```
-Light: Sharp, geometric, focused
-Sound: Distinct, rhythmic
-Form: Crystalline, structured
-Memory: Hand as choice
-Crisis: Fear of predetermination
-Resolution: Understanding through reconstruction
-```
+### Memory Route
 
-#### Mystery Path
+Light is clinical at first, then breathable. Hospital fragments become less hostile as the player allows partial memory to matter.
 
-```
-Light: Flowing, shifting
-Sound: Echoing, layered
-Form: Rippling, fluid
-Memory: Hand as question
-Crisis: Fear of meaninglessness
-Resolution: Meaning through seeking
-```
+Primary question: can incomplete memory still carry truth?
 
-### Implementation Guide
+Scene vocabulary:
+- Geometric frames and bedrail shapes.
+- Monitor-like pulse in the music.
+- Corridor and ward imagery near the endings.
 
-1. Track player tendencies through:
+### Silence Route
 
-- Dialogue choice patterns
-- Response to memories
-- Reaction to uncertainty
+Light is low and rhythmic. Silence changes from absence into shared presence.
 
-2. Provide feedback via:
+Primary question: can quiet be company instead of abandonment?
 
-- Light behavior
-- Sound layering
-- Form stability
-- Memory clarity
+Scene vocabulary:
+- Few objects early.
+- Single hand and monitor-light rather than dense object clusters.
+- Slow fog rhythm and basin imagery.
 
-3. Crisis points occur when:
+### Uncertainty Route
 
-- Core questions emerge
-- Stability wavers
-- Reality shifts
-- Identity questions arise
+Light is unstable but not hostile. Conflicting symbols coexist instead of resolving into one answer.
 
-4. Resolution achieved through:
+Primary question: can care survive uncertainty?
 
-- Philosophical consistency
-- Emotional resonance
-- Environmental harmony
-- Memory integration
+Scene vocabulary:
+- Overlapping hand and hospital tags.
+- Tilted frames, open doors, and unresolved dark rooms.
+- Fog remains thicker than in the other routes.
 
-### Development Priority
+## Implementation Guidance
 
-1. Core interaction system
-2. Environmental feedback
-3. Path differentiation
-4. Crisis/resolution mechanics
+- Use `# objects` tags as scene direction, not decoration.
+- Use `# fog` as emotional clarity: lower values should feel earned.
+- Use `# audio` for acts of the story: opening ambience, mid-route emergence, ending release, credits.
+- Keep object names aligned with `NARRATIVE_OBJECT_TYPES` in `src/game/content/worldDesign.ts`.
+- Preserve off-map positions near route culminations; they are part of the game's concept.
