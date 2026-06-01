@@ -86,11 +86,8 @@ export class GameScene {
 
     const { text, choices, position, audio, objects } = getCurrentDialogue(this.currentStory);
 
-    // Handle audio
-    this.audioSystem.play();
-
     if (audio) {
-      this.audioSystem.playAudio(audio);
+      void this.audioSystem.playAudio(audio);
     }
 
     this.currentChoiceTexts = choices.map((choice) => choice.text);
@@ -327,7 +324,7 @@ export class GameScene {
   private async initializeSystems(): Promise<void> {
     try {
       // Initialize audio system first
-      this.audioSystem = new AudioSystem(this.scene);
+      this.audioSystem = new AudioSystem();
       
       if (this.enableAtmosphere) {
         this.atmosphere = new AtmosphereSystem(this.scene);
