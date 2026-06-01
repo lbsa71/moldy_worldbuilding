@@ -114,17 +114,23 @@ export class GameScene {
     // Get route state and update atmosphere
     if (this.enableAtmosphere) {
       const trust = this.currentStory.variablesState.trust || 0;
+      const hospital_clarity =
+        this.currentStory.variablesState.hospital_clarity || false;
       const worldTreatment = createWorldTreatment(position);
       this.atmosphere.updateFog(fog, position, worldTreatment);
       this.cameraSystem.applyWorldTreatment(worldTreatment.camera);
 
-      const hospital_clarity = this.currentStory.variablesState.hospital_clarity || false;
       if (this.enableEnvironment) {
         // Convert objects to array, defaulting to empty if null/undefined
         const objectsArray = objects || [];
         
         // Create new objects
-        this.environment.createObjectsFromTag(objectsArray, this.terrain.terrain, position || undefined);
+        this.environment.createObjectsFromTag(
+          objectsArray,
+          this.terrain.terrain,
+          position || undefined,
+          { trust, hospitalClarity: hospital_clarity }
+        );
         this.environment.updateObjectVisibilities(trust, hospital_clarity);
 
         // Camera always follows character smoothly now

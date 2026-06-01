@@ -19,6 +19,7 @@ import {
   planSceneObjects,
   type SceneObjectPlacement,
   type SceneObjectPresentation,
+  type SceneObjectState,
 } from "../../game/content/sceneObjectPlanner";
 import type { NarrativeObjectType } from "../../game/content/worldDesign";
 
@@ -50,7 +51,8 @@ export class EnvironmentSystem {
   public createObjectsFromTag(
     objectNames: string[],
     terrain: AbstractMesh,
-    position?: { x: number; z: number }
+    position?: { x: number; z: number },
+    state: SceneObjectState = {}
   ): void {
     if (!terrain) {
       console.error("No terrain provided to createObjectsFromTag");
@@ -65,7 +67,11 @@ export class EnvironmentSystem {
       return;
     }
 
-    const placements = planSceneObjects(objectNames, position ?? { x: 0, z: 0 });
+    const placements = planSceneObjects(
+      objectNames,
+      position ?? { x: 0, z: 0 },
+      state
+    );
 
     placements.forEach((placement) => {
       try {

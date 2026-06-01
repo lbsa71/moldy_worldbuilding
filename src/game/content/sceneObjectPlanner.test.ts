@@ -109,4 +109,43 @@ describe("planSceneObjects", () => {
       secondPlan.map((placement) => placement.presentation.variant)
     );
   });
+
+  it("attaches stable material profiles to planned story objects", () => {
+    const firstPlan = planSceneObjects(
+      ["lamp", "hand", "geometric", "hospital"],
+      { x: 24, z: -18 },
+      { trust: 3, hospitalClarity: true }
+    );
+    const secondPlan = planSceneObjects(
+      ["lamp", "hand", "geometric", "hospital"],
+      { x: 24, z: -18 },
+      { trust: 3, hospitalClarity: true }
+    );
+
+    expect(
+      firstPlan.every((placement) => placement.presentation.material.alpha > 0)
+    ).toBe(true);
+    expect(firstPlan.map((placement) => placement.presentation.material)).toEqual(
+      secondPlan.map((placement) => placement.presentation.material)
+    );
+    expect(
+      firstPlan.find((placement) => placement.type === "lamp")?.presentation
+        .material.diffuse.r
+    ).toBeGreaterThan(
+      firstPlan.find((placement) => placement.type === "hand")?.presentation
+        .material.diffuse.r ?? 1
+    );
+  });
+
+  it("carries off-map intensity into material glow", () => {
+    const grounded = planSceneObjects(["geometric"], { x: 0, z: 0 })[0];
+    const offMap = planSceneObjects(["geometric"], { x: 0, z: 92 })[0];
+
+    expect(offMap.presentation.material.glow).toBeGreaterThan(
+      grounded.presentation.material.glow
+    );
+    expect(offMap.presentation.material.emissive.b).toBeGreaterThan(
+      grounded.presentation.material.emissive.b
+    );
+  });
 });

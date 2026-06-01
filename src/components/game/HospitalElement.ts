@@ -11,11 +11,22 @@ import {
   PointLight,
 } from "@babylonjs/core";
 import type { SceneObjectPresentation } from "../../game/content/sceneObjectPlanner";
+import {
+  applySceneObjectMaterial,
+  scaleColor3,
+  setProfileVisibilityAlpha,
+  toColor3,
+} from "./sceneMaterial";
 
 export class HospitalElement {
   private mainNode: TransformNode;
   private meshes: Mesh[] = [];
   private materials: StandardMaterial[] = [];
+  private materialBaseAlphas = new Map<StandardMaterial, number>();
+  private buildingMaterial: StandardMaterial;
+  private roofMaterial: StandardMaterial;
+  private crossMaterial: StandardMaterial;
+  private windowMaterial: StandardMaterial;
   private animation: Animation;
   private isVisible: boolean = false;
   private directionalLight: DirectionalLight;
@@ -31,24 +42,28 @@ export class HospitalElement {
     this.mainNode.rotation = rotation;
 
     // Main building material
-    const buildingMaterial = new StandardMaterial("hospitalBuildingMaterial", scene);
-    buildingMaterial.diffuseColor = new Color3(0.95, 0.95, 0.95);
-    buildingMaterial.specularColor = new Color3(0.2, 0.2, 0.2);
-    buildingMaterial.alpha = 0.5;
-    this.materials.push(buildingMaterial);
+    this.buildingMaterial = this.registerMaterial(
+      new StandardMaterial("hospitalBuildingMaterial", scene),
+      0.5
+    );
+    this.buildingMaterial.diffuseColor = new Color3(0.72, 0.8, 0.88);
+    this.buildingMaterial.specularColor = new Color3(0.1, 0.12, 0.14);
+    this.buildingMaterial.ambientColor = new Color3(0.14, 0.18, 0.2);
 
     // Main building
     const building = MeshBuilder.CreateBox("hospitalBuilding", { width: 2, height: 1.5, depth: 1.2 }, scene);
-    building.material = buildingMaterial;
+    building.material = this.buildingMaterial;
     building.parent = this.mainNode;
     this.meshes.push(building);
 
     // Roof material
-    const roofMaterial = new StandardMaterial("hospitalRoofMaterial", scene);
-    roofMaterial.diffuseColor = new Color3(0.7, 0.8, 0.9);
-    roofMaterial.specularColor = new Color3(0.3, 0.3, 0.3);
-    roofMaterial.alpha = 0.5;
-    this.materials.push(roofMaterial);
+    this.roofMaterial = this.registerMaterial(
+      new StandardMaterial("hospitalRoofMaterial", scene),
+      0.45
+    );
+    this.roofMaterial.diffuseColor = new Color3(0.44, 0.66, 0.84);
+    this.roofMaterial.specularColor = new Color3(0.1, 0.12, 0.14);
+    this.roofMaterial.ambientColor = new Color3(0.1, 0.14, 0.18);
 
     // Roof
     const roof = MeshBuilder.CreateCylinder("hospitalRoof", { 
@@ -58,22 +73,24 @@ export class HospitalElement {
     }, scene);
     roof.rotation.y = Math.PI / 4;
     roof.position.y = 0.9;
-    roof.material = roofMaterial;
+    roof.material = this.roofMaterial;
     roof.parent = this.mainNode;
     this.meshes.push(roof);
 
     // Cross material
-    const crossMaterial = new StandardMaterial("hospitalCrossMaterial", scene);
-    crossMaterial.diffuseColor = new Color3(1, 0, 0);
-    crossMaterial.emissiveColor = new Color3(0.5, 0, 0);
-    crossMaterial.alpha = 0.2;
-    this.materials.push(crossMaterial);
+    this.crossMaterial = this.registerMaterial(
+      new StandardMaterial("hospitalCrossMaterial", scene),
+      0.28
+    );
+    this.crossMaterial.diffuseColor = new Color3(0.66, 0.56, 0.5);
+    this.crossMaterial.emissiveColor = new Color3(0.12, 0.18, 0.24);
+    this.crossMaterial.specularColor = Color3.Black();
 
     // Hospital cross
     const crossVertical = MeshBuilder.CreateBox("crossVertical", { height: 0.6, width: 0.15, depth: 0.1 }, scene);
     const crossHorizontal = MeshBuilder.CreateBox("crossHorizontal", { height: 0.15, width: 0.4, depth: 0.1 }, scene);
-    crossVertical.material = crossMaterial;
-    crossHorizontal.material = crossMaterial;
+    crossVertical.material = this.crossMaterial;
+    crossHorizontal.material = this.crossMaterial;
     crossVertical.position.y = 0.4;
     crossVertical.position.z = 0.65;
     crossHorizontal.position.y = 0.4;
@@ -83,11 +100,13 @@ export class HospitalElement {
     this.meshes.push(crossVertical, crossHorizontal);
 
     // Windows material
-    const windowMaterial = new StandardMaterial("hospitalWindowMaterial", scene);
-    windowMaterial.diffuseColor = new Color3(0.4, 0.7, 1);
-    windowMaterial.emissiveColor = new Color3(0.2, 0.3, 0.5);
-    windowMaterial.alpha = 0.5;
-    this.materials.push(windowMaterial);
+    this.windowMaterial = this.registerMaterial(
+      new StandardMaterial("hospitalWindowMaterial", scene),
+      0.58
+    );
+    this.windowMaterial.diffuseColor = new Color3(0.44, 0.66, 0.84);
+    this.windowMaterial.emissiveColor = new Color3(0.12, 0.18, 0.24);
+    this.windowMaterial.specularColor = Color3.Black();
 
     // Windows
     const windowPositions = [
@@ -100,7 +119,7 @@ export class HospitalElement {
     windowPositions.forEach((pos, index) => {
       const window = MeshBuilder.CreateBox(`window${index}`, { height: 0.3, width: 0.3, depth: 0.01 }, scene);
       window.position = pos;
-      window.material = windowMaterial;
+      window.material = this.windowMaterial;
       window.parent = this.mainNode;
       this.meshes.push(window);
     });
@@ -148,7 +167,11 @@ export class HospitalElement {
 
   setVisibility(value: number): void {
     this.materials.forEach(material => {
-      material.alpha = value;
+      setProfileVisibilityAlpha(
+        material,
+        this.materialBaseAlphas.get(material) ?? 1,
+        value
+      );
     });
     this.isVisible = value > 0;
     this.meshes.forEach(mesh => {
@@ -164,6 +187,35 @@ export class HospitalElement {
 
   applyPresentation(presentation: SceneObjectPresentation): void {
     this.presentationLightIntensity = presentation.lightIntensity;
+    this.setMaterialBaseAlpha(this.buildingMaterial, presentation.material.alpha);
+    this.setMaterialBaseAlpha(
+      this.roofMaterial,
+      Math.max(0.32, presentation.material.alpha - 0.08)
+    );
+    this.setMaterialBaseAlpha(
+      this.crossMaterial,
+      Math.min(0.9, presentation.material.alpha + 0.08)
+    );
+    this.setMaterialBaseAlpha(
+      this.windowMaterial,
+      Math.min(0.92, presentation.material.alpha + 0.12)
+    );
+    applySceneObjectMaterial(this.buildingMaterial, presentation.material);
+    applySceneObjectMaterial(this.roofMaterial, presentation.material, "secondary", {
+      alpha: this.materialBaseAlphas.get(this.roofMaterial),
+      emissiveScale: 0.65,
+    });
+    applySceneObjectMaterial(this.crossMaterial, presentation.material, "accent", {
+      alpha: this.materialBaseAlphas.get(this.crossMaterial),
+      emissiveScale: 1.25,
+    });
+    applySceneObjectMaterial(this.windowMaterial, presentation.material, "secondary", {
+      alpha: this.materialBaseAlphas.get(this.windowMaterial),
+      emissiveScale: 1.4,
+    });
+    this.directionalLight.diffuse = toColor3(presentation.material.diffuse);
+    this.pointLight.diffuse = toColor3(presentation.material.secondary);
+    this.pointLight.specular = scaleColor3(presentation.material.secondary, 0.8);
     this.mainNode.scaling = new Vector3(
       presentation.scale,
       presentation.scale,
@@ -184,5 +236,25 @@ export class HospitalElement {
     this.directionalLight.position = this.mainNode.position.add(new Vector3(2, 2, 0));
     this.directionalLight.setDirectionToTarget(this.mainNode.position);
     this.pointLight.position = this.mainNode.position.add(new Vector3(0, 1, 0));
+  }
+
+  private registerMaterial(
+    material: StandardMaterial,
+    baseAlpha: number
+  ): StandardMaterial {
+    material.alpha = baseAlpha;
+    this.materialBaseAlphas.set(material, baseAlpha);
+    this.materials.push(material);
+
+    return material;
+  }
+
+  private setMaterialBaseAlpha(
+    material: StandardMaterial,
+    baseAlpha: number
+  ): void {
+    const alpha = Math.max(0, Math.min(baseAlpha, 1));
+    this.materialBaseAlphas.set(material, alpha);
+    material.alpha = alpha;
   }
 }

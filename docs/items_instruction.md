@@ -7,11 +7,14 @@ Each object class should expose:
 ```typescript
 class ObjectName {
   constructor(scene: Scene, position: Vector3);
+  applyPresentation(presentation: SceneObjectPresentation): void;
   setVisibility(value: number): void;
   dispose(): void;
   updatePosition(position: Vector3): void;
 }
 ```
+
+Material colors should come from the scene-object planner's presentation profile. Component-local defaults are acceptable as fallbacks, but production route colors should remain authored in `src/game/content/sceneObjectMaterial.ts` so they can be tested.
 
 ## Lamp
 
@@ -23,6 +26,7 @@ Production requirements:
 - Warm falloff and visible glow through fog.
 - Strong silhouette from a distance.
 - Should feel handmade or old, not sterile.
+- Bulb, pole, glow layer, and light color should all use the warm lamp material family.
 
 Narrative usage:
 - Appears at the crossroads and trust beats.
@@ -37,6 +41,7 @@ Production requirements:
 - Fade and hover smoothly.
 - Multiple instances should feel like an orbit or memory trace rather than clutter.
 - Alpha and light intensity should be controllable per beat.
+- Tint and emissive strength should improve with trust rather than staying as a flat white texture.
 
 Narrative usage:
 - Trust route: hands become safe.
@@ -53,6 +58,7 @@ Production requirements:
 - Slow rotation and hover.
 - Semi-transparent material with clear silhouettes.
 - Variants should avoid looking like placeholder primitives.
+- Primary and secondary pieces should use related but distinct material slots so the object reads as composed.
 
 Narrative usage:
 - Memory route: clinical geometry and corridors.
@@ -67,6 +73,7 @@ Production requirements:
 - Suggest IV stands, monitors, bed rails, and chairs.
 - Ethereal material treatment; never bright white plastic.
 - Visibility should respond to `hospital_clarity`.
+- Cross, windows, roof, and building should soften from alarmed clinical color into calmer ward color as clarity increases.
 
 Narrative usage:
 - Reflective endings should make hospital forms feel like evidence of care.
