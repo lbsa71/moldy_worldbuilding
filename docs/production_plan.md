@@ -42,6 +42,22 @@ Quality checks:
 - Visibility rules are tested separately from Babylon mesh creation.
 - Browser QA confirms the launch-to-first-route flow still renders without console errors.
 
+## Iteration 4 - Cinematic Dialogue UI
+
+Status: PR opened.
+
+Highest-value improvement:
+- Replace the debug-like text and choice stack with a bounded, responsive dialogue panel that leaves the scene readable.
+- Move dialogue layout decisions into a pure presentation helper so sizing can be tested without Babylon.
+- Keep choices stable across desktop and narrow screens with wrapped text, consistent hit areas, and restrained visual styling.
+
+Quality checks:
+- Desktop layout leaves more than 45% of the viewport available for the scene.
+- Compact layout centers the panel and keeps it within mobile margins.
+- Choice-stack height is calculated from the number of choices so buttons do not overlap.
+- Authored text normalization trims accidental whitespace while preserving paragraph breaks.
+- Browser QA covers launch, first choice, console logs, and mobile framing.
+
 ## Next Iteration Candidates
 
 ### Scene Composition and Object Polish
@@ -51,14 +67,6 @@ Improve mesh-level object polish with smoother fades, stronger silhouettes, and 
 Reliable assessment:
 - Unit-test tag-to-object planning separately from Babylon mesh creation.
 - Browser QA: first route choice creates visible, non-overlapping objects near the character.
-
-### Dialogue UI and Choice Presentation
-
-The current Babylon GUI reads as debug UI. Replace it with a more cinematic, readable presentation that still lives inside the game surface.
-
-Reliable assessment:
-- Browser screenshots at desktop and mobile widths.
-- Automated checks for choice button count and visible text after route selection.
 
 ### Audio Transitions
 
