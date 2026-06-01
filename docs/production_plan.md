@@ -11,7 +11,7 @@ Outcome:
 
 ## Iteration 2 - Narrative Content Pass
 
-Status: in progress.
+Status: PR opened.
 
 Highest-value improvement:
 - Replace repeated POC prose with a coherent authored route pass.
@@ -26,11 +26,27 @@ Quality checks:
 - Audio tags reference existing assets.
 - Spatial tags remain inside the intended liminal envelope while preserving off-map endings.
 
+## Iteration 3 - Deterministic Scene Direction
+
+Status: PR opened.
+
+Highest-value improvement:
+- Make story object tags resolve to deterministic scene placement instead of random rotations and ad hoc clustering.
+- Preserve the intentional off-map `+92` route language while constraining renderable objects to the liminal envelope.
+- Let story state drive object visibility so trust and hospital clarity have readable visual consequences.
+
+Quality checks:
+- Object planning is pure and repeatable for the same story tags and route state.
+- Unknown object tags are ignored instead of creating silent runtime drift.
+- Generated positions stay inside the liminal envelope.
+- Visibility rules are tested separately from Babylon mesh creation.
+- Browser QA confirms the launch-to-first-route flow still renders without console errors.
+
 ## Next Iteration Candidates
 
 ### Scene Composition and Object Polish
 
-Improve `EnvironmentSystem` so object tags create route-specific clusters, smoother fades, and fewer abrupt disposals.
+Improve mesh-level object polish with smoother fades, stronger silhouettes, and route-specific composition beats.
 
 Reliable assessment:
 - Unit-test tag-to-object planning separately from Babylon mesh creation.
