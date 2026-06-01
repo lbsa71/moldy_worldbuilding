@@ -130,15 +130,21 @@ Quality checks:
 - Each route playthrough asserts its expected choice path, minimum visible beat count, off-map travel, soundtrack release cue, and credits audio.
 - Browser QA still covers one complete route path in the rendered game with screenshot checkpoints and clean console logs.
 
+## Iteration 10 - Asset and Bundle Polish
+
+Status: PR opened.
+
+Highest-value improvement:
+- Replace the single oversized Babylon runtime chunk with purpose-built engine, rendering, scene, material, mesh, math, GUI, and loader chunks.
+- Add a build artifact budget check so future production builds fail if a JS chunk grows past the 2 MB warning threshold.
+- Wire the bundle budget into `npm run validate`, making runtime payload size part of the ordinary production gate.
+
+Quality checks:
+- `npm run check:bundle` fails against an oversized built JS chunk and passes after the Babylon split.
+- `npm run build` completes without the previous oversized chunk warning.
+- Browser QA covers launch and a route beat from a fresh server to prove the chunk split still loads the Babylon runtime correctly.
+
 ## Next Iteration Candidates
-
-### Asset and Bundle Polish
-
-Reduce production bundle warnings and replace remaining placeholder materials with authored palettes/textures where they matter most.
-
-Reliable assessment:
-- Build-size checks around Babylon chunking.
-- Browser QA first route and off-map ending for material readability.
 
 ### Ending Presentation Polish
 
@@ -147,3 +153,11 @@ Make route endings feel intentionally authored in the UI and world state instead
 Reliable assessment:
 - Route playthrough tests assert ending-specific copy, audio, and available choices.
 - Browser QA captures warm and reflective endings for visual distinction.
+
+### Material Readability Polish
+
+Replace remaining placeholder-like material treatments with a tighter route palette and clearer object silhouettes.
+
+Reliable assessment:
+- Planner or presentation tests assert route object color/intensity families.
+- Browser QA captures first-route, memory-route, and off-map ending material readability.

@@ -6,6 +6,7 @@
     "dev": "npm run build:wasm && astro dev",
     "start": "astro dev",
     "build": "npm run clean && npm run build:wasm && astro build",
+    "check:bundle": "node scripts/check-bundle-size.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "build:wasm": "cd src/game/wasm && npx asc assembly/gameLogic.ts --target release --optimize",
@@ -14,7 +15,7 @@
     "test": "vitest run",
     "test:routes": "vitest run routePlaythrough",
     "test:watch": "vitest",
-    "validate": "npm run test && npm run check && npm run build"
+    "validate": "npm run test && npm run check && npm run build && npm run check:bundle"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
