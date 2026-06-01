@@ -9,7 +9,11 @@
     "preview": "astro preview",
     "astro": "astro",
     "build:wasm": "cd src/game/wasm && npx asc assembly/gameLogic.ts --target release --optimize",
-    "clean": "rm -rf public/wasm/* dist"
+    "clean": "node scripts/clean.mjs",
+    "check": "astro check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "validate": "npm run test && npm run check && npm run build"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -22,5 +26,10 @@
     "astro": "^4.16.13",
     "sharp": "^0.33.5",
     "typescript": "^5.6.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "jsdom": "^29.1.1",
+    "vitest": "^4.1.7"
   }
 }

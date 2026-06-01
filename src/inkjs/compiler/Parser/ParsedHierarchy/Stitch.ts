@@ -24,6 +24,7 @@ export class Stitch extends FlowBase {
 
   // Fixes TS issue with not being able to access the prototype via `super` in functions
   // attached to the class as properties.
+  // @ts-expect-error Captures FlowBase's field initializer before Stitch installs its override.
   private baseToString = this.toString;
 
   public toString = (): string => {

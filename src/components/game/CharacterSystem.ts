@@ -168,11 +168,12 @@ export class CharacterSystem {
   }
 
   private async turnToTarget(targetDirection: Vector3): Promise<void> {
-    if (!this.characterRoot) return;
+    const characterRoot = this.characterRoot;
+    if (!characterRoot) return;
 
     return new Promise((resolve) => {
       // Get current and target rotations
-      const currentRotation = this.characterRoot.rotation.y;
+      const currentRotation = characterRoot.rotation.y;
       const targetRotation = Math.atan2(targetDirection.x, targetDirection.z);
 
       // Calculate shortest rotation path
@@ -222,7 +223,7 @@ export class CharacterSystem {
 
       // Play the rotation animation
       this.scene.beginDirectAnimation(
-        this.characterRoot,
+        characterRoot,
         [rotationAnim],
         0,
         20,

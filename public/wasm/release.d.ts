@@ -2,13 +2,6 @@ declare namespace __AdaptedExports {
   /** Exported memory */
   export const memory: WebAssembly.Memory;
   /**
-   * assembly/index/add
-   * @param a `i32`
-   * @param b `i32`
-   * @returns `i32`
-   */
-  export function add(a: number, b: number): number;
-  /**
    * assembly/gameLogic/calculatePhysics
    * @param x `f32`
    * @param y `f32`

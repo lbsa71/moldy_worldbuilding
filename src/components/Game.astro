@@ -2,21 +2,29 @@
 ---
 ---
 <div id="game-container" class="game-container">
-    <canvas id="gameCanvas"></canvas>
-    <div id="statsOverlay">
+    <canvas id="gameCanvas" tabindex="-1" aria-label="Fading game scene"></canvas>
+    <div id="statsOverlay" hidden>
         <div>Renderer: <span id="rendererType">Loading...</span></div>
         <div>FPS: <span id="fpsCounter">0</span></div>
     </div>
+    <section id="launchScreen" class="launch-screen" aria-labelledby="launch-title" aria-describedby="launch-copy launch-status">
+        <div class="launch-content">
+            <p class="launch-kicker">A quiet passage through memory</p>
+            <h1 id="launch-title">Fading</h1>
+            <p id="launch-copy" class="launch-copy">
+                The lamp remains. Everything else shifts: fog, voices, fragments of care, and the shape of who is dreaming whom.
+            </p>
+            <button id="start-button" class="start-button" type="button">Wake up</button>
+            <p id="launch-status" class="launch-status" aria-live="polite"></p>
+        </div>
+    </section>
 </div>
 
 <script>
     import { Compiler } from "../inkjs/compiler/Compiler";
+    import { createLaunchExperience } from "../game/experience/launchExperience";
     import inkFile from '../ink/demo.ink?raw';
 
-    const inkFileContents = inkFile;
-    const compiler = new Compiler(inkFileContents);
-    const compiledStory = compiler.Compile();
-    let story = compiledStory;
     // WASM types
     interface WasmExports {
         calculatePhysics: (x: number, y: number, z: number) => number;
@@ -26,8 +34,6 @@
     // Simple WASM loader
     async function loadWasm() {
         try {
-            console.log('loading wasm');
-
             const response = await fetch('/wasm/release.wasm');
             const bytes = await response.arrayBuffer();
             
@@ -51,7 +57,6 @@
             // Assign the function to window
             window.calculatePhysics = (x: number, y: number, z: number) => exports.calculatePhysics(x, y, z);
             
-            console.log('WASM loaded successfully');
             return true;
         } catch (error) {
             console.error('Failed to load WASM:', error);
@@ -59,45 +64,46 @@
         }
     }
 
-    // Import and initialize game
-    const initGame = async () => {
-        try {
-            console.log('initGame');
-            const { GameScene } = await import('./GameScene');
-            console.log('after import of initGame');
-            // Load WASM first
-            await loadWasm();
-            
-            const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
-            if (canvas) {
-                console.log("init GameScene");
-                const game = new GameScene(canvas);
-                game.setStory(story);
-                console.log("GameScene initialized");
+    const initializeLaunchExperience = () => {
+        const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement | null;
+        const launchScreen = document.getElementById('launchScreen') as HTMLElement | null;
+        const startButton = document.getElementById('start-button') as HTMLButtonElement | null;
+        const rendererType = document.getElementById('rendererType') as HTMLElement | null;
+        const fpsCounter = document.getElementById('fpsCounter') as HTMLElement | null;
+        const statusText = document.getElementById('launch-status') as HTMLElement | null;
+        const statsOverlay = document.getElementById('statsOverlay') as HTMLElement | null;
 
-                await game.run();
-                
-                // Update renderer type
-                const rendererType = document.getElementById('rendererType');
-                if (rendererType) {
-                    rendererType.textContent = game.getRendererType();
-                }
-
-                // Update FPS counter
-                const fpsCounter = document.getElementById('fpsCounter');
-                if (fpsCounter) {
-                    setInterval(() => {
-                        fpsCounter.textContent = game.getFps().toFixed(0);
-                    }, 1000);
-                }
-            }
-        } catch (error) {
-            console.error('Failed to initialize game:', error);
+        if (!canvas || !launchScreen || !startButton || !rendererType || !fpsCounter) {
+            console.error('Failed to initialize launch experience: missing required DOM nodes');
+            return;
         }
+
+        if (statsOverlay && new URLSearchParams(window.location.search).has('debug')) {
+            statsOverlay.hidden = false;
+        }
+
+        createLaunchExperience({
+            canvas,
+            launchScreen,
+            startButton,
+            rendererType,
+            fpsCounter,
+            statusText,
+            loadWasm,
+            gameFactory: async (gameCanvas) => {
+                const [{ GameScene }] = await Promise.all([
+                    import('./GameScene'),
+                ]);
+                const story = new Compiler(inkFile).Compile();
+                const game = new GameScene(gameCanvas);
+                game.setStory(story);
+                return game;
+            },
+            onError: (error) => console.error('Failed to initialize game:', error),
+        });
     };
 
-    // Wait for window load before initializing
-    window.addEventListener('load', initGame);
+    initializeLaunchExperience();
 </script>
 
 <style>
@@ -105,24 +111,143 @@
         width: 100%;
         height: 100vh;
         position: relative;
+        overflow: hidden;
+        background: #050705;
     }
     
     #gameCanvas {
         width: 100%;
         height: 100%;
         touch-action: none;
+        display: block;
+        outline: none;
     }
 
     #statsOverlay {
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: 16px;
+        right: 16px;
         background: rgba(0, 0, 0, 0.7);
-        color: white;
+        color: #f4f2e8;
         padding: 10px;
-        border-radius: 5px;
+        border: 1px solid rgba(244, 242, 232, 0.18);
+        border-radius: 6px;
         font-family: monospace;
         font-size: 14px;
         pointer-events: none;
+        z-index: 2;
+    }
+
+    .launch-screen {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        display: grid;
+        align-items: center;
+        padding: clamp(2rem, 7vw, 6rem);
+        color: #f4f2e8;
+        background:
+            linear-gradient(90deg, rgba(5, 8, 6, 0.96) 0%, rgba(10, 14, 12, 0.88) 52%, rgba(16, 15, 12, 0.72) 100%),
+            url("/assets/heightmap.png");
+        background-position: center;
+        background-size: cover;
+    }
+
+    .launch-screen[hidden] {
+        display: none;
+    }
+
+    .launch-screen::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url("/assets/hand_motif.png");
+        background-position: right 8% center;
+        background-repeat: no-repeat;
+        background-size: min(54vw, 620px);
+        opacity: 0.16;
+        transform: rotate(-4deg);
+    }
+
+    .launch-content {
+        position: relative;
+        max-width: 760px;
+    }
+
+    .launch-kicker {
+        margin: 0 0 1rem;
+        color: #cbd89a;
+        font: 700 0.78rem/1.2 system-ui, sans-serif;
+        letter-spacing: 0;
+        text-transform: uppercase;
+    }
+
+    #launch-title {
+        margin: 0;
+        color: #fff8dc;
+        font: 800 clamp(3.5rem, 12vw, 8rem)/0.9 Georgia, "Times New Roman", serif;
+        letter-spacing: 0;
+        text-shadow: 0 14px 46px rgba(0, 0, 0, 0.6);
+    }
+
+    .launch-copy {
+        max-width: 45rem;
+        margin: 1.25rem 0 2rem;
+        color: rgba(244, 242, 232, 0.82);
+        font: 400 clamp(1rem, 1.9vw, 1.3rem)/1.65 system-ui, sans-serif;
+    }
+
+    .start-button {
+        min-width: 11rem;
+        min-height: 3.25rem;
+        border: 1px solid rgba(255, 248, 220, 0.68);
+        border-radius: 6px;
+        background: #d8b86a;
+        color: #10120c;
+        cursor: pointer;
+        font: 800 1rem/1 system-ui, sans-serif;
+        letter-spacing: 0;
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+        transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+    }
+
+    .start-button:hover {
+        background: #f0d886;
+        transform: translateY(-1px);
+    }
+
+    .start-button:focus-visible {
+        outline: 3px solid #f4f2e8;
+        outline-offset: 4px;
+    }
+
+    .start-button:disabled {
+        cursor: wait;
+        opacity: 0.76;
+        transform: none;
+    }
+
+    .launch-status {
+        min-height: 1.4rem;
+        margin: 1rem 0 0;
+        color: #f0d886;
+        font: 600 0.95rem/1.4 system-ui, sans-serif;
+    }
+
+    @media (max-width: 720px) {
+        .launch-screen {
+            align-items: end;
+            padding: 2rem 1.25rem 3rem;
+        }
+
+        .launch-screen::before {
+            background-position: center 14%;
+            background-size: 92vw;
+            opacity: 0.11;
+        }
+
+        .launch-copy {
+            max-width: 100%;
+        }
     }
 </style>
