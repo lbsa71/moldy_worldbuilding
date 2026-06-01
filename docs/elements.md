@@ -61,3 +61,5 @@ Scene vocabulary:
 - Use `# audio` for acts of the story: opening ambience, mid-route emergence, ending release, credits.
 - Keep object names aligned with `NARRATIVE_OBJECT_TYPES` in `src/game/content/worldDesign.ts`.
 - Preserve off-map positions near route culminations; they are part of the game's concept.
+- Keep object material families authored and testable through `sceneObjectMaterial.ts`; do not pick ad hoc colors inside Babylon mesh classes.
+- Let route state affect material readability: trust clarifies hands, hospital clarity calms medical forms, and off-map intensity adds shared haze/glow.

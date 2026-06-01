@@ -7,15 +7,27 @@ import {
   Mesh,
   Color3,
   DirectionalLight,
+  StandardMaterial,
 } from "@babylonjs/core";
 import type { SceneObjectPresentation } from "../../game/content/sceneObjectPlanner";
+import {
+  applySceneObjectMaterial,
+  scaleColor3,
+  setProfileVisibilityAlpha,
+  toColor3,
+} from "./sceneMaterial";
 
 export class Lamp {
   private light: PointLight;
   private glowLayer: GlowLayer;
   private mesh: Mesh;
   private pole: Mesh;
+  private bulbMaterial: StandardMaterial;
+  private poleMaterial: StandardMaterial;
   private directionalLight: DirectionalLight;
+  private bulbBaseAlpha = 0.82;
+  private poleBaseAlpha = 0.92;
+  private materialGlowIntensity = 1;
   private presentationLightIntensity = 1;
 
   constructor(scene: Scene, position: Vector3, rotation: Vector3 = new Vector3(0, 0, 0)) {
@@ -28,11 +40,24 @@ export class Lamp {
     this.pole.position = position.clone();
     this.pole.position.y += 1;
     this.pole.rotation = rotation.clone();
+    this.poleMaterial = new StandardMaterial("lampPoleMaterial", scene);
+    this.poleMaterial.diffuseColor = new Color3(0.16, 0.13, 0.1);
+    this.poleMaterial.ambientColor = new Color3(0.06, 0.05, 0.04);
+    this.poleMaterial.specularColor = new Color3(0.1, 0.08, 0.06);
+    this.poleMaterial.alpha = this.poleBaseAlpha;
+    this.pole.material = this.poleMaterial;
 
     // Create lamp mesh
     this.mesh = MeshBuilder.CreateSphere("lampMesh", { diameter: 1 }, scene);
     this.mesh.parent = this.pole;
     this.mesh.position = new Vector3(0, 2.5, -0.5); // Position relative to pole (2 units up)
+    this.bulbMaterial = new StandardMaterial("lampBulbMaterial", scene);
+    this.bulbMaterial.diffuseColor = new Color3(0.98, 0.78, 0.36);
+    this.bulbMaterial.emissiveColor = new Color3(0.42, 0.25, 0.1);
+    this.bulbMaterial.ambientColor = new Color3(0.28, 0.19, 0.1);
+    this.bulbMaterial.specularColor = new Color3(0.16, 0.12, 0.08);
+    this.bulbMaterial.alpha = this.bulbBaseAlpha;
+    this.mesh.material = this.bulbMaterial;
 
     // Create light
     this.light = new PointLight("lampLight", this.mesh.position, scene);
@@ -53,15 +78,33 @@ export class Lamp {
   }
 
   setVisibility(value: number): void {
-    this.light.intensity = value * this.presentationLightIntensity;
+    this.light.intensity =
+      value * this.presentationLightIntensity * this.materialGlowIntensity;
+    this.glowLayer.intensity = value > 0 ? this.materialGlowIntensity * value : 0;
+    setProfileVisibilityAlpha(this.bulbMaterial, this.bulbBaseAlpha, value);
+    setProfileVisibilityAlpha(this.poleMaterial, this.poleBaseAlpha, value);
     this.mesh.visibility = value > 0 ? 1 : 0;
     this.pole.visibility = value > 0 ? 1 : 0;
     this.directionalLight.intensity =
-      value > 0 ? 0.5 * this.presentationLightIntensity : 0;
+      value > 0 ? 0.5 * value * this.presentationLightIntensity : 0;
   }
 
   applyPresentation(presentation: SceneObjectPresentation): void {
     this.presentationLightIntensity = presentation.lightIntensity;
+    this.materialGlowIntensity = Math.max(0.4, presentation.material.glow * 1.35);
+    this.bulbBaseAlpha = presentation.material.alpha;
+    this.poleBaseAlpha = Math.min(0.96, presentation.material.alpha + 0.12);
+    applySceneObjectMaterial(this.bulbMaterial, presentation.material, "accent", {
+      alpha: this.bulbBaseAlpha,
+      emissiveScale: 1.35,
+    });
+    applySceneObjectMaterial(this.poleMaterial, presentation.material, "secondary", {
+      alpha: this.poleBaseAlpha,
+      emissiveScale: 0.25,
+    });
+    this.light.diffuse = toColor3(presentation.material.accent);
+    this.light.specular = scaleColor3(presentation.material.accent, 0.7);
+    this.directionalLight.diffuse = toColor3(presentation.material.diffuse);
     this.pole.scaling = new Vector3(
       presentation.scale,
       presentation.scale,
@@ -75,6 +118,8 @@ export class Lamp {
     this.glowLayer.dispose();
     this.mesh.dispose();
     this.pole.dispose();
+    this.bulbMaterial.dispose();
+    this.poleMaterial.dispose();
     this.directionalLight.dispose();
   }
 

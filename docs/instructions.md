@@ -21,6 +21,15 @@ The first production bar is not content volume. It is coherence: every line of d
 - Positions beyond the terrain are the liminal band: the player is leaving reliable ground, which supports the feeling of going off the map.
 - Liminal positions must stay inside the authored envelope documented in `src/game/content/worldDesign.ts`.
 
+## Material Rules
+
+- Object colors should come from authored material profiles, not from one-off component constants.
+- Lamp materials are warm and return-oriented.
+- Hand materials are green-blue, translucent, and become more legible with trust.
+- Hospital materials should avoid bright plastic white and pure alarm red; clarity should make them calmer and more breathable.
+- Geometric materials can be strange, but they must stay inside a bounded spectral palette.
+- Off-map material treatment should feel like haze crossing the whole scene, not a new unrelated color theme.
+
 ## Narrative Voice
 
 - Concrete sensory images first: lamp, wrist, rail, breath, monitor, corridor, hand.

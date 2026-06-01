@@ -36,6 +36,12 @@ Traversal should feel like the avatar is choosing how to approach each memory, n
 
 Tiny retargets near the same story beat should become stillness rather than visible shuffling.
 
+### Materials Carry Meaning
+
+Scene objects should be readable before they are literal. The lamp is warm amber and hand-made. Hands lean toward green-blue memory light and become clearer with trust. Hospital forms begin clinical and alarmed, then soften toward breathable ward colors when clarity arrives. Geometric shapes use a bounded spectral palette so uncertainty feels designed, not random.
+
+Off-map beats should add haze, glow, and translucency across object materials without turning the scene into a saturated rainbow.
+
 ### Silence Is Play
 
 Silent choices are valid actions. They should create environmental and narrative consequences: steadier fog, altered trust, softened memory, or a route into quiet companionship.

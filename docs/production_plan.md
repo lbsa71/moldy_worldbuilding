@@ -159,15 +159,23 @@ Quality checks:
 - Route playthrough tests assert Dream On / Wake Up choices and route-specific ending copy for every route family.
 - Browser QA captures an off-map ending and credits state without warnings or runtime errors.
 
+## Iteration 12 - Material Readability Polish
+
+Status: PR opened.
+
+Highest-value improvement:
+- Replace remaining placeholder-like object materials with authored material families tied to object identity, route state, and off-map intensity.
+- Give each narrative prop a clearer silhouette: warm lamp, trust-responsive hand glow, calmer hospital materials, and spectral geometric variants.
+- Move material selection into a pure profile helper so visual direction is testable before Babylon mesh code consumes it.
+
+Quality checks:
+- Material tests assert distinct color/intensity families for lamp, hand, hospital, and geometric objects.
+- State tests prove trust improves hand legibility and hospital clarity softens alarm red into calmer ward colors.
+- Off-map material tests prove liminal beats add spectral haze and glow without saturating alpha.
+- Planner tests prove every object placement receives a stable material profile.
+- Browser QA captures rendered material readability when the local browser backend is available.
+
 ## Next Iteration Candidates
-
-### Material Readability Polish
-
-Replace remaining placeholder-like material treatments with a tighter route palette and clearer object silhouettes.
-
-Reliable assessment:
-- Planner or presentation tests assert route object color/intensity families.
-- Browser QA captures first-route, memory-route, and off-map ending material readability.
 
 ### Production Log Hygiene
 
@@ -176,3 +184,11 @@ Reduce routine runtime console output while preserving actionable errors and exp
 Reliable assessment:
 - Unit-test logger or diagnostics helpers if introduced.
 - Browser QA captures route progression with no warn/error logs and minimal non-debug console noise.
+
+### Object Silhouette Composition
+
+Refine prop geometry beyond material treatment so hospital, hand, and geometric scenes read as authored installations rather than simple primitive clusters.
+
+Reliable assessment:
+- Pure planner or geometry-description tests assert route-specific composition constraints.
+- Browser QA captures trust, memory, and uncertainty beats from desktop and narrow viewports.

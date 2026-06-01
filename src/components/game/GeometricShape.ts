@@ -11,6 +11,11 @@ import {
   TransformNode,
 } from "@babylonjs/core";
 import type { SceneObjectPresentation } from "../../game/content/sceneObjectPlanner";
+import {
+  applySceneObjectMaterial,
+  setProfileVisibilityAlpha,
+  toColor3,
+} from "./sceneMaterial";
 
 export class GeometricShape {
   private rootNode: TransformNode;
@@ -18,7 +23,10 @@ export class GeometricShape {
   private secondaryMesh: Mesh;
   private animation: Animation;
   private material: StandardMaterial;
+  private secondaryMaterial: StandardMaterial;
   private directionalLight: DirectionalLight;
+  private baseAlpha = 0.52;
+  private secondaryBaseAlpha = 0.58;
   private presentationLightIntensity = 1;
 
   constructor(
@@ -77,17 +85,27 @@ export class GeometricShape {
 
     // Create and setup materials
     this.material = new StandardMaterial("geometricShapeMaterial", scene);
+    this.secondaryMaterial = new StandardMaterial(
+      "geometricShapeSecondaryMaterial",
+      scene
+    );
     const palette = [
-      new Color3(0.55, 0.9, 0.72),
-      new Color3(0.68, 0.78, 1),
-      new Color3(0.88, 0.72, 0.96),
-      new Color3(0.95, 0.86, 0.52),
+      new Color3(0.34, 0.7, 0.76),
+      new Color3(0.66, 0.5, 0.86),
+      new Color3(0.82, 0.62, 0.36),
+      new Color3(0.42, 0.62, 0.88),
     ];
     const baseColor = palette[Math.abs(variant) % palette.length];
     this.material.diffuseColor = baseColor;
+    this.material.emissiveColor = baseColor.scale(0.18);
     this.material.specularColor = Color3.Black();
-    this.material.ambientColor = Color3.White();
-    this.material.alpha = 0.5;
+    this.material.ambientColor = baseColor.scale(0.22);
+    this.material.alpha = this.baseAlpha;
+    this.secondaryMaterial.diffuseColor = baseColor.scale(1.08);
+    this.secondaryMaterial.emissiveColor = baseColor.scale(0.24);
+    this.secondaryMaterial.specularColor = Color3.Black();
+    this.secondaryMaterial.ambientColor = baseColor.scale(0.24);
+    this.secondaryMaterial.alpha = this.secondaryBaseAlpha;
 
     // Add noise texture for more visual interest
     const noiseTexture = new NoiseProceduralTexture("noiseTexture", 256, scene);
@@ -98,7 +116,7 @@ export class GeometricShape {
     this.material.bumpTexture.level = 0.4;
 
     this.primaryMesh.material = this.material;
-    this.secondaryMesh.material = this.material;
+    this.secondaryMesh.material = this.secondaryMaterial;
 
     this.animation = new Animation(
       "geometricShapeRotate",
@@ -162,15 +180,28 @@ export class GeometricShape {
   }
 
   setVisibility(value: number): void {
-    this.material.alpha = value;
+    setProfileVisibilityAlpha(this.material, this.baseAlpha, value);
+    setProfileVisibilityAlpha(
+      this.secondaryMaterial,
+      this.secondaryBaseAlpha,
+      value
+    );
     this.directionalLight.intensity =
-      value > 0 ? 0.5 * this.presentationLightIntensity : 0;
+      value > 0 ? 0.5 * value * this.presentationLightIntensity : 0;
     this.primaryMesh.visibility = value > 0 ? 1 : 0;
     this.secondaryMesh.visibility = value > 0 ? 1 : 0;
   }
 
   applyPresentation(presentation: SceneObjectPresentation): void {
     this.presentationLightIntensity = presentation.lightIntensity;
+    this.baseAlpha = presentation.material.alpha;
+    this.secondaryBaseAlpha = Math.min(0.92, presentation.material.alpha + 0.08);
+    applySceneObjectMaterial(this.material, presentation.material);
+    applySceneObjectMaterial(this.secondaryMaterial, presentation.material, "secondary", {
+      alpha: this.secondaryBaseAlpha,
+      emissiveScale: 1.2,
+    });
+    this.directionalLight.diffuse = toColor3(presentation.material.accent);
     this.rootNode.scaling = new Vector3(
       presentation.scale,
       presentation.scale,
@@ -182,10 +213,11 @@ export class GeometricShape {
     this.primaryMesh.dispose();
     this.secondaryMesh.dispose();
     this.rootNode.dispose();
-    this.material.dispose();
     if (this.material.bumpTexture) {
       this.material.bumpTexture.dispose();
     }
+    this.material.dispose();
+    this.secondaryMaterial.dispose();
     this.directionalLight.dispose();
   }
 

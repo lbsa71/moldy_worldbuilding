@@ -3,6 +3,10 @@ import {
   NARRATIVE_OBJECT_TYPES,
   type NarrativeObjectType,
 } from "./worldDesign";
+import {
+  createSceneObjectMaterialProfile,
+  type SceneObjectMaterialProfile,
+} from "./sceneObjectMaterial";
 import { getOffMapIntensity } from "./worldZones";
 
 export type ScenePoint = {
@@ -25,6 +29,7 @@ export type SceneObjectPresentationRole = "primary" | "echo";
 
 export type SceneObjectPresentation = {
   lightIntensity: number;
+  material: SceneObjectMaterialProfile;
   role: SceneObjectPresentationRole;
   scale: number;
   variant: number;
@@ -169,6 +174,7 @@ function getSceneObjectPresentation({
         ? 0.12
         : 0;
   const echoLift = duplicateCount > 1 ? duplicateIndex * 0.22 : 0;
+  const variant = getStableVariant(type, objectIndex, center);
 
   return {
     lightIntensity: clamp(
@@ -178,6 +184,13 @@ function getSceneObjectPresentation({
       0.6,
       1.65
     ),
+    material: createSceneObjectMaterialProfile({
+      offMapIntensity,
+      role,
+      state,
+      type,
+      variant,
+    }),
     role,
     scale: clamp(
       (OBJECT_BASE_SCALE[type] + routeScale + offMapIntensity * 0.22) *
@@ -185,7 +198,7 @@ function getSceneObjectPresentation({
       0.72,
       1.7
     ),
-    variant: getStableVariant(type, objectIndex, center),
+    variant,
     verticalOffset: echoLift + offMapIntensity * 0.12,
   };
 }
