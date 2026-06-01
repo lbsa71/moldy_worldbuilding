@@ -18,11 +18,13 @@ import {
   getSceneObjectVisibility,
   planSceneObjects,
   type SceneObjectPlacement,
+  type SceneObjectPresentation,
 } from "../../game/content/sceneObjectPlanner";
 import type { NarrativeObjectType } from "../../game/content/worldDesign";
 
 type NarrativeSceneObject = {
   type: NarrativeObjectType;
+  applyPresentation?(presentation: SceneObjectPresentation): void;
   setVisibility(value: number): void;
   dispose(): void;
 };
@@ -68,12 +70,14 @@ export class EnvironmentSystem {
     placements.forEach((placement) => {
       try {
         const adjustedPosition = this.getTerrainAdjustedPosition(placement);
+        adjustedPosition.y += placement.presentation.verticalOffset;
         const instance = this.createNarrativeObject(placement, adjustedPosition);
 
         if (!this.firstObjectPosition) {
           this.firstObjectPosition = adjustedPosition.clone();
         }
 
+        instance.applyPresentation?.(placement.presentation);
         instance.setVisibility(placement.visibility);
         this.narrativeObjects.push(instance);
       } catch (error) {
@@ -129,9 +133,17 @@ export class EnvironmentSystem {
     }
 
     if (placement.type === "geometric") {
-      return Object.assign(new GeometricShape(this.scene, position, rotation), {
-        type: placement.type,
-      });
+      return Object.assign(
+        new GeometricShape(
+          this.scene,
+          position,
+          rotation,
+          placement.presentation.variant
+        ),
+        {
+          type: placement.type,
+        }
+      );
     }
 
     return Object.assign(new HospitalElement(this.scene, position, rotation), {

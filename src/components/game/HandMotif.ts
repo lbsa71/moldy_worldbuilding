@@ -4,18 +4,19 @@ import {
   MeshBuilder,
   Mesh,
   Animation,
-  Scalar,
   StandardMaterial,
   Texture,
   Color3,
   DirectionalLight,
 } from "@babylonjs/core";
+import type { SceneObjectPresentation } from "../../game/content/sceneObjectPlanner";
 
 export class HandMotif {
   private mesh: Mesh;
   private animation: Animation;
   private material: StandardMaterial;
   private directionalLight: DirectionalLight;
+  private presentationLightIntensity = 1;
 
   constructor(scene: Scene, position: Vector3, rotation: Vector3 = new Vector3(0, 0, 0)) {
     this.material = new StandardMaterial("handMotifMaterial", scene);
@@ -57,8 +58,18 @@ export class HandMotif {
 
   setVisibility(value: number): void {
     this.material.alpha = value;
-    this.directionalLight.intensity = value > 0 ? 0.5 : 0;
+    this.directionalLight.intensity =
+      value > 0 ? 0.5 * this.presentationLightIntensity : 0;
     this.mesh.visibility = value > 0 ? 1 : 0;
+  }
+
+  applyPresentation(presentation: SceneObjectPresentation): void {
+    this.presentationLightIntensity = presentation.lightIntensity;
+    this.mesh.scaling = new Vector3(
+      presentation.scale,
+      presentation.scale,
+      presentation.scale
+    );
   }
 
   dispose(): void {

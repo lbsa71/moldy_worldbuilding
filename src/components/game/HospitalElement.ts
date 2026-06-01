@@ -10,6 +10,7 @@ import {
   TransformNode,
   PointLight,
 } from "@babylonjs/core";
+import type { SceneObjectPresentation } from "../../game/content/sceneObjectPlanner";
 
 export class HospitalElement {
   private mainNode: TransformNode;
@@ -19,6 +20,7 @@ export class HospitalElement {
   private isVisible: boolean = false;
   private directionalLight: DirectionalLight;
   private pointLight: PointLight;
+  private presentationLightIntensity = 1;
 
   constructor(scene: Scene, position: Vector3, rotation: Vector3 = new Vector3(0, 0, 0)) {
     
@@ -152,8 +154,21 @@ export class HospitalElement {
     this.meshes.forEach(mesh => {
       mesh.isVisible = this.isVisible;
     });
-    this.directionalLight.intensity = this.isVisible ? 0.5 : 0;
-    this.pointLight.intensity = this.isVisible ? 0.3 : 0;
+    this.directionalLight.intensity = this.isVisible
+      ? 0.5 * this.presentationLightIntensity
+      : 0;
+    this.pointLight.intensity = this.isVisible
+      ? 0.3 * this.presentationLightIntensity
+      : 0;
+  }
+
+  applyPresentation(presentation: SceneObjectPresentation): void {
+    this.presentationLightIntensity = presentation.lightIntensity;
+    this.mainNode.scaling = new Vector3(
+      presentation.scale,
+      presentation.scale,
+      presentation.scale
+    );
   }
 
   dispose(): void {

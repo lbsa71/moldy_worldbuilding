@@ -3,6 +3,7 @@ import {
   NARRATIVE_OBJECT_TYPES,
   type NarrativeObjectType,
 } from "./worldDesign";
+import { getOffMapIntensity } from "./worldZones";
 
 export type ScenePoint = {
   x: number;
@@ -20,11 +21,22 @@ export type SceneObjectState = {
   hospitalClarity?: boolean;
 };
 
+export type SceneObjectPresentationRole = "primary" | "echo";
+
+export type SceneObjectPresentation = {
+  lightIntensity: number;
+  role: SceneObjectPresentationRole;
+  scale: number;
+  variant: number;
+  verticalOffset: number;
+};
+
 export type SceneObjectPlacement = {
   type: NarrativeObjectType;
   worldPosition: ScenePoint;
   rotation: SceneRotation;
   visibility: number;
+  presentation: SceneObjectPresentation;
 };
 
 const OBJECT_RADII: Record<NarrativeObjectType, number> = {
@@ -39,6 +51,20 @@ const OBJECT_HEIGHT_TILT: Record<NarrativeObjectType, number> = {
   hand: -0.12,
   geometric: 0.08,
   hospital: 0,
+};
+
+const OBJECT_BASE_SCALE: Record<NarrativeObjectType, number> = {
+  lamp: 1,
+  hand: 1,
+  geometric: 1.08,
+  hospital: 1.12,
+};
+
+const OBJECT_BASE_LIGHT: Record<NarrativeObjectType, number> = {
+  lamp: 1.2,
+  hand: 1.05,
+  geometric: 0.95,
+  hospital: 1.1,
 };
 
 const knownObjectTypes = new Set<string>(NARRATIVE_OBJECT_TYPES);
@@ -56,12 +82,17 @@ export function planSceneObjects(
     return [];
   }
 
+  const objectTypeCounts = countObjectTypes(knownNames);
+  const objectTypeIndexes = new Map<NarrativeObjectType, number>();
+  const offMapIntensity = getOffMapIntensity(center);
   const angleStep = (Math.PI * 2) / knownNames.length;
   const startAngle = -Math.PI / 2;
 
   return knownNames.map((type, index) => {
+    const typeIndex = objectTypeIndexes.get(type) ?? 0;
+    objectTypeIndexes.set(type, typeIndex + 1);
     const angle = startAngle + angleStep * index;
-    const radius = OBJECT_RADII[type];
+    const radius = OBJECT_RADII[type] + offMapIntensity * 2 + typeIndex * 0.45;
     const targetX = center.x + Math.cos(angle) * radius;
     const targetZ = center.z + Math.sin(angle) * radius;
     const worldPosition = {
@@ -78,6 +109,15 @@ export function planSceneObjects(
         z: -OBJECT_HEIGHT_TILT[type],
       },
       visibility: getSceneObjectVisibility(type, state),
+      presentation: getSceneObjectPresentation({
+        center,
+        duplicateCount: objectTypeCounts.get(type) ?? 1,
+        duplicateIndex: typeIndex,
+        objectIndex: index,
+        offMapIntensity,
+        state,
+        type,
+      }),
     };
   });
 }
@@ -99,6 +139,77 @@ export function getSceneObjectVisibility(
   }
 
   return 0.58;
+}
+
+function getSceneObjectPresentation({
+  center,
+  duplicateCount,
+  duplicateIndex,
+  objectIndex,
+  offMapIntensity,
+  state,
+  type,
+}: {
+  center: ScenePoint;
+  duplicateCount: number;
+  duplicateIndex: number;
+  objectIndex: number;
+  offMapIntensity: number;
+  state: SceneObjectState;
+  type: NarrativeObjectType;
+}): SceneObjectPresentation {
+  const role: SceneObjectPresentationRole =
+    duplicateIndex === 0 ? "primary" : "echo";
+  const trust = state.trust ?? 0;
+  const duplicateScale = duplicateIndex === 0 ? 1.08 : 0.9;
+  const routeScale =
+    type === "hand"
+      ? trust * 0.025
+      : type === "hospital" && state.hospitalClarity
+        ? 0.12
+        : 0;
+  const echoLift = duplicateCount > 1 ? duplicateIndex * 0.22 : 0;
+
+  return {
+    lightIntensity: clamp(
+      OBJECT_BASE_LIGHT[type] +
+        offMapIntensity * 0.35 +
+        (role === "primary" ? 0.08 : -0.08),
+      0.6,
+      1.65
+    ),
+    role,
+    scale: clamp(
+      (OBJECT_BASE_SCALE[type] + routeScale + offMapIntensity * 0.22) *
+        duplicateScale,
+      0.72,
+      1.7
+    ),
+    variant: getStableVariant(type, objectIndex, center),
+    verticalOffset: echoLift + offMapIntensity * 0.12,
+  };
+}
+
+function countObjectTypes(
+  objectNames: NarrativeObjectType[]
+): Map<NarrativeObjectType, number> {
+  const counts = new Map<NarrativeObjectType, number>();
+
+  objectNames.forEach((name) => {
+    counts.set(name, (counts.get(name) ?? 0) + 1);
+  });
+
+  return counts;
+}
+
+function getStableVariant(
+  type: NarrativeObjectType,
+  index: number,
+  center: ScenePoint
+): number {
+  const seed = `${type}:${index}:${Math.round(center.x)}:${Math.round(center.z)}`;
+
+  return [...seed].reduce((hash, char) => hash + char.charCodeAt(0), 0);
 }
 
 function clamp(value: number, min: number, max: number): number {

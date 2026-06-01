@@ -10,6 +10,7 @@ import {
   NoiseProceduralTexture,
   TransformNode,
 } from "@babylonjs/core";
+import type { SceneObjectPresentation } from "../../game/content/sceneObjectPlanner";
 
 export class GeometricShape {
   private rootNode: TransformNode;
@@ -18,8 +19,14 @@ export class GeometricShape {
   private animation: Animation;
   private material: StandardMaterial;
   private directionalLight: DirectionalLight;
+  private presentationLightIntensity = 1;
 
-  constructor(scene: Scene, position: Vector3, rotation: Vector3 = new Vector3(0, 0, 0)) {
+  constructor(
+    scene: Scene,
+    position: Vector3,
+    rotation: Vector3 = new Vector3(0, 0, 0),
+    variant = 0
+  ) {
     this.rootNode = new TransformNode("geometricShapeRoot", scene);
     this.rootNode.position = position;
     this.rootNode.rotation = rotation;
@@ -32,10 +39,11 @@ export class GeometricShape {
       { type: "cone", options: { height: 1, diameter: 1, diameterTop: 0 }, createFn: MeshBuilder.CreateCylinder },
     ];
 
-    const randomPrimaryShape = primaryShapeOptions[Math.floor(Math.random() * primaryShapeOptions.length)];
-    this.primaryMesh = randomPrimaryShape.createFn(
+    const primaryShape =
+      primaryShapeOptions[Math.abs(variant) % primaryShapeOptions.length];
+    this.primaryMesh = primaryShape.createFn(
       "geometricShapePrimary",
-      randomPrimaryShape.options,
+      primaryShape.options,
       scene
     );
     this.primaryMesh.parent = this.rootNode;
@@ -47,16 +55,20 @@ export class GeometricShape {
       { type: "torus", options: { diameter: 0.4, thickness: 0.1 }, createFn: MeshBuilder.CreateTorus },
     ];
 
-    const randomSecondaryShape = secondaryShapeOptions[Math.floor(Math.random() * secondaryShapeOptions.length)];
-    this.secondaryMesh = randomSecondaryShape.createFn(
+    const secondaryShape =
+      secondaryShapeOptions[
+        Math.floor(Math.abs(variant) / primaryShapeOptions.length) %
+          secondaryShapeOptions.length
+      ];
+    this.secondaryMesh = secondaryShape.createFn(
       "geometricShapeSecondary",
-      randomSecondaryShape.options,
+      secondaryShape.options,
       scene
     );
     this.secondaryMesh.parent = this.rootNode;
     
     // Position secondary shape relative to primary
-    const randomAngle = Math.random() * Math.PI * 2;
+    const randomAngle = ((Math.abs(variant) % 16) / 16) * Math.PI * 2;
     this.secondaryMesh.position = new Vector3(
       Math.cos(randomAngle) * 0.7,
       0.5,
@@ -65,7 +77,13 @@ export class GeometricShape {
 
     // Create and setup materials
     this.material = new StandardMaterial("geometricShapeMaterial", scene);
-    const baseColor = new Color3(Math.random(), Math.random(), Math.random());
+    const palette = [
+      new Color3(0.55, 0.9, 0.72),
+      new Color3(0.68, 0.78, 1),
+      new Color3(0.88, 0.72, 0.96),
+      new Color3(0.95, 0.86, 0.52),
+    ];
+    const baseColor = palette[Math.abs(variant) % palette.length];
     this.material.diffuseColor = baseColor;
     this.material.specularColor = Color3.Black();
     this.material.ambientColor = Color3.White();
@@ -145,9 +163,19 @@ export class GeometricShape {
 
   setVisibility(value: number): void {
     this.material.alpha = value;
-    this.directionalLight.intensity = value > 0 ? 0.5 : 0;
+    this.directionalLight.intensity =
+      value > 0 ? 0.5 * this.presentationLightIntensity : 0;
     this.primaryMesh.visibility = value > 0 ? 1 : 0;
     this.secondaryMesh.visibility = value > 0 ? 1 : 0;
+  }
+
+  applyPresentation(presentation: SceneObjectPresentation): void {
+    this.presentationLightIntensity = presentation.lightIntensity;
+    this.rootNode.scaling = new Vector3(
+      presentation.scale,
+      presentation.scale,
+      presentation.scale
+    );
   }
 
   dispose(): void {

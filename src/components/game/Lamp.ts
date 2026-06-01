@@ -8,6 +8,7 @@ import {
   Color3,
   DirectionalLight,
 } from "@babylonjs/core";
+import type { SceneObjectPresentation } from "../../game/content/sceneObjectPlanner";
 
 export class Lamp {
   private light: PointLight;
@@ -15,6 +16,7 @@ export class Lamp {
   private mesh: Mesh;
   private pole: Mesh;
   private directionalLight: DirectionalLight;
+  private presentationLightIntensity = 1;
 
   constructor(scene: Scene, position: Vector3, rotation: Vector3 = new Vector3(0, 0, 0)) {
     // Create pole
@@ -51,10 +53,21 @@ export class Lamp {
   }
 
   setVisibility(value: number): void {
-    this.light.intensity = value;
+    this.light.intensity = value * this.presentationLightIntensity;
     this.mesh.visibility = value > 0 ? 1 : 0;
     this.pole.visibility = value > 0 ? 1 : 0;
-    this.directionalLight.intensity = value > 0 ? 0.5 : 0;
+    this.directionalLight.intensity =
+      value > 0 ? 0.5 * this.presentationLightIntensity : 0;
+  }
+
+  applyPresentation(presentation: SceneObjectPresentation): void {
+    this.presentationLightIntensity = presentation.lightIntensity;
+    this.pole.scaling = new Vector3(
+      presentation.scale,
+      presentation.scale,
+      presentation.scale
+    );
+    this.light.range = 20 * presentation.scale;
   }
 
   dispose(): void {

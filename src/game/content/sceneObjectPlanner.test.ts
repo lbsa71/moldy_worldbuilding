@@ -61,4 +61,52 @@ describe("planSceneObjects", () => {
     expect(hiddenHospital?.visibility).toBe(0);
     expect(clearHospital?.visibility).toBeGreaterThan(0.55);
   });
+
+  it("turns repeated object tags into primary and echo staging", () => {
+    const plan = planSceneObjects(
+      ["hand", "hand", "hand"],
+      { x: 40, z: 0 },
+      { trust: 3 }
+    );
+
+    expect(plan).toHaveLength(3);
+    expect(plan[0].presentation.role).toBe("primary");
+    expect(plan[1].presentation.role).toBe("echo");
+    expect(plan[2].presentation.role).toBe("echo");
+    expect(plan[0].presentation.scale).toBeGreaterThan(plan[1].presentation.scale);
+    expect(plan[2].presentation.verticalOffset).toBeGreaterThan(
+      plan[1].presentation.verticalOffset
+    );
+  });
+
+  it("amplifies object staging when the story goes off the map", () => {
+    const grounded = planSceneObjects(["hospital"], { x: 0, z: 0 }, {
+      hospitalClarity: true,
+    })[0];
+    const offMap = planSceneObjects(["hospital"], { x: 0, z: 92 }, {
+      hospitalClarity: true,
+    })[0];
+
+    expect(offMap.presentation.scale).toBeGreaterThan(grounded.presentation.scale);
+    expect(offMap.presentation.lightIntensity).toBeGreaterThan(
+      grounded.presentation.lightIntensity
+    );
+  });
+
+  it("assigns stable visual variants for implemented object tags", () => {
+    const firstPlan = planSceneObjects(
+      ["geometric", "hospital", "geometric"],
+      { x: 20, z: 20 },
+      { hospitalClarity: true }
+    );
+    const secondPlan = planSceneObjects(
+      ["geometric", "hospital", "geometric"],
+      { x: 20, z: 20 },
+      { hospitalClarity: true }
+    );
+
+    expect(firstPlan.map((placement) => placement.presentation.variant)).toEqual(
+      secondPlan.map((placement) => placement.presentation.variant)
+    );
+  });
 });
