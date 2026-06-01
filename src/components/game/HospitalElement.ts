@@ -21,6 +21,7 @@ import {
 export class HospitalElement {
   private mainNode: TransformNode;
   private meshes: Mesh[] = [];
+  private detailMeshes: Mesh[] = [];
   private materials: StandardMaterial[] = [];
   private materialBaseAlphas = new Map<StandardMaterial, number>();
   private buildingMaterial: StandardMaterial;
@@ -124,6 +125,8 @@ export class HospitalElement {
       this.meshes.push(window);
     });
 
+    this.createWardDetails(scene);
+
     // Animation setup
     this.animation = new Animation(
       "hospitalElementPulse",
@@ -216,6 +219,15 @@ export class HospitalElement {
     this.directionalLight.diffuse = toColor3(presentation.material.diffuse);
     this.pointLight.diffuse = toColor3(presentation.material.secondary);
     this.pointLight.specular = scaleColor3(presentation.material.secondary, 0.8);
+    const detailLineScale = 1 + presentation.composition.lineWeight * 1.5;
+    this.detailMeshes.forEach((mesh) => {
+      mesh.visibility = presentation.composition.detailOpacity;
+      mesh.scaling = new Vector3(
+        presentation.composition.frameScale * detailLineScale,
+        presentation.composition.verticalStretch,
+        presentation.composition.frameScale * detailLineScale
+      );
+    });
     this.mainNode.scaling = new Vector3(
       presentation.scale,
       presentation.scale,
@@ -256,5 +268,81 @@ export class HospitalElement {
     const alpha = Math.max(0, Math.min(baseAlpha, 1));
     this.materialBaseAlphas.set(material, alpha);
     material.alpha = alpha;
+  }
+
+  private createWardDetails(scene: Scene): void {
+    this.addDetailMesh(
+      MeshBuilder.CreateBox(
+        "hospitalBedRail",
+        { depth: 0.04, height: 0.06, width: 1.35 },
+        scene
+      ),
+      new Vector3(0, -0.46, 0.73),
+      this.roofMaterial
+    );
+
+    [-0.52, 0, 0.52].forEach((x, index) => {
+      this.addDetailMesh(
+        MeshBuilder.CreateBox(
+          `hospitalRailPost${index}`,
+          { depth: 0.04, height: 0.34, width: 0.045 },
+          scene
+        ),
+        new Vector3(x, -0.32, 0.74),
+        this.roofMaterial
+      );
+    });
+
+    this.addDetailMesh(
+      MeshBuilder.CreateBox(
+        "hospitalMonitorPanel",
+        { depth: 0.045, height: 0.28, width: 0.45 },
+        scene
+      ),
+      new Vector3(-0.74, 0.42, 0.72),
+      this.windowMaterial
+    );
+
+    this.addDetailMesh(
+      MeshBuilder.CreateCylinder(
+        "hospitalIvPole",
+        { diameter: 0.035, height: 0.92, tessellation: 8 },
+        scene
+      ),
+      new Vector3(0.86, 0.2, 0.72),
+      this.roofMaterial
+    );
+
+    this.addDetailMesh(
+      MeshBuilder.CreateBox(
+        "hospitalIvBag",
+        { depth: 0.04, height: 0.24, width: 0.14 },
+        scene
+      ),
+      new Vector3(0.86, 0.74, 0.72),
+      this.windowMaterial
+    );
+
+    this.addDetailMesh(
+      MeshBuilder.CreateBox(
+        "hospitalChairBack",
+        { depth: 0.05, height: 0.32, width: 0.32 },
+        scene
+      ),
+      new Vector3(0.58, -0.32, 0.76),
+      this.buildingMaterial
+    );
+  }
+
+  private addDetailMesh(
+    mesh: Mesh,
+    position: Vector3,
+    material: StandardMaterial
+  ): void {
+    mesh.position = position;
+    mesh.material = material;
+    mesh.parent = this.mainNode;
+    this.meshes.push(mesh);
+    this.detailMeshes.push(mesh);
   }
 }

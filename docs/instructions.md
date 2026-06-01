@@ -30,6 +30,15 @@ The first production bar is not content volume. It is coherence: every line of d
 - Geometric materials can be strange, but they must stay inside a bounded spectral palette.
 - Off-map material treatment should feel like haze crossing the whole scene, not a new unrelated color theme.
 
+## Silhouette Rules
+
+- Object composition should come from authored composition profiles, not incidental primitive placement.
+- Lamp shapes should read as a beacon from a distance.
+- Hand shapes should read as reaching memory traces, with trust making the trace more open.
+- Hospital shapes should suggest ward fragments: rail, monitor, IV, chair, threshold.
+- Geometric shapes should read as threshold frames rather than disconnected primitives.
+- Echo objects should be lighter and more spread out while preserving their family identity.
+
 ## Narrative Voice
 
 - Concrete sensory images first: lamp, wrist, rail, breath, monitor, corridor, hand.

@@ -18,10 +18,13 @@ import {
 
 export class HandMotif {
   private mesh: Mesh;
+  private haloMesh: Mesh;
   private animation: Animation;
   private material: StandardMaterial;
+  private haloMaterial: StandardMaterial;
   private directionalLight: DirectionalLight;
   private baseAlpha = 0.52;
+  private haloBaseAlpha = 0.32;
   private presentationLightIntensity = 1;
 
   constructor(scene: Scene, position: Vector3, rotation: Vector3 = new Vector3(0, 0, 0)) {
@@ -40,6 +43,22 @@ export class HandMotif {
     this.mesh.rotation = rotation;
     this.mesh.material = this.material;
 
+    this.haloMaterial = new StandardMaterial("handMotifHaloMaterial", scene);
+    this.haloMaterial.diffuseColor = new Color3(0.28, 0.62, 0.66);
+    this.haloMaterial.emissiveColor = new Color3(0.08, 0.22, 0.28);
+    this.haloMaterial.specularColor = Color3.Black();
+    this.haloMaterial.alpha = this.haloBaseAlpha;
+
+    this.haloMesh = MeshBuilder.CreateTorus(
+      "handMotifHalo",
+      { diameter: 2.35, thickness: 0.035, tessellation: 48 },
+      scene
+    );
+    this.haloMesh.position = position.clone();
+    this.haloMesh.rotation = rotation.clone();
+    this.haloMesh.rotation.z += Math.PI / 18;
+    this.haloMesh.material = this.haloMaterial;
+
     this.animation = new Animation(
       "handMotifFloat",
       "position.y",
@@ -55,6 +74,7 @@ export class HandMotif {
 
     this.animation.setKeys(keys);
     scene.beginDirectAnimation(this.mesh, [this.animation], 0, 120, true);
+    scene.beginDirectAnimation(this.haloMesh, [this.animation], 0, 120, true);
 
     // Create directional light
     this.directionalLight = new DirectionalLight("handMotifDirectionalLight", new Vector3(0, -1, 0), scene);
@@ -66,16 +86,24 @@ export class HandMotif {
 
   setVisibility(value: number): void {
     setProfileVisibilityAlpha(this.material, this.baseAlpha, value);
+    setProfileVisibilityAlpha(this.haloMaterial, this.haloBaseAlpha, value);
     this.directionalLight.intensity =
       value > 0 ? 0.5 * value * this.presentationLightIntensity : 0;
     this.mesh.visibility = value > 0 ? 1 : 0;
+    this.haloMesh.visibility = value > 0 ? 1 : 0;
   }
 
   applyPresentation(presentation: SceneObjectPresentation): void {
     this.presentationLightIntensity = presentation.lightIntensity;
     this.baseAlpha = presentation.material.alpha;
+    this.haloBaseAlpha =
+      presentation.material.alpha * presentation.composition.detailOpacity;
     applySceneObjectMaterial(this.material, presentation.material, "diffuse", {
       emissiveScale: 1.25,
+    });
+    applySceneObjectMaterial(this.haloMaterial, presentation.material, "secondary", {
+      alpha: this.haloBaseAlpha,
+      emissiveScale: 1.6,
     });
     this.directionalLight.diffuse = toColor3(presentation.material.accent);
     this.mesh.scaling = new Vector3(
@@ -83,16 +111,28 @@ export class HandMotif {
       presentation.scale,
       presentation.scale
     );
+    const haloScale =
+      presentation.scale *
+      presentation.composition.frameScale *
+      (1 + presentation.composition.echoSpread * 0.18);
+    this.haloMesh.scaling = new Vector3(
+      haloScale,
+      haloScale * presentation.composition.verticalStretch,
+      haloScale
+    );
   }
 
   dispose(): void {
     this.mesh.dispose();
+    this.haloMesh.dispose();
     this.material.dispose();
+    this.haloMaterial.dispose();
     this.directionalLight.dispose();
   }
 
   updatePosition(position: Vector3): void {
     this.mesh.position = position;
+    this.haloMesh.position = position.clone();
     this.directionalLight.position = this.mesh.position.add(new Vector3(2, 2, 0));
     this.directionalLight.setDirectionToTarget(this.mesh.position);
   }

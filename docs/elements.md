@@ -63,3 +63,4 @@ Scene vocabulary:
 - Preserve off-map positions near route culminations; they are part of the game's concept.
 - Keep object material families authored and testable through `sceneObjectMaterial.ts`; do not pick ad hoc colors inside Babylon mesh classes.
 - Let route state affect material readability: trust clarifies hands, hospital clarity calms medical forms, and off-map intensity adds shared haze/glow.
+- Keep object silhouette roles authored and testable through `sceneObjectComposition.ts`; mesh classes should consume those profiles for detail opacity, spread, frame scale, and stretch.

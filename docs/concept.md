@@ -42,6 +42,12 @@ Scene objects should be readable before they are literal. The lamp is warm amber
 
 Off-map beats should add haze, glow, and translucency across object materials without turning the scene into a saturated rainbow.
 
+### Silhouettes Are Scene Direction
+
+Every repeated object should have a recognizable stage role. The lamp is a beacon with a shade and base, not just a light source. The hand is a reach held inside a memory halo. Hospital imagery should read as a ward fragment through rails, monitor light, IV shapes, and small furniture, not as a toy building. Geometric props are threshold frames: strange enough to be dreamlike, stable enough to orient the player.
+
+Echo objects can be lighter and more spatially spread, but they should still belong to the same silhouette family as the primary motif.
+
 ### Silence Is Play
 
 Silent choices are valid actions. They should create environmental and narrative consequences: steadier fog, altered trust, softened memory, or a route into quiet companionship.
