@@ -78,3 +78,7 @@ Future audio work should move toward layered stems, but the current tags should 
 ## QA Direction
 
 Route-level checks should protect the emotional shape of the game, not just syntax. A passing route should prove that a player can enter from the crossroads, make coherent choices, leave reliable ground, hear the release cue, and wake into the credits without warnings, runtime errors, or broken presentation.
+
+## Technical Direction
+
+The game can be visually strange, but it should not feel technically careless. Production builds should keep runtime JavaScript split into reviewable chunks, treat bundle size as a budgeted quality gate, and preserve the player-gesture launch flow so the heavy 3D runtime loads only when the player chooses to enter the dream.
