@@ -6,9 +6,7 @@ import {
   StandardMaterial,
   MeshBuilder,
   Ray,
-  TransformNode,
   InstancedMesh,
-  Nullable,
   AbstractMesh,
 } from "@babylonjs/core";
 import { Lamp } from "./Lamp";
@@ -16,6 +14,18 @@ import { HandMotif } from "./HandMotif";
 import { GeometricShape } from "./GeometricShape";
 import { HospitalElement } from "./HospitalElement";
 import { EnvironmentalLightElement } from "./EnvironmentalLightElement";
+import {
+  getSceneObjectVisibility,
+  planSceneObjects,
+  type SceneObjectPlacement,
+} from "../../game/content/sceneObjectPlanner";
+import type { NarrativeObjectType } from "../../game/content/worldDesign";
+
+type NarrativeSceneObject = {
+  type: NarrativeObjectType;
+  setVisibility(value: number): void;
+  dispose(): void;
+};
 
 export class EnvironmentSystem {
   private instances: (Mesh | InstancedMesh)[] = [];
@@ -23,10 +33,7 @@ export class EnvironmentSystem {
   private rockMaterial: StandardMaterial;
   private treeTemplate?: Mesh;
   private rockTemplate?: Mesh;
-  private lampInstances: Lamp[] = [];
-  private handMotifInstances: HandMotif[] = [];
-  private geometricShapeInstances: GeometricShape[] = [];
-  private hospitalElementInstances: HospitalElement[] = [];
+  private narrativeObjects: NarrativeSceneObject[] = [];
   private environmentalLightElementInstances: EnvironmentalLightElement[] = [];
   private debug: boolean = false;
   private terrain: AbstractMesh | null = null;
@@ -38,92 +45,97 @@ export class EnvironmentSystem {
     this.createTemplates();
   }
 
-  public createObjectsFromTag(objectNames: string[], terrain: AbstractMesh, position?: { x: number, z: number }): void {
-    console.log("Creating objects from tag:", objectNames, "at position:", position);
-    
+  public createObjectsFromTag(
+    objectNames: string[],
+    terrain: AbstractMesh,
+    position?: { x: number; z: number }
+  ): void {
     if (!terrain) {
       console.error("No terrain provided to createObjectsFromTag");
       return;
     }
+
     this.terrain = terrain;
-    
-    // Clear previous instances
-    console.log("Clearing previous instances");
+    this.clearNarrativeObjects();
+    this.clearFirstObjectPosition();
 
-    this.lampInstances.forEach(lamp => lamp.dispose());
-    this.handMotifInstances.forEach(hand => hand.dispose());
-    this.geometricShapeInstances.forEach(shape => shape.dispose());
-    this.hospitalElementInstances.forEach(hospital => hospital.dispose());
-    
-    this.lampInstances = [];
-    this.handMotifInstances = [];
-    this.geometricShapeInstances = [];
-    this.hospitalElementInstances = [];
-
-    // If no objects to create, return early
     if (!objectNames?.length) {
-      console.log("No objects to create");
       return;
     }
 
-    // Calculate spread positions around the target position
-    const radius = 5; // Smaller spread radius
-    const angleStep = (2 * Math.PI) / objectNames.length;
-    const centerX = position?.x || 0;
-    const centerZ = position?.z || 0;
-    
-    this.clearFirstObjectPosition();
+    const placements = planSceneObjects(objectNames, position ?? { x: 0, z: 0 });
 
-    objectNames.forEach((objectName, index) => {
-      // Calculate spread position around the center point
-      const angle = angleStep * index;
-      const offsetX = centerX + (radius * Math.cos(angle));
-      const offsetZ = centerZ + (radius * Math.sin(angle));
-      const position = new Vector3(offsetX, 0, offsetZ);
-      
-      // Raycast to find ground height
-      const ray = new Ray(new Vector3(position.x, 100, position.z), new Vector3(0, -1, 0), 200);
-      const hit = this.scene.pickWithRay(ray, (mesh) => mesh === this.terrain);
+    placements.forEach((placement) => {
+      try {
+        const adjustedPosition = this.getTerrainAdjustedPosition(placement);
+        const instance = this.createNarrativeObject(placement, adjustedPosition);
 
-      const pickedPoint = hit?.pickedPoint;
-      const adjustedPosition = (pickedPoint ? pickedPoint : position).add(new Vector3(0, 2, 0));
-
-
-        console.log(`Creating ${objectName} at position:`, adjustedPosition);
-        
-        // Store the first object's position
         if (!this.firstObjectPosition) {
           this.firstObjectPosition = adjustedPosition.clone();
         }
-        
-        try {
-          // Calculate rotation to face center while maintaining slight tilt
-          const rotation = new Vector3(
-            Math.random() * Math.PI * 0.2 - Math.PI * 0.1, // Slight tilt on X (-0.1π to 0.1π)
-            angle + Math.PI / 2,                           // Y rotation to face center
-            Math.random() * Math.PI * 0.2 - Math.PI * 0.1  // Slight tilt on Z (-0.1π to 0.1π)
-          );
 
-          if (objectName === 'lamp') {
-            const lamp = new Lamp(this.scene, adjustedPosition, rotation);
-            this.lampInstances.push(lamp);
-          }
-          if (objectName === 'hand') {
-            const hand = new HandMotif(this.scene, adjustedPosition, rotation);
-            this.handMotifInstances.push(hand);
-          }
-          if (objectName === 'geometric') {
-            const shape = new GeometricShape(this.scene, adjustedPosition, rotation);
-            this.geometricShapeInstances.push(shape);
-          }
-          if (objectName === 'hospital') {
-            const hospital = new HospitalElement(this.scene, adjustedPosition, rotation);
-            this.hospitalElementInstances.push(hospital);
-          }
-        } catch (error) {
-          console.error(`Failed to create ${objectName}:`, error);
-        }
-   
+        instance.setVisibility(placement.visibility);
+        this.narrativeObjects.push(instance);
+      } catch (error) {
+        console.error(`Failed to create ${placement.type}:`, error);
+      }
+    });
+  }
+
+  private clearNarrativeObjects(): void {
+    this.narrativeObjects.forEach((object) => object.dispose());
+    this.environmentalLightElementInstances.forEach((light) => light.dispose());
+    this.narrativeObjects = [];
+    this.environmentalLightElementInstances = [];
+  }
+
+  private getTerrainAdjustedPosition(placement: SceneObjectPlacement): Vector3 {
+    const plannedPosition = new Vector3(
+      placement.worldPosition.x,
+      0,
+      placement.worldPosition.z
+    );
+    const ray = new Ray(
+      new Vector3(plannedPosition.x, 100, plannedPosition.z),
+      new Vector3(0, -1, 0),
+      200
+    );
+    const hit = this.scene.pickWithRay(ray, (mesh) => mesh === this.terrain);
+    const pickedPoint = hit?.pickedPoint;
+
+    return (pickedPoint ? pickedPoint : plannedPosition).add(new Vector3(0, 2, 0));
+  }
+
+  private createNarrativeObject(
+    placement: SceneObjectPlacement,
+    position: Vector3
+  ): NarrativeSceneObject {
+    const rotation = new Vector3(
+      placement.rotation.x,
+      placement.rotation.y,
+      placement.rotation.z
+    );
+
+    if (placement.type === "lamp") {
+      return Object.assign(new Lamp(this.scene, position, rotation), {
+        type: placement.type,
+      });
+    }
+
+    if (placement.type === "hand") {
+      return Object.assign(new HandMotif(this.scene, position, rotation), {
+        type: placement.type,
+      });
+    }
+
+    if (placement.type === "geometric") {
+      return Object.assign(new GeometricShape(this.scene, position, rotation), {
+        type: placement.type,
+      });
+    }
+
+    return Object.assign(new HospitalElement(this.scene, position, rotation), {
+      type: placement.type,
     });
   }
 
@@ -145,7 +157,6 @@ export class EnvironmentSystem {
   }
 
   private createTemplates(): void {
-    // Create tree template
     const trunkHeight = 3;
     const trunk = MeshBuilder.CreateCylinder(
       "trunkTemplate",
@@ -173,7 +184,6 @@ export class EnvironmentSystem {
 
     foliage.position.y = trunkHeight * 0.5;
 
-    // Merge tree parts
     const treePartsArray = [trunk, foliage];
     const mergedTree = Mesh.MergeMeshes(
       treePartsArray,
@@ -190,7 +200,6 @@ export class EnvironmentSystem {
       this.treeTemplate.isVisible = false;
     }
 
-    // Create rock template
     this.rockTemplate = MeshBuilder.CreatePolyhedron(
       "rockTemplate",
       {
@@ -203,11 +212,10 @@ export class EnvironmentSystem {
     this.rockTemplate.isVisible = false;
   }
 
-  public populate(terrain: Mesh, objectNames: string[]): void {
+  public populate(terrain: Mesh, _objectNames: string[]): void {
     if (!this.treeTemplate || !this.rockTemplate) return;
     this.terrain = terrain;
 
-    // Create fewer but more strategically placed objects
     const numObjects = 30;
     const positions: Vector3[] = this.generatePositions(numObjects, terrain);
 
@@ -222,7 +230,7 @@ export class EnvironmentSystem {
 
   private generatePositions(count: number, terrain: Mesh): Vector3[] {
     const positions: Vector3[] = [];
-    const minDistance = 5; // Minimum distance between objects
+    const minDistance = 5;
 
     for (let i = 0; i < count; i++) {
       let attempts = 0;
@@ -232,14 +240,11 @@ export class EnvironmentSystem {
         const x = Math.random() * 80 - 40;
         const z = Math.random() * 80 - 40;
 
-        // Get height at position
         const ray = new Ray(new Vector3(x, 100, z), new Vector3(0, -1, 0), 200);
         const hit = this.scene.pickWithRay(ray, (mesh) => mesh === terrain);
 
         if (hit?.pickedPoint) {
           const newPos = hit.pickedPoint;
-
-          // Check distance from other objects
           const isTooClose = positions.some(
             (pos) => Vector3.Distance(pos, newPos) < minDistance
           );
@@ -299,28 +304,21 @@ export class EnvironmentSystem {
     this.instances.push(instance);
   }
 
-  public updateObjectVisibilities(trust: number, hospital_clarity: boolean): void {
-    // Lamp
-    this.lampInstances.forEach((lamp) => {
-      lamp.setVisibility(this.debug ? 1 : 1); // Always visible
+  public updateObjectVisibilities(
+    trust: number,
+    hospital_clarity: boolean
+  ): void {
+    this.narrativeObjects.forEach((object) => {
+      object.setVisibility(
+        this.debug
+          ? 1
+          : getSceneObjectVisibility(object.type, {
+              trust,
+              hospitalClarity: hospital_clarity,
+            })
+      );
     });
 
-    // HandMotif
-    this.handMotifInstances.forEach((handMotif, index) => {
-        handMotif.setVisibility(0.5);
-    });
-
-    // GeometricShape
-    this.geometricShapeInstances.forEach((geometricShape) => {
-      geometricShape.setVisibility(0.5);
-    });
-
-    // HospitalElement
-    this.hospitalElementInstances.forEach((hospitalElement) => {
-      hospitalElement.setVisibility(0.5);
-    });
-
-    // EnvironmentalLightElement
     this.environmentalLightElementInstances.forEach((lightElement) => {
       lightElement.setVisibility(0.5);
     });
