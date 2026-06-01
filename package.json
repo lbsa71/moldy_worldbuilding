@@ -12,6 +12,7 @@
     "clean": "node scripts/clean.mjs",
     "check": "astro check",
     "test": "vitest run",
+    "test:routes": "vitest run routePlaythrough",
     "test:watch": "vitest",
     "validate": "npm run test && npm run check && npm run build"
   },

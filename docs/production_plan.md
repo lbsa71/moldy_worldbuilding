@@ -116,6 +116,20 @@ Quality checks:
 - Step tests prove movement is elapsed-time based and clamps arrival without overshoot.
 - Browser QA covers launch and route progression for character/camera continuity and clean console logs.
 
+## Iteration 9 - Route-Level Playthrough QA
+
+Status: PR opened.
+
+Highest-value improvement:
+- Add deterministic playthrough coverage for every authored first-screen route through end credits.
+- Make route QA inspect the actual Ink dialogue helper so content tags, choice text, audio cues, and final credits are tested together.
+- Remove noisy dialogue debug logging and split tag parsing into a reusable helper for future content/runtime checks.
+
+Quality checks:
+- `npm run test:routes` verifies trust, memory, silence, and uncertainty can all reach credits.
+- Each route playthrough asserts its expected choice path, minimum visible beat count, off-map travel, soundtrack release cue, and credits audio.
+- Browser QA still covers one complete route path in the rendered game with screenshot checkpoints and clean console logs.
+
 ## Next Iteration Candidates
 
 ### Asset and Bundle Polish
@@ -126,10 +140,10 @@ Reliable assessment:
 - Build-size checks around Babylon chunking.
 - Browser QA first route and off-map ending for material readability.
 
-### Route-Level Playthrough QA
+### Ending Presentation Polish
 
-Add automated or semi-automated coverage for at least one complete route so production passes can prove the game remains playable beyond the first choice.
+Make route endings feel intentionally authored in the UI and world state instead of landing on ordinary choice presentation.
 
 Reliable assessment:
-- Browser route script that reaches an ending without console errors.
-- Screenshot checkpoints for launch, route midpoint, and off-map ending.
+- Route playthrough tests assert ending-specific copy, audio, and available choices.
+- Browser QA captures warm and reflective endings for visual distinction.

@@ -73,4 +73,8 @@ Future audio work should move toward layered stems, but the current tags should 
 2. Make scene objects visually distinct and tied to route identity.
 3. Smooth environmental transitions for fog, visibility, and audio.
 4. Improve dialogue UI readability without making it feel like a conventional menu.
-5. Add route-level browser QA that verifies at least one complete path can be played.
+5. Keep complete-route playability under test so every route can still reach credits after production changes.
+
+## QA Direction
+
+Route-level checks should protect the emotional shape of the game, not just syntax. A passing route should prove that a player can enter from the crossroads, make coherent choices, leave reliable ground, hear the release cue, and wake into the credits without warnings, runtime errors, or broken presentation.
