@@ -101,15 +101,22 @@ Quality checks:
 - Stable-variant tests ensure deterministic visual selection for implemented object tags.
 - Browser QA covers a route beat with repeated hand props and clean console logs.
 
+## Iteration 8 - Character Motion Polish
+
+Status: PR opened.
+
+Highest-value improvement:
+- Replace fixed-frame avatar stepping with a pure, tested motion model that uses elapsed time, route distance, and off-map intensity.
+- Make off-map passages more deliberate while preventing tiny retargets from causing visible shuffles.
+- Remove debug movement logs and fallback-character debug geometry from the production runtime.
+
+Quality checks:
+- Motion tests prove angle wrapping chooses the short rotation path.
+- Journey tests prove off-map passages are paced more slowly than grounded passages of the same distance.
+- Step tests prove movement is elapsed-time based and clamps arrival without overshoot.
+- Browser QA covers launch and route progression for character/camera continuity and clean console logs.
+
 ## Next Iteration Candidates
-
-### Character and Movement Polish
-
-Improve avatar locomotion, route movement pacing, and camera follow smoothing so transitions between story beats feel performed rather than teleported.
-
-Reliable assessment:
-- Unit-test pure movement timing/classification helpers.
-- Browser QA route transitions for character/camera continuity and no visual snapping.
 
 ### Asset and Bundle Polish
 
@@ -118,3 +125,11 @@ Reduce production bundle warnings and replace remaining placeholder materials wi
 Reliable assessment:
 - Build-size checks around Babylon chunking.
 - Browser QA first route and off-map ending for material readability.
+
+### Route-Level Playthrough QA
+
+Add automated or semi-automated coverage for at least one complete route so production passes can prove the game remains playable beyond the first choice.
+
+Reliable assessment:
+- Browser route script that reaches an ending without console errors.
+- Screenshot checkpoints for launch, route midpoint, and off-map ending.

@@ -30,6 +30,12 @@ The terrain is deliberately finite. Late-route positions move beyond it, creatin
 
 This is not a bug. It is a core spatial metaphor.
 
+### Movement Is Performance
+
+Traversal should feel like the avatar is choosing how to approach each memory, not like a marker sliding between coordinates. Grounded passages can be steady and readable. Off-map passages should slow slightly, hold their turns, and let the camera drift with more patience so the player feels the loss of reliable ground.
+
+Tiny retargets near the same story beat should become stillness rather than visible shuffling.
+
 ### Silence Is Play
 
 Silent choices are valid actions. They should create environmental and narrative consequences: steadier fog, altered trust, softened memory, or a route into quiet companionship.
