@@ -13,6 +13,8 @@ import {
   AdvancedDynamicTexture,
   Button,
   Control,
+  Rectangle,
+  StackPanel,
   TextBlock,
 } from "@babylonjs/gui";
 
@@ -22,7 +24,13 @@ import { EnvironmentSystem } from "./game/EnvironmentSystem";
 import { Character } from "./game/Character";
 import { AudioSystem } from "./game/AudioSystem";
 import { CameraSystem } from "./game/CameraSystem";
-import { loadInkFile, getCurrentDialogue, choose } from "../utils/ink";
+import { getCurrentDialogue, choose } from "../utils/ink";
+import {
+  createDialoguePresentation,
+  normalizeDialogueText,
+  type DialogueHorizontalAlignment,
+  type DialoguePresentation,
+} from "../game/experience/dialoguePresentation";
 
 export class GameScene {
   private engine!: Engine;
@@ -34,10 +42,15 @@ export class GameScene {
   private cameraSystem!: CameraSystem;
   private initialized = false;
   private isWebGPU = false;
-  private guiTexture!: any;
-  private dialogueText!: any;
+  private guiTexture!: AdvancedDynamicTexture;
+  private dialoguePanel!: Rectangle;
+  private dialogueText!: TextBlock;
+  private choiceStack!: StackPanel;
   private currentStory: any;
-  private currentButtonNames: string[] = [];
+  private currentChoiceControls: Control[] = [];
+  private currentChoiceTexts: string[] = [];
+  private currentChoiceCount = 0;
+  private currentDialogueText = "";
   private enableAtmosphere = true; // Toggle for atmosphere
   private enableEnvironment = true; // Toggle for environment
   private enableInk = true; // Toggle for Ink
@@ -80,31 +93,15 @@ export class GameScene {
       this.audioSystem.playAudio(audio);
     }
 
-    this.dialogueText.text = text;
-
-    // Remove existing buttons
-    this.currentButtonNames.forEach((buttonName) => {
-      const button = this.guiTexture.getControlByName(buttonName);
-      if (button) {
-        this.guiTexture.removeControl(button);
-      }
-    });
-    this.currentButtonNames = [];
-
-    choices.forEach((choice, index) => {
-      const buttonName = `choice${index}`;
-      const button = Button.CreateSimpleButton(buttonName, choice.text);
-      button.width = "30%";
-      button.height = "55px";
-      button.color = "white";
-      button.background = "black";
-      button.top = `${(index + 1) * 65 + 30}px`;
-      button.left = "20px";
-      button.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
-      button.onPointerUpObservable.add(() => this.handleChoiceClick(index));
-      this.guiTexture.addControl(button);
-      this.currentButtonNames.push(buttonName);
-    });
+    this.currentChoiceTexts = choices.map((choice) => choice.text);
+    this.currentChoiceCount = this.currentChoiceTexts.length;
+    this.currentDialogueText = normalizeDialogueText(text);
+    const presentation = this.applyDialogueLayout(
+      this.currentChoiceCount,
+      this.currentDialogueText
+    );
+    this.dialogueText.text = this.currentDialogueText;
+    this.renderChoiceControls(presentation);
 
     if (position) {
       this.character.moveTo(
@@ -136,22 +133,168 @@ export class GameScene {
   private setupGUI(): void {
     this.guiTexture = AdvancedDynamicTexture.CreateFullscreenUI("gui");
 
-    this.dialogueText = new TextBlock();
-    this.dialogueText.color = "white";
-    this.dialogueText.fontSize = 24;
+    this.dialoguePanel = new Rectangle("dialoguePanel");
+    this.dialoguePanel.cornerRadius = 6;
+    this.dialoguePanel.thickness = 1;
+    this.dialoguePanel.shadowBlur = 18;
+    this.dialoguePanel.shadowOffsetY = 8;
+    this.dialoguePanel.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
+    this.dialoguePanel.zIndex = 10;
+    this.guiTexture.addControl(this.dialoguePanel);
+
+    this.dialogueText = new TextBlock("dialogueText");
     this.dialogueText.textWrapping = true;
-    this.dialogueText.top = "60px";
-    this.dialogueText.width = "100%";
-    this.dialogueText.height = "300px";
-    this.dialogueText.left = "0px";
+    this.dialogueText.fontFamily = "Georgia, 'Times New Roman', serif";
     this.dialogueText.textHorizontalAlignment =
       Control.HORIZONTAL_ALIGNMENT_LEFT;
     this.dialogueText.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
-    this.dialogueText.paddingTop = "20px";
-    this.dialogueText.paddingLeft = "20px";
-    this.dialogueText.background = "rgba(0, 0, 0, 0.5)";
-    this.dialogueText.zIndex = 10;
-    this.guiTexture.addControl(this.dialogueText);
+    this.dialogueText.textVerticalAlignment =
+      Control.VERTICAL_ALIGNMENT_TOP;
+    this.dialogueText.zIndex = 12;
+    this.dialoguePanel.addControl(this.dialogueText);
+
+    this.choiceStack = new StackPanel("choiceStack");
+    this.choiceStack.isVertical = true;
+    this.choiceStack.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
+    this.choiceStack.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
+    this.choiceStack.zIndex = 12;
+    this.dialoguePanel.addControl(this.choiceStack);
+
+    this.applyDialogueLayout(0);
+  }
+
+  private clearChoiceControls(): void {
+    this.currentChoiceControls.forEach((control) => {
+      this.choiceStack.removeControl(control);
+    });
+    this.currentChoiceControls = [];
+  }
+
+  private renderChoiceControls(presentation: DialoguePresentation): void {
+    this.clearChoiceControls();
+
+    this.currentChoiceTexts.forEach((choiceText, index) => {
+      this.addChoiceButton(
+        choiceText,
+        index,
+        this.currentChoiceTexts.length,
+        presentation
+      );
+    });
+  }
+
+  private addChoiceButton(
+    choiceText: string,
+    index: number,
+    totalChoices: number,
+    presentation: DialoguePresentation
+  ): void {
+    const { palette } = presentation;
+    const buttonName = `choice${index}`;
+    const slot = new Rectangle(`${buttonName}Slot`);
+    const hasGap = index < totalChoices - 1;
+    slot.thickness = 0;
+    slot.width = "100%";
+    slot.height = `${
+      presentation.choice.buttonHeightPx + (hasGap ? presentation.choice.gapPx : 0)
+    }px`;
+    slot.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+
+    const button = Button.CreateSimpleButton(buttonName, choiceText);
+    button.width = "100%";
+    button.height = `${presentation.choice.buttonHeightPx}px`;
+    button.cornerRadius = 4;
+    button.thickness = 1;
+    button.color = palette.choiceBorder;
+    button.background = palette.choiceBackground;
+    button.fontFamily = "Segoe UI, Arial, sans-serif";
+    button.fontSize = presentation.choice.fontSizePx;
+    button.onPointerEnterObservable.add(() => {
+      button.background = palette.choiceHoverBackground;
+      button.color = palette.choiceHoverBorder;
+      if (button.textBlock) {
+        button.textBlock.color = "#071008";
+      }
+    });
+    button.onPointerOutObservable.add(() => {
+      button.background = palette.choiceBackground;
+      button.color = palette.choiceBorder;
+      if (button.textBlock) {
+        button.textBlock.color = palette.choiceText;
+      }
+    });
+    button.onPointerUpObservable.add(() => this.handleChoiceClick(index));
+
+    if (button.textBlock) {
+      button.textBlock.color = palette.choiceText;
+      button.textBlock.fontFamily = "Segoe UI, Arial, sans-serif";
+      button.textBlock.fontSize = presentation.choice.fontSizePx;
+      button.textBlock.fontWeight = "600";
+      button.textBlock.textWrapping = true;
+      button.textBlock.textHorizontalAlignment =
+        Control.HORIZONTAL_ALIGNMENT_LEFT;
+      button.textBlock.paddingLeft = "16px";
+      button.textBlock.paddingRight = "16px";
+    }
+
+    slot.addControl(button);
+    this.choiceStack.addControl(slot);
+    this.currentChoiceControls.push(slot);
+  }
+
+  private applyDialogueLayout(
+    choiceCount = this.currentChoiceCount,
+    dialogueText = this.currentDialogueText
+  ): DialoguePresentation {
+    const presentation = createDialoguePresentation({
+      choiceCount,
+      text: dialogueText,
+      viewport: this.getDialogueViewport(),
+    });
+    const panelWidth = presentation.panel.widthPx;
+    const contentWidth = panelWidth - presentation.text.paddingPx * 2;
+
+    this.dialoguePanel.width = `${panelWidth}px`;
+    this.dialoguePanel.height = `${presentation.panel.heightPx}px`;
+    this.dialoguePanel.left = `${presentation.panel.leftPx}px`;
+    this.dialoguePanel.top = `-${presentation.panel.bottomPx}px`;
+    this.dialoguePanel.horizontalAlignment = this.toGuiHorizontalAlignment(
+      presentation.panel.horizontalAlignment
+    );
+    this.dialoguePanel.background = presentation.palette.panelBackground;
+    this.dialoguePanel.color = presentation.palette.panelBorder;
+    this.dialoguePanel.shadowColor = presentation.palette.panelShadow;
+
+    this.dialogueText.width = `${contentWidth}px`;
+    this.dialogueText.height = `${presentation.text.heightPx}px`;
+    this.dialogueText.left = `${presentation.text.paddingPx}px`;
+    this.dialogueText.top = `${presentation.text.paddingPx}px`;
+    this.dialogueText.color = presentation.palette.text;
+    this.dialogueText.fontSize = presentation.text.fontSizePx;
+    this.dialogueText.lineSpacing = `${presentation.text.lineSpacingPx}px`;
+
+    this.choiceStack.width = `${contentWidth}px`;
+    this.choiceStack.height = `${presentation.choiceStack.heightPx}px`;
+    this.choiceStack.left = `${presentation.text.paddingPx}px`;
+    this.choiceStack.top = `-${presentation.text.paddingPx}px`;
+    this.choiceStack.isVisible = choiceCount > 0;
+
+    return presentation;
+  }
+
+  private getDialogueViewport(): { width: number; height: number } {
+    return {
+      width: this.canvas.clientWidth || window.innerWidth,
+      height: this.canvas.clientHeight || window.innerHeight,
+    };
+  }
+
+  private toGuiHorizontalAlignment(
+    alignment: DialogueHorizontalAlignment
+  ): number {
+    return alignment === "center"
+      ? Control.HORIZONTAL_ALIGNMENT_CENTER
+      : Control.HORIZONTAL_ALIGNMENT_LEFT;
   }
 
   private handleChoiceClick(choiceIndex: number): void {
@@ -254,6 +397,8 @@ export class GameScene {
 
     window.addEventListener("resize", () => {
       this.engine.resize();
+      const presentation = this.applyDialogueLayout();
+      this.renderChoiceControls(presentation);
     });
 
     this.scene.onKeyboardObservable.add((kbInfo) => {
