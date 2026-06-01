@@ -16,6 +16,13 @@ describe("authored route playthroughs", () => {
 
       expect(result.ended).toBe(true);
       expect(result.finalText).toContain("Wake up. Your life is waiting.");
+      expect(result.endingBeat?.choices.map((choice) => choice.text)).toEqual([
+        "Dream On",
+        "Wake Up",
+      ]);
+      expect(result.endingBeat?.text).toEqual(
+        expect.stringContaining(routePlan.endingTextIncludes)
+      );
       expect(result.choicePath).toEqual(routePlan.expectedChoicePath);
       expect(result.beats.length).toBeGreaterThanOrEqual(
         routePlan.minimumBeatCount

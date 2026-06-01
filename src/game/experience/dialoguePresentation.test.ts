@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   createDialoguePresentation,
+  getDialoguePhase,
   normalizeDialogueText,
 } from "./dialoguePresentation";
 
@@ -61,6 +62,61 @@ describe("createDialoguePresentation", () => {
 
     expect(presentation.choiceStack.heightPx).toBeGreaterThanOrEqual(requiredChoiceHeight);
     expect(presentation.panel.heightPx).toBeLessThanOrEqual(540 - presentation.panel.marginPx * 2);
+  });
+
+  it("recognizes route endings and gives them a centered warm treatment", () => {
+    const presentation = createDialoguePresentation({
+      choices: ["Dream On", "Wake Up"],
+      choiceCount: 2,
+      text: "The handprints become small lights along the corridor floor.",
+      viewport: { width: 1280, height: 720 },
+    });
+
+    expect(presentation.phase).toBe("ending");
+    expect(presentation.panel.horizontalAlignment).toBe("center");
+    expect(presentation.panel.widthPx).toBeGreaterThan(650);
+    expect(presentation.palette.panelBorder).toBe("#ead28a");
+    expect(presentation.choice.textHorizontalAlignment).toBe("center");
+  });
+
+  it("recognizes credits and presents them without ordinary choice spacing", () => {
+    const presentation = createDialoguePresentation({
+      choiceCount: 0,
+      text:
+        "The lamp goes out without drama.\n\n" +
+        "Wake up. Your life is waiting.",
+      viewport: { width: 1280, height: 720 },
+    });
+
+    expect(presentation.phase).toBe("credits");
+    expect(presentation.panel.horizontalAlignment).toBe("center");
+    expect(presentation.choiceStack.heightPx).toBe(0);
+    expect(presentation.text.fontSizePx).toBeGreaterThanOrEqual(23);
+  });
+});
+
+describe("getDialoguePhase", () => {
+  it("distinguishes normal story beats, route endings, and credits", () => {
+    expect(
+      getDialoguePhase({
+        choices: ["Step into the lamp's circle."],
+        text: "The lamp waits.",
+      })
+    ).toBe("story");
+
+    expect(
+      getDialoguePhase({
+        choices: ["Dream On", "Wake Up"],
+        text: "The handprints become lights.",
+      })
+    ).toBe("ending");
+
+    expect(
+      getDialoguePhase({
+        choices: [],
+        text: "Wake up. Your life is waiting.",
+      })
+    ).toBe("credits");
   });
 });
 

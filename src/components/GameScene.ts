@@ -30,6 +30,7 @@ import {
   normalizeDialogueText,
   type DialogueHorizontalAlignment,
   type DialoguePresentation,
+  type DialogueTextAlignment,
 } from "../game/experience/dialoguePresentation";
 import { createWorldTreatment } from "../game/content/worldZones";
 
@@ -97,7 +98,8 @@ export class GameScene {
     this.currentDialogueText = normalizeDialogueText(text);
     const presentation = this.applyDialogueLayout(
       this.currentChoiceCount,
-      this.currentDialogueText
+      this.currentDialogueText,
+      this.currentChoiceTexts
     );
     this.dialogueText.text = this.currentDialogueText;
     this.renderChoiceControls(presentation);
@@ -232,9 +234,14 @@ export class GameScene {
       button.textBlock.fontWeight = "600";
       button.textBlock.textWrapping = true;
       button.textBlock.textHorizontalAlignment =
-        Control.HORIZONTAL_ALIGNMENT_LEFT;
-      button.textBlock.paddingLeft = "16px";
-      button.textBlock.paddingRight = "16px";
+        this.toGuiTextHorizontalAlignment(
+          presentation.choice.textHorizontalAlignment
+        );
+      const isCenteredChoiceText =
+        presentation.choice.textHorizontalAlignment === "center";
+      const horizontalPadding = isCenteredChoiceText ? "0px" : "16px";
+      button.textBlock.paddingLeft = horizontalPadding;
+      button.textBlock.paddingRight = horizontalPadding;
     }
 
     slot.addControl(button);
@@ -244,9 +251,11 @@ export class GameScene {
 
   private applyDialogueLayout(
     choiceCount = this.currentChoiceCount,
-    dialogueText = this.currentDialogueText
+    dialogueText = this.currentDialogueText,
+    choiceTexts = this.currentChoiceTexts
   ): DialoguePresentation {
     const presentation = createDialoguePresentation({
+      choices: choiceTexts,
       choiceCount,
       text: dialogueText,
       viewport: this.getDialogueViewport(),
@@ -292,6 +301,12 @@ export class GameScene {
   private toGuiHorizontalAlignment(
     alignment: DialogueHorizontalAlignment
   ): number {
+    return alignment === "center"
+      ? Control.HORIZONTAL_ALIGNMENT_CENTER
+      : Control.HORIZONTAL_ALIGNMENT_LEFT;
+  }
+
+  private toGuiTextHorizontalAlignment(alignment: DialogueTextAlignment): number {
     return alignment === "center"
       ? Control.HORIZONTAL_ALIGNMENT_CENTER
       : Control.HORIZONTAL_ALIGNMENT_LEFT;

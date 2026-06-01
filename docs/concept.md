@@ -40,6 +40,10 @@ Tiny retargets near the same story beat should become stillness rather than visi
 
 Silent choices are valid actions. They should create environmental and narrative consequences: steadier fog, altered trust, softened memory, or a route into quiet companionship.
 
+### Endings Are Thresholds
+
+Route endings should feel like a held threshold between returning to the dream and waking out of it. The Dream On / Wake Up moment should be visually warmer, more centered, and less menu-like than ordinary branches. Credits are not a reward screen; they are the last quiet room before the player leaves.
+
 ## Current Route Structure
 
 ### Trust
