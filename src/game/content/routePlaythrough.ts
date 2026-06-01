@@ -4,6 +4,7 @@ import { choose, getCurrentDialogue, type Dialogue } from "../../utils/ink";
 export type AuthoredRouteName = "trust" | "memory" | "silence" | "uncertainty";
 
 export type AuthoredRoutePlaythrough = {
+  endingTextIncludes: string;
   expectedChoicePath: string[];
   minimumBeatCount: number;
   openingChoice: string;
@@ -18,6 +19,7 @@ export type RoutePlaythroughResult = {
   audioTimeline: string[];
   beats: RouteBeat[];
   choicePath: string[];
+  endingBeat?: RouteBeat;
   ended: boolean;
   finalText: string;
   maxAxisDistance: number;
@@ -28,6 +30,7 @@ const WAKE_UP_CHOICE = "Wake Up";
 export const AUTHORED_ROUTE_PLAYTHROUGHS: AuthoredRoutePlaythrough[] = [
   {
     route: "trust",
+    endingTextIncludes: "You did not fix me.",
     openingChoice: "Step into the lamp's circle.",
     minimumBeatCount: 7,
     expectedChoicePath: [
@@ -41,6 +44,7 @@ export const AUTHORED_ROUTE_PLAYTHROUGHS: AuthoredRoutePlaythrough[] = [
   },
   {
     route: "memory",
+    endingTextIncludes: "If I had to be carried",
     openingChoice: "Follow the metallic pulse in the mist.",
     minimumBeatCount: 7,
     expectedChoicePath: [
@@ -54,6 +58,7 @@ export const AUTHORED_ROUTE_PLAYTHROUGHS: AuthoredRoutePlaythrough[] = [
   },
   {
     route: "silence",
+    endingTextIncludes: "I cannot follow you past this quiet",
     openingChoice: "Stay quiet until the fog answers.",
     minimumBeatCount: 7,
     expectedChoicePath: [
@@ -67,6 +72,7 @@ export const AUTHORED_ROUTE_PLAYTHROUGHS: AuthoredRoutePlaythrough[] = [
   },
   {
     route: "uncertainty",
+    endingTextIncludes: "Some answers keep their backs turned",
     openingChoice: "Walk away from the lamp and into uncertainty.",
     minimumBeatCount: 7,
     expectedChoicePath: [
@@ -87,6 +93,7 @@ export function playAuthoredRoute(
   const beats: RouteBeat[] = [];
   const choicePath: string[] = [];
   const audioTimeline: string[] = [];
+  let endingBeat: RouteBeat | undefined;
   let finalText = "";
   let maxAxisDistance = 0;
 
@@ -113,10 +120,15 @@ export function playAuthoredRoute(
         audioTimeline,
         beats,
         choicePath,
+        endingBeat,
         ended: true,
         finalText,
         maxAxisDistance,
       };
+    }
+
+    if (isEndingBeat(dialogue)) {
+      endingBeat = beat;
     }
 
     const expectedChoice = routePlan.expectedChoicePath[choicePath.length];
@@ -147,6 +159,7 @@ export function playAuthoredRoute(
     audioTimeline,
     beats,
     choicePath,
+    endingBeat,
     ended: false,
     finalText,
     maxAxisDistance,
@@ -155,4 +168,10 @@ export function playAuthoredRoute(
 
 function formatChoices(dialogue: Dialogue): string {
   return `[${dialogue.choices.map((choice) => `"${choice.text}"`).join(", ")}]`;
+}
+
+function isEndingBeat(dialogue: Dialogue): boolean {
+  const choiceTexts = dialogue.choices.map((choice) => choice.text);
+
+  return choiceTexts[0] === "Dream On" && choiceTexts[1] === WAKE_UP_CHOICE;
 }

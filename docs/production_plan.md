@@ -144,15 +144,22 @@ Quality checks:
 - `npm run build` completes without the previous oversized chunk warning.
 - Browser QA covers launch and a route beat from a fresh server to prove the chunk split still loads the Babylon runtime correctly.
 
+## Iteration 11 - Ending Presentation Polish
+
+Status: PR opened.
+
+Highest-value improvement:
+- Give route endings and credits their own dialogue presentation phase instead of reusing the ordinary branch UI.
+- Center and warm the final Dream On / Wake Up choice moment so it reads like a threshold, not another menu.
+- Extend route playthrough QA to expose and assert ending-specific copy and ending choices before credits.
+
+Quality checks:
+- Presentation tests distinguish story, route-ending, and credits phases.
+- Ending layout tests prove centered warm treatment, centered final choices, and credits without ordinary choice spacing.
+- Route playthrough tests assert Dream On / Wake Up choices and route-specific ending copy for every route family.
+- Browser QA captures an off-map ending and credits state without warnings or runtime errors.
+
 ## Next Iteration Candidates
-
-### Ending Presentation Polish
-
-Make route endings feel intentionally authored in the UI and world state instead of landing on ordinary choice presentation.
-
-Reliable assessment:
-- Route playthrough tests assert ending-specific copy, audio, and available choices.
-- Browser QA captures warm and reflective endings for visual distinction.
 
 ### Material Readability Polish
 
@@ -161,3 +168,11 @@ Replace remaining placeholder-like material treatments with a tighter route pale
 Reliable assessment:
 - Planner or presentation tests assert route object color/intensity families.
 - Browser QA captures first-route, memory-route, and off-map ending material readability.
+
+### Production Log Hygiene
+
+Reduce routine runtime console output while preserving actionable errors and explicit debug-mode diagnostics.
+
+Reliable assessment:
+- Unit-test logger or diagnostics helpers if introduced.
+- Browser QA captures route progression with no warn/error logs and minimal non-debug console noise.
