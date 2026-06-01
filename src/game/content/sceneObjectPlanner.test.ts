@@ -148,4 +148,41 @@ describe("planSceneObjects", () => {
       grounded.presentation.material.emissive.b
     );
   });
+
+  it("attaches stable composition profiles to planned story objects", () => {
+    const firstPlan = planSceneObjects(
+      ["lamp", "hand", "geometric", "hospital"],
+      { x: -18, z: 32 },
+      { trust: 4, hospitalClarity: true }
+    );
+    const secondPlan = planSceneObjects(
+      ["lamp", "hand", "geometric", "hospital"],
+      { x: -18, z: 32 },
+      { trust: 4, hospitalClarity: true }
+    );
+
+    expect(firstPlan.map((placement) => placement.presentation.composition)).toEqual(
+      secondPlan.map((placement) => placement.presentation.composition)
+    );
+    expect(
+      firstPlan.find((placement) => placement.type === "lamp")?.presentation
+        .composition.silhouette
+    ).toBe("beacon");
+    expect(
+      firstPlan.find((placement) => placement.type === "hospital")
+        ?.presentation.composition.detailOpacity
+    ).toBeGreaterThan(0.6);
+  });
+
+  it("carries off-map intensity into silhouette stretch", () => {
+    const grounded = planSceneObjects(["geometric"], { x: 0, z: 0 })[0];
+    const offMap = planSceneObjects(["geometric"], { x: 0, z: 92 })[0];
+
+    expect(offMap.presentation.composition.frameScale).toBeGreaterThan(
+      grounded.presentation.composition.frameScale
+    );
+    expect(offMap.presentation.composition.verticalStretch).toBeGreaterThan(
+      grounded.presentation.composition.verticalStretch
+    );
+  });
 });

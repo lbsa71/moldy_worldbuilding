@@ -175,6 +175,22 @@ Quality checks:
 - Planner tests prove every object placement receives a stable material profile.
 - Browser QA captures rendered material readability when the local browser backend is available.
 
+## Iteration 13 - Object Silhouette Composition
+
+Status: PR opened.
+
+Highest-value improvement:
+- Move object composition into a pure, tested profile so silhouette roles are authored rather than incidental mesh choices.
+- Add stronger prop language to the runtime meshes: lamp shade/base, hand halo, geometric threshold frame, and hospital rail/monitor/IV/chair details.
+- Let trust, hospital clarity, echo role, and off-map intensity shape detail opacity, spread, frame scale, and vertical stretch.
+
+Quality checks:
+- Composition tests assert authored silhouette roles for lamp, hand, hospital, and geometric objects.
+- State tests prove trust opens the hand motif and hospital clarity reveals more ward detail.
+- Off-map tests prove threshold silhouettes stretch while preserving object identity.
+- Planner tests prove every object placement receives a stable composition profile.
+- Browser QA captures rendered silhouette readability when the local browser backend is available.
+
 ## Next Iteration Candidates
 
 ### Production Log Hygiene
@@ -185,10 +201,10 @@ Reliable assessment:
 - Unit-test logger or diagnostics helpers if introduced.
 - Browser QA captures route progression with no warn/error logs and minimal non-debug console noise.
 
-### Object Silhouette Composition
+### Soundscape Interaction Polish
 
-Refine prop geometry beyond material treatment so hospital, hand, and geometric scenes read as authored installations rather than simple primitive clusters.
+Make the existing soundtrack transitions respond more deliberately to route endings, silence choices, and off-map passages.
 
 Reliable assessment:
-- Pure planner or geometry-description tests assert route-specific composition constraints.
-- Browser QA captures trust, memory, and uncertainty beats from desktop and narrow viewports.
+- Pure transition tests assert route-state driven volume or crossfade behavior.
+- Browser QA confirms launch, first route choice, and ending audio state without warnings.

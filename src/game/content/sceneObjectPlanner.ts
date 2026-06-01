@@ -7,6 +7,10 @@ import {
   createSceneObjectMaterialProfile,
   type SceneObjectMaterialProfile,
 } from "./sceneObjectMaterial";
+import {
+  createSceneObjectCompositionProfile,
+  type SceneObjectCompositionProfile,
+} from "./sceneObjectComposition";
 import { getOffMapIntensity } from "./worldZones";
 
 export type ScenePoint = {
@@ -28,6 +32,7 @@ export type SceneObjectState = {
 export type SceneObjectPresentationRole = "primary" | "echo";
 
 export type SceneObjectPresentation = {
+  composition: SceneObjectCompositionProfile;
   lightIntensity: number;
   material: SceneObjectMaterialProfile;
   role: SceneObjectPresentationRole;
@@ -177,6 +182,13 @@ function getSceneObjectPresentation({
   const variant = getStableVariant(type, objectIndex, center);
 
   return {
+    composition: createSceneObjectCompositionProfile({
+      offMapIntensity,
+      role,
+      state,
+      type,
+      variant,
+    }),
     lightIntensity: clamp(
       OBJECT_BASE_LIGHT[type] +
         offMapIntensity * 0.35 +

@@ -21,13 +21,17 @@ export class GeometricShape {
   private rootNode: TransformNode;
   private primaryMesh: Mesh;
   private secondaryMesh: Mesh;
+  private frameMesh: Mesh;
   private animation: Animation;
   private material: StandardMaterial;
   private secondaryMaterial: StandardMaterial;
+  private frameMaterial: StandardMaterial;
   private directionalLight: DirectionalLight;
   private baseAlpha = 0.52;
   private secondaryBaseAlpha = 0.58;
+  private frameBaseAlpha = 0.46;
   private presentationLightIntensity = 1;
+  private secondaryAngle = 0;
 
   constructor(
     scene: Scene,
@@ -76,11 +80,23 @@ export class GeometricShape {
     this.secondaryMesh.parent = this.rootNode;
     
     // Position secondary shape relative to primary
-    const randomAngle = ((Math.abs(variant) % 16) / 16) * Math.PI * 2;
+    this.secondaryAngle = ((Math.abs(variant) % 16) / 16) * Math.PI * 2;
     this.secondaryMesh.position = new Vector3(
-      Math.cos(randomAngle) * 0.7,
+      Math.cos(this.secondaryAngle) * 0.7,
       0.5,
-      Math.sin(randomAngle) * 0.7
+      Math.sin(this.secondaryAngle) * 0.7
+    );
+
+    this.frameMesh = MeshBuilder.CreateTorus(
+      "geometricShapeFrame",
+      { diameter: 1.45, thickness: 0.035, tessellation: 48 },
+      scene
+    );
+    this.frameMesh.parent = this.rootNode;
+    this.frameMesh.rotation = new Vector3(
+      Math.PI / 2,
+      ((Math.abs(variant) % 8) / 8) * Math.PI,
+      0
     );
 
     // Create and setup materials
@@ -89,6 +105,7 @@ export class GeometricShape {
       "geometricShapeSecondaryMaterial",
       scene
     );
+    this.frameMaterial = new StandardMaterial("geometricShapeFrameMaterial", scene);
     const palette = [
       new Color3(0.34, 0.7, 0.76),
       new Color3(0.66, 0.5, 0.86),
@@ -106,6 +123,11 @@ export class GeometricShape {
     this.secondaryMaterial.specularColor = Color3.Black();
     this.secondaryMaterial.ambientColor = baseColor.scale(0.24);
     this.secondaryMaterial.alpha = this.secondaryBaseAlpha;
+    this.frameMaterial.diffuseColor = baseColor.scale(1.12);
+    this.frameMaterial.emissiveColor = baseColor.scale(0.3);
+    this.frameMaterial.specularColor = Color3.Black();
+    this.frameMaterial.ambientColor = baseColor.scale(0.18);
+    this.frameMaterial.alpha = this.frameBaseAlpha;
 
     // Add noise texture for more visual interest
     const noiseTexture = new NoiseProceduralTexture("noiseTexture", 256, scene);
@@ -117,6 +139,7 @@ export class GeometricShape {
 
     this.primaryMesh.material = this.material;
     this.secondaryMesh.material = this.secondaryMaterial;
+    this.frameMesh.material = this.frameMaterial;
 
     this.animation = new Animation(
       "geometricShapeRotate",
@@ -186,22 +209,43 @@ export class GeometricShape {
       this.secondaryBaseAlpha,
       value
     );
+    setProfileVisibilityAlpha(this.frameMaterial, this.frameBaseAlpha, value);
     this.directionalLight.intensity =
       value > 0 ? 0.5 * value * this.presentationLightIntensity : 0;
     this.primaryMesh.visibility = value > 0 ? 1 : 0;
     this.secondaryMesh.visibility = value > 0 ? 1 : 0;
+    this.frameMesh.visibility = value > 0 ? 1 : 0;
   }
 
   applyPresentation(presentation: SceneObjectPresentation): void {
     this.presentationLightIntensity = presentation.lightIntensity;
     this.baseAlpha = presentation.material.alpha;
     this.secondaryBaseAlpha = Math.min(0.92, presentation.material.alpha + 0.08);
+    this.frameBaseAlpha =
+      presentation.material.alpha * presentation.composition.detailOpacity;
     applySceneObjectMaterial(this.material, presentation.material);
     applySceneObjectMaterial(this.secondaryMaterial, presentation.material, "secondary", {
       alpha: this.secondaryBaseAlpha,
       emissiveScale: 1.2,
     });
+    applySceneObjectMaterial(this.frameMaterial, presentation.material, "accent", {
+      alpha: this.frameBaseAlpha,
+      emissiveScale: 1.35,
+    });
     this.directionalLight.diffuse = toColor3(presentation.material.accent);
+    const secondaryDistance =
+      0.58 + presentation.composition.echoSpread * 0.42;
+    this.secondaryMesh.position = new Vector3(
+      Math.cos(this.secondaryAngle) * secondaryDistance,
+      0.42 + presentation.composition.echoSpread * 0.18,
+      Math.sin(this.secondaryAngle) * secondaryDistance
+    );
+    const frameLineScale = 1 + presentation.composition.lineWeight * 2;
+    this.frameMesh.scaling = new Vector3(
+      presentation.composition.frameScale * frameLineScale,
+      presentation.composition.verticalStretch,
+      presentation.composition.frameScale * frameLineScale
+    );
     this.rootNode.scaling = new Vector3(
       presentation.scale,
       presentation.scale,
@@ -212,12 +256,14 @@ export class GeometricShape {
   dispose(): void {
     this.primaryMesh.dispose();
     this.secondaryMesh.dispose();
+    this.frameMesh.dispose();
     this.rootNode.dispose();
     if (this.material.bumpTexture) {
       this.material.bumpTexture.dispose();
     }
     this.material.dispose();
     this.secondaryMaterial.dispose();
+    this.frameMaterial.dispose();
     this.directionalLight.dispose();
   }
 

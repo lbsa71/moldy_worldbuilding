@@ -22,6 +22,8 @@ export class Lamp {
   private glowLayer: GlowLayer;
   private mesh: Mesh;
   private pole: Mesh;
+  private shade: Mesh;
+  private base: Mesh;
   private bulbMaterial: StandardMaterial;
   private poleMaterial: StandardMaterial;
   private directionalLight: DirectionalLight;
@@ -59,6 +61,29 @@ export class Lamp {
     this.bulbMaterial.alpha = this.bulbBaseAlpha;
     this.mesh.material = this.bulbMaterial;
 
+    this.shade = MeshBuilder.CreateCylinder(
+      "lampShade",
+      {
+        diameterBottom: 1.25,
+        diameterTop: 0.62,
+        height: 0.42,
+        tessellation: 16,
+      },
+      scene
+    );
+    this.shade.parent = this.pole;
+    this.shade.position = new Vector3(0, 2.25, -0.5);
+    this.shade.material = this.poleMaterial;
+
+    this.base = MeshBuilder.CreateTorus(
+      "lampBaseRing",
+      { diameter: 0.86, thickness: 0.06, tessellation: 24 },
+      scene
+    );
+    this.base.parent = this.pole;
+    this.base.position = new Vector3(0, -3, 0);
+    this.base.material = this.poleMaterial;
+
     // Create light
     this.light = new PointLight("lampLight", this.mesh.position, scene);
     this.light.intensity = 1;
@@ -85,6 +110,8 @@ export class Lamp {
     setProfileVisibilityAlpha(this.poleMaterial, this.poleBaseAlpha, value);
     this.mesh.visibility = value > 0 ? 1 : 0;
     this.pole.visibility = value > 0 ? 1 : 0;
+    this.shade.visibility = value > 0 ? 1 : 0;
+    this.base.visibility = value > 0 ? 1 : 0;
     this.directionalLight.intensity =
       value > 0 ? 0.5 * value * this.presentationLightIntensity : 0;
   }
@@ -107,8 +134,18 @@ export class Lamp {
     this.directionalLight.diffuse = toColor3(presentation.material.diffuse);
     this.pole.scaling = new Vector3(
       presentation.scale,
-      presentation.scale,
+      presentation.scale * presentation.composition.verticalStretch,
       presentation.scale
+    );
+    this.shade.scaling = new Vector3(
+      presentation.composition.frameScale,
+      1,
+      presentation.composition.frameScale
+    );
+    this.base.scaling = new Vector3(
+      presentation.composition.frameScale,
+      presentation.composition.frameScale,
+      presentation.composition.frameScale
     );
     this.light.range = 20 * presentation.scale;
   }
@@ -117,6 +154,8 @@ export class Lamp {
     this.light.dispose();
     this.glowLayer.dispose();
     this.mesh.dispose();
+    this.shade.dispose();
+    this.base.dispose();
     this.pole.dispose();
     this.bulbMaterial.dispose();
     this.poleMaterial.dispose();
