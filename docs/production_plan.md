@@ -58,6 +58,20 @@ Quality checks:
 - Authored text normalization trims accidental whitespace while preserving paragraph breaks.
 - Browser QA covers launch, first choice, console logs, and mobile framing.
 
+## Iteration 5 - Audio Transition System
+
+Status: PR opened.
+
+Highest-value improvement:
+- Replace one-off `HTMLAudioElement` handling with a stateful transition system that can start, keep, and crossfade authored music cues.
+- Make unsafe or repeated audio tags harmless instead of reloading assets or leaking playback promises.
+- Expose current track, transition state, and playback errors for testable runtime diagnostics.
+
+Quality checks:
+- Pure transition tests cover asset normalization, unsafe paths, duplicate requests, starts, crossfades, and fade curves.
+- Runtime audio tests cover duplicate suppression, crossfade disposal, and autoplay failure handling without requiring real playback.
+- Browser QA confirms launch and the first route choice run without audio-related console warnings or errors.
+
 ## Next Iteration Candidates
 
 ### Scene Composition and Object Polish
@@ -67,14 +81,6 @@ Improve mesh-level object polish with smoother fades, stronger silhouettes, and 
 Reliable assessment:
 - Unit-test tag-to-object planning separately from Babylon mesh creation.
 - Browser QA: first route choice creates visible, non-overlapping objects near the character.
-
-### Audio Transitions
-
-Make audio startup and crossfades robust, and expose meaningful track state for tests.
-
-Reliable assessment:
-- Unit-test audio transition state without requiring real playback.
-- Browser QA confirms no autoplay errors after launch.
 
 ### Terrain and Off-Map Treatment
 
