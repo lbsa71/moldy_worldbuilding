@@ -1,0 +1,86 @@
+{
+  "generator": "scripts/blender/build_bedside.py",
+  "blender": "5.2.2 LTS",
+  "units": "meters",
+  "original_geometry": true,
+  "lods": [
+    0
+  ],
+  "status": "generated study; requires art and browser review",
+  "assets": [
+    {
+      "file": "lamp_lod0.glb",
+      "bytes": 183260,
+      "evaluated_triangles": 5244,
+      "materials": [
+        "Fading_IvoryLinen",
+        "Fading_SatinBrass",
+        "Fading_WarmFilament"
+      ],
+      "sha256": "393a4cd6b572142e00cbce4ca095423a9544bb91264759154adc4d12164d7c66",
+      "triangle_budget": 6000,
+      "dimensions_blender_xyz_m": [
+        0.4811549782752991,
+        0.48204079270362854,
+        1.7092288732528687
+      ],
+      "validation_passed": true
+    },
+    {
+      "file": "chair_lod0.glb",
+      "bytes": 101316,
+      "evaluated_triangles": 1404,
+      "materials": [
+        "Fading_WoodWear",
+        "Fading_WornWood"
+      ],
+      "sha256": "a2992716d90659842f2841751727c8e1dd9a42cebdc5f5a2f7fc4cec38ed6b1b",
+      "triangle_budget": 4000,
+      "dimensions_blender_xyz_m": [
+        0.42899999022483826,
+        0.4300000071525574,
+        0.9000000357627869
+      ],
+      "validation_passed": true
+    },
+    {
+      "file": "cup_lod0.glb",
+      "bytes": 40756,
+      "evaluated_triangles": 1676,
+      "materials": [
+        "Fading_BlueGlaze",
+        "Fading_ExposedCeramic"
+      ],
+      "sha256": "01461f9bb3243aaa4538bdf0ab99fc7b67d6cc2ca8ce68b72671447fa631cd71",
+      "triangle_budget": 2000,
+      "dimensions_blender_xyz_m": [
+        0.11300000175833702,
+        0.0860000029206276,
+        0.09110000729560852
+      ],
+      "validation_passed": true
+    },
+    {
+      "file": "bedside_lod0.glb",
+      "bytes": 34124,
+      "evaluated_triangles": 1240,
+      "materials": [
+        "Fading_MemoryCloth",
+        "Fading_PaintedRail"
+      ],
+      "sha256": "98bc8a5e2f3fcd813e4f2530b20aa084ffadd7a60fa99a47993a9a5b05135a4c",
+      "triangle_budget": 10000,
+      "dimensions_blender_xyz_m": [
+        1.9249999523162842,
+        0.2779999878257513,
+        2.111999988555908
+      ],
+      "validation_passed": true
+    }
+  ],
+  "job_id": "fading-bedside-20261003-01",
+  "supplied_source_sha256": "065680aae7e8af70d1f8f3561a4eca0c3e0da355de050c71f3e8ce9ca3e93da3",
+  "corrected_source_sha256": "8e0bfe4db4c443e3c4eb1f4bd5f814d89ac79037d1cdc5f65912199b34444add",
+  "combined_triangles": 9564,
+  "combined_glb_bytes": 359456
+}

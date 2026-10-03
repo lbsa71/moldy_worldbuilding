@@ -1,0 +1,918 @@
+{
+  "blender": "5.2.2 LTS",
+  "assets": [
+    {
+      "file": "lamp_lod0.glb",
+      "bytes": 183260,
+      "sha256": "393a4cd6b572142e00cbce4ca095423a9544bb91264759154adc4d12164d7c66",
+      "triangles": 5244,
+      "budget": 6000,
+      "bounds_blender_Z_up": {
+        "min": [
+          -0.2405966967344284,
+          -0.2410300076007843,
+          0.0
+        ],
+        "max": [
+          0.24055828154087067,
+          0.24101078510284424,
+          1.7092288732528687
+        ],
+        "dimensions": [
+          0.4811549782752991,
+          0.48204079270362854,
+          1.7092288732528687
+        ]
+      },
+      "required_names": [
+        "lampFilament",
+        "lampWarmthSocket",
+        "lampShadePivot"
+      ],
+      "all_names": [
+        "Fading_Lamp",
+        "lampCollar",
+        "lampCollar.001",
+        "lampCollar.002",
+        "lampCollar.003",
+        "lampFilament",
+        "lampFoot_LOD0",
+        "lampShadePivot",
+        "lampShade_LOD0",
+        "lampStem_LOD0",
+        "lampWarmthSocket",
+        "shadeHem",
+        "shadeHem.001",
+        "shadeSeam",
+        "shadeSeam.001",
+        "shadeSeam.002",
+        "shadeSeam.003",
+        "shadeSeam.004",
+        "shadeSeam.005",
+        "shadeSeam.006",
+        "shadeSeam.007",
+        "shadeSeam.008",
+        "shadeSeam.009",
+        "shadeSeam.010",
+        "shadeSeam.011"
+      ],
+      "gltf_root_nodes": [
+        {
+          "children": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            21,
+            22,
+            23
+          ],
+          "extras": {
+            "asset_role": "persistent_lamp",
+            "units": "meters"
+          },
+          "name": "Fading_Lamp"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "name": "Fading_SatinBrass",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.5840784311294556,
+              0.30054378509521484,
+              0.0802198201417923,
+              1
+            ],
+            "roughnessFactor": 0.47999998927116394
+          }
+        },
+        {
+          "doubleSided": true,
+          "emissiveFactor": [
+            1,
+            0.7758222222328186,
+            0.35153260827064514
+          ],
+          "name": "Fading_WarmFilament",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              1,
+              0.7758222222328186,
+              0.35153260827064514,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.3499999940395355
+          }
+        },
+        {
+          "doubleSided": true,
+          "emissiveFactor": [
+            0.03355195924151033,
+            0.031651915796430785,
+            0.024419822147045522
+          ],
+          "name": "Fading_IvoryLinen",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.838798999786377,
+              0.7912979125976562,
+              0.6104955673217773,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.8299999833106995
+          }
+        }
+      ],
+      "extensions_used": [],
+      "checks": {
+        "single_expected_root": true,
+        "root_at_origin_identity": true,
+        "semantic_names_present": true,
+        "no_cameras_lights_animations_skins": true,
+        "no_textures_images": true,
+        "material_count": true,
+        "triangle_budget": true,
+        "no_degenerate_triangles": true,
+        "reimport_triangle_count_matches": true,
+        "closed_consistent_outward_meshes": true,
+        "contact_plane": true,
+        "expected_dimensions": true,
+        "Y_up_once_socket_translation": true,
+        "core_metal_rough_materials_only": true,
+        "no_physics": true
+      },
+      "meshes": [
+        {
+          "name": "lampCollar",
+          "triangles": 380,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.00010399091124349669,
+          "closed_outward": true
+        },
+        {
+          "name": "lampCollar.001",
+          "triangles": 380,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 7.301986312525605e-05,
+          "closed_outward": true
+        },
+        {
+          "name": "lampCollar.002",
+          "triangles": 380,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 7.877707204881557e-05,
+          "closed_outward": true
+        },
+        {
+          "name": "lampCollar.003",
+          "triangles": 380,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.00011790884607765459,
+          "closed_outward": true
+        },
+        {
+          "name": "lampFilament",
+          "triangles": 224,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 7.728717262203122e-05,
+          "closed_outward": true
+        },
+        {
+          "name": "lampFoot_LOD0",
+          "triangles": 480,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.004116874362423087,
+          "closed_outward": true
+        },
+        {
+          "name": "lampShade_LOD0",
+          "triangles": 576,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0016527746000078042,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeHem",
+          "triangles": 768,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 2.6359721850719223e-05,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeHem.001",
+          "triangles": 768,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.3622833139060812e-05,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeSeam",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.5030087904169576e-06,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeSeam.001",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.5030136144317635e-06,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeSeam.002",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.5030136741283616e-06,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeSeam.003",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.5030094436863774e-06,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeSeam.004",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.503012881028896e-06,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeSeam.005",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.5030131102115149e-06,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeSeam.006",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.5030094755367017e-06,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeSeam.007",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.5030131885269754e-06,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeSeam.008",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.5030137008749516e-06,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeSeam.009",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.5030086851688034e-06,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeSeam.010",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.5030134196640454e-06,
+          "closed_outward": true
+        },
+        {
+          "name": "shadeSeam.011",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.5030142566292424e-06,
+          "closed_outward": true
+        },
+        {
+          "name": "lampStem_LOD0",
+          "triangles": 380,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0008013216626740821,
+          "closed_outward": true
+        }
+      ]
+    },
+    {
+      "file": "chair_lod0.glb",
+      "bytes": 101316,
+      "sha256": "a2992716d90659842f2841751727c8e1dd9a42cebdc5f5a2f7fc4cec38ed6b1b",
+      "triangles": 1404,
+      "budget": 4000,
+      "bounds_blender_Z_up": {
+        "min": [
+          -0.21449999511241913,
+          -0.2150000035762787,
+          0.0
+        ],
+        "max": [
+          0.21449999511241913,
+          0.2150000035762787,
+          0.9000000357627869
+        ],
+        "dimensions": [
+          0.42899999022483826,
+          0.4300000071525574,
+          0.9000000357627869
+        ]
+      },
+      "required_names": [
+        "chairSeatSocket",
+        "chairFacingSocket"
+      ],
+      "all_names": [
+        "Fading_Chair",
+        "chairBackPost",
+        "chairBackPost.001",
+        "chairBackRail",
+        "chairBackRail.001",
+        "chairFacingSocket",
+        "chairLeg_LOD0",
+        "chairLeg_LOD0.001",
+        "chairLeg_LOD0.002",
+        "chairLeg_LOD0.003",
+        "chairSeat",
+        "chairSeatSlat",
+        "chairSeatSlat.001",
+        "chairSeatSlat.002",
+        "chairSeatSocket",
+        "chairSeatWear"
+      ],
+      "gltf_root_nodes": [
+        {
+          "children": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "extras": {
+            "asset_role": "empty_place"
+          },
+          "name": "Fading_Chair"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "name": "Fading_WornWood",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.09084171056747437,
+              0.061246052384376526,
+              0.0423114113509655,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.7599999904632568
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "Fading_WoodWear",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.25015828013420105,
+              0.17144110798835754,
+              0.09989872574806213,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.6700000166893005
+          }
+        }
+      ],
+      "extensions_used": [],
+      "checks": {
+        "single_expected_root": true,
+        "root_at_origin_identity": true,
+        "semantic_names_present": true,
+        "no_cameras_lights_animations_skins": true,
+        "no_textures_images": true,
+        "material_count": true,
+        "triangle_budget": true,
+        "no_degenerate_triangles": true,
+        "reimport_triangle_count_matches": true,
+        "closed_consistent_outward_meshes": true,
+        "contact_plane": true,
+        "expected_dimensions": true,
+        "Y_up_once_socket_translation": true,
+        "core_metal_rough_materials_only": true,
+        "no_physics": true
+      },
+      "meshes": [
+        {
+          "name": "chairBackPost",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0005822626769004904,
+          "closed_outward": true
+        },
+        {
+          "name": "chairBackPost.001",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0005822626769004904,
+          "closed_outward": true
+        },
+        {
+          "name": "chairBackRail",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0007410215434688537,
+          "closed_outward": true
+        },
+        {
+          "name": "chairBackRail.001",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0007410215434688537,
+          "closed_outward": true
+        },
+        {
+          "name": "chairLeg_LOD0",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0005215399064799733,
+          "closed_outward": true
+        },
+        {
+          "name": "chairLeg_LOD0.001",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0005215399064799733,
+          "closed_outward": true
+        },
+        {
+          "name": "chairLeg_LOD0.002",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0005215399064799733,
+          "closed_outward": true
+        },
+        {
+          "name": "chairLeg_LOD0.003",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0005215399064799733,
+          "closed_outward": true
+        },
+        {
+          "name": "chairSeat",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0015743017971976431,
+          "closed_outward": true
+        },
+        {
+          "name": "chairSeatSlat",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0015743017971976431,
+          "closed_outward": true
+        },
+        {
+          "name": "chairSeatSlat.001",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0015743017971976431,
+          "closed_outward": true
+        },
+        {
+          "name": "chairSeatSlat.002",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0015743017971976431,
+          "closed_outward": true
+        },
+        {
+          "name": "chairSeatWear",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.0433250212447964e-05,
+          "closed_outward": true
+        }
+      ]
+    },
+    {
+      "file": "cup_lod0.glb",
+      "bytes": 40756,
+      "sha256": "01461f9bb3243aaa4538bdf0ab99fc7b67d6cc2ca8ce68b72671447fa631cd71",
+      "triangles": 1676,
+      "budget": 2000,
+      "bounds_blender_Z_up": {
+        "min": [
+          -0.0430000014603138,
+          -0.0430000014603138,
+          0.0
+        ],
+        "max": [
+          0.07000000029802322,
+          0.0430000014603138,
+          0.09110000729560852
+        ],
+        "dimensions": [
+          0.11300000175833702,
+          0.0860000029206276,
+          0.09110000729560852
+        ]
+      },
+      "required_names": [
+        "cupRimSocket",
+        "cupHandle",
+        "cupRimChip"
+      ],
+      "all_names": [
+        "Fading_Cup",
+        "cupBody_LOD0",
+        "cupHandle",
+        "cupRimChip",
+        "cupRimSocket"
+      ],
+      "gltf_root_nodes": [
+        {
+          "children": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "extras": {
+            "asset_role": "chipped_cup"
+          },
+          "name": "Fading_Cup"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "name": "Fading_BlueGlaze",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.16513219475746155,
+              0.28744083642959595,
+              0.30946892499923706,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.30000001192092896
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "Fading_ExposedCeramic",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.6239603757858276,
+              0.6795424818992615,
+              0.6038273572921753,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.6800000071525574
+          }
+        }
+      ],
+      "extensions_used": [],
+      "checks": {
+        "single_expected_root": true,
+        "root_at_origin_identity": true,
+        "semantic_names_present": true,
+        "no_cameras_lights_animations_skins": true,
+        "no_textures_images": true,
+        "material_count": true,
+        "triangle_budget": true,
+        "no_degenerate_triangles": true,
+        "reimport_triangle_count_matches": true,
+        "closed_consistent_outward_meshes": true,
+        "contact_plane": true,
+        "expected_dimensions": true,
+        "Y_up_once_socket_translation": true,
+        "core_metal_rough_materials_only": true,
+        "no_physics": true,
+        "cup_normals_outward": true
+      },
+      "meshes": [
+        {
+          "name": "cupBody_LOD0",
+          "triangles": 576,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.00013595215241031267,
+          "closed_outward": true
+        },
+        {
+          "name": "cupHandle",
+          "triangles": 332,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 3.3604818110695715e-06,
+          "closed_outward": true
+        },
+        {
+          "name": "cupRimChip",
+          "triangles": 768,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 8.469657774699082e-07,
+          "closed_outward": true
+        }
+      ],
+      "cup_surface_normals": {
+        "outer_radial_min": 0.03807251443042564,
+        "inner_radial_max": -0.034204259948147915,
+        "underside_max_Z": -1.0,
+        "interior_floor_min_Z": 1.0
+      },
+      "cup_rim_height_m": {
+        "min": 0.0820000022649765,
+        "max": 0.09000000357627869,
+        "chip_depth": 0.008000001311302185
+      }
+    },
+    {
+      "file": "bedside_lod0.glb",
+      "bytes": 34124,
+      "sha256": "98bc8a5e2f3fcd813e4f2530b20aa084ffadd7a60fa99a47993a9a5b05135a4c",
+      "triangles": 1240,
+      "budget": 10000,
+      "bounds_blender_Z_up": {
+        "min": [
+          -1.0119999647140503,
+          -0.01300000213086605,
+          0.0
+        ],
+        "max": [
+          0.9129999876022339,
+          0.26499998569488525,
+          2.111999988555908
+        ],
+        "dimensions": [
+          1.9249999523162842,
+          0.2779999878257513,
+          2.111999988555908
+        ]
+      },
+      "required_names": [
+        "railTapSocket",
+        "bedRail",
+        "curtainFrame",
+        "partialCurtain"
+      ],
+      "all_names": [
+        "Fading_Bedside",
+        "bedRail",
+        "bedRailLower",
+        "curtainFrame",
+        "partialCurtain",
+        "railTapSocket",
+        "railUpright",
+        "railUpright.001",
+        "railUpright.002",
+        "railUpright.003"
+      ],
+      "gltf_root_nodes": [
+        {
+          "children": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "extras": {
+            "asset_role": "partial_memory"
+          },
+          "name": "Fading_Bedside"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "name": "Fading_PaintedRail",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.6239603757858276,
+              0.6795424818992615,
+              0.6038273572921753,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.5699999928474426
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "Fading_MemoryCloth",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.7011018991470337,
+              0.6795424818992615,
+              0.5583403706550598,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.8999999761581421
+          }
+        }
+      ],
+      "extensions_used": [],
+      "checks": {
+        "single_expected_root": true,
+        "root_at_origin_identity": true,
+        "semantic_names_present": true,
+        "no_cameras_lights_animations_skins": true,
+        "no_textures_images": true,
+        "material_count": true,
+        "triangle_budget": true,
+        "no_degenerate_triangles": true,
+        "reimport_triangle_count_matches": true,
+        "closed_consistent_outward_meshes": true,
+        "contact_plane": true,
+        "expected_dimensions": true,
+        "Y_up_once_socket_translation": true,
+        "core_metal_rough_materials_only": true,
+        "no_physics": true
+      },
+      "meshes": [
+        {
+          "name": "bedRail",
+          "triangles": 60,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0012367251228909766,
+          "closed_outward": true
+        },
+        {
+          "name": "bedRailLower",
+          "triangles": 28,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.000733128398570251,
+          "closed_outward": true
+        },
+        {
+          "name": "curtainFrame",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0013384438519917757,
+          "closed_outward": true
+        },
+        {
+          "name": "partialCurtain",
+          "triangles": 996,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0015191697496189792,
+          "closed_outward": true
+        },
+        {
+          "name": "railUpright",
+          "triangles": 28,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.00011455156304157865,
+          "closed_outward": true
+        },
+        {
+          "name": "railUpright.001",
+          "triangles": 28,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.00011455129482067264,
+          "closed_outward": true
+        },
+        {
+          "name": "railUpright.002",
+          "triangles": 28,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.00011455129482067293,
+          "closed_outward": true
+        },
+        {
+          "name": "railUpright.003",
+          "triangles": 28,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.00011455156304157892,
+          "closed_outward": true
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "combined_triangle_budget": true,
+    "combined_download_budget": true
+  },
+  "combined_triangles": 9564,
+  "combined_glb_bytes": 359456
+}
