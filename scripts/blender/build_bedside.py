@@ -4,6 +4,7 @@ blender --background --factory-startup --python scripts/blender/build_bedside.py
 The generator resets its Blender scene. Outputs are review assets, not game replacements.
 """
 import argparse
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -21,6 +22,7 @@ def arguments():
     parser.add_argument('--output', type=Path, default=PROJECT / 'output' / 'blender')
     parser.add_argument('--render', action='store_true', help='Render a CPU Cycles reference PNG')
     parser.add_argument('--force', action='store_true', help='Replace prior generated files in the output directory')
+    parser.add_argument('--no-consolidate', action='store_true', help='Keep construction meshes for comparison renders')
     args = parser.parse_args(sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else [])
     args.output = args.output.expanduser().resolve()
     for protected in [PROJECT / 'public', PROJECT / 'src']:
@@ -253,6 +255,74 @@ def build_bedside(m):
     return root
 
 
+def merge_role(target, sources, semantic_markers=()):
+    """Bake modifiers and join one material/visibility role without moving its frame.
+
+    Corner normals, face smoothing and disconnected component topology are retained.
+    Region ranges refer to the merged Blender mesh, before glTF vertex splitting.
+    """
+    bpy.context.view_layer.update()
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    target_inverse = target.matrix_world.inverted()
+    vertices, faces, smooth, corner_normals, regions = [], [], [], [], []
+    material = target.data.materials[0]
+    for obj in sources:
+        if len(obj.data.materials) != 1 or obj.data.materials[0] != material:
+            raise ValueError('Role merge must have one shared material: ' + obj.name)
+        evaluated = obj.evaluated_get(depsgraph)
+        data = evaluated.to_mesh()
+        transform = target_inverse @ obj.matrix_world
+        normal_transform = transform.to_3x3().inverted().transposed()
+        first_vertex, first_polygon = len(vertices), len(faces)
+        local_vertices = [transform @ v.co for v in data.vertices]
+        vertices.extend(tuple(v) for v in local_vertices)
+        for polygon in data.polygons:
+            faces.append(tuple(first_vertex + i for i in polygon.vertices))
+            smooth.append(polygon.use_smooth)
+        corner_normals.extend(tuple((normal_transform @ n.vector).normalized()) for n in data.corner_normals)
+        region = {'source': obj.name, 'vertex_start': first_vertex, 'vertex_count': len(data.vertices),
+                  'polygon_start': first_polygon, 'polygon_count': len(data.polygons),
+                  'bounds_min': [min(v[i] for v in local_vertices) for i in range(3)],
+                  'bounds_max': [max(v[i] for v in local_vertices) for i in range(3)]}
+        regions.append(region)
+        evaluated.to_mesh_clear()
+    merged = bpy.data.meshes.new(target.name + '_consolidated')
+    merged.from_pydata(vertices, [], faces)
+    merged.materials.append(material)
+    for polygon, use_smooth in zip(merged.polygons, smooth):
+        polygon.use_smooth = use_smooth
+    merged.normals_split_custom_set(corner_normals)
+    merged.update()
+    target.modifiers.clear()
+    target.data = merged
+    target['geometry_regions'] = json.dumps(regions, separators=(',', ':'))
+    for obj, region in zip(sources, regions):
+        if obj == target:
+            continue
+        if obj.name in semantic_markers:
+            name, parent, local_matrix = obj.name, obj.parent, obj.matrix_local.copy()
+            bpy.data.objects.remove(obj, do_unlink=True)
+            marker = empty(name, parent)
+            marker.matrix_local = local_matrix
+            marker['mergedInto'] = target.name
+            marker['geometryRegion'] = json.dumps(region, separators=(',', ':'))
+        else:
+            bpy.data.objects.remove(obj, do_unlink=True)
+
+
+def consolidate(roots):
+    lamp, chair, cup, bedside = roots
+    brass = [o for o in lamp.children_recursive if o.type == 'MESH' and o.data.materials[0].name == 'Fading_SatinBrass']
+    merge_role(bpy.data.objects['lampFoot_LOD0'], brass)
+    pivot = bpy.data.objects['lampShadePivot']
+    merge_role(bpy.data.objects['lampShade_LOD0'], [o for o in pivot.children_recursive if o.type == 'MESH'])
+    wood = [o for o in chair.children_recursive if o.type == 'MESH' and o.data.materials[0].name == 'Fading_WornWood']
+    merge_role(bpy.data.objects['chairSeat'], wood)
+    merge_role(bpy.data.objects['cupBody_LOD0'], [bpy.data.objects['cupBody_LOD0'], bpy.data.objects['cupHandle']], semantic_markers=('cupHandle',))
+    rails = [o for o in bedside.children_recursive if o.type == 'MESH' and o.name not in ('curtainFrame', 'partialCurtain')]
+    merge_role(bpy.data.objects['bedRail'], rails)
+
+
 def export_asset(root, filename):
     bpy.ops.object.select_all(action='DESELECT')
     root.select_set(True)
@@ -274,8 +344,16 @@ def export_asset(root, filename):
         triangles += len(data.loop_triangles)
         material_names.update(slot.material.name for slot in obj.material_slots if slot.material)
         evaluated.to_mesh_clear()
-    return {'file': filename.name, 'bytes': filename.stat().st_size,
-            'evaluated_triangles': triangles, 'materials': sorted(material_names)}
+    raw = filename.read_bytes()
+    import struct
+    json_length = struct.unpack_from('<I', raw, 12)[0]
+    transport = json.loads(raw[20:20 + json_length])
+    # Count mesh instances as draws, not merely unique material names.
+    primitive_count = sum(len(transport['meshes'][node['mesh']]['primitives'])
+                          for node in transport['nodes'] if 'mesh' in node)
+    return {'file': filename.name, 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest(),
+            'evaluated_triangles': triangles, 'mesh_primitives': primitive_count,
+            'materials': sorted(material_names)}
 
 
 def point_at(obj, target):
@@ -348,11 +426,18 @@ def main():
         'slate': surface('Fading_PreviewSlate', '303D40', 0.83),
     }
     roots = [build_lamp(m), build_chair(m), build_cup(m), build_bedside(m)]
+    if not args.no_consolidate:
+        consolidate(roots)
     manifest = {'generator': 'scripts/blender/build_bedside.py', 'blender': bpy.app.version_string,
+                'generator_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                 'units': 'meters', 'original_geometry': True, 'lods': [0],
+                'consolidated_by_material_and_visibility_role': not args.no_consolidate,
                 'status': 'generated study; requires art and browser review', 'assets': []}
     for root, filename in zip(roots, ['lamp_lod0.glb', 'chair_lod0.glb', 'cup_lod0.glb', 'bedside_lod0.glb']):
         manifest['assets'].append(export_asset(root, args.output / filename))
+    manifest['combined_triangles'] = sum(a['evaluated_triangles'] for a in manifest['assets'])
+    manifest['combined_glb_bytes'] = sum(a['bytes'] for a in manifest['assets'])
+    manifest['combined_mesh_primitives'] = sum(a['mesh_primitives'] for a in manifest['assets'])
     preview_setup(roots, m)
     bpy.ops.wm.save_as_mainfile(filepath=str(args.output / 'fading_bedside.blend'))
     (args.output / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')

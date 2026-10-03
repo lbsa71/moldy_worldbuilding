@@ -4,7 +4,7 @@ from pathlib import Path
 from mathutils import Vector
 import numpy as np
 
-folder = Path(sys.argv[sys.argv.index('--') + 1])
+folder = Path(sys.argv[sys.argv.index('--') + 1]).resolve()
 expectations = {
     'lamp': ('Fading_Lamp', ['lampFilament', 'lampWarmthSocket', 'lampShadePivot'], 6000, 3),
     'chair': ('Fading_Chair', ['chairSeatSocket', 'chairFacingSocket'], 4000, 2),
@@ -12,6 +12,7 @@ expectations = {
     'bedside': ('Fading_Bedside', ['railTapSocket', 'bedRail', 'curtainFrame', 'partialCurtain'], 10000, 2),
 }
 report = {'blender': bpy.app.version_string, 'assets': [], 'checks': {}}
+primitive_budgets = {'lamp':3, 'chair':2, 'cup':2, 'bedside':3}
 
 for asset, (root_name, required, budget, matcount) in expectations.items():
     path = folder / (asset + '_lod0.glb')
@@ -29,6 +30,7 @@ for asset, (root_name, required, budget, matcount) in expectations.items():
         return np.ndarray((a['count'],width), dtype=dtype, buffer=binary, offset=offset,
                           strides=(v.get('byteStride',np.dtype(dtype).itemsize*width),np.dtype(dtype).itemsize))
     exported_triangles = 0; raw_degenerate = 0
+    primitives = sum(len(doc['meshes'][n['mesh']]['primitives']) for n in doc['nodes'] if 'mesh' in n)
     for m in doc.get('meshes',[]):
         for p in m['primitives']:
             xyz = accessor(p['attributes']['POSITION'])
@@ -81,16 +83,36 @@ for asset, (root_name, required, budget, matcount) in expectations.items():
         'Y_up_once_socket_translation':all(abs(transport_node.get('translation',[0,0,0])[i]-orientation_socket[1][i])<1e-6 for i in range(3)),
         'core_metal_rough_materials_only':not doc.get('extensionsUsed') and all('pbrMetallicRoughness' in m for m in doc['materials']),
         'no_physics':all(o.rigid_body is None for o in bpy.context.scene.objects) and not doc.get('extensionsUsed'),
+        'mesh_primitive_budget':primitives<=primitive_budgets[asset],
     }
     item={'file':path.name,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),
-          'triangles':triangles,'budget':budget,'bounds_blender_Z_up':{'min':low,'max':high,'dimensions':[high[i]-low[i] for i in range(3)]},
+          'triangles':triangles,'budget':budget,'mesh_primitives':primitives,'primitive_budget':primitive_budgets[asset],
+          'bounds_blender_Z_up':{'min':low,'max':high,'dimensions':[high[i]-low[i] for i in range(3)]},
           'required_names':required,'all_names':sorted(names),'gltf_root_nodes':[doc['nodes'][i] for i in doc['scenes'][doc.get('scene',0)]['nodes']],
           'materials':doc.get('materials',[]),'extensions_used':doc.get('extensionsUsed',[]),'checks':checks,'meshes':mesh_report}
     if asset=='cup':
         body=bpy.data.objects['cupBody_LOD0'].data
+        # Vessel and handle are disconnected components in the merged draw.
+        # Identify the vessel after glTF splitting/reindexing, rather than using
+        # Blender-only source polygon ranges against an imported mesh.
+        bm=bmesh.new();bm.from_mesh(body)
+        bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=1e-7)
+        bm.normal_update()
+        remaining=set(bm.verts);components=[]
+        while remaining:
+            seed=remaining.pop();component={seed};pending=[seed]
+            while pending:
+                v=pending.pop()
+                for edge in v.link_edges:
+                    neighbor=edge.other_vert(v)
+                    if neighbor in remaining:
+                        remaining.remove(neighbor);component.add(neighbor);pending.append(neighbor)
+            components.append(component)
+        vessel=max(components,key=len)
+        vessel_faces=[f for f in bm.faces if all(v in vessel for v in f.verts)]
         outer=[];inner=[];bottom=[];floor=[]
-        for p in body.polygons:
-            c=p.center;n=p.normal;r=(c.x*c.x+c.y*c.y)**0.5
+        for p in vessel_faces:
+            c=p.calc_center_median();n=p.normal;r=(c.x*c.x+c.y*c.y)**0.5
             if 0.025<c.z<0.075:
                 outer_r=0.036+(c.z-0.006)/0.080*0.007
                 inner_r=0.033+(c.z-0.012)/0.078*0.004
@@ -99,14 +121,24 @@ for asset, (root_name, required, budget, matcount) in expectations.items():
             if abs(c.z-0.012)<1e-6 and r<0.03: floor.append(n.z)
         item['cup_surface_normals']={'outer_radial_min':min(outer),'inner_radial_max':max(inner),
                                      'underside_max_Z':max(bottom),'interior_floor_min_Z':min(floor)}
-        rim=[v.co.z for v in body.vertices if any(abs((v.co.x*v.co.x+v.co.y*v.co.y)**0.5-r)<1e-6 for r in [0.037,0.041]) and v.co.z>0.075]
+        rim=[v.co.z for v in vessel if any(abs((v.co.x*v.co.x+v.co.y*v.co.y)**0.5-r)<1e-6 for r in [0.037,0.041]) and v.co.z>0.075]
         item['cup_rim_height_m']={'min':min(rim),'max':max(rim),'chip_depth':max(rim)-min(rim)}
         checks['cup_normals_outward']=min(outer)>0 and max(inner)<0 and max(bottom)<0 and min(floor)>0
+        bm.free()
+        marker=bpy.data.objects['cupHandle']
+        checks['cup_handle_semantic_marker']=marker.type=='EMPTY' and marker.get('mergedInto')=='cupBody_LOD0' and bool(marker.get('geometryRegion'))
+    if asset=='lamp':
+        shade=bpy.data.objects['lampShade_LOD0']
+        checks['shade_articulation_and_filament_mesh']=shade.type=='MESH' and shade.parent.name=='lampShadePivot' and bpy.data.objects['lampFilament'].type=='MESH'
+    if asset=='bedside':
+        checks['independent_runtime_visibility_meshes']=all(bpy.data.objects[n].type=='MESH' for n in ['bedRail','curtainFrame','partialCurtain'])
     report['assets'].append(item)
 
 report['combined_triangles']=sum(a['triangles'] for a in report['assets'])
 report['combined_glb_bytes']=sum(a['bytes'] for a in report['assets'])
+report['combined_mesh_primitives']=sum(a['mesh_primitives'] for a in report['assets'])
 report['checks']['combined_triangle_budget']=report['combined_triangles']<25000
 report['checks']['combined_download_budget']=report['combined_glb_bytes']<4*1024*1024
+report['checks']['combined_mesh_primitive_budget']=report['combined_mesh_primitives']<=11
 (folder/'validation.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 print(json.dumps({a['file']:{'triangles':a['triangles'],'checks':a['checks'],'open_or_inverted':[m for m in a['meshes'] if not m['closed_outward']]} for a in report['assets']},indent=2))

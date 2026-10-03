@@ -3,25 +3,27 @@
   "assets": [
     {
       "file": "lamp_lod0.glb",
-      "bytes": 183260,
-      "sha256": "393a4cd6b572142e00cbce4ca095423a9544bb91264759154adc4d12164d7c66",
+      "bytes": 154296,
+      "sha256": "371ee05aad32961ee7d268850bfff88075209011125a353f3e5955182bd7809f",
       "triangles": 5244,
       "budget": 6000,
+      "mesh_primitives": 3,
+      "primitive_budget": 3,
       "bounds_blender_Z_up": {
         "min": [
-          -0.2405966967344284,
-          -0.2410300076007843,
+          -0.2405967116355896,
+          -0.2410300225019455,
           0.0
         ],
         "max": [
-          0.24055828154087067,
-          0.24101078510284424,
-          1.7092288732528687
+          0.24055826663970947,
+          0.24101077020168304,
+          1.7092289924621582
         ],
         "dimensions": [
           0.4811549782752991,
           0.48204079270362854,
-          1.7092288732528687
+          1.7092289924621582
         ]
       },
       "required_names": [
@@ -31,43 +33,19 @@
       ],
       "all_names": [
         "Fading_Lamp",
-        "lampCollar",
-        "lampCollar.001",
-        "lampCollar.002",
-        "lampCollar.003",
         "lampFilament",
         "lampFoot_LOD0",
         "lampShadePivot",
         "lampShade_LOD0",
-        "lampStem_LOD0",
-        "lampWarmthSocket",
-        "shadeHem",
-        "shadeHem.001",
-        "shadeSeam",
-        "shadeSeam.001",
-        "shadeSeam.002",
-        "shadeSeam.003",
-        "shadeSeam.004",
-        "shadeSeam.005",
-        "shadeSeam.006",
-        "shadeSeam.007",
-        "shadeSeam.008",
-        "shadeSeam.009",
-        "shadeSeam.010",
-        "shadeSeam.011"
+        "lampWarmthSocket"
       ],
       "gltf_root_nodes": [
         {
           "children": [
             0,
             1,
-            2,
             3,
-            4,
-            5,
-            21,
-            22,
-            23
+            4
           ],
           "extras": {
             "asset_role": "persistent_lamp",
@@ -77,19 +55,6 @@
         }
       ],
       "materials": [
-        {
-          "doubleSided": true,
-          "name": "Fading_SatinBrass",
-          "pbrMetallicRoughness": {
-            "baseColorFactor": [
-              0.5840784311294556,
-              0.30054378509521484,
-              0.0802198201417923,
-              1
-            ],
-            "roughnessFactor": 0.47999998927116394
-          }
-        },
         {
           "doubleSided": true,
           "emissiveFactor": [
@@ -107,6 +72,19 @@
             ],
             "metallicFactor": 0,
             "roughnessFactor": 0.3499999940395355
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "Fading_SatinBrass",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.5840784311294556,
+              0.30054378509521484,
+              0.0802198201417923,
+              1
+            ],
+            "roughnessFactor": 0.47999998927116394
           }
         },
         {
@@ -145,45 +123,11 @@
         "expected_dimensions": true,
         "Y_up_once_socket_translation": true,
         "core_metal_rough_materials_only": true,
-        "no_physics": true
+        "no_physics": true,
+        "mesh_primitive_budget": true,
+        "shade_articulation_and_filament_mesh": true
       },
       "meshes": [
-        {
-          "name": "lampCollar",
-          "triangles": 380,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.00010399091124349669,
-          "closed_outward": true
-        },
-        {
-          "name": "lampCollar.001",
-          "triangles": 380,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 7.301986312525605e-05,
-          "closed_outward": true
-        },
-        {
-          "name": "lampCollar.002",
-          "triangles": 380,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 7.877707204881557e-05,
-          "closed_outward": true
-        },
-        {
-          "name": "lampCollar.003",
-          "triangles": 380,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.00011790884607765459,
-          "closed_outward": true
-        },
         {
           "name": "lampFilament",
           "triangles": 224,
@@ -195,165 +139,32 @@
         },
         {
           "name": "lampFoot_LOD0",
-          "triangles": 480,
+          "triangles": 2380,
           "boundary_edges_after_weld": 0,
           "nonmanifold_edges_after_weld": 0,
           "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.004116874362423087,
+          "signed_volume_m3": 0.0052918931960113285,
           "closed_outward": true
         },
         {
           "name": "lampShade_LOD0",
-          "triangles": 576,
+          "triangles": 2640,
           "boundary_edges_after_weld": 0,
           "nonmanifold_edges_after_weld": 0,
           "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0016527746000078042,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeHem",
-          "triangles": 768,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 2.6359721850719223e-05,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeHem.001",
-          "triangles": 768,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 1.3622833139060812e-05,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeSeam",
-          "triangles": 44,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 1.5030087904169576e-06,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeSeam.001",
-          "triangles": 44,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 1.5030136144317635e-06,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeSeam.002",
-          "triangles": 44,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 1.5030136741283616e-06,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeSeam.003",
-          "triangles": 44,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 1.5030094436863774e-06,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeSeam.004",
-          "triangles": 44,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 1.503012881028896e-06,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeSeam.005",
-          "triangles": 44,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 1.5030131102115149e-06,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeSeam.006",
-          "triangles": 44,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 1.5030094755367017e-06,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeSeam.007",
-          "triangles": 44,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 1.5030131885269754e-06,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeSeam.008",
-          "triangles": 44,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 1.5030137008749516e-06,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeSeam.009",
-          "triangles": 44,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 1.5030086851688034e-06,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeSeam.010",
-          "triangles": 44,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 1.5030134196640454e-06,
-          "closed_outward": true
-        },
-        {
-          "name": "shadeSeam.011",
-          "triangles": 44,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 1.5030142566292424e-06,
-          "closed_outward": true
-        },
-        {
-          "name": "lampStem_LOD0",
-          "triangles": 380,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0008013216626740821,
+          "signed_volume_m3": 0.0017107932992378508,
           "closed_outward": true
         }
       ]
     },
     {
       "file": "chair_lod0.glb",
-      "bytes": 101316,
-      "sha256": "a2992716d90659842f2841751727c8e1dd9a42cebdc5f5a2f7fc4cec38ed6b1b",
+      "bytes": 83348,
+      "sha256": "395b598c879910368fabf719efc69e032efe5c699f78fb703168c36fefd85e2c",
       "triangles": 1404,
       "budget": 4000,
+      "mesh_primitives": 2,
+      "primitive_budget": 2,
       "bounds_blender_Z_up": {
         "min": [
           -0.21449999511241913,
@@ -361,12 +172,12 @@
           0.0
         ],
         "max": [
-          0.21449999511241913,
+          0.21450001001358032,
           0.2150000035762787,
           0.9000000357627869
         ],
         "dimensions": [
-          0.42899999022483826,
+          0.42900000512599945,
           0.4300000071525574,
           0.9000000357627869
         ]
@@ -377,19 +188,8 @@
       ],
       "all_names": [
         "Fading_Chair",
-        "chairBackPost",
-        "chairBackPost.001",
-        "chairBackRail",
-        "chairBackRail.001",
         "chairFacingSocket",
-        "chairLeg_LOD0",
-        "chairLeg_LOD0.001",
-        "chairLeg_LOD0.002",
-        "chairLeg_LOD0.003",
         "chairSeat",
-        "chairSeatSlat",
-        "chairSeatSlat.001",
-        "chairSeatSlat.002",
         "chairSeatSocket",
         "chairSeatWear"
       ],
@@ -399,18 +199,7 @@
             0,
             1,
             2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14
+            3
           ],
           "extras": {
             "asset_role": "empty_place"
@@ -464,115 +253,17 @@
         "expected_dimensions": true,
         "Y_up_once_socket_translation": true,
         "core_metal_rough_materials_only": true,
-        "no_physics": true
+        "no_physics": true,
+        "mesh_primitive_budget": true
       },
       "meshes": [
         {
-          "name": "chairBackPost",
-          "triangles": 108,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0005822626769004904,
-          "closed_outward": true
-        },
-        {
-          "name": "chairBackPost.001",
-          "triangles": 108,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0005822626769004904,
-          "closed_outward": true
-        },
-        {
-          "name": "chairBackRail",
-          "triangles": 108,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0007410215434688537,
-          "closed_outward": true
-        },
-        {
-          "name": "chairBackRail.001",
-          "triangles": 108,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0007410215434688537,
-          "closed_outward": true
-        },
-        {
-          "name": "chairLeg_LOD0",
-          "triangles": 108,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0005215399064799733,
-          "closed_outward": true
-        },
-        {
-          "name": "chairLeg_LOD0.001",
-          "triangles": 108,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0005215399064799733,
-          "closed_outward": true
-        },
-        {
-          "name": "chairLeg_LOD0.002",
-          "triangles": 108,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0005215399064799733,
-          "closed_outward": true
-        },
-        {
-          "name": "chairLeg_LOD0.003",
-          "triangles": 108,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0005215399064799733,
-          "closed_outward": true
-        },
-        {
           "name": "chairSeat",
-          "triangles": 108,
+          "triangles": 1296,
           "boundary_edges_after_weld": 0,
           "nonmanifold_edges_after_weld": 0,
           "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0015743017971976431,
-          "closed_outward": true
-        },
-        {
-          "name": "chairSeatSlat",
-          "triangles": 108,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0015743017971976431,
-          "closed_outward": true
-        },
-        {
-          "name": "chairSeatSlat.001",
-          "triangles": 108,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0015743017971976431,
-          "closed_outward": true
-        },
-        {
-          "name": "chairSeatSlat.002",
-          "triangles": 108,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0015743017971976431,
+          "signed_volume_m3": 0.011029935583891048,
           "closed_outward": true
         },
         {
@@ -588,10 +279,12 @@
     },
     {
       "file": "cup_lod0.glb",
-      "bytes": 40756,
-      "sha256": "01461f9bb3243aaa4538bdf0ab99fc7b67d6cc2ca8ce68b72671447fa631cd71",
+      "bytes": 38724,
+      "sha256": "4e021b912eed7f4336ac3d08fa9f110a67f6f6c8290bfd8931646791c691477a",
       "triangles": 1676,
       "budget": 2000,
+      "mesh_primitives": 2,
+      "primitive_budget": 2,
       "bounds_blender_Z_up": {
         "min": [
           -0.0430000014603138,
@@ -682,25 +375,18 @@
         "Y_up_once_socket_translation": true,
         "core_metal_rough_materials_only": true,
         "no_physics": true,
-        "cup_normals_outward": true
+        "mesh_primitive_budget": true,
+        "cup_normals_outward": true,
+        "cup_handle_semantic_marker": true
       },
       "meshes": [
         {
           "name": "cupBody_LOD0",
-          "triangles": 576,
+          "triangles": 908,
           "boundary_edges_after_weld": 0,
           "nonmanifold_edges_after_weld": 0,
           "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.00013595215241031267,
-          "closed_outward": true
-        },
-        {
-          "name": "cupHandle",
-          "triangles": 332,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 3.3604818110695715e-06,
+          "signed_volume_m3": 0.00013931263422138222,
           "closed_outward": true
         },
         {
@@ -714,8 +400,8 @@
         }
       ],
       "cup_surface_normals": {
-        "outer_radial_min": 0.03807251443042564,
-        "inner_radial_max": -0.034204259948147915,
+        "outer_radial_min": 0.03807251443800398,
+        "inner_radial_max": -0.034204259955749536,
         "underside_max_Z": -1.0,
         "interior_floor_min_Z": 1.0
       },
@@ -727,10 +413,12 @@
     },
     {
       "file": "bedside_lod0.glb",
-      "bytes": 34124,
-      "sha256": "98bc8a5e2f3fcd813e4f2530b20aa084ffadd7a60fa99a47993a9a5b05135a4c",
+      "bytes": 30352,
+      "sha256": "0efd303bfea12cb886fb5f5f3d72001871fbc048e77bd2ca6b32957238fdcb3d",
       "triangles": 1240,
       "budget": 10000,
+      "mesh_primitives": 3,
+      "primitive_budget": 3,
       "bounds_blender_Z_up": {
         "min": [
           -1.0119999647140503,
@@ -757,14 +445,9 @@
       "all_names": [
         "Fading_Bedside",
         "bedRail",
-        "bedRailLower",
         "curtainFrame",
         "partialCurtain",
-        "railTapSocket",
-        "railUpright",
-        "railUpright.001",
-        "railUpright.002",
-        "railUpright.003"
+        "railTapSocket"
       ],
       "gltf_root_nodes": [
         {
@@ -772,12 +455,7 @@
             0,
             1,
             2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8
+            3
           ],
           "extras": {
             "asset_role": "partial_memory"
@@ -831,25 +509,18 @@
         "expected_dimensions": true,
         "Y_up_once_socket_translation": true,
         "core_metal_rough_materials_only": true,
-        "no_physics": true
+        "no_physics": true,
+        "mesh_primitive_budget": true,
+        "independent_runtime_visibility_meshes": true
       },
       "meshes": [
         {
           "name": "bedRail",
-          "triangles": 60,
+          "triangles": 200,
           "boundary_edges_after_weld": 0,
           "nonmanifold_edges_after_weld": 0,
           "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.0012367251228909766,
-          "closed_outward": true
-        },
-        {
-          "name": "bedRailLower",
-          "triangles": 28,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.000733128398570251,
+          "signed_volume_m3": 0.002428059237185729,
           "closed_outward": true
         },
         {
@@ -869,50 +540,16 @@
           "inconsistent_winding_edges": 0,
           "signed_volume_m3": 0.0015191697496189792,
           "closed_outward": true
-        },
-        {
-          "name": "railUpright",
-          "triangles": 28,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.00011455156304157865,
-          "closed_outward": true
-        },
-        {
-          "name": "railUpright.001",
-          "triangles": 28,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.00011455129482067264,
-          "closed_outward": true
-        },
-        {
-          "name": "railUpright.002",
-          "triangles": 28,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.00011455129482067293,
-          "closed_outward": true
-        },
-        {
-          "name": "railUpright.003",
-          "triangles": 28,
-          "boundary_edges_after_weld": 0,
-          "nonmanifold_edges_after_weld": 0,
-          "inconsistent_winding_edges": 0,
-          "signed_volume_m3": 0.00011455156304157892,
-          "closed_outward": true
         }
       ]
     }
   ],
   "checks": {
     "combined_triangle_budget": true,
-    "combined_download_budget": true
+    "combined_download_budget": true,
+    "combined_mesh_primitive_budget": true
   },
   "combined_triangles": 9564,
-  "combined_glb_bytes": 359456
+  "combined_glb_bytes": 306720,
+  "combined_mesh_primitives": 10
 }
