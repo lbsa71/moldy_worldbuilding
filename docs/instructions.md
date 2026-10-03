@@ -1,3 +1,5 @@
+> Historical prototype brief, superseded by the 3 October 2026 assessment and implementation. The current chapter deliberately uses semantic HTML dialogue for keyboard access, text scaling and screen readers, with a directed Babylon scene. This file preserves the original brief; it is not a current implementation constraint.
+
 I’m building a demo for a narrative-driven web game using Astro, Babylon.js, and Ink (via inkjs). The goal is to load an Ink script, display its dialogues using Babylon.js's GUI system, and move an avatar to a specific position on the ground mesh for each Ink knot (where each knot corresponds to a unique 2D position). 
 My ink parser src/utils/ink.ts loads a minimal Ink script src/ink/demo.ink using inkjs.
 

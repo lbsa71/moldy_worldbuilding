@@ -1,0 +1,555 @@
+{
+  "blender": "5.2.2 LTS",
+  "assets": [
+    {
+      "file": "lamp_lod0.glb",
+      "bytes": 154296,
+      "sha256": "371ee05aad32961ee7d268850bfff88075209011125a353f3e5955182bd7809f",
+      "triangles": 5244,
+      "budget": 6000,
+      "mesh_primitives": 3,
+      "primitive_budget": 3,
+      "bounds_blender_Z_up": {
+        "min": [
+          -0.2405967116355896,
+          -0.2410300225019455,
+          0.0
+        ],
+        "max": [
+          0.24055826663970947,
+          0.24101077020168304,
+          1.7092289924621582
+        ],
+        "dimensions": [
+          0.4811549782752991,
+          0.48204079270362854,
+          1.7092289924621582
+        ]
+      },
+      "required_names": [
+        "lampFilament",
+        "lampWarmthSocket",
+        "lampShadePivot"
+      ],
+      "all_names": [
+        "Fading_Lamp",
+        "lampFilament",
+        "lampFoot_LOD0",
+        "lampShadePivot",
+        "lampShade_LOD0",
+        "lampWarmthSocket"
+      ],
+      "gltf_root_nodes": [
+        {
+          "children": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "extras": {
+            "asset_role": "persistent_lamp",
+            "units": "meters"
+          },
+          "name": "Fading_Lamp"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "emissiveFactor": [
+            1,
+            0.7758222222328186,
+            0.35153260827064514
+          ],
+          "name": "Fading_WarmFilament",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              1,
+              0.7758222222328186,
+              0.35153260827064514,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.3499999940395355
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "Fading_SatinBrass",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.5840784311294556,
+              0.30054378509521484,
+              0.0802198201417923,
+              1
+            ],
+            "roughnessFactor": 0.47999998927116394
+          }
+        },
+        {
+          "doubleSided": true,
+          "emissiveFactor": [
+            0.03355195924151033,
+            0.031651915796430785,
+            0.024419822147045522
+          ],
+          "name": "Fading_IvoryLinen",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.838798999786377,
+              0.7912979125976562,
+              0.6104955673217773,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.8299999833106995
+          }
+        }
+      ],
+      "extensions_used": [],
+      "checks": {
+        "single_expected_root": true,
+        "root_at_origin_identity": true,
+        "semantic_names_present": true,
+        "no_cameras_lights_animations_skins": true,
+        "no_textures_images": true,
+        "material_count": true,
+        "triangle_budget": true,
+        "no_degenerate_triangles": true,
+        "reimport_triangle_count_matches": true,
+        "closed_consistent_outward_meshes": true,
+        "contact_plane": true,
+        "expected_dimensions": true,
+        "Y_up_once_socket_translation": true,
+        "core_metal_rough_materials_only": true,
+        "no_physics": true,
+        "mesh_primitive_budget": true,
+        "shade_articulation_and_filament_mesh": true
+      },
+      "meshes": [
+        {
+          "name": "lampFilament",
+          "triangles": 224,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 7.728717262203122e-05,
+          "closed_outward": true
+        },
+        {
+          "name": "lampFoot_LOD0",
+          "triangles": 2380,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0052918931960113285,
+          "closed_outward": true
+        },
+        {
+          "name": "lampShade_LOD0",
+          "triangles": 2640,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0017107932992378508,
+          "closed_outward": true
+        }
+      ]
+    },
+    {
+      "file": "chair_lod0.glb",
+      "bytes": 83348,
+      "sha256": "395b598c879910368fabf719efc69e032efe5c699f78fb703168c36fefd85e2c",
+      "triangles": 1404,
+      "budget": 4000,
+      "mesh_primitives": 2,
+      "primitive_budget": 2,
+      "bounds_blender_Z_up": {
+        "min": [
+          -0.21449999511241913,
+          -0.2150000035762787,
+          0.0
+        ],
+        "max": [
+          0.21450001001358032,
+          0.2150000035762787,
+          0.9000000357627869
+        ],
+        "dimensions": [
+          0.42900000512599945,
+          0.4300000071525574,
+          0.9000000357627869
+        ]
+      },
+      "required_names": [
+        "chairSeatSocket",
+        "chairFacingSocket"
+      ],
+      "all_names": [
+        "Fading_Chair",
+        "chairFacingSocket",
+        "chairSeat",
+        "chairSeatSocket",
+        "chairSeatWear"
+      ],
+      "gltf_root_nodes": [
+        {
+          "children": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "extras": {
+            "asset_role": "empty_place"
+          },
+          "name": "Fading_Chair"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "name": "Fading_WornWood",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.09084171056747437,
+              0.061246052384376526,
+              0.0423114113509655,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.7599999904632568
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "Fading_WoodWear",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.25015828013420105,
+              0.17144110798835754,
+              0.09989872574806213,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.6700000166893005
+          }
+        }
+      ],
+      "extensions_used": [],
+      "checks": {
+        "single_expected_root": true,
+        "root_at_origin_identity": true,
+        "semantic_names_present": true,
+        "no_cameras_lights_animations_skins": true,
+        "no_textures_images": true,
+        "material_count": true,
+        "triangle_budget": true,
+        "no_degenerate_triangles": true,
+        "reimport_triangle_count_matches": true,
+        "closed_consistent_outward_meshes": true,
+        "contact_plane": true,
+        "expected_dimensions": true,
+        "Y_up_once_socket_translation": true,
+        "core_metal_rough_materials_only": true,
+        "no_physics": true,
+        "mesh_primitive_budget": true
+      },
+      "meshes": [
+        {
+          "name": "chairSeat",
+          "triangles": 1296,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.011029935583891048,
+          "closed_outward": true
+        },
+        {
+          "name": "chairSeatWear",
+          "triangles": 108,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 1.0433250212447964e-05,
+          "closed_outward": true
+        }
+      ]
+    },
+    {
+      "file": "cup_lod0.glb",
+      "bytes": 38724,
+      "sha256": "4e021b912eed7f4336ac3d08fa9f110a67f6f6c8290bfd8931646791c691477a",
+      "triangles": 1676,
+      "budget": 2000,
+      "mesh_primitives": 2,
+      "primitive_budget": 2,
+      "bounds_blender_Z_up": {
+        "min": [
+          -0.0430000014603138,
+          -0.0430000014603138,
+          0.0
+        ],
+        "max": [
+          0.07000000029802322,
+          0.0430000014603138,
+          0.09110000729560852
+        ],
+        "dimensions": [
+          0.11300000175833702,
+          0.0860000029206276,
+          0.09110000729560852
+        ]
+      },
+      "required_names": [
+        "cupRimSocket",
+        "cupHandle",
+        "cupRimChip"
+      ],
+      "all_names": [
+        "Fading_Cup",
+        "cupBody_LOD0",
+        "cupHandle",
+        "cupRimChip",
+        "cupRimSocket"
+      ],
+      "gltf_root_nodes": [
+        {
+          "children": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "extras": {
+            "asset_role": "chipped_cup"
+          },
+          "name": "Fading_Cup"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "name": "Fading_BlueGlaze",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.16513219475746155,
+              0.28744083642959595,
+              0.30946892499923706,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.30000001192092896
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "Fading_ExposedCeramic",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.6239603757858276,
+              0.6795424818992615,
+              0.6038273572921753,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.6800000071525574
+          }
+        }
+      ],
+      "extensions_used": [],
+      "checks": {
+        "single_expected_root": true,
+        "root_at_origin_identity": true,
+        "semantic_names_present": true,
+        "no_cameras_lights_animations_skins": true,
+        "no_textures_images": true,
+        "material_count": true,
+        "triangle_budget": true,
+        "no_degenerate_triangles": true,
+        "reimport_triangle_count_matches": true,
+        "closed_consistent_outward_meshes": true,
+        "contact_plane": true,
+        "expected_dimensions": true,
+        "Y_up_once_socket_translation": true,
+        "core_metal_rough_materials_only": true,
+        "no_physics": true,
+        "mesh_primitive_budget": true,
+        "cup_normals_outward": true,
+        "cup_handle_semantic_marker": true
+      },
+      "meshes": [
+        {
+          "name": "cupBody_LOD0",
+          "triangles": 908,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.00013931263422138222,
+          "closed_outward": true
+        },
+        {
+          "name": "cupRimChip",
+          "triangles": 768,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 8.469657774699082e-07,
+          "closed_outward": true
+        }
+      ],
+      "cup_surface_normals": {
+        "outer_radial_min": 0.03807251443800398,
+        "inner_radial_max": -0.034204259955749536,
+        "underside_max_Z": -1.0,
+        "interior_floor_min_Z": 1.0
+      },
+      "cup_rim_height_m": {
+        "min": 0.0820000022649765,
+        "max": 0.09000000357627869,
+        "chip_depth": 0.008000001311302185
+      }
+    },
+    {
+      "file": "bedside_lod0.glb",
+      "bytes": 30352,
+      "sha256": "0efd303bfea12cb886fb5f5f3d72001871fbc048e77bd2ca6b32957238fdcb3d",
+      "triangles": 1240,
+      "budget": 10000,
+      "mesh_primitives": 3,
+      "primitive_budget": 3,
+      "bounds_blender_Z_up": {
+        "min": [
+          -1.0119999647140503,
+          -0.01300000213086605,
+          0.0
+        ],
+        "max": [
+          0.9129999876022339,
+          0.26499998569488525,
+          2.111999988555908
+        ],
+        "dimensions": [
+          1.9249999523162842,
+          0.2779999878257513,
+          2.111999988555908
+        ]
+      },
+      "required_names": [
+        "railTapSocket",
+        "bedRail",
+        "curtainFrame",
+        "partialCurtain"
+      ],
+      "all_names": [
+        "Fading_Bedside",
+        "bedRail",
+        "curtainFrame",
+        "partialCurtain",
+        "railTapSocket"
+      ],
+      "gltf_root_nodes": [
+        {
+          "children": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "extras": {
+            "asset_role": "partial_memory"
+          },
+          "name": "Fading_Bedside"
+        }
+      ],
+      "materials": [
+        {
+          "doubleSided": true,
+          "name": "Fading_PaintedRail",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.6239603757858276,
+              0.6795424818992615,
+              0.6038273572921753,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.5699999928474426
+          }
+        },
+        {
+          "doubleSided": true,
+          "name": "Fading_MemoryCloth",
+          "pbrMetallicRoughness": {
+            "baseColorFactor": [
+              0.7011018991470337,
+              0.6795424818992615,
+              0.5583403706550598,
+              1
+            ],
+            "metallicFactor": 0,
+            "roughnessFactor": 0.8999999761581421
+          }
+        }
+      ],
+      "extensions_used": [],
+      "checks": {
+        "single_expected_root": true,
+        "root_at_origin_identity": true,
+        "semantic_names_present": true,
+        "no_cameras_lights_animations_skins": true,
+        "no_textures_images": true,
+        "material_count": true,
+        "triangle_budget": true,
+        "no_degenerate_triangles": true,
+        "reimport_triangle_count_matches": true,
+        "closed_consistent_outward_meshes": true,
+        "contact_plane": true,
+        "expected_dimensions": true,
+        "Y_up_once_socket_translation": true,
+        "core_metal_rough_materials_only": true,
+        "no_physics": true,
+        "mesh_primitive_budget": true,
+        "independent_runtime_visibility_meshes": true
+      },
+      "meshes": [
+        {
+          "name": "bedRail",
+          "triangles": 200,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.002428059237185729,
+          "closed_outward": true
+        },
+        {
+          "name": "curtainFrame",
+          "triangles": 44,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0013384438519917757,
+          "closed_outward": true
+        },
+        {
+          "name": "partialCurtain",
+          "triangles": 996,
+          "boundary_edges_after_weld": 0,
+          "nonmanifold_edges_after_weld": 0,
+          "inconsistent_winding_edges": 0,
+          "signed_volume_m3": 0.0015191697496189792,
+          "closed_outward": true
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "combined_triangle_budget": true,
+    "combined_download_budget": true,
+    "combined_mesh_primitive_budget": true
+  },
+  "combined_triangles": 9564,
+  "combined_glb_bytes": 306720,
+  "combined_mesh_primitives": 10
+}

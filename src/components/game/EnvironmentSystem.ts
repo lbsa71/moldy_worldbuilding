@@ -1,341 +1,190 @@
-import {
-  Scene,
-  Vector3,
-  Color3,
-  Mesh,
-  StandardMaterial,
-  MeshBuilder,
-  Ray,
-  TransformNode,
-  InstancedMesh,
-  Nullable,
-  AbstractMesh,
-} from "@babylonjs/core";
+import type { AbstractMesh } from "@babylonjs/core/Meshes/abstractMesh";
+import { GlowLayer } from "@babylonjs/core/Layers/glowLayer";
+import type { Mesh } from "@babylonjs/core/Meshes/mesh";
+import type { Observer } from "@babylonjs/core/Misc/observable";
+import { Ray } from "@babylonjs/core/Culling/ray";
+import type { Scene } from "@babylonjs/core/scene";
+import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { CreateBox } from "@babylonjs/core/Meshes/Builders/boxBuilder";
+import { CreatePolyhedron } from "@babylonjs/core/Meshes/Builders/polyhedronBuilder";
 import { Lamp } from "./Lamp";
 import { HandMotif } from "./HandMotif";
 import { GeometricShape } from "./GeometricShape";
 import { HospitalElement } from "./HospitalElement";
 import { EnvironmentalLightElement } from "./EnvironmentalLightElement";
+import { MemoryProp } from "./MemoryProp";
+import { HeroAssetLibrary } from "./HeroAssetLibrary";
+import { ImportedMemorySymbol } from "./ImportedMemorySymbol";
+import { bounded, FadingSymbol, material, palette, seededRandom } from "./VisualStyle";
 
+type SymbolView = Pick<FadingSymbol, "setVisibility" | "setRotationY" | "setReducedMotion" | "updatePosition" | "dispose">;
+type Memory = { object: SymbolView; kind: string; position: Vector3 };
 export class EnvironmentSystem {
-  private instances: (Mesh | InstancedMesh)[] = [];
-  private treeMaterial: StandardMaterial;
-  private rockMaterial: StandardMaterial;
-  private treeTemplate?: Mesh;
-  private rockTemplate?: Mesh;
-  private lampInstances: Lamp[] = [];
-  private handMotifInstances: HandMotif[] = [];
-  private geometricShapeInstances: GeometricShape[] = [];
-  private hospitalElementInstances: HospitalElement[] = [];
-  private environmentalLightElementInstances: EnvironmentalLightElement[] = [];
-  private debug: boolean = false;
   private terrain: AbstractMesh | null = null;
+  private lamp?: Lamp;
+  private glow: GlowLayer;
+  private memories = new Map<string, Memory>();
+  private retiring: { object: SymbolView; remaining: number }[] = [];
+  private assets?: HeroAssetLibrary;
+  private scenery: Mesh[] = [];
+  private sceneryMaterial: StandardMaterial;
+  private observer: Observer<Scene> | null;
   private firstObjectPosition: Vector3 | null = null;
-
-  constructor(private scene: Scene) {
-    this.treeMaterial = this.createTreeMaterial();
-    this.rockMaterial = this.createRockMaterial();
-    this.createTemplates();
+  private reducedMotion = false;
+  private debug = false;
+  private trust = 0;
+  private hospitalClarity = false;
+  private narrativeScene: string | null = null;
+  constructor(private scene: Scene, options: { heroAssets?: boolean } = {}) {
+    if (options.heroAssets) this.assets = new HeroAssetLibrary(scene);
+    this.glow = new GlowLayer("lampGlow", scene, { mainTextureRatio: 0.25, blurKernelSize: 24 });
+    this.glow.intensity = 0.32;
+    // Keep an empty inclusion list before the lamp exists: no other surface glows.
+    this.glow.customEmissiveColorSelector = (mesh, _subMesh, surface, result) => {
+      const scale = mesh.metadata?.fadingLampGlow ?? (mesh.name === "lampFilament" ? 1 : mesh.name === "lampShade" ? 0.45 : 0);
+      if (scale && surface && "emissiveColor" in surface) {
+        const color = (surface as StandardMaterial).emissiveColor;
+        result.set(color.r * scale, color.g * scale, color.b * scale, 1);
+      } else result.set(0,0,0,0);
+    };
+    this.sceneryMaterial = material(scene,"distantStone",palette.stone,0.035);
+    this.observer = scene.onBeforeRenderObservable.add(() => {
+      const dt = Math.min(scene.getEngine().getDeltaTime()/1000 || 1/60,0.1);
+      this.retiring = this.retiring.filter(entry => {
+        entry.remaining -= dt;
+        if (entry.remaining <= 0) { entry.object.dispose(); return false; } return true;
+      });
+    });
   }
-
-  public createObjectsFromTag(objectNames: string[], terrain: AbstractMesh, position?: { x: number, z: number }): void {
-    console.log("Creating objects from tag:", objectNames, "at position:", position);
-    
-    if (!terrain) {
-      console.error("No terrain provided to createObjectsFromTag");
-      return;
+  private grounded(x: number,z: number): Vector3 {
+    const hit = this.scene.pickWithRay(new Ray(new Vector3(x,50,z),Vector3.Down(),100), mesh => mesh === this.terrain);
+    return new Vector3(x,hit?.pickedPoint?.y ?? 0,z);
+  }
+  private ensureLamp(): void {
+    if (this.lamp) return;
+    this.lamp = new Lamp(this.scene,this.grounded(0,0),Vector3.Zero(),this.glow,this.assets);
+    const shade = this.scene.getMeshByName("lampShade");
+    if (shade?.material instanceof StandardMaterial) {
+      shade.rotation.z = -0.075;
+      shade.material.emissiveColor = palette.brass.scale(0.52);
+      shade.material.alpha = 1;
+      this.glow.addIncludedOnlyMesh(shade as Mesh);
     }
+    this.lamp.setReducedMotion(this.reducedMotion);
+  }
+  populate(terrain: Mesh, _objectNames: string[]): void {
     this.terrain = terrain;
-    
-    // Clear previous instances
-    console.log("Clearing previous instances");
-
-    this.lampInstances.forEach(lamp => lamp.dispose());
-    this.handMotifInstances.forEach(hand => hand.dispose());
-    this.geometricShapeInstances.forEach(shape => shape.dispose());
-    this.hospitalElementInstances.forEach(hospital => hospital.dispose());
-    
-    this.lampInstances = [];
-    this.handMotifInstances = [];
-    this.geometricShapeInstances = [];
-    this.hospitalElementInstances = [];
-
-    // If no objects to create, return early
-    if (!objectNames?.length) {
-      console.log("No objects to create");
-      return;
+    this.ensureLamp();
+    if (this.scenery.length) return;
+    const random = seededRandom(1971);
+    // A broken bedside floor suggests a room without enclosing the landscape.
+    for (let i=0;i<22;i++) {
+      const angle = i/22*Math.PI*2;
+      const distance = 10+random()*3;
+      const stone = CreateBox(`floorFragment${i}`, { width: 0.8+random()*1.6, height: 0.08, depth: 0.55+random() },this.scene);
+      stone.position = this.grounded(Math.cos(angle)*distance,Math.sin(angle)*distance);
+      stone.position.y += 0.02; stone.rotation.y = angle;
+      stone.material = this.sceneryMaterial; stone.isPickable = false; this.scenery.push(stone);
     }
-
-    // Calculate spread positions around the target position
-    const radius = 5; // Smaller spread radius
-    const angleStep = (2 * Math.PI) / objectNames.length;
-    const centerX = position?.x || 0;
-    const centerZ = position?.z || 0;
-    
-    this.clearFirstObjectPosition();
-
-    objectNames.forEach((objectName, index) => {
-      // Calculate spread position around the center point
-      const angle = angleStep * index;
-      const offsetX = centerX + (radius * Math.cos(angle));
-      const offsetZ = centerZ + (radius * Math.sin(angle));
-      const position = new Vector3(offsetX, 0, offsetZ);
-      
-      // Raycast to find ground height
-      const ray = new Ray(new Vector3(position.x, 100, position.z), new Vector3(0, -1, 0), 200);
-      const hit = this.scene.pickWithRay(ray, (mesh) => mesh === this.terrain);
-
-      const pickedPoint = hit?.pickedPoint;
-      const adjustedPosition = (pickedPoint ? pickedPoint : position).add(new Vector3(0, 2, 0));
-
-
-        console.log(`Creating ${objectName} at position:`, adjustedPosition);
-        
-        // Store the first object's position
-        if (!this.firstObjectPosition) {
-          this.firstObjectPosition = adjustedPosition.clone();
-        }
-        
-        try {
-          // Calculate rotation to face center while maintaining slight tilt
-          const rotation = new Vector3(
-            Math.random() * Math.PI * 0.2 - Math.PI * 0.1, // Slight tilt on X (-0.1π to 0.1π)
-            angle + Math.PI / 2,                           // Y rotation to face center
-            Math.random() * Math.PI * 0.2 - Math.PI * 0.1  // Slight tilt on Z (-0.1π to 0.1π)
-          );
-
-          if (objectName === 'lamp') {
-            const lamp = new Lamp(this.scene, adjustedPosition, rotation);
-            this.lampInstances.push(lamp);
-          }
-          if (objectName === 'hand') {
-            const hand = new HandMotif(this.scene, adjustedPosition, rotation);
-            this.handMotifInstances.push(hand);
-          }
-          if (objectName === 'geometric') {
-            const shape = new GeometricShape(this.scene, adjustedPosition, rotation);
-            this.geometricShapeInstances.push(shape);
-          }
-          if (objectName === 'hospital') {
-            const hospital = new HospitalElement(this.scene, adjustedPosition, rotation);
-            this.hospitalElementInstances.push(hospital);
-          }
-        } catch (error) {
-          console.error(`Failed to create ${objectName}:`, error);
-        }
-   
-    });
-  }
-
-  private createTreeMaterial(): StandardMaterial {
-    const material = new StandardMaterial("treeMaterial", this.scene);
-    material.diffuseColor = new Color3(0.1, 0.15, 0.05);
-    material.specularColor = new Color3(0, 0, 0);
-    material.ambientColor = new Color3(0.05, 0.07, 0.02);
-    material.emissiveColor = new Color3(0.02, 0.03, 0.01);
-    return material;
-  }
-
-  private createRockMaterial(): StandardMaterial {
-    const material = new StandardMaterial("rockMaterial", this.scene);
-    material.diffuseColor = new Color3(0.15, 0.15, 0.15);
-    material.specularColor = new Color3(0.05, 0.05, 0.05);
-    material.ambientColor = new Color3(0.1, 0.1, 0.1);
-    return material;
-  }
-
-  private createTemplates(): void {
-    // Create tree template
-    const trunkHeight = 3;
-    const trunk = MeshBuilder.CreateCylinder(
-      "trunkTemplate",
-      {
-        height: trunkHeight,
-        diameterTop: 0.3,
-        diameterBottom: 0.4,
-        tessellation: 8,
-        subdivisions: 1,
-      },
-      this.scene
-    );
-
-    const foliage = MeshBuilder.CreateCylinder(
-      "foliageTemplate",
-      {
-        height: trunkHeight * 2,
-        diameterTop: 0.1,
-        diameterBottom: 2,
-        tessellation: 8,
-        subdivisions: 1,
-      },
-      this.scene
-    );
-
-    foliage.position.y = trunkHeight * 0.5;
-
-    // Merge tree parts
-    const treePartsArray = [trunk, foliage];
-    const mergedTree = Mesh.MergeMeshes(
-      treePartsArray,
-      true,
-      true,
-      undefined,
-      false,
-      true
-    );
-
-    if (mergedTree) {
-      this.treeTemplate = mergedTree;
-      this.treeTemplate.material = this.treeMaterial;
-      this.treeTemplate.isVisible = false;
+    // Low rock silhouettes sit behind the principal sightline, never random trees.
+    for(let i=0;i<12;i++) {
+      const x=(random()-0.5)*76,z=26+random()*20;
+      const rock=CreatePolyhedron(`slateFold${i}`,{type:1,size:1},this.scene);
+      rock.position=this.grounded(x,z); rock.scaling.set(2+random()*4,0.7+random()*1.7,1+random()*2);
+      rock.rotation.y=random()*Math.PI; rock.material=this.sceneryMaterial; rock.isPickable=false; this.scenery.push(rock);
     }
-
-    // Create rock template
-    this.rockTemplate = MeshBuilder.CreatePolyhedron(
-      "rockTemplate",
-      {
-        type: 1,
-        size: 1,
-      },
-      this.scene
-    );
-    this.rockTemplate.material = this.rockMaterial;
-    this.rockTemplate.isVisible = false;
   }
-
-  public populate(terrain: Mesh, objectNames: string[]): void {
-    if (!this.treeTemplate || !this.rockTemplate) return;
-    this.terrain = terrain;
-
-    // Create fewer but more strategically placed objects
-    const numObjects = 30;
-    const positions: Vector3[] = this.generatePositions(numObjects, terrain);
-
-    positions.forEach((position) => {
-      if (Math.random() > 0.3) {
-        this.createTreeInstance(position);
-      } else {
-        this.createRockInstance(position);
+  createObjectsFromTag(names: string[], terrain: AbstractMesh, _position?: {x:number;z:number}): void {
+    this.terrain=terrain;
+    this.ensureLamp();
+    const desired=new Set<string>();
+    const counts=new Map<string,number>();
+    const motifs=names.filter(name=>name !== "lamp");
+    this.firstObjectPosition=null;
+    motifs.forEach(kind=>{
+      const count=counts.get(kind) ?? 0; counts.set(kind,count+1);
+      // A remembered object has a place beside the lamp, independent of listener travel.
+      const key=`${kind}:${count}`; desired.add(key);
+      const existing = this.memories.get(key);
+      if(existing) {
+        if(!this.firstObjectPosition) this.firstObjectPosition=existing.position.clone();
+        return;
       }
+      const anchors: Record<string, [number, number]> = this.assets ? {
+        chair:[1.2,0.4], cup:[0.7,0.9], rail:[-1.1,1.7], hand:[-1.1,1.8],
+        hospital:[-1.1,1.7], geometric:[-3.3,3.3], light:[-1.65,2.3], environmentalLight:[-1.65,2.3],
+      } : {
+        chair:[2.2,0.7], cup:[1.4,1.2], rail:[-2,3], hand:[-2,3.1],
+        hospital:[-3,4.2], geometric:[-6,6], light:[-3,4.2], environmentalLight:[-3,4.2],
+      };
+      const anchor=anchors[kind] ?? [0,4];
+      const x=anchor[0]+count*1.7;
+      const z=anchor[1]+count*0.65;
+      const point=this.grounded(x,z);
+      const rotation=new Vector3(0,Math.PI/12,0);
+      let fallback:FadingSymbol;
+      switch(kind) {
+        case "hand": point.y+=this.assets ? 0.85 : 1.5; fallback=new HandMotif(this.scene,point,rotation); break;
+        case "geometric": fallback=new GeometricShape(this.scene,point,rotation); break;
+        case "hospital": fallback=new HospitalElement(this.scene,point,rotation,!this.assets); break;
+        case "light": case "environmentalLight": fallback=new EnvironmentalLightElement(this.scene,point); break;
+        case "chair": case "cup": case "rail": fallback=new MemoryProp(this.scene,kind,point,rotation); break;
+        default: return;
+      }
+      if (this.assets) fallback.setScale(0.55);
+      const object: SymbolView = this.assets && (kind === "chair" || kind === "cup" || kind === "rail" || kind === "hospital")
+        ? new ImportedMemorySymbol(this.scene,kind,point,rotation,this.assets,fallback)
+        : fallback;
+      object.setReducedMotion(this.reducedMotion);
+      this.memories.set(key,{object,kind,position:point.clone()});
+      if(!this.firstObjectPosition) this.firstObjectPosition=point.clone();
     });
-  }
-
-  private generatePositions(count: number, terrain: Mesh): Vector3[] {
-    const positions: Vector3[] = [];
-    const minDistance = 5; // Minimum distance between objects
-
-    for (let i = 0; i < count; i++) {
-      let attempts = 0;
-      let position: Vector3 | null = null;
-
-      while (!position && attempts < 10) {
-        const x = Math.random() * 80 - 40;
-        const z = Math.random() * 80 - 40;
-
-        // Get height at position
-        const ray = new Ray(new Vector3(x, 100, z), new Vector3(0, -1, 0), 200);
-        const hit = this.scene.pickWithRay(ray, (mesh) => mesh === terrain);
-
-        if (hit?.pickedPoint) {
-          const newPos = hit.pickedPoint;
-
-          // Check distance from other objects
-          const isTooClose = positions.some(
-            (pos) => Vector3.Distance(pos, newPos) < minDistance
-          );
-
-          if (!isTooClose) {
-            position = newPos;
-          }
-        }
-        attempts++;
-      }
-
-      if (position) {
-        positions.push(position);
-      }
+    for(const [key,entry] of this.memories) if(!desired.has(key)) {
+      entry.object.setVisibility(0);
+      if(this.reducedMotion) entry.object.dispose(); else this.retiring.push({object:entry.object,remaining:3});
+      this.memories.delete(key);
     }
-
-    return positions;
+    this.updateObjectVisibilities(this.trust,this.hospitalClarity);
   }
-
-  private createTreeInstance(position: Vector3): void {
-    if (!this.treeTemplate) return;
-
-    const instance = this.treeTemplate.createInstance(
-      "tree" + this.instances.length
-    );
-    instance.position = position;
-    instance.rotation = new Vector3(
-      Math.random() * 0.2 - 0.1,
-      Math.random() * Math.PI,
-      Math.random() * 0.2 - 0.1
-    );
-    instance.scaling = new Vector3(
-      0.8 + Math.random() * 0.4,
-      0.8 + Math.random() * 0.4,
-      0.8 + Math.random() * 0.4
-    );
-    this.instances.push(instance);
+  updateObjectVisibilities(trust:number,hospital_clarity:boolean): void {
+    this.trust=Number.isFinite(trust) ? trust : 0; this.hospitalClarity=hospital_clarity;
+    this.lamp?.setWarmth(this.trust);
+    const connection=bounded(this.trust/5);
+    for(const {object,kind} of this.memories.values()) {
+      const amount=kind === "hospital" ? (hospital_clarity ? 0.78 : 0) : kind === "hand" ? 0.4+connection*0.45 : this.assets ? 0.94 : 0.72;
+      object.setVisibility(this.debug ? 1 : amount);
+    }
+    this.applyNarrativeScene();
   }
-
-  private createRockInstance(position: Vector3): void {
-    if (!this.rockTemplate) return;
-
-    const instance = this.rockTemplate.createInstance(
-      "rock" + this.instances.length
-    );
-    instance.position = position;
-    instance.rotation = new Vector3(
-      Math.random() * Math.PI,
-      Math.random() * Math.PI,
-      Math.random() * Math.PI
-    );
-    instance.scaling = new Vector3(
-      1 + Math.random() * 1.5,
-      0.7 + Math.random() * 1.0,
-      1 + Math.random() * 1.5
-    );
-    this.instances.push(instance);
+  setNarrativeScene(scene: string | null): void {
+    this.narrativeScene = scene;
+    this.applyNarrativeScene();
   }
-
-  public updateObjectVisibilities(trust: number, hospital_clarity: boolean): void {
-    // Lamp
-    this.lampInstances.forEach((lamp) => {
-      lamp.setVisibility(this.debug ? 1 : 1); // Always visible
-    });
-
-    // HandMotif
-    this.handMotifInstances.forEach((handMotif, index) => {
-        handMotif.setVisibility(0.5);
-    });
-
-    // GeometricShape
-    this.geometricShapeInstances.forEach((geometricShape) => {
-      geometricShape.setVisibility(0.5);
-    });
-
-    // HospitalElement
-    this.hospitalElementInstances.forEach((hospitalElement) => {
-      hospitalElement.setVisibility(0.5);
-    });
-
-    // EnvironmentalLightElement
-    this.environmentalLightElementInstances.forEach((lightElement) => {
-      lightElement.setVisibility(0.5);
-    });
+  private applyNarrativeScene(): void {
+    const faceRail = ["contradiction", "boundary", "quiet", "recollection"].includes(this.narrativeScene || "");
+    const chairAngle = this.narrativeScene === "preparation" ? 1.9 : faceRail ? Math.atan2(-4.2, 2.3) : Math.atan2(-2.2, -0.7);
+    for (const {object, kind} of this.memories.values()) if (kind === "chair") object.setRotationY(chairAngle);
+    const levels: Record<string, number> = { preparation: 1.0, keep: 1.75, carry: 1.1, rest: 0.35 };
+    const level = levels[this.narrativeScene || ""];
+    if (level !== undefined) this.lamp?.setIntensity(level);
+    else this.lamp?.setWarmth(this.trust);
   }
-
-  public toggleDebug(): void {
-    this.debug = !this.debug;
-    console.log("Debug mode:", this.debug);
+  setReducedMotion(value:boolean): void {
+    this.reducedMotion=value;
+    this.lamp?.setReducedMotion(value);
+    for(const entry of this.memories.values()) entry.object.setReducedMotion(value);
+    this.retiring.forEach(entry=>entry.object.setReducedMotion(value));
+    if(value) { this.retiring.forEach(entry=>entry.object.dispose()); this.retiring=[]; }
   }
-
-  public getFirstObjectPosition(): Vector3 | null {
-    return this.firstObjectPosition;
-  }
-
-  public clearFirstObjectPosition(): void {
-    this.firstObjectPosition = null;
+  toggleDebug(): void { this.debug=!this.debug; this.updateObjectVisibilities(this.trust,this.hospitalClarity); }
+  getFirstObjectPosition(): Vector3|null { return this.firstObjectPosition; }
+  clearFirstObjectPosition(): void { this.firstObjectPosition=null; }
+  dispose(): void {
+    this.scene.onBeforeRenderObservable.remove(this.observer);
+    this.memories.forEach(({object})=>object.dispose()); this.memories.clear();
+    this.retiring.forEach(({object})=>object.dispose()); this.retiring=[];
+    this.scenery.forEach(mesh=>mesh.dispose()); this.scenery=[];
+    this.lamp?.dispose(); this.lamp=undefined; this.assets?.dispose(); this.glow.dispose(); this.sceneryMaterial.dispose();
   }
 }

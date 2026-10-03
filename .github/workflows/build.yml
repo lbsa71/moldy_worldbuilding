@@ -1,5 +1,4 @@
-# .github/workflows/build.yml
-name: Build and Push
+name: Validate game
 
 on:
   push:
@@ -9,51 +8,21 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
-  build:
+  validate:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-fund
+      - run: npm run validate
+      - uses: actions/upload-artifact@v4
         with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: "./terraform/workers/package-lock.json"
-
-      - name: Update Dependencies
-        working-directory: ./terraform/workers
-        run: |
-          npm install -g npm@latest
-          npm update
-          npm audit fix || true
-
-      - name: Build Worker
-        working-directory: ./terraform/workers
-        run: |
-          npm ci --no-fund
-          npm run build
-
-      - name: Build WASM
-        working-directory: ./src/game/wasm
-        run: |
-          npm ci --no-fund
-          npm run build
-
-      - name: Commit changes
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add -f terraform/workers/dist
-          git add -f public/wasm
-          git add terraform/workers/package*.json
-          git commit -m "Update deps and built worker" || echo "No changes to commit"
-          git push origin main
+          name: fading-static-site
+          path: dist
+          if-no-files-found: error

@@ -1,320 +1,112 @@
-import {
-  Scene,
-  Vector3,
-  Color3,
-  TransformNode,
-  PointLight,
-  StandardMaterial,
-  MeshBuilder,
-  Mesh,
-  SpotLight,
-  SceneLoader,
-  AbstractMesh,
-  AnimationGroup,
-  Ray,
-  Quaternion,
-} from "@babylonjs/core";
-import "@babylonjs/loaders/glTF";
-import { CharacterController } from "./CharacterController";
+import type { Scene } from "@babylonjs/core/scene";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { Color3 } from "@babylonjs/core/Maths/math.color";
+import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
+import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
+import { CreateTorus } from "@babylonjs/core/Meshes/Builders/torusBuilder";
+import { CreateCylinder } from "@babylonjs/core/Meshes/Builders/cylinderBuilder";
+import type { Mesh } from "@babylonjs/core/Meshes/mesh";
+import type { AbstractMesh } from "@babylonjs/core/Meshes/abstractMesh";
+// This module also registers scene.pickWithRay, used for terrain grounding.
+import { Ray } from "@babylonjs/core/Culling/ray";
 
 export class Character {
   private root: TransformNode;
-  private mesh?: AbstractMesh;
-  private mainLight: PointLight;
-  private spotLight: SpotLight;
-  private controller: CharacterController;
-  private animationGroups: AnimationGroup[] = [];
-  private currentAnimation?: AnimationGroup;
-  private isMoving = false;
   private targetPosition?: Vector3;
-  private startPosition?: Vector3;
-  private totalDistance = 0;
-  private moveSpeed = 5; // Units per second
-  private lastGroundY = 0;
-  private debugSphere?: Mesh;
   private terrain?: AbstractMesh;
+  private moveSpeed = 4;
+  private reducedMotion = false;
+  private disposed = false;
+  private completeMovement?: () => void;
+  private readonly updateFrame = () => this.update();
 
   constructor(private scene: Scene) {
-    // Create root node for character
     this.root = new TransformNode("characterRoot", scene);
-
-    // Create character lights
-    this.mainLight = this.createMainLight();
-    this.spotLight = this.createSpotLight();
-    this.mainLight.parent = this.root;
-    this.spotLight.parent = this.root;
-
-    // Create controller
-    this.controller = new CharacterController(scene, this.root);
-
-    // Load character model
-    this.loadCharacterModel();
-
-    // Register before render loop for movement and physics
-    this.scene.registerBeforeRender(() => this.update());
-  }
-
-  private async loadCharacterModel(): Promise<void> {
-    try {
-      // Load GLTF model
-      const result = await SceneLoader.ImportMeshAsync(
-        "",
-        "/models/",
-        "character.glb",
-        this.scene
-      );
-
-      // Set up mesh
-      this.mesh = result.meshes[0];
-      if (this.mesh) {
-        this.mesh.parent = this.root;
-        this.mesh.scaling = new Vector3(0.1, 0.1, 0.1);
-        this.mesh.rotate(Vector3.Up(), Math.PI); // Face forward
-
-        // Create debug sphere after physics is set up
-        // this.createDebugSphere();
-      }
-
-      // Store animations
-      this.animationGroups = result.animationGroups;
-
-      // Start idle animation
-      const idleAnim = this.animationGroups.find((a) =>
-        a.name.toLowerCase().includes("idle")
-      );
-      if (idleAnim) {
-        this.playAnimation(idleAnim, true);
-      }
-    } catch (error) {
-      console.warn("Failed to load character model, using fallback:", error);
-      this.createFallbackCharacter();
-    }
-  }
-
-  private createFallbackCharacter(): void {
-    // Create a capsule for the character
-    const mesh = MeshBuilder.CreateCapsule(
-      "characterMesh",
-      {
-        radius: 0.5,
-        height: 2,
-        tessellation: 8,
-        subdivisions: 1,
-        capSubdivisions: 8,
-      },
-      this.scene
-    );
-
-    // Create glowing material
-    const material = new StandardMaterial("characterMaterial", this.scene);
-    material.diffuseColor = new Color3(0.5, 0.7, 0.3);
-    material.emissiveColor = new Color3(0.3, 0.4, 0.2);
-    material.specularColor = new Color3(0.2, 0.3, 0.1);
-    material.ambientColor = new Color3(0.1, 0.15, 0.05);
-    mesh.material = material;
-
-    mesh.parent = this.root;
-    this.mesh = mesh;
-
-    // Create debug sphere after physics is set up
-    this.createDebugSphere();
-  }
-
-  private createDebugSphere(): void {
-    // Create a small sphere to visualize the physics shape
-    this.debugSphere = MeshBuilder.CreateSphere(
-      "debugSphere",
-      {
-        diameter: 2,
-      },
-      this.scene
-    );
-
-    const material = new StandardMaterial("debugMaterial", this.scene);
-    material.wireframe = true;
-    material.emissiveColor = new Color3(1, 0, 0);
-    material.alpha = 0.3;
-    this.debugSphere.material = material;
-    this.debugSphere.parent = this.root;
+    // A quiet point of attention, rather than an embodied avatar suggesting free movement.
+    const surface = new StandardMaterial("listenerSurface", scene);
+    surface.diffuseColor = new Color3(0.58, 0.61, 0.62);
+    surface.emissiveColor = new Color3(0.035, 0.042, 0.05);
+    surface.specularColor = Color3.Black();
+    surface.alpha = 0.4;
+    const ring = CreateTorus("listenerRing", { diameter: 0.65, thickness: 0.025, tessellation: 32 }, scene);
+    ring.parent = this.root;
+    ring.material = surface;
+    ring.isPickable = false;
+    const center = CreateCylinder("listenerCenter", { diameter: 0.13, height: 0.012, tessellation: 24 }, scene);
+    center.parent = this.root;
+    center.material = surface;
+    center.isPickable = false;
+    scene.registerBeforeRender(this.updateFrame);
   }
 
   private update(): void {
-    if (
-      !this.targetPosition ||
-      !this.startPosition ||
-      !this.isMoving
-    )
-      return;
-
-    const currentPos = this.root.position;
-    const distanceToTarget = Vector3.Distance(
-      new Vector3(currentPos.x, 0, currentPos.z),
-      new Vector3(this.targetPosition.x, 0, this.targetPosition.z)
-    );
-
-    // Stop if we're close enough to target
-    if (distanceToTarget < 0.5) {
-      this.stopMovement();
-      return;
-    }
-
-    // Calculate movement direction
-    const direction = this.targetPosition.subtract(currentPos);
+    if (this.disposed || !this.targetPosition) return;
+    if (this.reducedMotion) { this.finishAtTarget(); return; }
+    const deltaSeconds = Math.min(Math.max(this.scene.getEngine().getDeltaTime() / 1000, 0), 0.1);
+    const direction = this.targetPosition.subtract(this.root.position);
     direction.y = 0;
+    const distance = direction.length();
+    const step = Math.min(this.moveSpeed * deltaSeconds, distance);
+    if (distance <= step || distance < 0.02) { this.finishAtTarget(); return; }
     direction.normalize();
-
-    // Calculate target rotation
     const targetAngle = Math.atan2(direction.x, direction.z);
-    const currentRotation = this.root.rotation.y;
-    const angleDiff = targetAngle - currentRotation;
-    const normalizedDiff = Math.atan2(Math.sin(angleDiff), Math.cos(angleDiff));
-
-    // Apply rotation more smoothly
-    const newRotation = currentRotation + normalizedDiff * 0.05; // Reduced from 0.1
-    this.root.rotation.y = newRotation;
-
-    // Only move if roughly facing the target (increased threshold)
-    const isRotationAligned = Math.abs(normalizedDiff) < Math.PI / 6; // Changed from PI/12
-
-    if (isRotationAligned) {
-      const moveAmount = direction.scale(this.moveSpeed * (1 / 60));
-      const newPosition = currentPos.add(moveAmount);
-
-      // Get terrain height at new position
-      const ray = new Ray(
-        new Vector3(newPosition.x, 100, newPosition.z),
-        new Vector3(0, -1, 0),
-        1000
-      );
-
-      const hit = this.scene.pickWithRay(ray, (mesh) => mesh === this.terrain);
-      if (hit?.pickedPoint) {
-        newPosition.y = hit.pickedPoint.y + 1;
-      }
-
-      // Update position
-      this.root.position = newPosition;
-    }
+    const difference = targetAngle - this.root.rotation.y;
+    const shortestAngle = Math.atan2(Math.sin(difference), Math.cos(difference));
+    this.root.rotation.y += shortestAngle * (1 - Math.exp(-8 * deltaSeconds));
+    const next = this.root.position.add(direction.scale(step));
+    this.groundPosition(next);
+    this.root.position.copyFrom(next);
   }
 
-  private stopMovement(): void {
-    if (!this.isMoving) return;
+  private groundPosition(position: Vector3): void {
+    if (!this.terrain) return;
+    const hit = this.scene.pickWithRay(
+      new Ray(new Vector3(position.x, 100, position.z), Vector3.Down(), 200),
+      mesh => mesh === this.terrain,
+    );
+    if (hit?.pickedPoint) position.y = hit.pickedPoint.y + 0.04;
+  }
 
-    console.log("Stopping movement");
-    console.log("Avatar mesh position:", this.root.position);
+  private finishAtTarget(): void {
+    if (this.targetPosition) {
+      const destination = this.targetPosition.clone();
+      this.groundPosition(destination);
+      this.root.position.copyFrom(destination);
+    }
     this.targetPosition = undefined;
-    this.startPosition = undefined;
-    this.isMoving = false;
-
-    // Play idle animation
-    const idleAnim = this.animationGroups.find((a) =>
-      a.name.toLowerCase().includes("idle")
-    );
-    if (idleAnim) {
-      this.playAnimation(idleAnim, true);
-    }
+    this.completeMovement?.();
+    this.completeMovement = undefined;
   }
 
-  private createMainLight(): PointLight {
-    // Main character light (softer, wider)
-    const light = new PointLight(
-      "characterLight",
-      new Vector3(0, 2, 0),
-      this.scene
-    );
-    light.intensity = 3.5;
-    light.radius = 35;
-    light.diffuse = new Color3(0.3, 0.5, 0.2);
-    light.specular = new Color3(0.1, 0.2, 0.05);
-
-    // Add wider ambient glow
-    const ambient = new PointLight(
-      "characterAmbient",
-      new Vector3(0, 1, 0),
-      this.scene
-    );
-    ambient.parent = this.root;
-    ambient.intensity = 1.5;
-    ambient.radius = 70;
-    ambient.diffuse = new Color3(0.1, 0.15, 0.05);
-    ambient.specular = new Color3(0, 0, 0);
-    ambient.setEnabled(true);
-
-    return light;
-  }
-
-  private createSpotLight(): SpotLight {
-    // Downward spot light for dramatic effect
-    const spot = new SpotLight(
-      "characterSpot",
-      new Vector3(0, 4, 0),
-      new Vector3(0, -1, 0),
-      Math.PI / 2,
-      2,
-      this.scene
-    );
-    spot.intensity = 2;
-    spot.diffuse = new Color3(0.3, 0.5, 0.2);
-    spot.specular = new Color3(0.1, 0.2, 0.05);
-
-    return spot;
-  }
-
-  private playAnimation(
-    animation: AnimationGroup,
-    loop: boolean = false
-  ): void {
-    // Stop current animation if any
-    if (this.currentAnimation && this.currentAnimation !== animation) {
-      this.currentAnimation.stop();
-      this.currentAnimation = animation;
-      animation.loopAnimation = loop;
-      animation.start(true);
-    } else if (!this.currentAnimation) {
-      this.currentAnimation = animation;
-      animation.loopAnimation = loop;
-      animation.start(true);
-    }
-  }
-
-  public async moveTo(target: Vector3, terrain: Mesh): Promise<void> {
+  public moveTo(target: Vector3, terrain: Mesh): Promise<void> {
+    if (this.disposed) return Promise.resolve();
+    this.completeMovement?.();
     this.terrain = terrain;
+    this.targetPosition = target.clone();
+    const movement = new Promise<void>(resolve => { this.completeMovement = resolve; });
+    if (this.reducedMotion) this.finishAtTarget();
+    return movement;
+  }
 
-    console.log("Moving to target:", target);
-    this.isMoving = true;
-    this.targetPosition = target;
-    this.startPosition = this.root.position.clone();
-
-    // Calculate total distance to travel (ignoring height)
-    this.totalDistance = Vector3.Distance(
-      new Vector3(this.startPosition.x, 0, this.startPosition.z),
-      new Vector3(target.x, 0, target.z)
-    );
-
-    // Start walk animation
-    const walkAnim = this.animationGroups.find((a) =>
-      a.name.toLowerCase().includes("walk")
-    );
-    if (walkAnim) {
-      this.playAnimation(walkAnim, true);
+  public setReducedMotion(enabled: boolean): void {
+    this.reducedMotion = enabled;
+    if (enabled) {
+      if (this.targetPosition) this.finishAtTarget();
     }
   }
-
   public setPosition(position: Vector3): void {
-    console.log("Setting position:", position);
-    this.root.position = position;
-    this.lastGroundY = position.y;
+    this.completeMovement?.();
+    this.completeMovement = undefined;
+    this.targetPosition = undefined;
+    this.root.position.copyFrom(position);
   }
-
-  public getPosition(): Vector3 {
-    return this.root.position;
-  }
-
+  public getPosition(): Vector3 { return this.root.position; }
   public dispose(): void {
-    this.mesh?.dispose();
-    this.mainLight.dispose();
-    this.spotLight.dispose();
-    this.root.dispose();
-    this.debugSphere?.dispose();
+    if (this.disposed) return;
+    this.disposed = true;
+    this.scene.unregisterBeforeRender(this.updateFrame);
+    this.completeMovement?.();
+    this.completeMovement = undefined;
+    this.root.dispose(false, true);
   }
 }

@@ -1,0 +1,199 @@
+{
+  "surface_position_tolerance_m": 1e-06,
+  "corner_normal_dot_minimum": 0.999999,
+  "assets": [
+    {
+      "file": "lamp_lod0.glb",
+      "material_names_unchanged": true,
+      "materials": [
+        {
+          "material": "Fading_SatinBrass",
+          "triangles_before": 2380,
+          "triangles_after": 2380,
+          "old_to_new": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.9999998286366463
+          },
+          "new_to_old": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.9999998286366463
+          },
+          "passed": true
+        },
+        {
+          "material": "Fading_WarmFilament",
+          "triangles_before": 224,
+          "triangles_after": 224,
+          "old_to_new": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.9999998286366463
+          },
+          "new_to_old": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.9999998286366463
+          },
+          "passed": true
+        },
+        {
+          "material": "Fading_IvoryLinen",
+          "triangles_before": 2640,
+          "triangles_after": 2640,
+          "old_to_new": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 2.3865129605837865e-07,
+            "minimum_matching_normal_dot": 0.9999997597187757
+          },
+          "new_to_old": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 2.3865129605837865e-07,
+            "minimum_matching_normal_dot": 0.9999997597187757
+          },
+          "passed": true
+        }
+      ],
+      "semantic_world_transforms_unchanged": true,
+      "passed": true
+    },
+    {
+      "file": "chair_lod0.glb",
+      "material_names_unchanged": true,
+      "materials": [
+        {
+          "material": "Fading_WornWood",
+          "triangles_before": 1296,
+          "triangles_after": 1296,
+          "old_to_new": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 5.960464477539063e-08,
+            "minimum_matching_normal_dot": 0.9999998360872269
+          },
+          "new_to_old": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 5.960464477539063e-08,
+            "minimum_matching_normal_dot": 0.9999998360872269
+          },
+          "passed": true
+        },
+        {
+          "material": "Fading_WoodWear",
+          "triangles_before": 108,
+          "triangles_after": 108,
+          "old_to_new": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.999999925494194
+          },
+          "new_to_old": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.999999925494194
+          },
+          "passed": true
+        }
+      ],
+      "semantic_world_transforms_unchanged": true,
+      "passed": true
+    },
+    {
+      "file": "cup_lod0.glb",
+      "material_names_unchanged": true,
+      "materials": [
+        {
+          "material": "Fading_BlueGlaze",
+          "triangles_before": 908,
+          "triangles_after": 908,
+          "old_to_new": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.9999998584389687
+          },
+          "new_to_old": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.9999998584389687
+          },
+          "passed": true
+        },
+        {
+          "material": "Fading_ExposedCeramic",
+          "triangles_before": 768,
+          "triangles_after": 768,
+          "old_to_new": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.9999998682978912
+          },
+          "new_to_old": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.9999998682978912
+          },
+          "passed": true
+        }
+      ],
+      "semantic_world_transforms_unchanged": true,
+      "passed": true
+    },
+    {
+      "file": "bedside_lod0.glb",
+      "material_names_unchanged": true,
+      "materials": [
+        {
+          "material": "Fading_PaintedRail",
+          "triangles_before": 244,
+          "triangles_after": 244,
+          "old_to_new": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.9999996743163138
+          },
+          "new_to_old": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.9999997571035237
+          },
+          "passed": true
+        },
+        {
+          "material": "Fading_MemoryCloth",
+          "triangles_before": 996,
+          "triangles_after": 996,
+          "old_to_new": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.9999998658895493
+          },
+          "new_to_old": {
+            "missing_or_changed_corners": 0,
+            "max_position_difference_m": 0,
+            "minimum_matching_normal_dot": 0.9999998658895493
+          },
+          "passed": true
+        }
+      ],
+      "semantic_world_transforms_unchanged": true,
+      "passed": true
+    }
+  ],
+  "images": [
+    {
+      "file": "bedside_reference.png",
+      "mean_absolute_channel_difference": 2.5778264898690395e-05,
+      "root_mean_square_channel_difference": 0.0011279091704636812,
+      "max_channel_difference": 0.16470588743686676,
+      "fraction_pixels_changed_more_than_0_02": 0.0002546296296296296
+    },
+    {
+      "file": "cup_inspection.png",
+      "mean_absolute_channel_difference": 2.549019484376913e-07,
+      "root_mean_square_channel_difference": 3.201947038178332e-05,
+      "max_channel_difference": 0.00784313678741455,
+      "fraction_pixels_changed_more_than_0_02": 0.0
+    }
+  ],
+  "surface_comparison_passed": true
+}

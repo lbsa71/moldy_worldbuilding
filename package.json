@@ -3,9 +3,9 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "npm run build:wasm && astro dev",
+    "dev": "astro dev",
     "start": "astro dev",
-    "build": "npm run clean && npm run build:wasm && astro build",
+    "build": "npm run clean && astro build && node scripts/prepare-release.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "build:wasm": "cd src/game/wasm && npx asc assembly/gameLogic.ts --target release --optimize",
@@ -13,8 +13,10 @@
     "check": "astro check",
     "test": "vitest run",
     "test:watch": "vitest",
-    "validate": "npm run test && npm run check && npm run build"
+    "validate": "npm run test && npm run check && npm run build",
+    "score:render": "node scripts/generate-score.mjs"
   },
+  "engines": { "node": ">=22.12.0" },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@babylonjs/core": "^7.34.4",
@@ -23,8 +25,8 @@
     "@babylonjs/loaders": "^7.35.0",
     "@types/babylonjs": "^2.3.31",
     "assemblyscript": "^0.27.31",
-    "astro": "^4.16.13",
-    "sharp": "^0.33.5",
+    "astro": "^7.3.5",
+    "sharp": "^0.35.5",
     "typescript": "^5.6.3"
   },
   "devDependencies": {

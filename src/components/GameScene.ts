@@ -1,28 +1,23 @@
-import {
-  Engine,
-  Scene,
-  Vector3,
-  WebGPUEngine,
-  Color4,
-  Ray,
-  AbstractMesh,
-  KeyboardEventTypes,
-} from "@babylonjs/core";
-import "@babylonjs/loaders/glTF";
-import {
-  AdvancedDynamicTexture,
-  Button,
-  Control,
-  TextBlock,
-} from "@babylonjs/gui";
-
+import { Engine } from "@babylonjs/core/Engines/engine";
+import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
+import { Scene } from "@babylonjs/core/scene";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { Color4 } from "@babylonjs/core/Maths/math.color";
+import { KeyboardEventTypes } from "@babylonjs/core/Events/keyboardEvents";
 import { TerrainSystem } from "./game/TerrainSystem";
 import { AtmosphereSystem } from "./game/AtmosphereSystem";
 import { EnvironmentSystem } from "./game/EnvironmentSystem";
 import { Character } from "./game/Character";
 import { AudioSystem } from "./game/AudioSystem";
 import { CameraSystem } from "./game/CameraSystem";
-import { loadInkFile, getCurrentDialogue, choose } from "../utils/ink";
+import { DialogueUI } from "../game/experience/DialogueUI";
+import { getCurrentDialogue, choose } from "../utils/ink";
+import type { Story } from "../inkjs/engine/Story";
+
+export const SAVE_KEY = "fading:chapter-one:save:v1";
+const PREFERENCES_KEY = "fading:preferences:v1";
+
+type Preferences = { audio: boolean; volume: number; reducedMotion: boolean };
 
 export class GameScene {
   private engine!: Engine;
@@ -32,245 +27,281 @@ export class GameScene {
   private environment!: EnvironmentSystem;
   private character!: Character;
   private cameraSystem!: CameraSystem;
-  private initialized = false;
-  private isWebGPU = false;
-  private guiTexture!: any;
-  private dialogueText!: any;
-  private currentStory: any;
-  private currentButtonNames: string[] = [];
-  private enableAtmosphere = true; // Toggle for atmosphere
-  private enableEnvironment = true; // Toggle for environment
-  private enableInk = true; // Toggle for Ink
-  private enableTerrain = true; // Toggle for terrain
-  private enableCharacter = true; // Toggle for character
   private audioSystem!: AudioSystem;
+  private dialogueUI!: DialogueUI;
+  private currentStory?: Story;
+  private initialization: Promise<void> | null = null;
+  private isWebGPU = false;
+  private disposed = false;
+  private running = false;
+  private changingChoice = false;
+  private preferences: Preferences;
+  private storageNotice = "";
+  private readonly renderFrame = () => { if (!this.disposed) this.scene.render(); };
+  private readonly resize = () => {
+    if (!this.disposed) {
+      this.engine.resize();
+      this.cameraSystem.resize();
+    }
+  };
+  private readonly visibilityChanged = () => {
+    if (!this.running || this.disposed) return;
+    this.audioSystem.setPaused(document.hidden);
+    if (document.hidden) this.engine.stopRenderLoop(this.renderFrame);
+    else this.engine.runRenderLoop(this.renderFrame);
+  };
 
-  constructor(private canvas: HTMLCanvasElement) {}
-
-  public setStory(story: any): void {
-    this.currentStory = story;
+  constructor(private canvas: HTMLCanvasElement) {
+    this.preferences = this.readPreferences();
   }
 
-  public async initialize(): Promise<void> {
+  public setStory(story: Story): void { this.currentStory = story; }
+
+  private ensureActive(): void {
+    if (this.disposed) throw new Error("The game was closed during initialization.");
+  }
+
+  public initialize(): Promise<void> {
+    if (this.initialization) return this.initialization;
+    this.initialization = (async () => {
+      try {
+        this.ensureActive();
+        if (!this.currentStory) throw new Error("The story has not been loaded.");
+        await this.setupEngine();
+        this.ensureActive();
+        this.cameraSystem = new CameraSystem(this.scene, this.canvas);
+        this.audioSystem = new AudioSystem(this.scene);
+        this.atmosphere = new AtmosphereSystem(this.scene);
+        this.terrain = new TerrainSystem(this.scene);
+        await this.terrain.waitForReady();
+        this.ensureActive();
+        this.environment = new EnvironmentSystem(this.scene, { heroAssets: true });
+        this.environment.populate(this.terrain.terrain, []);
+        this.character = new Character(this.scene);
+        this.character.setPosition(new Vector3(0, this.terrain.getHeightAtPoint(0, 0) + 0.04, 0));
+        this.scene.registerBeforeRender(() => {
+          this.cameraSystem.updatePosition(this.character.getPosition());
+        });
+        const host = document.getElementById("experience-ui");
+        if (!host) throw new Error("The story interface is missing.");
+        this.dialogueUI = new DialogueUI(host, {
+          onChoice: index => this.handleChoice(index),
+          onRestart: () => this.restart(),
+          onAudioToggle: () => {
+            this.preferences.audio = !this.preferences.audio;
+            this.audioSystem.setEnabled(this.preferences.audio);
+            this.dialogueUI.setAudioEnabled(this.preferences.audio);
+            this.savePreferences();
+          },
+          onMotionToggle: () => {
+            this.preferences.reducedMotion = !this.preferences.reducedMotion;
+            this.applyMotionPreference();
+            this.savePreferences();
+          },
+          onVolumeChange: value => {
+            this.preferences.volume = Math.min(1, Math.max(0, value));
+            this.audioSystem.setVolume(this.preferences.volume);
+            this.dialogueUI.setVolume(this.preferences.volume);
+            this.savePreferences();
+          },
+        });
+        this.audioSystem.setEnabled(this.preferences.audio);
+        this.audioSystem.setVolume(this.preferences.volume);
+        this.dialogueUI.setAudioEnabled(this.preferences.audio);
+        this.dialogueUI.setVolume(this.preferences.volume);
+        this.applyMotionPreference();
+        this.restoreStory();
+        this.progressStory(true);
+        if (this.storageNotice) this.dialogueUI.setNotice(this.storageNotice);
+        if (new URLSearchParams(window.location.search).has("debug")) {
+          this.scene.onKeyboardObservable.add(event => {
+            if (event.type === KeyboardEventTypes.KEYDOWN && event.event.key.toLowerCase() === "d") {
+              this.environment.toggleDebug();
+              this.atmosphere.toggleDebug();
+            }
+          });
+        }
+      } catch (error) {
+        this.dispose();
+        throw error;
+      }
+    })();
+    return this.initialization;
+  }
+
+  private progressStory(immediate = false): void {
+    if (!this.currentStory || this.disposed) return;
+    // Store the entrance to this beat so Continue() cannot skip it when resuming.
+    this.saveStory();
+    const dialogue = getCurrentDialogue(this.currentStory);
+    this.dialogueUI.render(dialogue);
+    this.audioSystem.setMood(dialogue.mood || "hushed");
+    if (dialogue.scene === "rail") {
+      void this.audioSystem.playTapCue().catch(error => {
+        if (!this.disposed) console.warn("The optional rail taps could not play.", error);
+      });
+    }
+    if (dialogue.audio && !dialogue.mood) {
+      void this.audioSystem.playAudio(dialogue.audio).catch(error => {
+        if (!this.disposed) this.dialogueUI.setNotice("Sound is unavailable. You can continue reading.");
+        console.warn("Audio cue could not play.", error);
+      });
+    } else {
+      void this.audioSystem.play().catch(() => {
+        if (!this.disposed) this.dialogueUI.setNotice("Use the sound control to enable audio.");
+      });
+    }
+    if (dialogue.position) {
+      const { x, z } = dialogue.position;
+      const destination = new Vector3(x, this.terrain.getHeightAtPoint(x, z) + 0.04, z);
+      if (immediate) {
+        this.character.setPosition(destination);
+        this.cameraSystem.setCameraTarget(destination);
+      } else {
+        void this.character.moveTo(destination, this.terrain.terrain);
+      }
+    }
+    if (dialogue.fog !== null) this.atmosphere.updateFog(dialogue.fog);
+    if (dialogue.objects !== null) {
+      this.environment.createObjectsFromTag(dialogue.objects, this.terrain.terrain, dialogue.position || undefined);
+    }
+    const connection = Number(this.currentStory.variablesState.$("connection")) || 0;
+    const clarity = Boolean(this.currentStory.variablesState.$("hospital_clarity"));
+    this.environment.updateObjectVisibilities(connection, clarity);
+    this.environment.setNarrativeScene(dialogue.scene);
+    this.cameraSystem.setNarrativeScene(dialogue.scene);
+  }
+
+  private handleChoice(index: number): void {
+    if (!this.currentStory || this.disposed || this.changingChoice) return;
+    if (!Number.isInteger(index) || index < 0 || index >= this.currentStory.currentChoices.length) return;
+    this.changingChoice = true;
     try {
-      await this.setupEngine();
-      this.cameraSystem = new CameraSystem(this.scene, this.canvas);
-      await this.initializeSystems();
-      this.setupGUI();
-      if (this.enableInk && this.currentStory) {
-        this.progressStory();
-      }
-      this.initialized = true;
-      console.log("Game initialization complete");
-    } catch (error) {
-      console.error("Failed to initialize game:", error);
-      throw error;
-    }
+      this.storageNotice = "";
+      this.dialogueUI.setNotice("");
+      choose(this.currentStory, index);
+      this.progressStory();
+    } finally { this.changingChoice = false; }
   }
 
-  private progressStory(): void {
+  public restart(): void {
+    if (!this.currentStory || this.disposed) return;
+    this.currentStory.ResetState();
+    this.storageNotice = "";
+    this.progressStory(true);
+    this.dialogueUI.setNotice(this.storageNotice || "A fresh passage. Your previous choices have been cleared.");
+  }
+
+  private applyMotionPreference(): void {
+    const enabled = this.preferences.reducedMotion;
+    this.character.setReducedMotion(enabled);
+    this.cameraSystem.setReducedMotion(enabled);
+    this.atmosphere.setReducedMotion(enabled);
+    this.environment.setReducedMotion(enabled);
+    this.dialogueUI.setReducedMotion(enabled);
+  }
+
+  private readPreferences(): Preferences {
+    const defaults = {
+      audio: true, volume: 0.55,
+      reducedMotion: typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    };
+    try {
+      const stored = JSON.parse(localStorage.getItem(PREFERENCES_KEY) || "null");
+      if (!stored || typeof stored !== "object") return defaults;
+      return {
+        audio: typeof stored.audio === "boolean" ? stored.audio : defaults.audio,
+        volume: typeof stored.volume === "number" && Number.isFinite(stored.volume) ? Math.min(1, Math.max(0, stored.volume)) : defaults.volume,
+        reducedMotion: typeof stored.reducedMotion === "boolean" ? stored.reducedMotion : defaults.reducedMotion,
+      };
+    } catch { return defaults; }
+  }
+
+  private savePreferences(): void {
+    try { localStorage.setItem(PREFERENCES_KEY, JSON.stringify(this.preferences)); }
+    catch { this.dialogueUI.setNotice("Settings apply for this visit; browser storage is unavailable."); }
+  }
+
+  private saveStory(): void {
     if (!this.currentStory) return;
-
-    const { text, choices, position, audio, objects } = getCurrentDialogue(this.currentStory);
-
-    // Handle audio
-    this.audioSystem.play();
-
-    if (audio) {
-      this.audioSystem.playAudio(audio);
-    }
-
-    this.dialogueText.text = text;
-
-    // Remove existing buttons
-    this.currentButtonNames.forEach((buttonName) => {
-      const button = this.guiTexture.getControlByName(buttonName);
-      if (button) {
-        this.guiTexture.removeControl(button);
-      }
-    });
-    this.currentButtonNames = [];
-
-    choices.forEach((choice, index) => {
-      const buttonName = `choice${index}`;
-      const button = Button.CreateSimpleButton(buttonName, choice.text);
-      button.width = "30%";
-      button.height = "55px";
-      button.color = "white";
-      button.background = "black";
-      button.top = `${(index + 1) * 65 + 30}px`;
-      button.left = "20px";
-      button.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
-      button.onPointerUpObservable.add(() => this.handleChoiceClick(index));
-      this.guiTexture.addControl(button);
-      this.currentButtonNames.push(buttonName);
-    });
-
-    if (position) {
-      this.character.moveTo(
-        new Vector3(position.x, 0, position.z),
-        this.terrain.terrain
-      );
-    }
-
-    // Get trust value and update atmosphere
-    if (this.enableAtmosphere) {
-      const trust = this.currentStory.variablesState.trust || 0;
-      this.atmosphere.updateFog(trust);
-      
-      // Get hospital clarity and update environment
-      const hospital_clarity = this.currentStory.variablesState.hospital_clarity || false;
-      if (this.enableEnvironment) {
-        // Convert objects to array, defaulting to empty if null/undefined
-        const objectsArray = objects || [];
-        
-        // Create new objects
-        this.environment.createObjectsFromTag(objectsArray, this.terrain.terrain, position || undefined);
-        this.environment.updateObjectVisibilities(trust, hospital_clarity);
-
-        // Camera always follows character smoothly now
-      }
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ version: 1, state: this.currentStory.state.ToJson() }));
+    } catch {
+      this.storageNotice = "Progress cannot be saved in this browser. Keep this tab open to finish.";
+      this.dialogueUI?.setNotice(this.storageNotice);
     }
   }
 
-  private setupGUI(): void {
-    this.guiTexture = AdvancedDynamicTexture.CreateFullscreenUI("gui");
-
-    this.dialogueText = new TextBlock();
-    this.dialogueText.color = "white";
-    this.dialogueText.fontSize = 24;
-    this.dialogueText.textWrapping = true;
-    this.dialogueText.top = "60px";
-    this.dialogueText.width = "100%";
-    this.dialogueText.height = "300px";
-    this.dialogueText.left = "0px";
-    this.dialogueText.textHorizontalAlignment =
-      Control.HORIZONTAL_ALIGNMENT_LEFT;
-    this.dialogueText.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
-    this.dialogueText.paddingTop = "20px";
-    this.dialogueText.paddingLeft = "20px";
-    this.dialogueText.background = "rgba(0, 0, 0, 0.5)";
-    this.dialogueText.zIndex = 10;
-    this.guiTexture.addControl(this.dialogueText);
-  }
-
-  private handleChoiceClick(choiceIndex: number): void {
+  private restoreStory(): void {
     if (!this.currentStory) return;
-    choose(this.currentStory, choiceIndex);
-    this.progressStory();
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return;
+      const stored = JSON.parse(raw);
+      if (stored.version !== 1 || typeof stored.state !== "string") throw new Error("Unsupported saved passage.");
+      this.currentStory.state.LoadJson(stored.state);
+      if (!this.currentStory.canContinue) throw new Error("The saved passage has no readable entrance.");
+      this.storageNotice = "Your last passage has been restored.";
+    } catch {
+      this.currentStory.ResetState();
+      this.storageNotice = "Your saved passage could not be read. A fresh passage has opened.";
+    }
   }
 
   private async setupEngine(): Promise<void> {
-    const webGPUSupported = await WebGPUEngine.IsSupportedAsync;
-
-    if (webGPUSupported) {
-      const webGPUEngine = new WebGPUEngine(this.canvas);
-      await webGPUEngine.initAsync();
-      this.engine = webGPUEngine as unknown as Engine;
-      this.isWebGPU = true;
-    } else {
-      this.engine = new Engine(this.canvas, true);
+    let candidate: WebGPUEngine | undefined;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const inspectWebGL = params.has("debug") && params.get("renderer") === "webgl";
+      if (!inspectWebGL && await WebGPUEngine.IsSupportedAsync) {
+        this.ensureActive();
+        candidate = new WebGPUEngine(this.canvas);
+        await candidate.initAsync();
+        this.ensureActive();
+        this.engine = candidate as unknown as Engine;
+        this.isWebGPU = true;
+      }
+    } catch (error) {
+      candidate?.dispose();
+      this.ensureActive();
+      console.warn("WebGPU initialization failed; using WebGL.", error);
+    }
+    this.ensureActive();
+    if (!this.engine) {
+      this.engine = new Engine(this.canvas, true, { powerPreference: "high-performance" });
       this.isWebGPU = false;
     }
-
     this.scene = new Scene(this.engine);
-    this.scene.clearColor = new Color4(0.05, 0.05, 0.05, 1);
-
-    // Enable collision detection
-    this.scene.collisionsEnabled = true;
-    this.scene.gravity = new Vector3(0, -9.81, 0);
-  }
-
-  private async initializeSystems(): Promise<void> {
-    try {
-      // Initialize audio system first
-      this.audioSystem = new AudioSystem(this.scene);
-      
-      if (this.enableAtmosphere) {
-        this.atmosphere = new AtmosphereSystem(this.scene);
-      }
-
-      if (this.enableTerrain) {
-        console.log("Creating terrain...");
-        this.terrain = new TerrainSystem(this.scene);
-        await this.terrain.waitForReady();
-        console.log("Terrain ready");
-      }
-      
-      if (this.enableEnvironment && this.terrain) {
-        console.log("Setting up environment...");
-        this.environment = new EnvironmentSystem(this.scene);
-        this.environment.populate(this.terrain.terrain, []);  // Pass empty array as initial objects
-      }
-
-      if (this.enableCharacter) {
-        console.log("Creating character...");
-        this.character = new Character(this.scene);
-
-        if (this.terrain) {
-          const startPos = new Vector3(0, 50, 0);
-          this.character.setPosition(startPos);
-
-          const ray = new Ray(startPos, new Vector3(0, -1, 0), 100);
-          const hit = this.scene.pickWithRay(
-            ray,
-            (mesh: AbstractMesh) => mesh === this.terrain.terrain
-          );
-
-          if (hit?.pickedPoint) {
-            this.character.setPosition(
-              new Vector3(
-                hit.pickedPoint.x,
-                hit.pickedPoint.y + 1,
-                hit.pickedPoint.z
-              )
-            );
-            this.cameraSystem.setCameraTarget(hit.pickedPoint.clone());
-          }
-        }
-      }
-
-      this.scene.registerBeforeRender(() => {
-        if (this.character) {
-          this.cameraSystem.updatePosition(this.character.getPosition());
-        }
-      });
-
-      console.log("Systems initialization complete");
-    } catch (error) {
-      console.error("Failed to initialize systems:", error);
-      throw error;
-    }
+    this.scene.clearColor = new Color4(0.035, 0.045, 0.055, 1);
   }
 
   public async run(): Promise<void> {
-    if (!this.initialized) {
-      await this.initialize();
-    }
-
-    this.engine.runRenderLoop(() => {
-      this.scene.render();
-    });
-
-    window.addEventListener("resize", () => {
-      this.engine.resize();
-    });
-
-    this.scene.onKeyboardObservable.add((kbInfo) => {
-      if (kbInfo.type === KeyboardEventTypes.KEYDOWN) {
-        if (kbInfo.event.key === "d") {
-          this.environment.toggleDebug();
-          this.atmosphere.toggleDebug();
-        }
-      }
-    });
+    await this.initialize();
+    this.ensureActive();
+    if (this.running) return;
+    this.running = true;
+    window.addEventListener("resize", this.resize);
+    document.addEventListener("visibilitychange", this.visibilityChanged);
+    this.visibilityChanged();
   }
 
-  public getFps(): number {
-    return this.engine.getFps();
-  }
+  public getFps(): number { return this.engine.getFps(); }
+  public getRendererType(): string { return this.isWebGPU ? "WebGPU" : "WebGL"; }
 
-  public getRendererType(): string {
-    return this.isWebGPU ? "WebGPU" : "WebGL";
+  public dispose(): void {
+    if (this.disposed) return;
+    this.disposed = true;
+    this.running = false;
+    window.removeEventListener("resize", this.resize);
+    document.removeEventListener("visibilitychange", this.visibilityChanged);
+    this.engine?.stopRenderLoop(this.renderFrame);
+    this.dialogueUI?.dispose();
+    this.audioSystem?.dispose();
+    this.character?.dispose();
+    this.cameraSystem?.dispose();
+    this.environment?.dispose();
+    this.atmosphere?.dispose();
+    this.scene?.dispose();
+    this.engine?.dispose();
   }
 }

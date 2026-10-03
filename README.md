@@ -1,47 +1,47 @@
-# Astro Starter Kit: Minimal
+# Fading
+
+A quiet, choice-driven 3D story about memory, care, and a place beside a lamp. The current chapter has eleven decisions and three resolutions. It runs locally as a static Astro site with Babylon.js and Ink.
+
+## Play locally
+
+Use Node.js 22.12 or later (Node 24 is used in CI).
 
 ```sh
-npm create astro@latest -- --template minimal
+npm ci
+npm run dev
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/minimal)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/minimal)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/minimal/devcontainer.json)
+Open the local URL printed by Astro. Choose with the mouse, touch, Tab/Enter, or keys 1–4. The camera follows the story. Settings include sound, volume, reduced motion, larger text and conversation history. Progress and audio/motion preferences are saved in this browser when local storage is available. Begin again resets the story.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```sh
+npm run validate  # tests, type checking, production build
+npm run preview   # serve the production build
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Astro 7 runs development/preview servers in the background. Use `npm run astro -- dev stop` or `npm run astro -- preview stop` when finished. Add `?debug` to expose renderer and FPS telemetry; `?debug&renderer=webgl` explicitly exercises WebGL. The debug D key toggles fog/prop inspection.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Project map
 
-Any static assets, like images, can be placed in the `public/` directory.
+- `src/ink/demo.ink`: active chapter. `legacy-demo.ink` preserves the original experiment.
+- `src/utils/ink.ts`: validated story-to-world tags.
+- `src/components/GameScene.ts`: renderer, world, story, save and lifecycle coordination.
+- `src/components/game/`: lighting, terrain, symbolic props, character, camera and music playback.
+- `src/game/experience/`: launch, semantic dialogue controls and styles.
+- `public/assets/fading-*.mp3`: four original ambient compositions and a two-tap rail cue. Rebuild with `npm run score:render` (ffmpeg required).
+- `docs/assessment-and-remedy.md`: baseline critique, SWOT and staged quality plan.
+- `docs/implementation-status.md`: delivered scope, verification and remaining production work.
+- `docs/narrative-direction.md`: story structure and authoring contract.
+- `docs/art-and-audio-production.md`: direction and Blender asset brief.
+- `docs/asset-provenance.md`: origin and release status of assets.
+- `scripts/blender/README.md`: original bedside asset generator and Blender handoff.
+- `docs/blender-coordination.md`: active Blender management chat, job status and ownership.
 
-## 🧞 Commands
+The old WASM experiment and backup scene remain for reference. WASM is not loaded by the game; `npm run build:wasm` is an explicit legacy build only. No Spotify, account, API key, external font, or live service is needed to play.
 
-All commands are run from the root of the project, from a terminal:
+## Deployment
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+Public game address: [Fading](https://moldy-worldbuilding-api.lbsa71.workers.dev/). Check [GitHub Actions](https://github.com/lbsa71/moldy_worldbuilding/actions) for the latest validation and deployment result.
 
-## 👀 Want to learn more?
+CI installs from the lockfile and validates the actual game. A successful push to `main` uploads the tested static artifact to the existing R2 destination. Configure `CLOUDFLARE_API_TOKEN` as a repository **secret** and `CLOUDFLARE_ACCOUNT_ID` as a repository variable. Pull-request runs do not deploy. Local development does not publish anything. The Cloudflare worker under `terraform/workers` is a separate deployment and still needs its own dependency review.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+This is a substantially improved playable chapter, not a claim of AAA production completion. Final asset provenance, human music/story review, target-device performance, accessibility testing and release QA remain production gates.

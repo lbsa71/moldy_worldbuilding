@@ -1,0 +1,29 @@
+# Fading asset provenance
+
+Updated 3 October 2026. A file being present in the repository does not establish permission to distribute it. This ledger separates assets authored during this pass from inherited material whose origin is not recorded.
+
+| Asset | Origin and active use | Release status |
+| --- | --- | --- |
+| `public/assets/fading-title.png` | Created for Fading with the built-in OpenAI image generation tool on 3 October 2026; original output preserved. Prompt below. | Generated artwork. Review under the applicable generation service terms; no third-party source artwork was supplied. Do not label it CC0 or as a realtime screenshot. |
+| `public/assets/fading-title.webp` | WebP encoding of the original title PNG, quality 86, without resizing. Used by the launch screen. | Same origin as PNG. |
+| `public/assets/fading-hushed.mp3`, `fading-warm.mp3`, `fading-uneasy.mp3`, `fading-resolved.mp3` | Original deterministic additive-synthesis compositions authored in `scripts/generate-score.mjs`. Each is a 48-second stereo loop rendered at 44.1 kHz, encoded with ffmpeg/libmp3lame at 160 kbps. No samples or existing compositions are incorporated. | Project-authored score studies. Human musical/mix review remains; no third-party sample license required. |
+| `public/assets/fading-taps.mp3` | Original two-tap rail cue synthesized by the same script, synchronized to the rail passage, 2.5 seconds. | Project-authored; no third-party samples. |
+| `public/models/fading/*_lod0.glb` and `art/blender/bedside-study-lod0/` | Original editable geometry authored by the project generator, corrected and validated in Blender 5.2.2 LTS by **Manage Blender work in repo**. Git revision, checksums and validation are recorded in [coordination](blender-coordination.md). | Project-authored asset study; no external geometry, textures or model services. |
+| Procedural lamp, chair, cup and rail fallbacks; doorway, reaching hand, terrain, rocks and dust | Authored procedural Babylon geometry/materials in `src/components/game`. | Project source; no downloaded geometry or textures. |
+| `public/assets/soundtrack_1.mp3`, `soundtrack_2.mp3`, `soundtrack_3.mp3`, `end_credits.mp3` | Inherited recordings. Source, author and license absent from inspected project documentation. No longer used by the active score; legacy cue tags map to the new compositions. | Confirm ownership/license or remove from a release distribution. |
+| `public/assets/hand_motif.png`, `heightmap.png` | Inherited raster assets; origin undocumented. Replaced in active scene and title presentation. | Confirm ownership/license or remove from a release distribution. |
+| `public/models/character.glb` | Inherited humanoid model; origin undocumented. Replaced in the active game by a small procedural attention marker. | Excluded from release output. Confirm ownership/license before any later reuse. |
+| `public/HavokPhysics.wasm`, `public/wasm/*` | Inherited physics/runtime experiment, not loaded by the active chapter. | Review dependency/license and exclude unused files from release packaging. |
+| `src/inkjs` | Vendored Ink TypeScript implementation. | Preserve upstream license/attribution and verify vendored revision before release; current repository does not provide a complete provenance record. |
+
+The production build runs `scripts/prepare-release.mjs` after Astro to exclude inherited recordings, images, the model and unused WASM from the release output. The original title PNG is also excluded in favor of its optimized WebP. Source assets remain available for reference. No external assets were downloaded in this implementation wave; the user's authorization to use freely licensed assets remains available for the Blender production pass.
+
+## Original title artwork prompt
+
+The title is concept artwork showing the intended atmosphere. The current realtime chapter uses simpler procedural geometry.
+
+Use case: stylized-concept. Asset type: original title-screen key art for Fading, a quiet narrative game. Wide cinematic landscape composition 1536x1024. A single modest antique brass floor lamp with a softly lit parchment shade, an empty worn wooden bedside chair and a small porcelain cup occupy the RIGHT THIRD of frame, on dark stone barely above still reflective water. A fragment of pale hospital curtain and thin bed rail dissolve far behind them into layered slate-blue mist. No people. Intimate, melancholy, mysterious, compassionate, no horror. High-end art-directed 3D environment concept painting, tactile aged materials, subtle film grain, exquisite restrained indirect lighting, warm lamp gold contrasted with cold blue-grey fog. Left 55 percent is quiet deep blue negative space for overlaid typography; do NOT render any text, letters, logos, titles, watermarks or UI. Low eye-level camera, strong depth, naturally uneven stone, reflections subtly broken. A tiny ring stain beside cup suggests someone's recent presence. Avoid green lighting, generic fantasy ruins, excessive particle sparkles, neon, ornate lamp, symmetrical composition. The lamp and chair remain clear silhouetted story anchors.
+
+## Score design
+
+The score uses a D-centered harmonic language and a recurring pair of soft notes separated by 0.65 seconds, recalling the story's two taps. Hushed uses open intervals, Warm adds fuller voicings, Uneasy introduces semitone tension, and Resolved settles into slower familiar tones. Circular delays allow tails to cross the loop boundary. The score keeps substantial headroom; loudness/loop behavior still needs human review on multiple playback devices. Playback uses a 2.2-second overlapping fade and a maximum of two active media voices after a cue becomes ready.

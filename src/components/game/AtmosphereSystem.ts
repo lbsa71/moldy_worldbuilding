@@ -1,216 +1,61 @@
-import {
-  Scene,
-  Vector3,
-  Color3,
-  Color4,
-  ParticleSystem,
-  Texture,
-  HemisphericLight,
-} from "@babylonjs/core";
+import { Color3 } from "@babylonjs/core/Maths/math.color";
+import { Color4 } from "@babylonjs/core/Maths/math.color";
+import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
+import type { Mesh } from "@babylonjs/core/Meshes/mesh";
+import type { Observer } from "@babylonjs/core/Misc/observable";
+import { Scene } from "@babylonjs/core/scene";
+import type { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { CreateSphere } from "@babylonjs/core/Meshes/Builders/sphereBuilder";
+import { bounded, material, palette, seededRandom } from "./VisualStyle";
 
 export class AtmosphereSystem {
-  private groundMist!: ParticleSystem;
-  private atmosphericMist!: ParticleSystem;
-  private ambientLight!: HemisphericLight;
-  private mistTexture: Texture;
-  private initialFogDensity: number;
-  private initialGroundMistEmitRate: number;
-  private initialAtmosphericMistEmitRate: number;
-  private debug: boolean = false;
-
+  private ambient: HemisphericLight;
+  private surface: StandardMaterial;
+  private motes: { mesh: Mesh; y: number; phase: number }[] = [];
+  private observer: Observer<Scene> | null;
+  private targetFog = 1;
+  private fog = 1;
+  private elapsed = 0;
+  private reducedMotion = false;
+  private debug = false;
   constructor(private scene: Scene) {
-    this.mistTexture = this.createMistTexture();
-    this.setupLighting();
-    this.setupFog();
-    this.groundMist = this.createGroundMist();
-    this.atmosphericMist = this.createAtmosphericMist();
-    this.initialFogDensity = this.scene.fogDensity;
-    this.initialGroundMistEmitRate = this.groundMist.emitRate;
-    this.initialAtmosphericMistEmitRate = this.atmosphericMist.emitRate;
-  }
-
-  private createMistTexture(): Texture {
-    const size = 32;
-    const canvas = document.createElement("canvas");
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext("2d");
-    if (ctx) {
-      const gradient = ctx.createRadialGradient(
-        size / 2,
-        size / 2,
-        0,
-        size / 2,
-        size / 2,
-        size / 2
-      );
-      gradient.addColorStop(0, "rgba(255, 255, 255, 0.8)");
-      gradient.addColorStop(0.5, "rgba(255, 255, 255, 0.3)");
-      gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, size, size);
+    scene.fogMode = Scene.FOGMODE_EXP2;
+    scene.fogColor = Color3.FromHexString("#27383F");
+    scene.clearColor = new Color4(scene.fogColor.r, scene.fogColor.g, scene.fogColor.b, 1);
+    this.ambient = new HemisphericLight("slateAmbient", new Vector3(0.4,1,-0.25), scene);
+    this.ambient.diffuse = palette.bone; this.ambient.groundColor = palette.stone.scale(0.4);
+    this.ambient.intensity = 0.6;
+    this.surface = material(scene, "lampDust", palette.ivory, 0.35); this.surface.alpha = 0.35;
+    const random = seededRandom(71);
+    // A handful of small motes, rather than thousands of overlapping mist cards.
+    for (let i=0;i<18;i++) {
+      const mesh = CreateSphere(`lampDust${i}`, { diameter: 0.018 + random()*0.022, segments: 4 }, scene);
+      mesh.material = this.surface; mesh.isPickable = false;
+      mesh.position.set((random()-0.5)*12, 0.7+random()*3, (random()-0.5)*12);
+      this.motes.push({ mesh, y: mesh.position.y, phase: random()*Math.PI*2 });
     }
-    return new Texture(canvas.toDataURL(), this.scene);
+    this.applyFog();
+    this.observer = scene.onBeforeRenderObservable.add(() => {
+      const dt = Math.min(scene.getEngine().getDeltaTime()/1000 || 1/60,0.1);
+      this.elapsed += dt;
+      this.fog += (this.targetFog-this.fog)*(1-Math.exp(-dt*1.2));
+      this.applyFog();
+      this.motes.forEach(({mesh,y,phase}) => { mesh.position.y = y + (this.reducedMotion ? 0 : Math.sin(this.elapsed*0.3+phase)*0.12); });
+    });
   }
-
-  private setupLighting(): void {
-    // Dim ambient lighting with slight color
-    this.ambientLight = new HemisphericLight(
-      "ambientLight",
-      new Vector3(0.5, 1, 0.8),
-      this.scene
-    );
-    this.ambientLight.intensity = 0.2;
-    this.ambientLight.groundColor = new Color3(0.04, 0.06, 0.04);
-    this.ambientLight.diffuse = new Color3(0.15, 0.2, 0.15);
+  private applyFog(): void { this.scene.fogDensity = this.debug ? 0 : 0.004 + this.fog*0.02; }
+  updateFog(value: number | null): void {
+    this.targetFog = value === null ? 1 : bounded(value, 1);
+    if (this.reducedMotion) { this.fog = this.targetFog; this.applyFog(); }
   }
-
-  private setupFog(): void {
-    // Less dense exponential fog
-    this.scene.fogMode = Scene.FOGMODE_EXP2;
-    this.scene.fogDensity = 0.0002;
-    this.scene.fogColor = new Color3(0.04, 0.06, 0.04);
-    this.scene.fogStart = 20;
-    this.scene.fogEnd = 60;
+  setReducedMotion(value: boolean): void {
+    this.reducedMotion = value;
+    if (value) { this.fog = this.targetFog; this.applyFog(); this.motes.forEach(({mesh,y}) => { mesh.position.y=y; }); }
   }
-
-  private createGroundMist(): ParticleSystem {
-    const mistSystem = new ParticleSystem("groundMist", 2000, this.scene);
-
-    // Use shared texture
-    mistSystem.particleTexture = this.mistTexture;
-
-    // Emission box near ground
-    mistSystem.minEmitBox = new Vector3(-50, 0, -50);
-    mistSystem.maxEmitBox = new Vector3(50, 0.5, 50);
-
-    // Soft green-gray colors with moderate opacity
-    mistSystem.color1 = new Color4(0.15, 0.2, 0.15, 0.3);
-    mistSystem.color2 = new Color4(0.2, 0.25, 0.2, 0.4);
-    mistSystem.colorDead = new Color4(0.15, 0.2, 0.15, 0);
-
-    // Larger, slower particles
-    mistSystem.minSize = 15.0;
-    mistSystem.maxSize = 25.0;
-    mistSystem.minLifeTime = 4.0;
-    mistSystem.maxLifeTime = 6.0;
-
-    // Moderate emission rate
-    mistSystem.emitRate = 200;
-
-    // Blending for soft appearance
-    mistSystem.blendMode = ParticleSystem.BLENDMODE_STANDARD;
-
-    // Gentle upward drift
-    mistSystem.gravity = new Vector3(0, 0.02, 0);
-
-    // Slow random movement
-    mistSystem.direction1 = new Vector3(-0.05, 0, -0.05);
-    mistSystem.direction2 = new Vector3(0.05, 0.1, 0.05);
-
-    // Slight rotation
-    mistSystem.minAngularSpeed = 0;
-    mistSystem.maxAngularSpeed = 0.1;
-
-    // Very slow emission
-    mistSystem.minEmitPower = 0.1;
-    mistSystem.maxEmitPower = 0.2;
-
-    // Enable GPU particles for better performance
-    mistSystem.isBillboardBased = true;
-    mistSystem.useRampGradients = false;
-
-    // Start the system
-    mistSystem.start();
-
-    return mistSystem;
-  }
-
-  private createAtmosphericMist(): ParticleSystem {
-    const atmosphericSystem = new ParticleSystem(
-      "atmosphericMist",
-      1000,
-      this.scene
-    );
-
-    // Use shared texture
-    atmosphericSystem.particleTexture = this.mistTexture;
-
-    // Emit in a larger volume
-    atmosphericSystem.minEmitBox = new Vector3(-50, 2, -50);
-    atmosphericSystem.maxEmitBox = new Vector3(50, 15, 50);
-
-    // Very transparent, soft colors
-    atmosphericSystem.color1 = new Color4(0.15, 0.2, 0.15, 0.15);
-    atmosphericSystem.color2 = new Color4(0.2, 0.25, 0.2, 0.2);
-    atmosphericSystem.colorDead = new Color4(0.15, 0.2, 0.15, 0);
-
-    // Large, slow-moving particles
-    atmosphericSystem.minSize = 25.0;
-    atmosphericSystem.maxSize = 35.0;
-    atmosphericSystem.minLifeTime = 6.0;
-    atmosphericSystem.maxLifeTime = 8.0;
-
-    // Sparse emission rate
-    atmosphericSystem.emitRate = 80;
-
-    // Very soft blending
-    atmosphericSystem.blendMode = ParticleSystem.BLENDMODE_STANDARD;
-
-    // Almost no gravity
-    atmosphericSystem.gravity = new Vector3(0, 0.01, 0);
-
-    // Very slow random movement
-    atmosphericSystem.direction1 = new Vector3(-0.02, 0, -0.02);
-    atmosphericSystem.direction2 = new Vector3(0.02, 0.05, 0.02);
-
-    // Minimal rotation
-    atmosphericSystem.minAngularSpeed = 0;
-    atmosphericSystem.maxAngularSpeed = 0.05;
-
-    // Extremely slow emission
-    atmosphericSystem.minEmitPower = 0.05;
-    atmosphericSystem.maxEmitPower = 0.1;
-
-    // Enable GPU particles for better performance
-    atmosphericSystem.isBillboardBased = true;
-    atmosphericSystem.useRampGradients = false;
-
-    // Start the system
-    atmosphericSystem.start();
-
-    return atmosphericSystem;
-  }
-
-  public updateFog(fog: number | null): void {
-    if (this.debug) {
-      this.scene.fogDensity = 0;
-      return;
-    }
-
-    if (fog === null) {
-      this.scene.fogDensity = this.initialFogDensity;
-      this.groundMist.emitRate = this.initialGroundMistEmitRate;
-      this.atmosphericMist.emitRate = this.initialAtmosphericMistEmitRate;
-      return;
-    }
-
-    this.scene.fogDensity = this.initialFogDensity * fog;
-
-    // Map fog to particle emission rates
-    const minEmitRate = 20;
-    const maxGroundEmitRate = this.initialGroundMistEmitRate;
-    const maxAtmosphericEmitRate = this.initialAtmosphericMistEmitRate;
-
-    this.groundMist.emitRate =
-      minEmitRate + (maxGroundEmitRate - minEmitRate) * fog;
-    this.atmosphericMist.emitRate =
-      minEmitRate + (maxAtmosphericEmitRate - minEmitRate) * fog;
-  }
-
-  public toggleDebug(): void {
-    this.debug = !this.debug;
-    console.log("Fog debug mode:", this.debug);
-    this.updateFog(null);
+  toggleDebug(): void { this.debug = !this.debug; this.applyFog(); }
+  dispose(): void {
+    this.scene.onBeforeRenderObservable.remove(this.observer);
+    this.motes.forEach(({mesh}) => mesh.dispose()); this.surface.dispose(); this.ambient.dispose();
   }
 }

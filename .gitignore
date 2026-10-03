@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Generated Blender production assets are reviewed before importing into public.
+output/blender/
+scripts/blender/__pycache__/

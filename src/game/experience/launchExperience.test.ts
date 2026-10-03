@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createLaunchExperience } from "./launchExperience";
 
 function renderLaunchDom() {
@@ -26,6 +26,7 @@ function renderLaunchDom() {
 }
 
 describe("createLaunchExperience", () => {
+  afterEach(() => { vi.restoreAllMocks(); });
   it("waits for the player gesture before loading wasm or running the game", () => {
     const elements = renderLaunchDom();
     const loadWasm = vi.fn().mockResolvedValue(true);
@@ -93,5 +94,83 @@ describe("createLaunchExperience", () => {
     expect(elements.startButton.disabled).toBe(false);
     expect(elements.statusText.textContent).toContain("couldn't open");
     expect(onError).toHaveBeenCalledWith(error);
+  });
+
+  it("disposes a failed runtime and retries even a synchronous factory failure", async () => {
+    const elements = renderLaunchDom();
+    const failed = { run: vi.fn().mockRejectedValue(new Error("scene failed")), getRendererType: () => "WebGL", getFps: () => 60, dispose: vi.fn() };
+    const working = { ...failed, run: vi.fn().mockResolvedValue(undefined), dispose: vi.fn() };
+    const factory = vi.fn()
+      .mockImplementationOnce(() => { throw new Error("factory failed"); })
+      .mockReturnValueOnce(failed)
+      .mockReturnValueOnce(working);
+    const controller = createLaunchExperience({ ...elements, gameFactory: factory, setIntervalFn: () => 1 });
+
+    await expect(controller.start()).rejects.toThrow("factory failed");
+    await expect(controller.start()).rejects.toThrow("scene failed");
+    expect(failed.dispose).toHaveBeenCalledTimes(1);
+    await expect(controller.start()).resolves.toBe(working);
+    expect(factory).toHaveBeenCalledTimes(3);
+    controller.destroy();
+    expect(working.dispose).toHaveBeenCalledTimes(1);
+  });
+
+  it("handles rejected startup from a click without an unhandled event promise", async () => {
+    const elements = renderLaunchDom();
+    const onError = vi.fn();
+    const controller = createLaunchExperience({ ...elements, gameFactory: () => Promise.reject(new Error("offline")), onError });
+    elements.startButton.click();
+    await vi.waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
+    expect(elements.startButton.disabled).toBe(false);
+    controller.destroy();
+  });
+
+  it("disposes a runtime that arrives after its launch controller was destroyed", async () => {
+    const elements = renderLaunchDom();
+    const runtime = { run: vi.fn().mockResolvedValue(undefined), getRendererType: () => "WebGL", getFps: () => 60, dispose: vi.fn() };
+    let resolveFactory!: (game: typeof runtime) => void;
+    const factory = vi.fn(() => new Promise<typeof runtime>(resolve => { resolveFactory = resolve; }));
+    const controller = createLaunchExperience({ ...elements, gameFactory: factory });
+    const startup = controller.start();
+    await Promise.resolve();
+    controller.destroy();
+    resolveFactory(runtime);
+    await expect(startup).rejects.toThrow("closed");
+    expect(runtime.run).not.toHaveBeenCalled();
+    expect(runtime.dispose).toHaveBeenCalledTimes(1);
+    expect(elements.launchScreen.hidden).toBe(false);
+    await expect(controller.start()).rejects.toThrow("closed");
+  });
+
+  it("disposes exactly once if destroyed during runtime initialization", async () => {
+    const elements = renderLaunchDom();
+    let finishRun!: () => void;
+    const runtime = { run: vi.fn(() => new Promise<void>(resolve => { finishRun = resolve; })), getRendererType: () => "WebGL", getFps: () => 60, dispose: vi.fn() };
+    const controller = createLaunchExperience({ ...elements, gameFactory: () => runtime });
+    const startup = controller.start();
+    await vi.waitFor(() => expect(runtime.run).toHaveBeenCalled());
+    controller.destroy();
+    finishRun();
+    await expect(startup).rejects.toThrow("closed");
+    expect(runtime.dispose).toHaveBeenCalledTimes(1);
+    expect(elements.launchScreen.hidden).toBe(false);
+  });
+
+  it("clears telemetry and focuses the accessible story heading when started", async () => {
+    const elements = renderLaunchDom();
+    const heading = document.createElement("h2");
+    heading.id = "dialogue-heading";
+    heading.tabIndex = -1;
+    document.body.append(heading);
+    const clearIntervalFn = vi.fn();
+    const runtime = { run: async () => {}, getRendererType: () => "WebGL", getFps: () => 60, dispose: vi.fn() };
+    const controller = createLaunchExperience({ ...elements, gameFactory: () => runtime, setIntervalFn: () => 42, clearIntervalFn });
+    await controller.start();
+    expect(document.activeElement).toBe(heading);
+    controller.destroy();
+    controller.destroy();
+    expect(clearIntervalFn).toHaveBeenCalledOnce();
+    expect(clearIntervalFn).toHaveBeenCalledWith(42);
+    expect(runtime.dispose).toHaveBeenCalledOnce();
   });
 });
