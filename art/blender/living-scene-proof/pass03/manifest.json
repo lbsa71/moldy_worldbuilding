@@ -1,0 +1,387 @@
+{
+  "status": "pass03 sand and cloth repair; full photoreal fidelity remains under review",
+  "blender": "5.2.2 LTS",
+  "generator": "scripts/blender/living_scene_build.py",
+  "generator_sha256": "886c04572eeef62f20d4e9fec768792e849e479e0a583c43e9c3e972e8aa3822",
+  "file": "living-scene.glb",
+  "sha256": "8754ef4d3c3a37bc7ae890d54d9d8e92da4e3737ed901f7c6f49b08a4d348750",
+  "bytes": 25704764,
+  "triangles": 78988,
+  "mesh_primitives": 14,
+  "materials": 10,
+  "embedded_images": 27,
+  "units": "meters",
+  "coordinates": "glTF Y-up, right-handed; Blender (x,y,z) -> (x,z,-y)",
+  "camera": {
+    "name": "Fading_StudyCamera",
+    "position": [
+      0.0,
+      1.0,
+      8.199999809265137
+    ],
+    "target": [
+      0,
+      0.7,
+      0
+    ],
+    "fov": 0.4296308159828186,
+    "aspect": 1.5,
+    "near": 0.05,
+    "far": 200
+  },
+  "lampLight": {
+    "socket": "Fading_StudyLampLight",
+    "position": [
+      1.1699999570846558,
+      1.6349999904632568,
+      0.13499999046325684
+    ],
+    "intensity": 10,
+    "color": [
+      1,
+      0.64,
+      0.31
+    ],
+    "range": 6,
+    "note": "Babylon intensity is an initial calibration suggestion, not Cycles watts"
+  },
+  "environment": {
+    "cool_color": [
+      0.19,
+      0.27,
+      0.35
+    ],
+    "fog_color": [
+      0.24,
+      0.34,
+      0.44
+    ],
+    "fog_density_suggestion": 0.012,
+    "background": "real static depth geometry, no image plate",
+    "ibl": {
+      "asset": "Overcast Soil (Pure Sky)",
+      "source": "https://polyhaven.com/a/overcast_soil_puresky",
+      "license": "CC0",
+      "authors": [
+        "Jarod Guest",
+        "Sergej Majboroda"
+      ],
+      "sha256": "2dbbbbb1323a8e8989db2e8306bd13099b215539e5adba41b85738a250a7904e",
+      "offline_strength": 0.23,
+      "offline_tint": [
+        0.5,
+        0.62,
+        0.76
+      ]
+    }
+  },
+  "water": {
+    "runtime_only": true,
+    "level": 0,
+    "roughness_suggestion": 0.075,
+    "IOR": 1.333,
+    "reflection_membership": "all visible foreground roles; no furniture baked into permanent reflection"
+  },
+  "roles": [
+    {
+      "name": "Fading_StudyLamp",
+      "parent": null,
+      "position": [
+        1.1699999570846558,
+        0.14499999582767487,
+        0.11999999731779099
+      ]
+    },
+    {
+      "name": "Fading_StudyChair",
+      "parent": null,
+      "position": [
+        1.5199999809265137,
+        0.14499999582767487,
+        1.600000023841858
+      ]
+    },
+    {
+      "name": "Fading_StudyCup",
+      "parent": "Fading_StudyChair",
+      "position": [
+        1.284185528755188,
+        0.7299999594688416,
+        1.7406824827194214
+      ]
+    },
+    {
+      "name": "Fading_StudyShore",
+      "parent": null,
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ]
+    },
+    {
+      "name": "Fading_StudyBackdrop",
+      "parent": null,
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ]
+    },
+    {
+      "name": "Fading_StudyCurtain",
+      "parent": null,
+      "position": [
+        2.950000047683716,
+        0.14000000059604645,
+        -0.8500000238418579
+      ]
+    }
+  ],
+  "texture_provenance": {
+    "creator": "Fading project analytical materials; Sand 03 by Charlotte Baglioni / Poly Haven",
+    "source": "Original periodic fields, weave, grain and fissures; sand/wet_sand use acquired CC0 Sand 03 scan",
+    "method": "Original detail baked to portable PNG maps; sand uses scanned source maps with an authored wet adaptation",
+    "resolution": [
+      1024,
+      1024
+    ],
+    "license": "Original assets are project-authored; sand source and derivative maps are CC0 1.0",
+    "color_spaces": {
+      "basecolor": "sRGB",
+      "emission": "sRGB",
+      "normal": "linear/non-color",
+      "orm": "linear/non-color"
+    },
+    "orm_channels": {
+      "R": "occlusion",
+      "G": "roughness",
+      "B": "metalness"
+    },
+    "normal_convention": "Tangent-space OpenGL/glTF +Y; RGB encodes signed XYZ in [0,1]",
+    "uv": "Tileable [0,1] UV; no Blender-only texture transforms",
+    "materials": {
+      "brass": {
+        "description": "Weathered satin brass: subdued green-brown oxidation islands and fine directional brushing",
+        "maps": {
+          "basecolor": "brass_basecolor.png",
+          "normal": "brass_normal.png",
+          "orm": "brass_orm.png"
+        }
+      },
+      "wood": {
+        "description": "Worn dark walnut family: subdued directional grain along V, broad satin variation and shallow pores; edge wear is localized geometry",
+        "maps": {
+          "basecolor": "wood_basecolor.png",
+          "normal": "wood_normal.png",
+          "orm": "wood_orm.png"
+        }
+      },
+      "linen": {
+        "description": "Thin illuminated warm flax with soft yarn/slub variation baked into emissive texture",
+        "maps": {
+          "basecolor": "linen_basecolor.png",
+          "normal": "linen_normal.png",
+          "orm": "linen_orm.png",
+          "emission": "linen_emission.png"
+        }
+      },
+      "cloth": {
+        "description": "Neutral cool-grey woven flax with soft yarn crossings; broad physical folds supplied by mesh",
+        "maps": {
+          "basecolor": "cloth_basecolor.png",
+          "normal": "cloth_normal.png",
+          "orm": "cloth_orm.png"
+        }
+      },
+      "porcelain": {
+        "description": "Warm white glossy porcelain with sparse original cobalt floral sprigs and a separate blue material for rim decoration",
+        "maps": {
+          "basecolor": "porcelain_basecolor.png",
+          "normal": "porcelain_normal.png",
+          "orm": "porcelain_orm.png"
+        }
+      },
+      "blue": {
+        "description": "Muted cobalt underglaze blue for porcelain decoration",
+        "maps": {
+          "basecolor": "blue_basecolor.png",
+          "normal": "blue_normal.png",
+          "orm": "blue_orm.png"
+        }
+      },
+      "rock": {
+        "description": "Dark desaturated wet slate with shallow fissures and restrained rough specular variation",
+        "maps": {
+          "basecolor": "rock_basecolor.png",
+          "normal": "rock_normal.png",
+          "orm": "rock_orm.png"
+        }
+      },
+      "cliff": {
+        "description": "Cool stratified distant stone, matte mineral layers and subtle cellular fissures",
+        "maps": {
+          "basecolor": "cliff_basecolor.png",
+          "normal": "cliff_normal.png",
+          "orm": "cliff_orm.png"
+        }
+      },
+      "sand": {
+        "description": "Dry scanned granular shore sand",
+        "maps": {
+          "basecolor": "sand_basecolor.jpg",
+          "normal": "sand_normal.png",
+          "orm": "sand_orm.png"
+        },
+        "method": "Unmodified acquired scanned PBR maps",
+        "source_asset": {
+          "cc0_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "asset_url": "https://polyhaven.com/a/sand_03",
+          "acquired_utc": "2026-10-05T12:44:05.1655806Z",
+          "license_url": "https://polyhaven.com/license",
+          "orm_channels": {
+            "G": "roughness",
+            "B": "metalness",
+            "R": "occlusion"
+          },
+          "resolution": [
+            1024,
+            1024
+          ],
+          "asset": "Sand 03",
+          "license": "CC0 1.0",
+          "tile_width_m": 2,
+          "publisher": "Poly Haven",
+          "normal_convention": "OpenGL/glTF +Y",
+          "method": "Scanned source material maps acquired from Poly Haven; wet variant is project-authored map adaptation",
+          "author": "Charlotte Baglioni",
+          "files": [
+            {
+              "expected_md5": "84bde2b8bea6351805f67a15682b36b2",
+              "bytes": 703132,
+              "sha256": "e72144f9d7b81bdb7bbdb34222b53431738dcef79346dd89412d2abd541e4d30",
+              "md5": "84bde2b8bea6351805f67a15682b36b2",
+              "name": "sand_03_diff_1k.jpg",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sand_03/sand_03_diff_1k.jpg",
+              "color_space": "sRGB",
+              "role": "basecolor"
+            },
+            {
+              "expected_md5": "30f0f06ea1c2d1522b49ecd6cd0ae0c2",
+              "bytes": 5571260,
+              "sha256": "e331299950dabb749a6fe845220d645b79a174d9c6c04e9d01dde000ae7c6609",
+              "md5": "30f0f06ea1c2d1522b49ecd6cd0ae0c2",
+              "name": "sand_03_nor_gl_1k.png",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/sand_03/sand_03_nor_gl_1k.png",
+              "color_space": "Non-Color",
+              "role": "normal"
+            },
+            {
+              "expected_md5": "75ab8a42df97673ef267b519cd4f147c",
+              "bytes": 4079054,
+              "sha256": "fda0c245e487521a42b510be2eb659a146118bf1fcd6b201f27795ee2adac5e6",
+              "md5": "75ab8a42df97673ef267b519cd4f147c",
+              "name": "sand_03_arm_1k.png",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/sand_03/sand_03_arm_1k.png",
+              "color_space": "Non-Color",
+              "role": "orm"
+            }
+          ]
+        },
+        "tile_width_m": 2,
+        "normal_strength": 1.0,
+        "adaptation": null
+      },
+      "wet_sand": {
+        "description": "Darkened wet shore sand with reduced roughness",
+        "maps": {
+          "basecolor": "wet_sand_basecolor.png",
+          "normal": "sand_normal.png",
+          "orm": "wet_sand_orm.png"
+        },
+        "method": "Scanned PBR source with authored wet diffuse/roughness adaptation",
+        "source_asset": {
+          "cc0_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "asset_url": "https://polyhaven.com/a/sand_03",
+          "acquired_utc": "2026-10-05T12:44:05.1655806Z",
+          "license_url": "https://polyhaven.com/license",
+          "orm_channels": {
+            "G": "roughness",
+            "B": "metalness",
+            "R": "occlusion"
+          },
+          "resolution": [
+            1024,
+            1024
+          ],
+          "asset": "Sand 03",
+          "license": "CC0 1.0",
+          "tile_width_m": 2,
+          "publisher": "Poly Haven",
+          "normal_convention": "OpenGL/glTF +Y",
+          "method": "Scanned source material maps acquired from Poly Haven; wet variant is project-authored map adaptation",
+          "author": "Charlotte Baglioni",
+          "files": [
+            {
+              "expected_md5": "84bde2b8bea6351805f67a15682b36b2",
+              "bytes": 703132,
+              "sha256": "e72144f9d7b81bdb7bbdb34222b53431738dcef79346dd89412d2abd541e4d30",
+              "md5": "84bde2b8bea6351805f67a15682b36b2",
+              "name": "sand_03_diff_1k.jpg",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sand_03/sand_03_diff_1k.jpg",
+              "color_space": "sRGB",
+              "role": "basecolor"
+            },
+            {
+              "expected_md5": "30f0f06ea1c2d1522b49ecd6cd0ae0c2",
+              "bytes": 5571260,
+              "sha256": "e331299950dabb749a6fe845220d645b79a174d9c6c04e9d01dde000ae7c6609",
+              "md5": "30f0f06ea1c2d1522b49ecd6cd0ae0c2",
+              "name": "sand_03_nor_gl_1k.png",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/sand_03/sand_03_nor_gl_1k.png",
+              "color_space": "Non-Color",
+              "role": "normal"
+            },
+            {
+              "expected_md5": "75ab8a42df97673ef267b519cd4f147c",
+              "bytes": 4079054,
+              "sha256": "fda0c245e487521a42b510be2eb659a146118bf1fcd6b201f27795ee2adac5e6",
+              "md5": "75ab8a42df97673ef267b519cd4f147c",
+              "name": "sand_03_arm_1k.png",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/sand_03/sand_03_arm_1k.png",
+              "color_space": "Non-Color",
+              "role": "orm"
+            }
+          ]
+        },
+        "tile_width_m": 2,
+        "normal_strength": 1.0,
+        "adaptation": {
+          "diffuse_linear_multiplier": 0.55,
+          "roughness_multiplier": 0.6,
+          "roughness_clamp": [
+            0.22,
+            0.55
+          ],
+          "normal_and_ao": "Unchanged source detail"
+        }
+      }
+    }
+  },
+  "contacts": {
+    "report": "contacts.json",
+    "passed": true,
+    "chair_turn_test_degrees": -20
+  },
+  "sand": {
+    "physical_tile_width_m": 2,
+    "waterline": "gently sloping damp sand with sparse rocks; local flattened furniture deposits"
+  },
+  "known_limits": [
+    "Offline AgX, volume and preview lights need explicit Babylon calibration",
+    "Sand is scanned; other surfaces remain authored analytic textures",
+    "Distant silhouettes and horizon are provisional",
+    "Portrait camera not approved",
+    "Cup follows chair and remains independently removable"
+  ]
+}

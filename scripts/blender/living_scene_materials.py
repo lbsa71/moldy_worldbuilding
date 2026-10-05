@@ -1,12 +1,15 @@
-"""Portable, original material maps for the living bedside production study.
+"""Portable material maps for the living bedside production study.
 
 Run inside Blender: create_materials(Path('.../textures')). UV coordinates are
 untransformed, and all maps tile in both axes. Geometry supplies larger folds,
 chips and silhouette wear; these maps supply restrained surface detail. They are
-analytically authored materials, not photographs or scans of physical surfaces.
+analytically authored materials, except sand/wet_sand sourced from the documented
+CC0 Poly Haven Sand 03 scan. No source scan is claimed as project-authored.
 """
 from pathlib import Path
 import json
+import hashlib
+import shutil
 import struct
 import zlib
 
@@ -16,11 +19,11 @@ import numpy as np
 
 SIZE = 1024
 TEXTURE_PROVENANCE = {
-    "creator": "Original analytical material authoring for Fading living scene",
-    "source": "Seeded periodic fields, woven height profiles, directional grain and cellular fissures; no acquired imagery",
-    "method": "Procedural detail baked to portable PNG maps; not scanned materials",
+    "creator": "Fading project analytical materials; Sand 03 by Charlotte Baglioni / Poly Haven",
+    "source": "Original periodic fields, weave, grain and fissures; sand/wet_sand use acquired CC0 Sand 03 scan",
+    "method": "Original detail baked to portable PNG maps; sand uses scanned source maps with an authored wet adaptation",
     "resolution": [SIZE, SIZE],
-    "license": "Project-authored original assets; no third-party asset license requirements",
+    "license": "Original assets are project-authored; sand source and derivative maps are CC0 1.0",
     "color_spaces": {"basecolor": "sRGB", "emission": "sRGB", "normal": "linear/non-color", "orm": "linear/non-color"},
     "orm_channels": {"R": "occlusion", "G": "roughness", "B": "metalness"},
     "normal_convention": "Tangent-space OpenGL/glTF +Y; RGB encodes signed XYZ in [0,1]",
@@ -182,6 +185,63 @@ def _bake_maps(texture_dir):
     return maps
 
 
+def _read_map_rgb(path):
+    """Read image bytes without colour conversion, in PNG top-row-first order."""
+    image = bpy.data.images.load(str(path), check_existing=False)
+    try:
+        image.colorspace_settings.name = 'Non-Color'
+        width, height = image.size[:]
+        if (width, height) != (SIZE, SIZE):
+            raise ValueError(f'Sand source resolution differs from 1024px: {path}')
+        pixels = np.empty(width * height * 4, dtype=np.float32)
+        image.pixels.foreach_get(pixels)
+        return pixels.reshape(height, width, 4)[::-1, :, :3].copy()
+    finally:
+        bpy.data.images.remove(image)
+
+
+def _scanned_sand_maps(texture_dir):
+    """Copy checked source scan, bake the wet variant, and retain attribution."""
+    source_dir = Path(__file__).resolve().parents[2] / 'art/blender/living-scene-proof/source-assets/sand03'
+    provenance = json.loads((source_dir / 'provenance.json').read_text(encoding='utf-8-sig'))
+    source_maps = {}
+    for entry in provenance['files']:
+        source = source_dir / entry['name']
+        data = source.read_bytes()
+        if hashlib.sha256(data).hexdigest() != entry['sha256'] or hashlib.md5(data).hexdigest() != entry['md5']:
+            raise ValueError(f'Sand 03 source checksum mismatch: {source}')
+        source_maps[entry['role']] = source
+    dry = {}
+    for role, source in source_maps.items():
+        destination = texture_dir / f'sand_{role}{source.suffix}'
+        if source != destination:
+            shutil.copy2(source, destination)
+        dry[role] = destination
+
+    # Wet grains darken in linear light; preserve the captured color detail.
+    # Explicit sRGB conversion avoids baking a display-space multiplier.
+    encoded = _read_map_rgb(source_maps['basecolor'])
+    linear = np.where(encoded <= .04045, encoded / 12.92, ((encoded + .055) / 1.055) ** 2.4)
+    linear *= .55
+    wet_color = np.where(linear <= .0031308, linear * 12.92, 1.055 * linear ** (1 / 2.4) - .055)
+    wet_orm = _read_map_rgb(source_maps['orm'])
+    wet_orm[:, :, 1] = np.clip(wet_orm[:, :, 1] * .60, .22, .55)
+    wet = {'basecolor': texture_dir / 'wet_sand_basecolor.png', 'normal': dry['normal'], 'orm': texture_dir / 'wet_sand_orm.png'}
+    _png(wet['basecolor'], wet_color)
+    _png(wet['orm'], wet_orm)
+    for name, paths in (('sand', dry), ('wet_sand', wet)):
+        TEXTURE_PROVENANCE['materials'][name] = {
+            'description': ('Dry scanned granular shore sand' if name == 'sand' else 'Darkened wet shore sand with reduced roughness'),
+            'maps': {kind: path.name for kind, path in paths.items()},
+            'method': ('Unmodified acquired scanned PBR maps' if name == 'sand' else 'Scanned PBR source with authored wet diffuse/roughness adaptation'),
+            'source_asset': provenance,
+            'tile_width_m': 2,
+            'normal_strength': 1.0,
+            'adaptation': (None if name == 'sand' else {'diffuse_linear_multiplier': .55, 'roughness_multiplier': .60, 'roughness_clamp': [.22, .55], 'normal_and_ao': 'Unchanged source detail'}),
+        }
+    return {'sand': dry, 'wet_sand': wet}
+
+
 def _occlusion_group():
     # This exact group/input convention is recognized by Blender's core glTF exporter.
     group = bpy.data.node_groups.get('glTF Material Output')
@@ -193,7 +253,7 @@ def _occlusion_group():
 
 
 def create_materials(texture_dir: Path) -> dict:
-    """Bake maps and return brass/linen/wood/cloth/porcelain/blue/rock/cliff.
+    """Return the original eight materials plus scanned sand and wet_sand.
 
     Fully supported core glTF metal-rough workflow. Every node graph uses just
     UV images, normal mapping and channel splitting. PNGs remain external
@@ -201,12 +261,14 @@ def create_materials(texture_dir: Path) -> dict:
     """
     texture_dir = Path(texture_dir).resolve()
     maps = _bake_maps(texture_dir)
+    maps.update(_scanned_sand_maps(texture_dir))
+    (texture_dir / 'material-provenance.json').write_text(json.dumps(TEXTURE_PROVENANCE, indent=2), encoding='utf-8')
     result = {}
     hook = _occlusion_group()
     for key, paths in maps.items():
-        material = bpy.data.materials.new(key)
+        material = bpy.data.materials.new({'sand': 'Sand', 'wet_sand': 'WetSand'}.get(key, key))
         material.use_nodes = True
-        material['authored_source'] = TEXTURE_PROVENANCE['method']
+        material['authored_source'] = TEXTURE_PROVENANCE['materials'][key].get('method', 'Original analytical detail baked to maps; not a scanned surface')
         material['surface_description'] = TEXTURE_PROVENANCE['materials'][key]['description']
         nodes, links = material.node_tree.nodes, material.node_tree.links
         nodes.clear()

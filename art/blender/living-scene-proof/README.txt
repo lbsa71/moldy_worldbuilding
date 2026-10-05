@@ -77,3 +77,45 @@ photoreal scattering studies; foreground shore needs better layered rock/soil de
 wood wear remains analytical; portrait framing and actual browser photoreal parity
 need review. Pass02b is the bounded checkpoint; no further revision or deployment is
 part of this delivery. Pass01 remains preserved in Git and this evidence directory.
+
+Pass03 focuses on the reported sand identity and towel penetration defects:
+- Sand 03 by Charlotte Baglioni / Poly Haven replaces the rock material on the sand.
+  Source diffuse, OpenGL normal and packed AO/roughness/metal maps are acquired at
+  1024px, with a physical tile width of 2m. Source files, exact URLs, SHA256, MD5,
+  author and CC0 license are recorded in source-assets/sand03/provenance.json.
+  Wet sand uses explicit baked linear-light diffuse darkening and reduced roughness.
+  These are portable core glTF materials; no Blender-only shader effect is required.
+  Asset: https://polyhaven.com/a/sand_03 ; license: https://polyhaven.com/license
+- Shallow sand deposition and a gently rounded waterline replace the abrupt shore
+  height step. Rocks are sparse. Local flattened contact areas support the lamp
+  and chair, including the runtime minus-20-degree turn used for inspection.
+- The towel follows a rounded path over the top rail. The front tail ends above
+  the seat; the long tail hangs behind the back posts. Weighted folds, a thin
+  solidified body, hems and fringe are chair children. Fringe follows actual ends.
+- contacts.json audits evaluated bevel/solidify triangles, solid containment,
+  front/rear clearance and actual downward footprint raycasts onto the sand.
+  validation.json repeats contact checks after GLB export and fresh reimport.
+- reference.png preserves the pass02 camera, light setup and distant geometry.
+  inspection-front.png, inspection-rear.png and inspection-turned20.png show the
+  cloth path and foot contact from closer views. The packed living-scene.blend
+  contains the fixed camera and original scene; inspection cameras are temporary.
+
+Measured pass03: 78,988 triangles, 14 primitives, 10 materials, 27 embedded 1024px
+images, 25,704,764 GLB bytes. Approximately 144 MiB RGBA8 texture storage including
+mipmaps before compression, excluding live reflection/shadow buffers. GLB SHA256:
+8754ef4d3c3a37bc7ae890d54d9d8e92da4e3737ed901f7c6f49b08a4d348750
+Source and fresh GLB reimport: zero confirmed cloth/wood crossings and zero cloth
+vertices contained in wood beyond 0.5mm. Minimum cloth/wood distance is 4.624mm;
+front cloth/seat clearance 128.406mm; rear cloth/wood clearance 25.537mm. Chair
+underside gaps at 0/-20/+20 degrees are -0.445mm..+1.536mm; lamp contact is within
+0.002mm. 88 chair underside samples per pose and 129 lamp samples are checked.
+An intentional 45mm cloth displacement was rejected (987 crossing triangle pairs,
+800 cloth vertices inside wood), confirming the contact checks detect the defect.
+scope-preservation.json verifies original materials/images and lamp/cup/backdrop/
+curtain/camera geometry, transforms and projection against the pass02 GLB. Triangle
+ordering and unused secondary UV data do not affect that oriented-surface comparison.
+Transport and contact checks pass; the decorative lamp and sand open surfaces remain
+explicitly reported warnings rather than watertight-solid certifications.
+
+Pass03 is a bounded repair checkpoint. Distant silhouettes/horizon, other analytic
+materials, portrait framing and browser photoreal parity remain open review gates.
