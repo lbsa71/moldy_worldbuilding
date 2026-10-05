@@ -18,6 +18,14 @@ Water is live in Babylon at y=0. Offline reference water, atmosphere and lights 
 
 The study's turned-chair pose adds **−20°** about local glTF Y to the authored opening rotation (`SceneStudyObjects.setChairTurned`). Under the coordinate conversion above, this is **−20° about Blender Z**, not +20°. Ground support validation must cover the opening, the actual negative turn, and the intervening sweep; the cloth and cup remain children of the same chair root.
 
+### Active pass05 contract — 5 October 2026
+
+After welcoming the integrated pass04 result, the user requests cubic rocks in place of the beach. Blender management is producing a bounded pass05 from `5a5706d`; root integration baseline is `8fc588f`. Replace the low foreground shore/thin paving reading with irregular, substantial squared rock blocks and a stepped submerged edge. Retain approved charcoal maps, all non-shore assets, their materials/transforms, the fixed camera and existing support heights. See the [pass05 direction](living-scene-plan.md#pass05-request-substantial-squared-shore-rocks).
+
+Additional user steering: gaps become more pronounced as the tiled floor dissolves into the sea. Author a static transition from tightly fitting support tiles through widening water-filled cracks and missing pieces to sparse detached submerged fragments. Gap width and fragmentation must increase seaward; no exposed continuous beach shell may fill those gaps.
+
+Deliver a new `pass05/` source/render/report directory and updated runtime GLB/manifest on the same asset branch. Source/reimport validation must test actual rendered support surfaces beneath chair, lamp and books, including the runtime chair sweep; a hidden old beach mesh is not a valid support substitute. Scope comparison must cover background, sky, books and furniture against pass04. Preserve distinct named block geometry and record exact source/module/output hashes. Runtime behavior is expected to remain unchanged.
+
 ### Pass04 contract and delivery — 5 October 2026
 
 The next synchronized asset pass responds to the user's correction toward fractured black stone, worn books, layered mountains and cliff settlement, and a bridge belonging to that landscape. See the [art brief](living-scene-pass04-art-brief.md). It starts from the validated pass03 assets and retains camera, furniture and cloth. Static books and meaningful slabs must retain separate named geometry/pivots for later authored changes. No story integration or automatic destruction animation is part of this pass.
