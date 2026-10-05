@@ -50,6 +50,25 @@ export class SceneStudyObjects {
     this.syncPresence();
   }
 
+  /** Editorial cuts replace the complete arrangement without a second animation clock. */
+  settleArrangement(chairTurned: boolean, cupVisible: boolean): void {
+    if (this.closed) return;
+    this.targetTurn = this.turn = chairTurned ? -Math.PI / 9 : 0;
+    this.cupVisible = cupVisible;
+    this.applyTurn();
+    this.syncPresence();
+  }
+
+  getChairTurnAngle(): number { return this.turn; }
+
+  /** One director clock animates the chair, its child cup, mirror and shadows. */
+  setEditorialTurn(angle: number, targetTurned: boolean): void {
+    if (this.closed) return;
+    this.turn = angle;
+    this.targetTurn = targetTurned ? -Math.PI / 9 : 0;
+    this.applyTurn();
+  }
+
   setReducedMotion(value: boolean): void {
     if (this.closed) return;
     this.reducedMotion = value;

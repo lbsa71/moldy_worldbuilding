@@ -6,7 +6,7 @@ import type { Dialogue } from '../../utils/ink';
 const passage = (text = 'The lamp remains.\n\nA cup catches the light.', ending: string | null = null): Dialogue => ({
   text, choices: ending ? [] : [{ text: 'Wait quietly.', index: 0 }, { text: 'Ask about the cup.', index: 1 }] as Dialogue['choices'],
   scene: 'lamp', chapter: 'A place beside the light', mood: 'hushed', ending,
-  position: { x: 0, z: 0 }, fog: 0.5, objects: ['lamp'], audio: null,
+  position: { x: 0, z: 0 }, fog: 0.5, objects: ['lamp'], audio: null, direction: null, sound: null,
 });
 let host: HTMLElement;
 let ui: DialogueUI;

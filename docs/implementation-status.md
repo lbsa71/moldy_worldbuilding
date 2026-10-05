@@ -1,8 +1,22 @@
 # Fading implementation and verification
 
-3 October 2026. This records the implementation waves following the [baseline critique, SWOT and remedy plan](assessment-and-remedy.md). It is a substantially improved playable chapter, not a claim of AAA production completion. The implementation is prepared for the requested main-branch release; [GitHub Actions](https://github.com/lbsa71/moldy_worldbuilding/actions) records its validation and deployment status.
+Updated 5 October 2026. This records the implementation waves following the [baseline critique, SWOT and remedy plan](assessment-and-remedy.md). It is a substantially improved playable chapter, not a claim of AAA production completion. The living-scene work is on `codex/fixed-scene-proof`; the requested preview is local, and this integration does not deploy the public game. Earlier verification records below apply to their respective implementation waves.
 
 ## What changed
+
+### Living scene in the playable chapter — 5 October 2026
+
+The user accepts the current scene for story integration and explicitly prioritizes camera and transition direction in the dialogue script. `/` now uses the same pass05 scene as `/scene-study/`, with an independent editorial camera. Every displayed Ink passage carries a complete shot, transition, object arrangement and sound cue. The six compositions are wide, chair, cup, bedside, water and shore. Finite easing or a scene-only fade produces a settled reading image; rapid choices replace unfinished choreography. The scene no longer follows traversal coordinates.
+
+The eleven decisions and three endings are preserved, with narrow revisions to movement, duplicated furniture and literal-hand descriptions. Chair and cup orientation are authored in the same script as the prose. The keep-cup ending leaves a flat blue-grey seat trace; carry-cup removes the cup without a trace; rest establishes a subtly softer lamp state that does not keep dimming. Books and the floor's progressive breakup retain their accepted static composition. The Blender assets are unchanged.
+
+The cup detail reveals its actual modelled rim chip. Desktop shots reserve the left dialogue area; narrow screens have a separate scene above a scrolling dialogue panel. Reduced motion and v3 save restoration apply final arrangements immediately. Tap cues wait for the settled view, fire once, and are cancelled on a new beat, mute, tab hiding or disposal; restored passages do not replay them. Production asset failure offers retry, including recovery after graphics-context canvas replacement. The [cue authoring guide](living-scene-cues.md#editing-a-passage) documents tags and editing checks.
+
+Final verification: **222 tests pass in 19 files**; type checking reports **0 errors, 0 warnings and 24 existing hints**; production build passes with the existing renderer chunk-size advisory. Coverage includes every reachable presentation context, all endings/keepsakes, entrance-state restore, interrupted choreography, exact imported-camera parity, actual delivered cup/handle framing at 901/980/1099px, rail/shore framing, flat seat-trace gap masking and orientation, tap cancellation, and startup/retry/disposal. An exhaustive story traversal exceeded the default five-second timeout under concurrent validation; its local timeout is now fifteen seconds, with all assertions retained.
+
+Actual browser checks exercised WebGPU and explicit WebGL, the keep/carry/rest endings, quiet and inquiry paths, rapid choices, intermediate and terminal reloads, restart, mute and reduced motion. Layout review covers 1280×720, 980×720, 901×720 and 390×844. No warning/error logs were captured in the final runs. Visual review caught and corrected a cropped rail, oversized cup detail, narrow-desktop handle clipping, an over-tight shore shot and a back-face-culled seat stain. Independent review finds no blocking defects in the final bedside, mobile cup and keep-trace captures. Continuous pacing still needs human playtesting; browser viewport checks do not establish physical-device performance or accessibility certification.
+
+Evidence: [opening](evidence/living-scene-game-opening.png), [cup detail](evidence/living-scene-game-cup.png), [bedside](evidence/living-scene-game-bedside.png), [mobile cup](evidence/living-scene-game-mobile-cup.png), [narrow desktop](evidence/living-scene-game-narrow-desktop.png), [keep trace](evidence/living-scene-game-keep.png), [carry in WebGL](evidence/living-scene-game-carry-webgl.png), and [rest in WebGL](evidence/living-scene-game-rest-webgl.png). The accepted pass05 asset quality is preserved; the earlier photographic-fidelity and device-budget limitations remain.
 
 ### Living scene production started 5 October 2026
 

@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
+import { Story } from "../inkjs/engine/Story";
 import { Compiler } from "../inkjs/compiler/Compiler";
 import { choose, getCurrentDialogue, parseDialogueTags } from "./ink";
 
 const source = readFileSync(new URL("../ink/demo.ink", import.meta.url), "utf8");
-const compile = () => new Compiler(source).Compile();
+const compiled = new Compiler(source).Compile().ToJson() as string;
+const compile = () => new Story(compiled);
 
 function play(indices: number[]) {
   const story = compile();
@@ -17,11 +19,39 @@ function play(indices: number[]) {
 }
 
 describe("the story presentation contract", () => {
+  const cues = ["camera: cup", "transition: ease 1.8", "arrangement: chair=rest,cup=away,lamp=steady,trace=none"];
+  it("requires complete direction while preserving legacy snippets without cues", () => {
+    expect(parseDialogueTags([]).direction).toBeNull();
+    expect(parseDialogueTags(cues).direction).toEqual({ camera: "cup", transition: { kind: "ease", seconds: 1.8 }, arrangement: { chair: "rest", cup: "away", lamp: "steady", trace: "none" } });
+    for (const partial of [[cues[0]], cues.slice(0, 2), cues.slice(1)]) expect(() => parseDialogueTags(partial)).toThrow("Partial scene direction");
+    for (const cue of cues) expect(() => parseDialogueTags([...cues, cue])).toThrow("Multiple");
+  });
+  it.each([
+    ["camera: orbit", 0], ["transition: cut 1", 1], ["transition: ease NaN", 1],
+    ["transition: ease Infinity", 1], ["transition: ease -1", 1], ["transition: ease 5.01", 1],
+    ["transition: ease 1.8junk", 1], ["transition: dissolve 1e2", 1],
+    ["arrangement: chair=rest,cup=near,lamp=steady", 2],
+    ["arrangement: chair=rest,cup=near,lamp=steady,trace=none,trace=cup", 2],
+    ["arrangement: chair=rest,cup=near,lamp=steady,trace=none,books=reward", 2],
+    ["arrangement: chair=rest,cup=teleported,lamp=steady,trace=none", 2],
+    ["arrangement: chair=rest,cup=near,lamp=steady,trace=cup", 2],
+    ["arrangement: chair=rest,cup=away,lamp=steady,trace=cup", 2],
+  ])("rejects invalid direction %s", (tag, index) => {
+    const invalid = [...cues]; invalid[index as number] = tag as string;
+    expect(() => parseDialogueTags(invalid)).toThrow();
+  });
+  it("validates sound and accepts the duration bounds", () => {
+    expect(parseDialogueTags([...cues, "sound: taps"]).sound).toBe("taps");
+    expect(() => parseDialogueTags([...cues, "sound: pulse"])).toThrow();
+    for (const transition of ["cut 0", "ease 0", "dissolve 5"]) {
+      expect(parseDialogueTags([cues[0], `transition: ${transition}`, cues[2]]).direction).not.toBeNull();
+    }
+  });
   it("distinguishes absent objects from an explicit clear and validates every metadata field", () => {
     expect(parseDialogueTags([]).objects).toBeNull();
     expect(parseDialogueTags(["objects:"]).objects).toEqual([]);
     expect(parseDialogueTags(["position: (-3.5, +2)", "fog: .4", "audio soundtrack_1.mp3", "objects: lamp, cup, rail", "scene: bedside", "chapter: Two small taps", "mood: warm", "ending: carry"])).toEqual({
-      position: { x: -3.5, z: 2 }, fog: 0.4, audio: "soundtrack_1.mp3", objects: ["lamp", "cup", "rail"], scene: "bedside", chapter: "Two small taps", mood: "warm", ending: "carry",
+      position: { x: -3.5, z: 2 }, fog: 0.4, audio: "soundtrack_1.mp3", objects: ["lamp", "cup", "rail"], scene: "bedside", chapter: "Two small taps", mood: "warm", ending: "carry", direction: null, sound: null,
     });
   });
 
@@ -51,13 +81,15 @@ describe("Fading: The place beside the light", () => {
     const looking = play([1]), waiting = play([2]);
     expect(looking.last.scene).toBe("chair");
     expect(waiting.last.scene).toBe("chair");
-    expect(looking.last.position).not.toEqual(waiting.last.position);
+    expect(looking.last.direction!.camera).toBe("chair");
+    expect(waiting.last.direction!.camera).toBe("wide");
     const keep = play([...Array(10).fill(0), 0]).last;
     const carry = play([...Array(10).fill(0), 1]).last;
     const rest = play([...Array(10).fill(0), 2]).last;
-    expect(keep.position).toEqual({ x: 0, z: 0 });
-    expect(rest.position).toEqual(keep.position);
-    expect(Math.hypot(carry.position!.x, carry.position!.z)).toBeGreaterThan(25);
+    expect(keep.direction!.camera).toBe("cup");
+    expect(carry.direction!.camera).toBe("shore");
+    expect(rest.direction!.arrangement.lamp).toBe("rest");
+    expect(keep.direction!.arrangement.lamp).toBe("steady");
   });
 
   it.each(["keep", "carry", "rest"])("makes the %s ending available on a fresh journey", (ending) => {
@@ -112,12 +144,14 @@ describe("Fading: The place beside the light", () => {
           expect(passage.scene).toBeTruthy();
           expect(passage.chapter).toBeTruthy();
           expect(passage.mood).toBeTruthy();
-          expect(passage.objects).toContain("lamp");
-          expect(passage.position).not.toBeNull();
-          expect(Math.abs(passage.position!.x)).toBeLessThanOrEqual(35);
-          expect(Math.abs(passage.position!.z)).toBeLessThanOrEqual(35);
-          expect(passage.fog).toBeGreaterThanOrEqual(0);
-          expect(passage.fog).toBeLessThanOrEqual(1);
+          expect(passage.objects).toBeNull();
+          expect(passage.position).toBeNull();
+          expect(passage.fog).toBeNull();
+          expect(passage.direction).not.toBeNull();
+          expect(Object.keys(passage.direction!.arrangement).sort()).toEqual(["chair", "cup", "lamp", "trace"]);
+          expect(passage.direction!.transition.seconds).toBeGreaterThanOrEqual(0);
+          expect(passage.direction!.transition.seconds).toBeLessThanOrEqual(5);
+          expect(["taps", "none"]).toContain(passage.sound);
           if (passage.ending) endings.add(passage.ending);
           else { scenes.add(passage.scene!); expect(passage.choices).toHaveLength(3); }
         }
@@ -164,7 +198,76 @@ describe("Fading: The place beside the light", () => {
     const resumed = getCurrentDialogue(restored);
     expect(resumed.text).toBe(original.text);
     expect(resumed.scene).toBe(original.scene);
+    expect(resumed.direction).toEqual(original.direction);
+    expect(resumed.sound).toBe(original.sound);
     expect(resumed.choices.map(choice => choice.text)).toEqual(original.choices.map(choice => choice.text));
     expect(restored.variablesState.$("memory_rail")).toBe(true);
+  });
+
+  it("restores complete direction at every beat across branch histories, keepsakes and endings", () => {
+    for (let route = 0; route < 18; route++) {
+      const story = compile();
+      for (let beat = 0; beat < 12; beat++) {
+        const saved = story.state.ToJson();
+        const original = getCurrentDialogue(story);
+        const restored = compile(); restored.state.LoadJson(saved);
+        const resumed = getCurrentDialogue(restored);
+        expect(resumed.direction).toEqual(original.direction);
+        expect(resumed.sound).toBe(original.sound);
+        expect(resumed.text).toBe(original.text);
+        expect(original.direction).not.toBeNull();
+        if (beat < 11) choose(story, (route + beat * (Math.floor(route / 3) + 1)) % 3);
+      }
+    }
+  });
+
+  it("validates every reachable presentation context without repeating equivalent choice histories", () => {
+    const pending = [compile()];
+    const visited = new Set<string>();
+    const branches = new Set<string>();
+    // connection/inquiry have no presentation conditions; silence is capped at
+    // the authored >=3 threshold. Other variables affecting prose/cues are retained.
+    while (pending.length) {
+      const story = pending.pop()!;
+      const entrance = story.state.ToJson();
+      const dialogue = getCurrentDialogue(story);
+      const key = JSON.stringify([dialogue.scene,
+        ...["last_response", "memory_cup", "memory_rail", "hospital_clarity", "accepted_uncertainty", "keepsake", "chosen_ending"].map(name => story.variablesState.$(name)),
+        Math.min(3, Number(story.variablesState.$("silence_count"))),
+      ]);
+      if (visited.has(key)) continue;
+      visited.add(key);
+      expect(dialogue.direction).not.toBeNull();
+      expect(dialogue.sound).not.toBeNull();
+      expect(dialogue.position).toBeNull();
+      const restored = compile(); restored.state.LoadJson(entrance);
+      const replay = getCurrentDialogue(restored);
+      expect(replay.direction).toEqual(dialogue.direction);
+      expect(replay.sound).toBe(dialogue.sound);
+      for (let choice = 0; choice < dialogue.choices.length; choice++) {
+        branches.add(`${dialogue.scene}:${choice}`);
+        const next = compile(); next.state.LoadJson(story.state.ToJson());
+        choose(next, choice); pending.push(next);
+      }
+    }
+    expect(branches.size).toBe(33);
+  }, 15_000);
+
+  it.each([0, 1, 2])("preserves physical cup semantics for keepsake %s in every ending", keepsake => {
+    for (let ending = 0; ending < 3; ending++) {
+      const result = play([0, 0, 0, 1, 0, 0, 0, 0, keepsake, 1, ending]);
+      const arrangement = result.last.direction!.arrangement;
+      expect(arrangement.cup === "absent").toBe(keepsake === 0 && ending !== 2);
+      expect(arrangement.trace === "cup").toBe(keepsake === 0 && ending === 0);
+      if (ending === 0) expect(result.last.direction!.camera).toBe(keepsake === 0 ? "cup" : "wide");
+      expect(result.last.sound).toBe(keepsake === 1 ? "taps" : "none");
+    }
+  });
+
+  it("describes the retained cup orientation when a remembered chip is selected as keepsake", () => {
+    const { passages, last } = play([0, 0, 0, 1, 0, 0, 0, 0, 0]);
+    expect(passages.at(-2)!.direction!.arrangement.cup).toBe("away");
+    expect(last.direction!.arrangement.cup).toBe("away");
+    expect(last.text).toContain("The cup holds its chip on the far side.");
   });
 });

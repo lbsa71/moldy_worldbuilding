@@ -10,7 +10,11 @@ The user authorized synchronization with **Manage Blender work in repo** on 3 Oc
 
 ## Active handoff
 
-The current production job is the [living scene proof](living-scene-plan.md), authorized on 5 October 2026. The plan is committed at `3aec137` on `codex/fixed-scene-proof`. Blender management has created `codex/living-scene-assets-20261005` from that commit and is producing new assets without changing the prior bedside set or active chapter. The earlier job below remains historical evidence for the integrated study.
+Pass05 asset delivery is complete and integrated on `codex/fixed-scene-proof`. The user has now authorized this scene in the actual chapter. Game integration adds an independent editorial camera and explicit Ink direction, while preserving all pass05 Blender geometry, materials and source files. The cup's modelled rim chip is visible in the authored detail shot. A runtime-only flat stain records the cup keepsake ending on actual chair-seat surfaces, clipped at slat gaps; it is not part of the source GLB. No new Blender production job is required for this integration.
+
+The trace samples chair descendants using the existing `wood` material identity. Future asset revisions must preserve that identity and the direct chair-local cup placement, or update the trace contract and verify the keep-cup ending. A synchronization message to the management chat was attempted during this integration, but the app returned “Codex app-server is not available”; this repository record remains the available handoff.
+
+The original [living scene proof](living-scene-plan.md) plan is committed at `3aec137`. Blender management's delivery branch is `codex/living-scene-assets-20261005`; pass05 asset commit is `a172173b533726a86c8be8809e78ac3fe83817ba`. The earlier jobs below remain historical evidence for the integrated study.
 
 New outputs belong in `scripts/blender/living_scene*`, `art/blender/living-scene-proof/` and `public/scene-study/`. The runtime expects `/scene-study/living-scene.glb` plus `/scene-study/manifest.json`. Required scene names are `Fading_StudyCamera`, `Fading_StudyLamp`, `Fading_StudyChair`, `Fading_StudyCup`, `Fading_StudyShore` and `Fading_StudyLampLight`; optional scene roots include `Fading_StudyBackdrop` and `Fading_StudyCurtain`. The cup remains independently removable under the chair so rotation retains its support. The chair pivot is at its ground footprint. The camera and transforms use canonical glTF Y-up with a right-handed Babylon scene.
 

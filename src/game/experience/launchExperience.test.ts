@@ -115,6 +115,31 @@ describe("createLaunchExperience", () => {
     expect(working.dispose).toHaveBeenCalledTimes(1);
   });
 
+  it("resolves the live canvas again for retries and focus after context replacement", async () => {
+    const elements = renderLaunchDom();
+    const replacement = document.createElement("canvas"); replacement.id = "gameCanvas"; replacement.tabIndex = -1;
+    const finalCanvas = replacement.cloneNode(false) as HTMLCanvasElement;
+    const failed = {
+      run: vi.fn(async () => { elements.canvas.replaceWith(replacement); throw new Error("Asset loading failed after fallback"); }),
+      getRendererType: () => "WebGL", getFps: () => 60, dispose: vi.fn(),
+    };
+    const working = {
+      run: vi.fn(async () => { replacement.replaceWith(finalCanvas); }),
+      getRendererType: () => "WebGL", getFps: () => 60, dispose: vi.fn(),
+    };
+    const factory = vi.fn().mockReturnValueOnce(failed).mockReturnValueOnce(working);
+    const getCanvas = vi.fn(() => document.getElementById("gameCanvas") as HTMLCanvasElement);
+    const controller = createLaunchExperience({ ...elements, getCanvas, gameFactory: factory, setIntervalFn: () => 1 });
+    expect(getCanvas).not.toHaveBeenCalled();
+    await expect(controller.start()).rejects.toThrow("Asset loading failed after fallback");
+    expect(factory).toHaveBeenNthCalledWith(1, elements.canvas);
+    expect(failed.dispose).toHaveBeenCalledOnce();
+    await controller.start();
+    expect(factory).toHaveBeenNthCalledWith(2, replacement);
+    expect(document.activeElement).toBe(finalCanvas);
+    controller.destroy(); expect(working.dispose).toHaveBeenCalledOnce();
+  });
+
   it("handles rejected startup from a click without an unhandled event promise", async () => {
     const elements = renderLaunchDom();
     const onError = vi.fn();

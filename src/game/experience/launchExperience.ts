@@ -7,6 +7,8 @@ export type GameRuntime = {
 
 type LaunchExperienceOptions = {
   canvas: HTMLCanvasElement;
+  /** Resolve the live canvas after a renderer replaces a bound graphics context. */
+  getCanvas?: () => HTMLCanvasElement;
   launchScreen: HTMLElement;
   startButton: HTMLButtonElement;
   rendererType: HTMLElement;
@@ -26,7 +28,7 @@ export type LaunchExperience = {
 };
 
 export function createLaunchExperience({
-  canvas, launchScreen, startButton, rendererType, fpsCounter, statusText,
+  canvas, getCanvas, launchScreen, startButton, rendererType, fpsCounter, statusText,
   loadWasm, gameFactory, fpsIntervalMs = 1000,
   setIntervalFn = window.setInterval.bind(window),
   clearIntervalFn = window.clearInterval.bind(window), onError,
@@ -66,7 +68,8 @@ export function createLaunchExperience({
         ensureActive();
         if (loadWasm) await loadWasm();
         ensureActive();
-        game = await gameFactory(canvas);
+        const activeCanvas = getCanvas?.() ?? canvas;
+        game = await gameFactory(activeCanvas);
         ensureActive();
         await game.run();
         ensureActive();
@@ -79,7 +82,7 @@ export function createLaunchExperience({
         launchScreen.setAttribute("aria-hidden", "true");
         launchScreen.dataset.state = "started";
         startButton.setAttribute("aria-busy", "false");
-        (document.getElementById("dialogue-heading") || canvas).focus({ preventScroll: true });
+        (document.getElementById("dialogue-heading") || getCanvas?.() || activeCanvas).focus({ preventScroll: true });
         return game;
       } catch (error) {
         disposeGame(game);

@@ -43,6 +43,7 @@ export function configureStudySkyMeshes(meshes: readonly AbstractMesh[]): void {
 /** Emissive shade geometry represents light leaving the fixture, not an opaque blocker. */
 export function getStudyShadowCasters(meshes: AbstractMesh[], lamp: StudyAssets['lamp']): AbstractMesh[] {
   return meshes.filter(mesh => {
+    if (mesh.metadata?.livingSceneTrace) return false;
     if (isStudySkyMesh(mesh)) return false;
     if (!mesh.isDescendantOf(lamp)) return true;
     const emission = mesh.material instanceof PBRMaterial ? mesh.material.emissiveColor : undefined;
@@ -270,5 +271,12 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
     bulb.shadows.getShadowMap()!.renderList = [...casters];
   };
   warnings.push('The bulb uses six 256px cube shadow faces in addition to the downlight and mirror; browser performance remains under review.');
-  return { mirror, shadows, applyRenderLists, environmentMode, environmentUrl, warnings };
+  const steadyDownlight = lamp.intensity;
+  const steadyBulb = bulb.light.intensity;
+  const setLampRest = (rest: boolean) => {
+    // A small fixture change, independent of exposure, weather and story outcome.
+    lamp.intensity = steadyDownlight * (rest ? 0.9 : 1);
+    bulb.light.intensity = steadyBulb * (rest ? 0.9 : 1);
+  };
+  return { mirror, shadows, applyRenderLists, environmentMode, environmentUrl, warnings, setLampRest };
 }

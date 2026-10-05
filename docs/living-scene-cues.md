@@ -1,6 +1,6 @@
 # Fixed-view scene cue study
 
-5 October 2026. Source: [current chapter](../src/ink/demo.ink) and [accepted production plan](living-scene-plan.md). This document proposes a vocabulary for later review. It does not change Ink, its eleven decisions, audio files or the active game. All narrative mappings below are **proposed**, pending still-image/contact-sheet review and text/audio playtest.
+5 October 2026. Source: [current chapter](../src/ink/demo.ink) and [accepted production plan](living-scene-plan.md). The initial study proposals below remain a vocabulary for review. The later **Authored game integration** section records the script contract now implemented following the user's authorization; it supersedes earlier proposals where their mappings differ. The chapter retains eleven decisions and three legitimate endings.
 
 ## Implemented contract and proof scope
 
@@ -74,3 +74,42 @@ The following mappings are **proposals**, not user instructions or implemented c
 Select one dominant book **or** slab event for a given response; do not add it on top of another cue by default. Any audio accompaniment requires an authored onset shared with that event, then stillness. Reduced motion and muted audio yield the same complete settled arrangement. Save object identities and transforms explicitly; interruptible transitions settle to the newest state without consulting elapsed reading time.
 
 Silence, reassurance, inquiry and boundaries must never trigger greater destruction as a penalty. Breaking apart describes the place and its unresolved memory; it does not diagnose inadequate care or require the reader to prevent a collapse. Any chosen reveal/removal/rearrangement remains fixed until another authored passage replaces it.
+
+## Authored game integration
+
+### Editing a passage
+
+Put the direction beside its dialogue in `src/ink/demo.ink`, before the next choice:
+
+```ink
+# camera: cup
+# transition: ease 1.8
+# arrangement: chair=rest,cup=near,lamp=steady,trace=none
+# sound: none
+A porcelain cup with a blue pattern rests on the chair: a little chip at the rim.
+```
+
+| Tag | Accepted values | Meaning |
+| --- | --- | --- |
+| `camera` | `wide`, `chair`, `cup`, `bedside`, `water`, `shore` | A calibrated composition. The camera holds after the transition. |
+| `transition` | `cut 0`, `ease <seconds>`, `dissolve <seconds>` | Immediate change, continuous reframing, or a scene-only fade through dark. Duration is 0–5 seconds; dialogue and choices remain available. |
+| `arrangement` | All four fields shown above | `chair=rest/turned`; `cup=near/away/absent`; `lamp=steady/rest`; `trace=none/cup`. A cup trace requires an absent cup. |
+| `sound` | `none`, `taps` | One authored tap pair after the new view settles, cancelled if the reader leaves that beat. |
+
+Each displayed conditional branch must emit one complete direction, not a patch to the previous arrangement. Invalid, missing-part and duplicate directions fail validation. To change choreography, edit the Ink cue; to tune a named composition, edit `LivingSceneDirector.ts`. Run `npm test` and review the affected passage in the game at both desktop and narrow widths. Test the same passage after reload: restoring an entrance applies its final view immediately and does not replay taps.
+
+Use `ease` for reframing and chair/cup rotations: they share one finite animation clock. Use `dissolve` when a cup disappears, a trace appears or the lamp changes state, so the discrete arrangement change occurs behind the scene veil. This transition is a fade through dark, not an image cross-dissolve. Both leave a stable view once complete.
+
+The living-scene edition uses save version 3. Earlier edition keys are retained but are not read against the revised Ink indices. Motion, sound and volume preferences retain their existing key.
+
+The production Ink now emits exactly one complete `camera`, `transition` and `arrangement` trio per displayed beat, including conditional variants. The parser exposes this as `Dialogue.direction`; legacy snippets with no trio retain `null`, partial or duplicate cues reject. Arrangement always names chair, cup, lamp and trace. Legacy travel/fog/object tags are removed from this chapter, with legacy parser support retained. `Dialogue.sound` is `taps`, `none` or `null`; every production beat authors it explicitly. These are implemented script/parser contracts, not a claim of approved browser fidelity or emotional playtest results.
+
+Script comments explain the durations: opening uses `cut 0`; gentle reframing uses `ease 1.8`; consent holds the bedside shot with `ease 1.2`; contradiction and endings use `dissolve 1.2` for editorial/complete-arrangement changes. An unchanged shot target remains still. Water gives quiet room, the shore gives carrying negative space, and the cup shot makes its chip legible. No duration estimates reading progress or blocks a choice.
+
+Chair `turned` means −20° from its authored opening. Cup `away` rotates the same cup 180°; `absent` removes it. Trace `cup` means a faint blue-grey ring **on the seat where the cup stood**, with physical cup absent; it is not a ghost cup. The prose now describes one bedside arrangement, porcelain with a blue pattern, and remembered touch without a spawned hand. It retains the emotional replies, story variables, moods and existing score tracks.
+
+Keep leaves a place beside a steady lamp and authors the seat ring only for the cup keepsake. Carry opens the shore view and removes the physical cup only for the cup keepsake. Taps/chair keepsakes retain the cup in both endings. Rest keeps the cup and establishes a complete soft lamp state; it never fades further while reading. All endings remain available after quiet, reassurance or inquiry, without reward brightness or accumulating damage.
+
+Tap sound cues are passage-entry events at the rail, the explicit tap response, taps preparation and taps keepsake endings. The runtime must suppress replay when restoring an already-entered beat while restoring its full direction. Save/restore and all reachable presentation contexts are covered by Ink tests; actual sound onset synchronization remains a runtime verification responsibility. Books and fractured slabs remain static motifs in this integration, with future changes still proposed above.
+
+Continuity correction: cup preparation describes its held far-side chip, because recollection may already establish `cup=away`. Keep with the cup keepsake now uses a single `camera: cup` ending cue so the faint seat ring is legible; other keep variants retain the wide shot. This authored camera change awaits browser framing review. There is no timed return to wide or second cue within the beat: the chosen ending image settles indefinitely.

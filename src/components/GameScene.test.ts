@@ -4,281 +4,361 @@ import { Compiler } from "../inkjs/compiler/Compiler";
 import { GameScene, SAVE_KEY } from "./GameScene";
 
 const harness = vi.hoisted(() => ({
-  engines: [] as any[], scenes: [] as any[], interfaces: [] as any[],
-  atmosphere: null as any, environment: null as any, audio: null as any, camera: null as any, character: null as any,
-  gpuSupported: false, gpuFailure: false, gpuWait: null as Promise<void> | null,
-  terrainWait: null as Promise<void> | null,
+  handles: [] as any[], interfaces: [] as any[], audios: [] as any[], options: [] as any[],
+  wait: null as Promise<void> | null, failure: null as Error | null, production: true,
 }));
-
-vi.mock("@babylonjs/core/Engines/engine", () => {
-  class Engine {
-    kind = "WebGL";
-    runRenderLoop = vi.fn(); stopRenderLoop = vi.fn(); resize = vi.fn(); dispose = vi.fn();
-    getFps = () => 60;
-    constructor() { harness.engines.push(this); }
-  }
-  return { Engine };
-});
-vi.mock("@babylonjs/core/Engines/webgpuEngine", () => {
-  class WebGPUEngine {
-    kind = "WebGPU";
-    runRenderLoop = vi.fn(); stopRenderLoop = vi.fn(); resize = vi.fn(); dispose = vi.fn();
-    getFps = () => 60;
-    constructor() { harness.engines.push(this); }
-    static get IsSupportedAsync() { return Promise.resolve(harness.gpuSupported); }
-    async initAsync() {
-      if (harness.gpuWait) await harness.gpuWait;
-      if (harness.gpuFailure) throw new Error("GPU device unavailable");
-    }
-  }
-  return { WebGPUEngine };
-});
-vi.mock("@babylonjs/core/scene", () => {
-  class Scene {
-    clearColor: unknown;
-    onKeyboardObservable = { add: vi.fn() };
-    registerBeforeRender = vi.fn(); render = vi.fn(); dispose = vi.fn();
-    constructor() { harness.scenes.push(this); }
-  }
-  return { Scene };
-});
-vi.mock("./game/TerrainSystem", () => ({ TerrainSystem: class {
-  terrain = {};
-  async waitForReady() { if (harness.terrainWait) await harness.terrainWait; }
-  getHeightAtPoint() { return 0; }
-} }));
-vi.mock("./game/AtmosphereSystem", () => ({ AtmosphereSystem: class {
-  updateFog = vi.fn(); setReducedMotion = vi.fn(); toggleDebug = vi.fn(); dispose = vi.fn();
-  setNarrativeScene = vi.fn(); updateListenerPosition = vi.fn();
-  constructor() { harness.atmosphere = this; }
-} }));
-vi.mock("./game/EnvironmentSystem", () => ({ EnvironmentSystem: class {
-  populate = vi.fn(); createObjectsFromTag = vi.fn(); updateObjectVisibilities = vi.fn();
-  setNarrativeScene = vi.fn(); resetJourney = vi.fn();
-  setReducedMotion = vi.fn(); toggleDebug = vi.fn(); dispose = vi.fn();
-  constructor() { harness.environment = this; }
-} }));
-vi.mock("./game/Character", () => ({ Character: class {
-  setPosition = vi.fn(); setReducedMotion = vi.fn(); dispose = vi.fn();
-  getPosition = () => ({ x: 0, y: 0, z: 0 });
-  moveTo = vi.fn().mockResolvedValue(undefined);
-  constructor() { harness.character = this; }
-} }));
-vi.mock("./game/CameraSystem", () => ({ CameraSystem: class {
-  updatePosition = vi.fn(); setCameraTarget = vi.fn(); setReducedMotion = vi.fn(); resize = vi.fn(); dispose = vi.fn();
-  setNarrativeScene = vi.fn();
-  constructor() { harness.camera = this; }
-} }));
+vi.mock("./scene-study/createSceneStudy", () => ({ createSceneStudy: vi.fn(async (_canvas: HTMLCanvasElement, options: any) => {
+  harness.options.push(options);
+  if (harness.wait) await harness.wait;
+  if (harness.failure) throw harness.failure;
+  const state = { assetMode: harness.production ? "production" : "provisional", backend: "WebGPU", fps: 57, settled: true };
+  const observers = new Set<() => void>();
+  const scene = {
+    acceptedScene: true,
+    onAfterRenderObservable: {
+      add: vi.fn((callback: () => void) => { observers.add(callback); return callback; }),
+      remove: vi.fn((callback: () => void) => observers.delete(callback)),
+    },
+    renderFrame: () => { for (const callback of [...observers]) callback(); },
+    observers,
+  };
+  const handle = {
+    state, scene, applyDirection: vi.fn((direction, immediate) => { state.settled = Boolean(immediate || direction.transition.kind === "cut"); }),
+    getScene: vi.fn(() => scene), getDiagnostics: vi.fn(() => state),
+    reset: vi.fn(() => { state.settled = true; }), setReducedMotion: vi.fn((value) => { if (value) state.settled = true; }), dispose: vi.fn(),
+  };
+  harness.handles.push(handle);
+  return handle;
+}) }));
 vi.mock("./game/AudioSystem", () => ({ AudioSystem: class {
   setEnabled = vi.fn(); setVolume = vi.fn(); setPaused = vi.fn(); setMood = vi.fn(); dispose = vi.fn();
   play = vi.fn().mockResolvedValue(undefined); playAudio = vi.fn().mockResolvedValue(undefined);
   playTapCue = vi.fn().mockResolvedValue(undefined);
-  constructor() { harness.audio = this; }
+  constructor(public scene: unknown) { harness.audios.push(this); }
 } }));
 vi.mock("../game/experience/DialogueUI", () => ({ DialogueUI: class {
   render = vi.fn(); setAudioEnabled = vi.fn(); setReducedMotion = vi.fn();
   setNotice = vi.fn(); setVolume = vi.fn(); dispose = vi.fn();
-  callbacks: any;
-  constructor(_host: HTMLElement, callbacks: any) { this.callbacks = callbacks; harness.interfaces.push(this); }
+  constructor(_host: HTMLElement, public callbacks: any) { harness.interfaces.push(this); }
 } }));
 
 const script = `
 VAR connection = 0
-VAR hospital_clarity = false
 -> opening
 === opening ===
 # scene: lamp
 # mood: hushed
-# fog: 0.9
-# position: (0, 0)
-# objects: lamp
-The first room.
+# camera: wide
+# transition: cut 0
+# arrangement: chair=rest,cup=near,lamp=steady,trace=none
+# sound: none
+The first shore.
 * [Look at the cup] -> cup
 === cup ===
 # scene: rail
 # mood: warm
-# audio soundtrack_2.mp3
-# fog: 0.35
-# position: (10, 0)
-# objects: geometric
-~ connection = 2
-~ hospital_clarity = true
+# camera: cup
+# transition: dissolve 0.8
+# arrangement: chair=turned,cup=away,lamp=steady,trace=none
+# sound: none
+~ connection = 10
 A cup, still warm.
+* [Wait for permission] -> taps
+=== taps ===
+# scene: hand
+# mood: warm
+# camera: bedside
+# transition: ease 1.2
+# arrangement: chair=turned,cup=near,lamp=steady,trace=none
+# sound: taps
+Two taps, then a pause.
 * [Keep the light] -> ending
 === ending ===
 # scene: keep
 # mood: resolved
 # ending: keep
+# camera: water
+# transition: dissolve 1.5
+# arrangement: chair=rest,cup=absent,lamp=rest,trace=cup
+# sound: none
 The lamp remains.
 -> END
 `;
-
-function game() {
+const games: GameScene[] = [];
+function game(source = script) {
   const instance = new GameScene(document.querySelector("canvas")!);
-  instance.setStory(new Compiler(script).Compile());
+  instance.setStory(new Compiler(source).Compile());
+  games.push(instance);
   return instance;
 }
-function currentUI() { return harness.interfaces.at(-1)!; }
+const ui = () => harness.interfaces.at(-1)!;
+const renderer = () => harness.handles.at(-1)!;
+const audio = () => harness.audios.at(-1)!;
+const passage = () => ui().render.mock.calls.at(-1)[0];
+const lastDirection = () => renderer().applyDirection.mock.calls.at(-1);
+function deferred() {
+  let resolve!: () => void;
+  const promise = new Promise<void>(done => { resolve = done; });
+  return { promise, resolve };
+}
 
 beforeEach(() => {
   window.history.replaceState({}, "", "/");
   localStorage.clear();
-  document.body.innerHTML = '<canvas></canvas><div id="experience-ui"></div>';
-  harness.engines = []; harness.scenes = []; harness.interfaces = [];
-  harness.gpuSupported = false; harness.gpuFailure = false;
-  harness.gpuWait = null; harness.terrainWait = null;
-  vi.spyOn(document, "hidden", "get").mockReturnValue(false);
-  vi.spyOn(console, "warn").mockImplementation(() => {});
+  document.body.innerHTML = '<div id="game-container"><canvas id="gameCanvas"></canvas><div id="experience-ui"></div></div>';
+  Object.defineProperty(document, "hidden", { configurable: true, get: () => false });
+  harness.handles = []; harness.interfaces = []; harness.audios = []; harness.options = [];
+  harness.wait = null; harness.failure = null; harness.production = true;
 });
-afterEach(() => { vi.restoreAllMocks(); });
+afterEach(() => { games.splice(0).forEach(instance => instance.dispose()); vi.restoreAllMocks(); vi.useRealTimers(); });
 
-describe("game runtime ownership", () => {
-  it("allows explicit WebGL inspection without attempting a supported WebGPU device", async () => {
-    window.history.replaceState({}, "", "/?debug&renderer=webgl");
-    harness.gpuSupported = true;
+describe("accepted living-scene game runtime", () => {
+  it("waits for accepted assets, initializes once, and constructs audio from the renderer scene", async () => {
+    const pending = deferred(); harness.wait = pending.promise;
     const instance = game();
-    await instance.run();
-    expect(harness.engines.map(engine => engine.kind)).toEqual(["WebGL"]);
-    expect(instance.getRendererType()).toBe("WebGL");
-    instance.dispose();
-  });
-  it("falls back to WebGL after supported WebGPU fails and disposes its device", async () => {
-    harness.gpuSupported = true; harness.gpuFailure = true;
-    const instance = game();
-    await instance.run();
-    expect(harness.engines.map(engine => engine.kind)).toEqual(["WebGPU", "WebGL"]);
-    expect(harness.engines[0].dispose).toHaveBeenCalledOnce();
-    expect(instance.getRendererType()).toBe("WebGL");
-    instance.dispose();
-    expect(harness.engines[1].dispose).toHaveBeenCalledOnce();
+    const first = instance.initialize(); const second = instance.initialize();
+    expect(second).toBe(first);
+    expect(harness.audios).toHaveLength(0); expect(harness.interfaces).toHaveLength(0);
+    pending.resolve(); await first; await instance.run(); await instance.run();
+    expect(harness.handles).toHaveLength(1);
+    expect(audio().scene).toBe(renderer().scene);
+    expect(harness.options[0].narrative).toBe(true);
+    expect(lastDirection()).toEqual([passage().direction, true]);
+    expect(passage().text).toBe("The first shore.");
+    expect(instance.getRendererType()).toBe("WebGPU"); expect(instance.getFps()).toBe(57);
   });
 
-  it("starts once, pauses rendering and audio in hidden tabs, and removes owned resources", async () => {
-    const instance = game();
-    await instance.run();
-    await instance.run();
-    const engine = harness.engines[0];
-    const scene = harness.scenes[0];
-    expect(engine.runRenderLoop).toHaveBeenCalledOnce();
-    vi.spyOn(document, "hidden", "get").mockReturnValue(true);
-    document.dispatchEvent(new Event("visibilitychange"));
-    expect(engine.stopRenderLoop).toHaveBeenCalledOnce();
-    expect(harness.audio.setPaused).toHaveBeenLastCalledWith(true);
-    vi.spyOn(document, "hidden", "get").mockReturnValue(false);
-    document.dispatchEvent(new Event("visibilitychange"));
-    expect(engine.runRenderLoop).toHaveBeenCalledTimes(2);
-    expect(harness.audio.setPaused).toHaveBeenLastCalledWith(false);
-    instance.dispose(); instance.dispose();
-    expect(engine.dispose).toHaveBeenCalledOnce();
-    expect(scene.dispose).toHaveBeenCalledOnce();
-    expect(currentUI().dispose).toHaveBeenCalledOnce();
-    expect(harness.audio.dispose).toHaveBeenCalledOnce();
-    window.dispatchEvent(new Event("resize"));
-    document.dispatchEvent(new Event("visibilitychange"));
-    expect(engine.resize).not.toHaveBeenCalled();
-    expect(engine.runRenderLoop).toHaveBeenCalledTimes(2);
-    expect(scene.onKeyboardObservable.add).not.toHaveBeenCalled();
+  it("requires a story before allocating the renderer", async () => {
+    const instance = new GameScene(document.querySelector("canvas")!); games.push(instance);
+    await expect(instance.run()).rejects.toThrow("story has not been loaded");
+    expect(harness.options).toHaveLength(0);
   });
 
-  it("cannot resurrect a disposed game while terrain is still initializing", async () => {
-    let finishTerrain!: () => void;
-    harness.terrainWait = new Promise<void>(resolve => { finishTerrain = resolve; });
-    const instance = game();
-    const startup = instance.run();
-    await vi.waitFor(() => expect(harness.scenes).toHaveLength(1));
-    instance.dispose(); finishTerrain();
-    await expect(startup).rejects.toThrow("closed");
-    expect(harness.engines[0].dispose).toHaveBeenCalledOnce();
+  it("uses only the opening fallback for legacy passages without direction tags", async () => {
+    await game("A legacy passage.\n* [Remain] -> END").run();
+    expect(passage().direction).toBeNull();
+    expect(lastDirection()).toEqual([{
+      camera: "wide", transition: { kind: "cut", seconds: 0 },
+      arrangement: { chair: "rest", cup: "near", lamp: "steady", trace: "none" },
+    }, true]);
+    expect(audio().playTapCue).not.toHaveBeenCalled();
+  });
+
+  it("rejects provisional assets before exposing story or audio", async () => {
+    harness.production = false;
+    await expect(game().run()).rejects.toThrow("accepted scene assets");
+    expect(renderer().dispose).toHaveBeenCalledOnce();
+    expect(harness.interfaces).toHaveLength(0); expect(harness.audios).toHaveLength(0);
+  });
+
+  it("propagates renderer failure and aborts initialization for launch retry", async () => {
+    harness.failure = new Error("Textures unavailable");
+    await expect(game().run()).rejects.toThrow("Textures unavailable");
+    expect(harness.options[0].signal.aborted).toBe(true);
     expect(harness.interfaces).toHaveLength(0);
+    harness.failure = null;
+    await game().run(); expect(passage().text).toBe("The first shore.");
   });
 
-  it("cannot leak a GPU device that finishes initialization after disposal", async () => {
-    harness.gpuSupported = true;
-    let finishGPU!: () => void;
-    harness.gpuWait = new Promise<void>(resolve => { finishGPU = resolve; });
-    const instance = game();
-    const startup = instance.run();
-    await vi.waitFor(() => expect(harness.engines).toHaveLength(1));
-    instance.dispose(); finishGPU();
-    await expect(startup).rejects.toThrow("closed");
-    expect(harness.engines).toHaveLength(1);
-    expect(harness.engines[0].dispose).toHaveBeenCalledOnce();
-    expect(harness.scenes).toHaveLength(0);
-  });
-});
-
-describe("story and world contract", () => {
-  it("applies authored fog, connection, clarity and mood after a choice", async () => {
-    const instance = game();
-    await instance.run();
-    expect(harness.atmosphere.updateFog).toHaveBeenLastCalledWith(0.9);
-    currentUI().callbacks.onChoice(0);
-    expect(currentUI().render.mock.lastCall[0].text).toContain("A cup, still warm.");
-    expect(harness.atmosphere.updateFog).toHaveBeenLastCalledWith(0.35);
-    expect(harness.environment.updateObjectVisibilities).toHaveBeenLastCalledWith(2, true);
-    expect(harness.audio.setMood).toHaveBeenLastCalledWith("warm");
-    expect(harness.audio.playAudio).not.toHaveBeenCalled();
-    expect(harness.environment.setNarrativeScene).toHaveBeenLastCalledWith("rail");
-    expect(harness.atmosphere.setNarrativeScene).toHaveBeenLastCalledWith("rail");
-    expect(harness.camera.setNarrativeScene).toHaveBeenLastCalledWith("rail", expect.objectContaining({ x: 10, z: 0 }));
-    expect(harness.character.moveTo).toHaveBeenLastCalledWith(expect.objectContaining({ x: 10, z: 0 }), expect.anything());
-    expect(harness.camera.setNarrativeScene.mock.invocationCallOrder.at(-1)).toBeLessThan(harness.character.moveTo.mock.invocationCallOrder.at(-1));
-    expect(harness.audio.playTapCue).toHaveBeenCalledOnce();
-    currentUI().callbacks.onChoice(0);
-    expect(currentUI().render.mock.lastCall[0]).toMatchObject({ ending: "keep", choices: [] });
-    expect(harness.audio.setMood).toHaveBeenLastCalledWith("resolved");
-    expect(harness.environment.setNarrativeScene).toHaveBeenLastCalledWith("keep");
-    instance.dispose();
+  it("cancels loading and disposes a late renderer without constructing audio or UI", async () => {
+    const pending = deferred(); harness.wait = pending.promise;
+    const instance = game(); const starting = instance.run();
+    instance.dispose(); instance.dispose();
+    expect(harness.options[0].signal.aborted).toBe(true);
+    pending.resolve(); await expect(starting).rejects.toThrow("closed");
+    expect(renderer().dispose).toHaveBeenCalledOnce();
+    expect(harness.audios).toHaveLength(0); expect(harness.interfaces).toHaveLength(0);
   });
 
-  it("restores the same beat with its choices, and replay starts with fresh state", async () => {
-    const first = game();
-    await first.run();
-    currentUI().callbacks.onChoice(0);
-    const before = currentUI().render.mock.lastCall[0];
-    expect(localStorage.getItem(SAVE_KEY)).toBeTruthy();
-    first.dispose();
-    const resumed = game();
-    await resumed.run();
-    const restored = currentUI().render.mock.lastCall[0];
-    expect(restored.text).toBe(before.text);
-    expect(restored.choices.map((choice: any) => choice.text)).toEqual(before.choices.map((choice: any) => choice.text));
-    expect(harness.environment.createObjectsFromTag.mock.calls.map((call: any[]) => call[0])).toEqual([["lamp"], ["geometric"]]);
-    expect(currentUI().setNotice).toHaveBeenLastCalledWith(expect.stringContaining("restored"));
-    resumed.restart();
-    expect(harness.environment.resetJourney).toHaveBeenCalledOnce();
-    expect(harness.camera.setNarrativeScene).toHaveBeenLastCalledWith("lamp", expect.objectContaining({ x: 0, z: 0 }));
-    expect(harness.camera.setNarrativeScene.mock.invocationCallOrder.at(-1)).toBeLessThan(harness.camera.setCameraTarget.mock.invocationCallOrder.at(-1));
-    expect(currentUI().render.mock.lastCall[0].text).toContain("The first room.");
-    expect(harness.environment.updateObjectVisibilities).toHaveBeenLastCalledWith(0, false);
-    currentUI().callbacks.onChoice(0);
-    expect(currentUI().setNotice).toHaveBeenLastCalledWith("");
-    resumed.dispose();
+  it("passes backend fallback options and accepts a replaced canvas", async () => {
+    window.history.replaceState({}, "", "/?debug&renderer=webgl");
+    const pending = deferred(); harness.wait = pending.promise;
+    const instance = game(); const starting = instance.run();
+    expect(harness.options[0].forceWebGL).toBe(true);
+    const replacement = document.createElement("canvas"); replacement.id = "gameCanvas";
+    document.querySelector("canvas")!.replaceWith(replacement);
+    harness.options[0].onCanvasReplaced(replacement);
+    pending.resolve(); await starting;
+    expect((instance as unknown as { canvas: HTMLCanvasElement }).canvas).toBe(replacement);
   });
 
-  it("rejects malformed saved world coordinates before rebuilding a memory trail", async () => {
+  it("lets rapid choices apply the latest complete direction without waiting for scene animation", async () => {
+    await game().run();
+    ui().callbacks.onChoice(999); expect(renderer().applyDirection).toHaveBeenCalledOnce();
+    ui().callbacks.onChoice(0);
+    expect(lastDirection()[0]).toEqual({ camera: "cup", transition: { kind: "dissolve", seconds: 0.8 }, arrangement: { chair: "turned", cup: "away", lamp: "steady", trace: "none" } });
+    expect(audio().playTapCue).not.toHaveBeenCalled(); // Scene name alone never plays taps.
+    ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    expect(passage().ending).toBe("keep"); expect(lastDirection()[0].camera).toBe("water");
+    expect(lastDirection()[1]).toBe(false); expect(audio().playTapCue).not.toHaveBeenCalled();
+    expect(renderer().scene.observers.size).toBe(0); // New choice retired the waiting cue.
+    const container = document.getElementById("game-container")!;
+    expect(container.dataset).toMatchObject({ cameraCue: "water", scene: "keep", transition: "dissolve", settled: "false" });
+  });
+
+  it("restores the saved entrance and its full authored state immediately without replaying taps", async () => {
     const first = game(); await first.run();
+    ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    expect(passage().text).toBe("Two taps, then a pause.");
+    const direction = structuredClone(passage().direction);
     const saved = JSON.parse(localStorage.getItem(SAVE_KEY)!);
-    saved.journey = [{ scene: "chair", objects: ["chair"], position: { x: 900, z: 0 } }];
-    localStorage.setItem(SAVE_KEY, JSON.stringify(saved));
-    first.dispose();
-    const resumed = game(); await resumed.run();
-    expect(currentUI().setNotice).toHaveBeenLastCalledWith(expect.stringContaining("could not be read"));
-    expect(harness.environment.createObjectsFromTag).toHaveBeenCalledOnce();
-    expect(harness.environment.createObjectsFromTag.mock.lastCall[2]).toEqual({ x: 0, z: 0 });
-    resumed.dispose();
+    expect(saved.version).toBe(3); first.dispose();
+    await game().run();
+    expect(passage().text).toBe("Two taps, then a pause.");
+    expect(lastDirection()).toEqual([direction, true]);
+    expect(audio().playTapCue).not.toHaveBeenCalled();
+    expect(ui().setNotice).toHaveBeenCalledWith("Your last passage has been restored.");
+    ui().callbacks.onChoice(0); expect(passage().ending).toBe("keep");
   });
 
-  it("recovers corrupt saves and remains playable when storage is unavailable", async () => {
-    localStorage.setItem(SAVE_KEY, "broken json");
-    const instance = game();
-    await instance.run();
-    expect(currentUI().render.mock.lastCall[0].text).toContain("The first room.");
-    expect(currentUI().setNotice).toHaveBeenCalledWith(expect.stringContaining("could not be read"));
-    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => { throw new Error("blocked"); });
-    currentUI().callbacks.onChoice(0);
-    expect(currentUI().render.mock.lastCall[0].text).toContain("A cup, still warm.");
-    expect(currentUI().setNotice).toHaveBeenCalledWith(expect.stringContaining("cannot be saved"));
-    instance.dispose();
+  it("restores terminal endings without skipping their text or arrangement", async () => {
+    const first = game(); await first.run();
+    ui().callbacks.onChoice(0); ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    first.dispose(); await game().run();
+    expect(passage().text).toBe("The lamp remains."); expect(passage().choices).toHaveLength(0);
+    expect(lastDirection()).toEqual([passage().direction, true]);
+    expect(lastDirection()[0].arrangement).toMatchObject({ cup: "absent", lamp: "rest", trace: "cup" });
+  });
+
+  it("recovers invalid saves and leaves earlier editions untouched", async () => {
+    localStorage.setItem("fading:chapter-one:save:v2", "earlier edition");
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ version: 3, state: "not Ink JSON" }));
+    await game().run();
+    expect(passage().text).toBe("The first shore.");
+    expect(lastDirection()[1]).toBe(true);
+    expect(ui().setNotice).toHaveBeenCalledWith(expect.stringContaining("could not be read"));
+    expect(localStorage.getItem("fading:chapter-one:save:v2")).toBe("earlier edition");
+    expect(JSON.parse(localStorage.getItem(SAVE_KEY)!).version).toBe(3);
+  });
+
+  it("restarts by resetting transitions, retiring audio one-shots, and settling the opening", async () => {
+    await game().run(); ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    ui().callbacks.onRestart();
+    expect(renderer().reset).toHaveBeenCalledOnce();
+    expect(audio().setMood).toHaveBeenLastCalledWith("hushed");
+    expect(passage().text).toBe("The first shore."); expect(lastDirection()[1]).toBe(true);
+    expect(audio().playTapCue).not.toHaveBeenCalled();
+    expect(renderer().scene.observers.size).toBe(0);
+    const saved = localStorage.getItem(SAVE_KEY)!;
+    await game().run(); expect(passage().text).toBe("The first shore.");
+    expect(localStorage.getItem(SAVE_KEY)).toBe(saved);
+  });
+
+  it("applies and persists audio, volume and reduced-motion preferences", async () => {
+    localStorage.setItem("fading:preferences:v1", JSON.stringify({ audio: false, volume: 0.25, reducedMotion: true }));
+    await game().run();
+    expect(audio().setEnabled).toHaveBeenCalledWith(false); expect(audio().setVolume).toHaveBeenCalledWith(0.25);
+    expect(renderer().setReducedMotion).toHaveBeenCalledWith(true); expect(ui().setReducedMotion).toHaveBeenCalledWith(true);
+    ui().callbacks.onAudioToggle(); ui().callbacks.onVolumeChange(0.8); ui().callbacks.onMotionToggle();
+    expect(JSON.parse(localStorage.getItem("fading:preferences:v1")!)).toEqual({ audio: true, volume: 0.8, reducedMotion: false });
+    ui().callbacks.onVolumeChange(Number.NaN); expect(audio().setVolume).toHaveBeenLastCalledWith(0.8);
+  });
+
+  it("pauses audio on tab visibility and does not take over the renderer loop", async () => {
+    const instance = game(); await instance.run();
+    const hidden = vi.spyOn(document, "hidden", "get").mockReturnValue(true);
+    document.dispatchEvent(new Event("visibilitychange")); expect(audio().setPaused).toHaveBeenLastCalledWith(true);
+    hidden.mockReturnValue(false); document.dispatchEvent(new Event("visibilitychange"));
+    expect(audio().setPaused).toHaveBeenLastCalledWith(false);
+    instance.dispose(); audio().setPaused.mockClear();
+    document.dispatchEvent(new Event("visibilitychange")); expect(audio().setPaused).not.toHaveBeenCalled();
+  });
+
+  it("updates the transition veil and prevents late callbacks or audio failures changing disposed UI", async () => {
+    const instance = game(); await instance.run();
+    const options = harness.options[0]; const container = document.getElementById("game-container")!;
+    options.onTransitionOpacity(0.6); expect(container.style.getPropertyValue("--scene-transition-opacity")).toBe("0.6");
+    const pending = deferred(); audio().play.mockReturnValueOnce(pending.promise.then(() => { throw new Error("Denied"); }));
+    ui().callbacks.onChoice(0); instance.dispose(); instance.dispose();
+    expect(renderer().dispose).toHaveBeenCalledOnce(); expect(audio().dispose).toHaveBeenCalledOnce(); expect(ui().dispose).toHaveBeenCalledOnce();
+    const notices = ui().setNotice.mock.calls.length;
+    options.onTransitionOpacity(1); expect(container.style.getPropertyValue("--scene-transition-opacity")).toBe("0");
+    pending.resolve(); await Promise.resolve(); await Promise.resolve();
+    expect(ui().setNotice.mock.calls).toHaveLength(notices);
+  });
+
+  it("ignores an obsolete audio rejection after a newer choice has already rendered", async () => {
+    await game().run();
+    const pending = deferred();
+    audio().play.mockReturnValueOnce(pending.promise.then(() => { throw new Error("Denied"); }));
+    ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    const notices = ui().setNotice.mock.calls.length;
+    pending.resolve(); await Promise.resolve(); await Promise.resolve();
+    expect(passage().text).toBe("Two taps, then a pause.");
+    expect(ui().setNotice.mock.calls).toHaveLength(notices);
+  });
+
+  it("plays taps only after the bedside shot has rendered settled, then removes its observer", async () => {
+    await game().run(); ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    expect(audio().playTapCue).not.toHaveBeenCalled();
+    expect(renderer().scene.observers.size).toBe(1);
+    renderer().scene.renderFrame(); expect(audio().playTapCue).not.toHaveBeenCalled();
+    renderer().state.settled = true;
+    renderer().scene.renderFrame();
+    expect(audio().playTapCue).toHaveBeenCalledOnce();
+    expect(renderer().scene.observers.size).toBe(0);
+    renderer().scene.renderFrame(); expect(audio().playTapCue).toHaveBeenCalledOnce();
+  });
+
+  it("does not let a retired frame callback cancel a newer cue after restart", async () => {
+    await game().run(); ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    const retiredFrame = renderer().scene.onAfterRenderObservable.add.mock.calls.at(-1)[0];
+    ui().callbacks.onRestart(); ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    retiredFrame();
+    expect(renderer().scene.observers.size).toBe(1);
+    renderer().state.settled = true; renderer().scene.renderFrame();
+    expect(audio().playTapCue).toHaveBeenCalledOnce();
+    expect(renderer().scene.observers.size).toBe(0);
+  });
+
+  it("cancels waiting taps on a hidden tab and never replays them on return", async () => {
+    await game().run(); ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    const hidden = vi.spyOn(document, "hidden", "get").mockReturnValue(true);
+    document.dispatchEvent(new Event("visibilitychange"));
+    expect(renderer().scene.observers.size).toBe(0);
+    hidden.mockReturnValue(false); document.dispatchEvent(new Event("visibilitychange"));
+    renderer().state.settled = true; renderer().scene.renderFrame();
+    expect(audio().playTapCue).not.toHaveBeenCalled();
+  });
+
+  it("cancels waiting taps on mute and disposal", async () => {
+    const instance = game(); await instance.run(); ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    ui().callbacks.onAudioToggle();
+    expect(renderer().scene.observers.size).toBe(0);
+    ui().callbacks.onAudioToggle(); renderer().state.settled = true; renderer().scene.renderFrame();
+    expect(audio().playTapCue).not.toHaveBeenCalled();
+    ui().callbacks.onRestart(); ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    expect(renderer().scene.observers.size).toBe(1);
+    instance.dispose(); expect(renderer().scene.observers.size).toBe(0);
+    renderer().state.settled = true; renderer().scene.renderFrame();
+    expect(audio().playTapCue).not.toHaveBeenCalled();
+  });
+
+  it("settles and plays a waiting tap cue immediately when reduced motion is selected", async () => {
+    await game().run(); ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    expect(audio().playTapCue).not.toHaveBeenCalled();
+    ui().callbacks.onMotionToggle();
+    expect(renderer().state.settled).toBe(true);
+    expect(renderer().scene.observers.size).toBe(0);
+    expect(audio().playTapCue).toHaveBeenCalledOnce();
+    renderer().scene.renderFrame(); expect(audio().playTapCue).toHaveBeenCalledOnce();
+  });
+
+  it("retires a stalled presentation cue after a finite deadline without delayed playback", async () => {
+    vi.useFakeTimers();
+    await game().run(); ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    expect(renderer().scene.observers.size).toBe(1);
+    vi.advanceTimersByTime(10000);
+    expect(renderer().scene.observers.size).toBe(0);
+    renderer().state.settled = true; renderer().scene.renderFrame();
+    expect(audio().playTapCue).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it("reports unavailable storage while continuing the story", async () => {
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => { throw new Error("Storage unavailable"); });
+    await game().run();
+    expect(passage().text).toBe("The first shore.");
+    expect(ui().setNotice).toHaveBeenCalledWith(expect.stringContaining("cannot be saved"));
   });
 });

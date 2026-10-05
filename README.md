@@ -1,8 +1,8 @@
 # Fading
 
-The next visual direction is documented in the [living scene production plan](docs/living-scene-plan.md): reconstruct the opening image as a fixed scene that responds to choices. The existing chapter remains available while the browser proof is developed.
+The playable chapter now uses the accepted living scene: the lamp, chair and chipped cup on a stone floor dissolving into the sea. Its [production plan](docs/living-scene-plan.md) and [Ink camera/transition authoring guide](docs/living-scene-cues.md#editing-a-passage) record the direction and implementation.
 
-A quiet, choice-driven 3D journey through memory and care. Replies carry you through an emotional landscape: refuge, constriction, room to breathe, and a return or departure. The current chapter has eleven decisions and three resolutions. It runs locally as a static Astro site with Babylon.js and Ink.
+A quiet, choice-driven 3D story about memory and care. Replies change attention and the arrangement of one place. Six authored camera compositions settle between passages; objects retain their identity. The chapter has eleven decisions and three resolutions. It runs locally as a static Astro site with Babylon.js and Ink.
 
 ## Play locally
 
@@ -15,23 +15,25 @@ npm run dev
 
 Open the local URL printed by Astro. Choose with the mouse, touch, Tab/Enter, or keys 1–4. The camera follows the story. Settings include sound, volume, reduced motion, larger text and conversation history. Progress and audio/motion preferences are saved in this browser when local storage is available. Begin again resets the story.
 
-The separate `/scene-study/` route previews the new fixed-view renderer. It has chair/cup controls and an opening-image comparison. Asset status explicitly distinguishes the provisional studies from the detailed Blender delivery; loading a model does not mean its visual fidelity has been accepted. Use `/scene-study/?renderer=webgl` to exercise the fallback renderer.
+The separate `/scene-study/` route retains chair/cup controls and an opening-image comparison for asset review. Both routes share the renderer and Blender assets. The actual chapter requires the production scene; a load failure offers retry. Use `/scene-study/?renderer=webgl` to exercise the study's fallback renderer.
 
-The spatial edition uses a new save slot because its Ink content structure changed. Earlier saves remain stored, but this edition starts a fresh passage. New saves retain the memory landmarks visited along the way.
+The living-scene edition uses save slot v3 because its Ink content structure changed. Earlier saves remain stored, but this edition starts a fresh passage. New saves restore the current passage, full object arrangement and camera immediately, including endings, without replaying taps.
 
 ```sh
 npm run validate  # tests, type checking, production build
 npm run preview   # serve the production build
 ```
 
-Astro 7 runs development/preview servers in the background. Use `npm run astro -- dev stop` or `npm run astro -- preview stop` when finished. Add `?debug` to expose renderer and FPS telemetry; `?debug&renderer=webgl` explicitly exercises WebGL. The debug D key toggles fog/prop inspection.
+Astro 7 runs development/preview servers in the background. Use `npm run astro -- dev stop` or `npm run astro -- preview stop` when finished. Add `?debug` to expose renderer and FPS telemetry; `?debug&renderer=webgl` explicitly exercises WebGL.
 
 ## Project map
 
 - `src/ink/demo.ink`: active chapter. `legacy-demo.ink` preserves the original experiment.
 - `src/utils/ink.ts`: validated story-to-world tags.
 - `src/components/GameScene.ts`: renderer, world, story, save and lifecycle coordination.
-- `src/components/game/`: lighting, terrain, symbolic props, character, camera and music playback.
+- `src/components/scene-study/`: shared living scene, materials, object state and editorial camera director.
+- `src/game/presentation/SceneDirection.ts`: shared script-to-renderer direction contract.
+- `src/components/game/AudioSystem.ts`: music and sound playback. Other files in this folder retain the earlier traversal experiment.
 - `src/game/experience/`: launch, semantic dialogue controls and styles.
 - `public/assets/fading-*.mp3`: four original ambient compositions and a two-tap rail cue. Rebuild with `npm run score:render` (ffmpeg required).
 - `docs/assessment-and-remedy.md`: baseline critique, SWOT and staged quality plan.

@@ -7,6 +7,8 @@ import { loadStudyAssets } from './SceneStudyAssets';
 import { selectStudyCamera } from './SceneStudyCamera';
 import { createStudySurfaces } from './SceneStudySurfaces';
 import { SceneStudyObjects } from './SceneStudyObjects';
+import { createLivingSceneCamera, LivingSceneDirector, type LivingSceneDiagnostics } from './LivingSceneDirector';
+import type { SceneDirection } from '../../game/presentation/SceneDirection';
 
 export type SceneStudyDiagnostics = {
   backend: 'WebGPU' | 'WebGL';
@@ -27,7 +29,7 @@ export type SceneStudyDiagnostics = {
   cameraName: string;
   environmentMode: 'hdr' | 'generated';
   environmentUrl: string | null;
-};
+} & Partial<LivingSceneDiagnostics>;
 
 export type SceneStudyHandle = {
   setChairTurned(value: boolean): void;
@@ -36,6 +38,8 @@ export type SceneStudyHandle = {
   reset(): void;
   dispose(): void;
   getDiagnostics(): SceneStudyDiagnostics;
+  applyDirection(direction: SceneDirection, immediate?: boolean): void;
+  getScene(): Scene;
 };
 
 export type SceneStudyOptions = {
@@ -47,6 +51,10 @@ export type SceneStudyOptions = {
   signal?: AbortSignal;
   /** Override the manifest without changing its production asset checksum. IBL only. */
   environment?: { url: string; intensity?: number };
+  /** Complete story arrangements and authored editorial camera cues. */
+  narrative?: boolean;
+  /** Fades only the scene overlay; dialogue and choices remain interactive. */
+  onTransitionOpacity?: (opacity: number) => void;
 };
 
 export async function createSceneStudy(canvas: HTMLCanvasElement, options: SceneStudyOptions = {}): Promise<SceneStudyHandle> {
@@ -57,15 +65,17 @@ export async function createSceneStudy(canvas: HTMLCanvasElement, options: Scene
   let backend: 'WebGPU' | 'WebGL' = 'WebGL';
   let disposed = false;
   let objects: SceneStudyObjects | undefined;
+  let director: LivingSceneDirector | undefined;
   let resizeObserver: ResizeObserver | undefined;
   let renderedFrames = 0;
   const render = () => {
     if (disposed || !scene || !engine) return;
-    objects?.update(engine.getDeltaTime() / 1000);
+    if (director) director.update(Math.min(0.1, engine.getDeltaTime() / 1000));
+    else objects?.update(engine.getDeltaTime() / 1000);
     scene.render();
     renderedFrames++;
   };
-  const resize = () => { if (!disposed) engine?.resize(); };
+  const resize = () => { if (!disposed) { engine?.resize(); director?.resize(); } };
   const visibility = () => {
     if (disposed || !engine) return;
     if (document.hidden) engine.stopRenderLoop(render);
@@ -79,6 +89,7 @@ export async function createSceneStudy(canvas: HTMLCanvasElement, options: Scene
     document.removeEventListener('visibilitychange', visibility);
     resizeObserver?.disconnect();
     engine?.stopRenderLoop(render);
+    director?.dispose();
     objects?.dispose();
     scene?.dispose();
     engine?.dispose();
@@ -139,11 +150,25 @@ export async function createSceneStudy(canvas: HTMLCanvasElement, options: Scene
     scene.useRightHandedSystem = true;
     const assets = await loadStudyAssets(scene, status, options.signal);
     ensureActive();
-    const camera = selectStudyCamera(scene, assets.camera, assets.manifest.camera);
+    if (options.narrative && assets.mode !== 'production') throw new Error('The production living scene could not load. Retry to start the story.');
+    const authoredCamera = selectStudyCamera(scene, assets.camera, assets.manifest.camera);
+    const camera = options.narrative ? createLivingSceneCamera(scene, authoredCamera) : authoredCamera;
     const surfaces = await createStudySurfaces(scene, assets, { environment: options.environment, signal: options.signal, onStatus: status });
     ensureActive();
     warnings.push(...assets.warnings, ...surfaces.warnings, 'Browser visual acceptance remains pending.');
     objects = new SceneStudyObjects(assets.chair, assets.cup, assets.meshes, surfaces.applyRenderLists);
+    if (options.narrative) {
+      director = new LivingSceneDirector({
+        scene, camera: camera as ReturnType<typeof createLivingSceneCamera>, authoredCamera, assets, objects,
+        viewport: () => {
+          const width = canvas.clientWidth || window.innerWidth;
+          const height = canvas.clientHeight || window.innerHeight;
+          return { width, aspect: width / Math.max(1, height) };
+        },
+        setLampRest: surfaces.setLampRest,
+        onTransitionOpacity: options.onTransitionOpacity,
+      });
+    }
     window.addEventListener('resize', resize);
     document.addEventListener('visibilitychange', visibility);
     if (typeof ResizeObserver !== 'undefined') {
@@ -157,8 +182,10 @@ export async function createSceneStudy(canvas: HTMLCanvasElement, options: Scene
     return {
       setChairTurned: value => objects?.setChairTurned(value),
       setCupVisible: value => objects?.setCupVisible(value),
-      setReducedMotion: value => objects?.setReducedMotion(value),
-      reset: () => objects?.reset(),
+      setReducedMotion: value => director ? director.setReducedMotion(value) : objects?.setReducedMotion(value),
+      reset: () => director ? director.reset() : objects?.reset(),
+      applyDirection: (direction, immediate) => director?.applyDirection(direction, immediate),
+      getScene: () => scene!,
       dispose,
       getDiagnostics: () => ({
         backend, assetMode: assets.mode, assetMessage: assets.message, warnings: [...warnings],
@@ -167,6 +194,7 @@ export async function createSceneStudy(canvas: HTMLCanvasElement, options: Scene
         shadowMeshCount: surfaces.shadows.getShadowMap()?.renderList?.length ?? 0,
         fps: disposed ? 0 : engine!.getFps(), renderedFrames, cameraName: camera.name,
         environmentMode: surfaces.environmentMode, environmentUrl: surfaces.environmentUrl,
+        ...director?.getDiagnostics(),
       }),
     };
   } catch (error) {

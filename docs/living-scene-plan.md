@@ -1,6 +1,6 @@
 # Fading living scene production plan
 
-Accepted direction, 5 October 2026. Reconstruct the praised opening image as a fixed, high-fidelity scene whose objects and spatial relationships respond to choices. The successful text and sound remain the emotional foundation. The first deliverable is a browser proof; the current chapter remains available while that proof is developed.
+Accepted direction, 5 October 2026. Reconstruct the praised opening image as a fixed, high-fidelity scene whose objects and spatial relationships respond to choices. The successful text and sound remain the emotional foundation. After accepting the pass05 shore, the user authorized integration into the actual game with camera and transition hints embedded in the dialogue script. The earlier proof milestones below remain a record of production history.
 
 ## Why the direction changed
 
@@ -16,7 +16,7 @@ The visual reference is [the original opening image](../public/assets/fading-tit
 - Keep one warm center: the shade, nearby worn surfaces and the lamp's water reflection. Surrounding water, cliffs and mist remain blue-grey; avoid whole-scene mood recoloring.
 - Use a coherent material family: weathered brass, woven ivory cloth, worn dark wood, porcelain with blue decoration, wet dark stone and still water. Resolve the existing blue-glaze wording when integrating the scene.
 - Preserve an absent person's place. Do not add a humanoid or a floating wire hand merely to demonstrate technical detail.
-- Lock the camera during dialogue. Approve desktop and portrait framing separately. No automatic orbit, arrival zoom, travel marker or drifting camera.
+- Hold the camera still while reading. The latest user authorization permits explicit script-directed reframing and transitions between passages; no automatic orbit, travel marker, free locomotion or reading-time drift. Review desktop and portrait framing separately.
 - Keep object scale and identity consistent. Introductions and transformations change the same arrangement instead of spawning another set of furniture.
 - Water, shadows and reflections must agree with object presence except for an explicitly authored, reviewed memory effect. Rendering mistakes must not stand in for ambiguity.
 - Every settled state must be a convincing still image and remain comfortable indefinitely.
@@ -158,3 +158,19 @@ The user's subsequent direction makes the spatial progression explicit: “The g
 Blender management owns pass05 modeling/export and the editable source; integration owns actual WebGPU/WebGL review, contact/hash verification and delivery. Acceptance is an immediate chunky, squared-rock reading at the existing browser size, with visible vertical faces, natural variation and real gaps. Separate block identities preserve the breakup motif for future authored changes. This pass does not reopen the background or add story transitions.
 
 The integrated [pass05 browser view](evidence/living-scene-pass05-opening-webgpu.png) passes independent review for both requests: substantial squared rock replaces the beach silhouette, and closely fitted support tiles dissolve into progressively wider water-filled breaks and isolated outer fragments. No scoped visual defect remains. The contact checks now use explicit visible block geometry and sample the chair throughout its turn. The camera, books, furniture and distant scenery remain preserved. Functional checks pass in WebGPU and WebGL, as does the production build. Separate block identity raises the scene to 236 base-pass primitives; device performance and broader photographic fidelity remain separate gates. See [implementation status](implementation-status.md) and [delivery record](blender-coordination.md).
+
+### Authorized chapter integration and script direction
+
+The user now asks to incorporate the scene into the actual game and makes camera/transition authorship a priority. This authorizes story integration despite the previously recorded broader photographic-fidelity limitations. Keep pass05 geometry and the successful text/audio, replacing the traversal renderer with the shared living-scene renderer. Preserve eleven decisions, memory callbacks and three legitimate endings; revise only prose that conflicts with the new staging or porcelain material.
+
+Each displayed Ink passage must define a complete camera, transition and arrangement. The shared contract is `src/game/presentation/SceneDirection.ts`. Camera presets are `wide`, `chair`, `cup`, `bedside`, `water` and `shore`; transitions are `cut`, `ease` and `dissolve`, with bounded explicit durations. Arrangement fields identify chair orientation, cup near/away/absent, steady/resting lamp and an optional cup-ring trace. One director owns transitions and complete settled states. Dissolves affect the rendered scene while text/choices remain available. Reduced motion and restored progress apply complete states immediately; newer choices supersede unfinished transitions.
+
+The cup view must reveal its actual 5.45mm exported rim notch. Return to wider context deliberately rather than traveling through the landscape. The warm lamp remains the anchor; dialogue scores never drive brightness. Explicit `sound` tags trigger authored tap pairs once and suppress replay on saved resume. Save version3 retains earlier editions under their old keys because Ink content indices change. Main-game loading requires the accepted production scene; the separate study keeps its diagnostic fallback.
+
+Ownership: narrative agent owns Ink/tag validation/path tests and cue documentation; renderer agent owns the director, shared scene integration and transition tests; runtime agent owns chapter/save/audio integration and lifecycle tests; root owns framing/interface adjustments, integration review, browser playthroughs, full validation and delivery. Verification covers every ending, conditional camera/staging paths, interrupted transitions, restore/restart, reduced motion, muted sound, loading failure, WebGPU/WebGL and narrow layouts. No Blender asset revision is required for this integration.
+
+### Integration delivered
+
+The actual chapter at `/` now runs the pass05 living scene. Six script-directed compositions, synchronized finite chair/cup rotations, scene-only fades, explicit sound cues, complete ending arrangements and immediate restore/reduced-motion behavior are implemented. The keep-cup trace is flat, clipped to actual seat wood and visible in its detail shot. The cup chip, rail and shore each receive a composition that supports their dialogue. The separate study remains available for asset work.
+
+Final validation passes **222 tests**, type checking and the production build. Browser checks cover all three endings, save/restart, interruption, sound/motion controls, WebGPU/WebGL and narrow layouts. See the [implementation record and captures](implementation-status.md#living-scene-in-the-playable-chapter--5-october-2026) and [script authoring guide](living-scene-cues.md#editing-a-passage). The next useful review is a human playthrough of the complete choreography: judge the emotional pacing of attention and silence together with the existing text and score.

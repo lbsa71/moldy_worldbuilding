@@ -1,5 +1,6 @@
 import type { Choice } from "../inkjs/engine/Choice";
 import type { Story } from "../inkjs/engine/Story";
+import { CAMERA_CUES, type CameraCue, type SceneDirection, type SceneArrangement, type TransitionCue } from "../game/presentation/SceneDirection";
 
 export type Mood = "hushed" | "warm" | "uneasy" | "resolved";
 
@@ -22,21 +23,26 @@ export type Dialogue = {
   chapter: string | null;
   mood: Mood | null;
   ending: string | null;
+  direction: SceneDirection | null;
+  sound: "taps" | "none" | null;
 };
 
 type Presentation = Omit<Dialogue, "text" | "choices">;
 
 function emptyPresentation(): Presentation {
-  return { position: null, fog: null, audio: null, objects: null, scene: null, chapter: null, mood: null, ending: null };
+  return { position: null, fog: null, audio: null, objects: null, scene: null, chapter: null, mood: null, ending: null, direction: null, sound: null };
 }
 
-/** Validate the complete tag set for one displayed passage. Absence retains scene state; objects: clears memories. */
+/** Validate one displayed beat. New direction cues are complete; legacy tags remain supported. */
 export function parseDialogueTags(tags: readonly string[]): Presentation {
   const presentation = emptyPresentation();
   const seen = new Set<string>();
+  let camera: CameraCue | undefined;
+  let transition: TransitionCue | undefined;
+  let arrangement: SceneArrangement | undefined;
   for (const rawTag of tags) {
     const tag = rawTag.trim();
-    const match = tag.match(/^(position|fog|objects|scene|chapter|mood|ending):\s*(.*)$/)
+    const match = tag.match(/^(position|fog|objects|scene|chapter|mood|ending|camera|transition|arrangement|sound):\s*(.*)$/)
       ?? tag.match(/^(audio)(?::\s*|\s+)(.+)$/);
     if (!match) throw new Error(`Unknown or malformed story tag: ${tag}`);
     const [, key, rawValue] = match;
@@ -46,6 +52,35 @@ export function parseDialogueTags(tags: readonly string[]): Presentation {
     const invalid = () => new Error(`Invalid ${key} story tag: ${tag}`);
 
     switch (key) {
+      case "camera":
+        if (!(CAMERA_CUES as readonly string[]).includes(value)) throw invalid();
+        camera = value as CameraCue;
+        break;
+      case "transition": {
+        const parts = value.match(/^(cut|ease|dissolve)\s+(\d+(?:\.\d+)?|\.\d+)$/);
+        if (!parts) throw invalid();
+        const seconds = Number(parts[2]);
+        if (!Number.isFinite(seconds) || seconds < 0 || seconds > 5 || (parts[1] === "cut" && seconds !== 0)) throw invalid();
+        transition = { kind: parts[1] as TransitionCue["kind"], seconds };
+        break;
+      }
+      case "arrangement": {
+        const allowed = { chair: ["rest", "turned"], cup: ["near", "away", "absent"], lamp: ["steady", "rest"], trace: ["none", "cup"] };
+        const result: Record<string, string> = {};
+        for (const part of value.split(",")) {
+          const pair = part.trim().match(/^(chair|cup|lamp|trace)=(\w+)$/);
+          if (!pair || pair[1] in result || !allowed[pair[1] as keyof typeof allowed].includes(pair[2])) throw invalid();
+          result[pair[1]] = pair[2];
+        }
+        if (Object.keys(result).length !== 4) throw invalid();
+        if (result.trace === "cup" && result.cup !== "absent") throw invalid();
+        arrangement = result as SceneArrangement;
+        break;
+      }
+      case "sound":
+        if (value !== "taps" && value !== "none") throw invalid();
+        presentation.sound = value;
+        break;
       case "position": {
         const coordinates = value.match(/^\(([^()]*)\)$/)?.[1].split(",").map(part => part.trim());
         if (!coordinates || coordinates.length !== 2 || coordinates.some(part => !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(part))) throw invalid();
@@ -86,6 +121,9 @@ export function parseDialogueTags(tags: readonly string[]): Presentation {
         break;
     }
   }
+  const cueCount = [camera, transition, arrangement].filter(Boolean).length;
+  if (cueCount !== 0 && cueCount !== 3) throw new Error("Partial scene direction: camera, transition and arrangement must all be supplied.");
+  if (camera && transition && arrangement) presentation.direction = { camera, transition, arrangement };
   return presentation;
 }
 
