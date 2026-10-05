@@ -56,7 +56,7 @@
       import { createSceneStudy, type SceneStudyHandle } from '../components/scene-study/createSceneStudy';
       import { getSceneStudyState } from '../components/scene-study/SceneStudyState';
 
-      const canvas = document.querySelector<HTMLCanvasElement>('#study-canvas')!;
+      let canvas = document.querySelector<HTMLCanvasElement>('#study-canvas')!;
       const stage = document.querySelector<HTMLElement>('#study-stage')!;
       const loading = document.querySelector<HTMLElement>('#study-loading')!;
       const status = document.querySelector<HTMLElement>('#asset-status')!;
@@ -129,6 +129,7 @@
         const result = await createSceneStudy(canvas, {
           forceWebGL: new URLSearchParams(window.location.search).get('renderer') === 'webgl',
           signal: startup.signal,
+          onCanvasReplaced: replacement => { canvas = replacement; },
           environment: { url: '/scene-study/overcast.hdr', intensity: 0.55 },
           onStatus: message => { if (!disposed) loading.textContent = message; },
         });

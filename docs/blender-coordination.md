@@ -16,7 +16,9 @@ New outputs belong in `scripts/blender/living_scene*`, `art/blender/living-scene
 
 Water is live in Babylon at y=0. Offline reference water, atmosphere and lights are excluded from the GLB. The manifest provides camera position/target/vertical FOV in runtime coordinates and lamp light position/intensity suggestions. No permanent background may contain removable furniture or its light/shadow/reflection contribution. The first local review route is `/scene-study/`; production fidelity is evaluated against the opening artwork in the browser, not inferred from a successful Blender render.
 
-On 5 October, the Blender chat confirmed the production branch and export contract. Rendering and asset delivery are in progress; no new delivery has yet been imported or accepted.
+On 5 October, the Blender chat delivered pass01 at `ab523ca70297e13e28e9c0833ca0aa387560f9e9`. The new living-scene scripts, `art/blender/living-scene-proof/` and the exact GLB/manifest were selectively imported; the local HDR/credits and runtime were preserved. GLB SHA-256 `d0e116dc354fbc144c99c1f03919adcd10aa2f9ed272fea4d969bf42d0c605e1` matches the handoff. The independent inspector reports no structural issues: 47,056 triangles, 11 primitives, 8 materials, 21 embedded maps and 16,301,920 bytes. The packed source, offline reference and Blender reimport validation are retained in `pass01/`.
+
+The scene loads in Babylon with the authored camera, but the art review does not accept its visual fidelity. The next revision targets shoreline/depth composition, chair construction, cloth asymmetry, shade luminosity and the warm water reflection. Source and offline-image success are not final scene acceptance.
 
 ### Previous bedside study
 

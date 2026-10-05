@@ -4,6 +4,8 @@ import { Scene } from '@babylonjs/core/scene';
 import { AssetContainer } from '@babylonjs/core/assetContainer';
 import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader';
 import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
+import { FreeCamera } from '@babylonjs/core/Cameras/freeCamera';
+import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { loadStudyAssets } from './SceneStudyAssets';
 
 const cleanups: (() => void)[] = [];
@@ -22,6 +24,26 @@ function fixture() {
 }
 
 describe('scene study asynchronous asset ownership', () => {
+  it('selects Blender camera data through its named transform without losing the authored hierarchy', async () => {
+    const scene = fixture();
+    const container = new AssetContainer(scene);
+    container.transformNodes = ['Lamp', 'Chair', 'Cup', 'Shore', 'LampLight', 'Camera']
+      .map(name => new TransformNode(`Fading_Study${name}`, scene));
+    const cameraRoot = container.transformNodes.find(node => node.name === 'Fading_StudyCamera')!;
+    cameraRoot.position.set(0, 2.3, 8.2);
+    const camera = new FreeCamera('Camera', Vector3.Zero(), scene);
+    camera.parent = cameraRoot;
+    camera.fov = 0.42963;
+    container.cameras = [camera];
+    container.removeAllFromScene();
+    vi.spyOn(SceneLoader, 'LoadAssetContainerAsync').mockResolvedValue(container);
+    const loaded = await loadStudyAssets(scene, () => {});
+    expect(loaded.camera).toBe(camera);
+    expect(loaded.camera?.parent).toBe(cameraRoot);
+    expect(loaded.camera?.fov).toBe(0.42963);
+    expect(loaded.warnings.some(warning => warning.includes('provisional framing'))).toBe(false);
+  });
+
   it('disposes a production container that arrives after cancellation without exposing it or starting a fallback', async () => {
     const scene = fixture();
     const late = new AssetContainer(scene);

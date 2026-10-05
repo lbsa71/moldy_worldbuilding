@@ -81,6 +81,7 @@ function inspect(bytes) {
   accessors.forEach((accessor, index) => {
     const component = sizes[accessor.componentType], elements = counts[accessor.type];
     requireCondition(integer(accessor.count) && component && elements, `Accessor ${index} has invalid count/type`);
+    requireCondition(!accessor.sparse, `Accessor ${index} uses unsupported sparse storage; delivery inspection requires dense accessors`);
     if (accessor.bufferView === undefined) return;
     const view = views[accessor.bufferView];
     // Matrix columns of 8/16-bit components are aligned to four bytes in glTF.

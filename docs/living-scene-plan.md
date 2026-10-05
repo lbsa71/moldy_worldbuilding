@@ -98,13 +98,17 @@ The model mix reserves the more costly review capacity for visual reasoning whil
 ## Progress
 
 - [x] Plan persisted before implementation, 5 October 2026.
-- [x] Camera and asset interface agreed across Blender and Babylon; visual camera match awaits the delivery.
+- [x] Camera and asset interface agreed across Blender and Babylon; delivered camera hierarchy loads in both browser backends.
 - [x] Browser proof framework and review controls implemented and exercised with clearly labelled provisional assets in WebGPU and WebGL.
-- [ ] First detailed Blender delivery imported and validated.
-- [ ] Browser images compared with the reference; remaining fidelity gaps recorded.
+- [x] First Blender delivery imported and structurally validated (`ab523ca`, pass01); it remains a blockout in visual terms.
+- [x] First browser images compared with the reference; remaining fidelity gaps recorded. Fidelity is not accepted.
 - [ ] Emotional state contact sheet reviewed.
 - [ ] Story integration and comparative playtest complete.
 
 No milestone should be marked complete on the strength of planned work, placeholder assets or an offline render alone. Subsequent implementation evidence belongs here and in [implementation status](implementation-status.md).
 
-Initial work includes the [art-direction specification](living-scene-art-direction.md), [proposed narrative cue sheet](living-scene-cues.md), isolated `/scene-study/` review route and an asset inspector (`node scripts/inspect-scene-study.mjs`). The scene supports complete chair/cup states, reset, reduced motion, dynamic shadow/reflection participation and a verified CC0 overcast HDR for material illumination. The inspector reports structural validity separately from visual acceptance. Blender delivery and photographic fidelity remain pending.
+Initial work includes the [art-direction specification](living-scene-art-direction.md), [proposed narrative cue sheet](living-scene-cues.md), isolated `/scene-study/` review route and an asset inspector (`node scripts/inspect-scene-study.mjs`). The scene supports complete chair/cup states, reset, reduced motion, dynamic shadow/reflection participation and a verified CC0 overcast HDR for material illumination. The inspector reports structural validity separately from visual acceptance.
+
+Pass01 from Blender commit `ab523ca70297e13e28e9c0833ca0aa387560f9e9` imports successfully in the browser and passes the named-root, camera, socket and cup-parent contracts. It contains 47,056 triangles, 11 mesh primitives, 8 materials and 21 embedded maps. The [offline image](../art/blender/living-scene-proof/pass01/reference.png) and [initial browser capture](evidence/living-scene-pass01-webgpu.png) show a useful blockout, not reference-level fidelity. The independent art review rejects the current composition, material credibility and light hierarchy. Highest-priority revisions are a shorter irregular promontory with water below the lamp, smaller mist-softened distant bridge, reference-shaped chair and cloth, luminous woven shade and warm broken reflection. Runtime lighting parity is being revised separately. Photographic fidelity and emotional acceptance remain pending.
+
+The integrated checkpoint corrects double conversion of fog color, selects the exported camera through Blender's named transform node, and repairs WebGPU initialization cleanup and WebGL recovery, including canvas replacement after a WebGPU context has been acquired. [Corrected WebGPU composition](evidence/living-scene-pass01-calibrated-webgpu.png) and [chair turned/cup removed in WebGL](evidence/living-scene-pass01-changed-webgl.png) are actual browser captures. The changed hierarchy leaves the reflection and shadow render lists together; visual reflection and warm-light fidelity still need improvement. Final validation passes 173 tests in 18 files, type checking and production build. Blender pass02 has been requested and is still on the asset-production branch; its delivery and adoption are the next integration step.

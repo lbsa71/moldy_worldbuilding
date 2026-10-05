@@ -22,6 +22,16 @@ import '@babylonjs/core/Lights/Shadows/shadowGeneratorSceneComponent';
 import { Scene } from '@babylonjs/core/scene';
 import type { StudyAssets, StudyManifest } from './SceneStudyAssets';
 
+/** Emissive shade geometry represents light leaving the fixture, not an opaque blocker. */
+export function getStudyShadowCasters(meshes: AbstractMesh[], lamp: StudyAssets['lamp']): AbstractMesh[] {
+  return meshes.filter(mesh => {
+    if (!mesh.isDescendantOf(lamp)) return true;
+    const emission = mesh.material instanceof PBRMaterial ? mesh.material.emissiveColor : undefined;
+    const luminousMaterial = emission && (emission.r > 0 || emission.g > 0 || emission.b > 0);
+    return !(luminousMaterial || /shade|filament/i.test(mesh.name));
+  });
+}
+
 export function getStudyLampPosition(assets: StudyAssets): Vector3 {
   if (assets.lampLight) {
     assets.lampLight.computeWorldMatrix(true);
@@ -34,6 +44,20 @@ export function getStudyLampPosition(assets: StudyAssets): Vector3 {
   const maxY = Math.max(...lampMeshes.map(mesh => mesh.getBoundingInfo().boundingBox.maximumWorld.y));
   const rootPosition = assets.lamp.getAbsolutePosition();
   return rootPosition.add(new Vector3(0, Number.isFinite(maxY) ? maxY - rootPosition.y - 0.25 : 1.4, 0));
+}
+
+export function configureStudyFog(scene: Scene, manifest: StudyManifest): void {
+  const swatch = manifest.environment?.fog_color;
+  const displayColor = swatch?.length === 3 ? Color3.FromArray(swatch) : new Color3(0.34, 0.44, 0.52);
+  // PBR's BindFogParameters converts scene.fogColor to linear itself. A clear
+  // buffer enters the final postprocess directly, so only that needs conversion.
+  scene.fogColor = displayColor;
+  const linearColor = displayColor.toLinearSpace(scene.getEngine().useExactSrgbConversions);
+  scene.clearColor = new Color4(linearColor.r, linearColor.g, linearColor.b, 1);
+  scene.fogMode = Scene.FOGMODE_EXP2;
+  // A Cycles volume density is not an exp2 coefficient. This bounded calibration
+  // keeps foreground surfaces readable while distant water converges to the sky.
+  scene.fogDensity = Math.max(0.035, Math.min(0.055, (manifest.environment?.fog_density_suggestion ?? 0.017) * 2.4));
 }
 
 async function loadAuthoredEnvironment(scene: Scene, url: string, signal?: AbortSignal): Promise<HDRCubeTexture> {
@@ -91,10 +115,7 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
   // Keep all geometry and the mirror in linear space; tone-map the composed view once.
   const hdrType = scene.getEngine().getCaps().textureHalfFloatRender ? Constants.TEXTURETYPE_HALF_FLOAT : Constants.TEXTURETYPE_UNSIGNED_BYTE;
   new ImageProcessingPostProcess('single display transform', 1, scene.activeCamera, Texture.BILINEAR_SAMPLINGMODE, scene.getEngine(), false, hdrType, config);
-  scene.clearColor = new Color4(0.095, 0.13, 0.165, 1);
-  scene.fogMode = Scene.FOGMODE_EXP2;
-  scene.fogDensity = 0.025;
-  scene.fogColor = new Color3(0.095, 0.13, 0.165);
+  configureStudyFog(scene, assets.manifest);
 
   // Local IBL with deterministic CPU irradiance; no CDN/network image dependency.
   // This is a lighting study, pending an authored production HDR environment.
@@ -121,7 +142,7 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
   let environmentUrl: string | null = null;
   const warnings: string[] = [];
   const environmentHint = options.environment ?? assets.manifest.environment;
-  if (environmentHint) {
+  if (environmentHint?.url) {
     options.onStatus?.('Loading and prefiltering the authored overcast environment…');
     try {
       const hdr = await loadAuthoredEnvironment(scene, environmentHint.url, options.signal);
@@ -147,13 +168,14 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
   moon.intensity = 0.7;
   const position = getStudyLampPosition(assets);
   const lamp = new SpotLight('warm light beneath shade', position, new Vector3(0, -1, 0), 2.65, 1.1, scene);
-  lamp.diffuse = new Color3(1, 0.65, 0.29);
+  const warmColor = assets.manifest.lampLight?.color;
+  lamp.diffuse = warmColor?.length === 3 ? Color3.FromArray(warmColor) : new Color3(1, 0.65, 0.29);
   lamp.intensity = assets.manifest.lampLight?.intensity ?? 5;
-  lamp.range = 5;
+  lamp.range = assets.manifest.lampLight?.range ?? 5;
   lamp.shadowMinZ = 0.04;
-  lamp.shadowMaxZ = 6;
+  lamp.shadowMaxZ = lamp.range;
   const glow = new PointLight('shade local warmth', position, scene);
-  glow.diffuse = new Color3(1, 0.64, 0.28);
+  glow.diffuse = lamp.diffuse.clone();
   glow.intensity = 0.35;
   glow.range = 2.2;
   const shadows = new ShadowGenerator(1024, lamp);
@@ -168,14 +190,14 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
   mirror.clearColor = scene.clearColor.clone();
   mirror.level = 0.88;
   // The water plane is always runtime geometry and never appears in its own pass.
-  const water = MeshBuilder.CreateGround('living water at y=0', { width: 100, height: 100, subdivisions: 1 }, scene);
+  const water = MeshBuilder.CreateGround('living water at y=0', { width: 300, height: 300, subdivisions: 1 }, scene);
   water.position.y = 0;
   water.isPickable = false;
   const waterMaterial = new PBRMaterial('still cool water', scene);
   waterMaterial.albedoColor = new Color3(0.026, 0.052, 0.075);
   waterMaterial.metallic = 0;
-  waterMaterial.roughness = 0.08;
-  waterMaterial.indexOfRefraction = 1.333;
+  waterMaterial.roughness = assets.manifest.water?.roughness_suggestion ?? 0.15;
+  waterMaterial.indexOfRefraction = assets.manifest.water?.IOR ?? 1.333;
   waterMaterial.reflectionTexture = mirror;
   const normalSize = 128;
   const normals = new Uint8Array(normalSize * normalSize * 4);
@@ -198,7 +220,7 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
 
   const applyRenderLists = (meshes: AbstractMesh[]) => {
     mirror.renderList = [...meshes];
-    shadows.getShadowMap()!.renderList = [...meshes];
+    shadows.getShadowMap()!.renderList = getStudyShadowCasters(meshes, assets.lamp);
   };
   return { mirror, shadows, applyRenderLists, environmentMode, environmentUrl, warnings };
 }

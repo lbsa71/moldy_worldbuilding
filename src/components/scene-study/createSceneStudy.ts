@@ -1,5 +1,7 @@
 import { Engine } from '@babylonjs/core/Engines/engine';
-import type { AbstractEngine } from '@babylonjs/core/Engines/abstractEngine';
+import { AbstractEngine } from '@babylonjs/core/Engines/abstractEngine';
+import { _CommonDispose } from '@babylonjs/core/Engines/engine.common';
+import type { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine';
 import { Scene } from '@babylonjs/core/scene';
 import { loadStudyAssets } from './SceneStudyAssets';
 import { selectStudyCamera } from './SceneStudyCamera';
@@ -39,6 +41,8 @@ export type SceneStudyHandle = {
 export type SceneStudyOptions = {
   forceWebGL?: boolean;
   onStatus?: (message: string) => void;
+  /** A canvas already bound to WebGPU must be replaced before WebGL fallback. */
+  onCanvasReplaced?: (canvas: HTMLCanvasElement) => void;
   /** Allows a page removed during loading to retire its engine and late asset containers. */
   signal?: AbortSignal;
   /** Override the manifest without changing its production asset checksum. IBL only. */
@@ -87,19 +91,44 @@ export async function createSceneStudy(canvas: HTMLCanvasElement, options: Scene
     ensureActive();
     status('Preparing the fixed-view renderer…');
     if (!options.forceWebGL && 'gpu' in navigator) {
+      let candidate: WebGPUEngine | undefined;
+      let initialized = false;
       try {
         const { WebGPUEngine } = await import('@babylonjs/core/Engines/webgpuEngine');
         ensureActive();
         if (await WebGPUEngine.IsSupportedAsync) {
           ensureActive();
-          engine = new WebGPUEngine(canvas, { antialias: true, adaptToDeviceRatio: false });
-          await (engine as InstanceType<typeof WebGPUEngine>).initAsync();
+          // Keep pending initialization out of dispose(): Babylon 7's WebGPU
+          // disposer assumes resources that initAsync has not created yet.
+          candidate = new WebGPUEngine(canvas, { antialias: true, adaptToDeviceRatio: false });
+          await candidate.initAsync();
+          initialized = true;
+          ensureActive();
+          engine = candidate;
           backend = 'WebGPU';
         }
       } catch (error) {
-        engine?.dispose();
-        engine = undefined;
+        // Inspect Babylon 7's context without calling getContext(), which would
+        // itself bind a previously untouched canvas to that context type.
+        const contextAcquired = Boolean((candidate as unknown as { _context?: unknown } | undefined)?._context);
+        if (candidate) {
+          if (initialized) candidate.dispose();
+          else {
+            // A rejected init has no scene/effects. Destroy the possibly acquired
+            // device and retire canvas listeners/EngineStore through base cleanup.
+            // Calling WebGPUEngine.dispose here dereferences missing managers.
+            candidate._device?.destroy();
+            _CommonDispose(candidate, canvas);
+            AbstractEngine.prototype.dispose.call(candidate);
+          }
+        }
         ensureActive();
+        if (contextAcquired) {
+          const replacement = canvas.cloneNode(false) as HTMLCanvasElement;
+          canvas.replaceWith(replacement);
+          canvas = replacement;
+          options.onCanvasReplaced?.(replacement);
+        }
         warnings.push(`WebGPU initialization failed; using WebGL. ${error instanceof Error ? error.message : String(error)}`);
       }
     }

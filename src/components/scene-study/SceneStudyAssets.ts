@@ -11,8 +11,9 @@ import type { StudyCameraHint } from './SceneStudyCamera';
 
 export type StudyManifest = {
   camera?: StudyCameraHint;
-  lampLight?: { position?: number[]; intensity?: number };
-  environment?: { url: string; intensity?: number };
+  lampLight?: { position?: number[]; intensity?: number; color?: number[]; range?: number };
+  environment?: { url?: string; intensity?: number; fog_color?: number[]; fog_density_suggestion?: number };
+  water?: { roughness_suggestion?: number; IOR?: number };
 };
 export type StudyAssets = {
   mode: 'production' | 'provisional';
@@ -72,7 +73,11 @@ export async function loadStudyAssets(scene: Scene, onStatus: (message: string) 
         warnings.push(`Optional '${name}' is absent from this delivery.`);
       }
     }
-    const camera = production.cameras.find(camera => camera.name === 'Fading_StudyCamera');
+    // glTF separates a camera's data name from its transform-node name. Blender
+    // can export data called "Camera" beneath the authored Fading_StudyCamera node.
+    const cameraRoot = production.transformNodes.find(node => node.name === 'Fading_StudyCamera');
+    const camera = production.cameras.find(camera => camera.name === 'Fading_StudyCamera'
+      || (cameraRoot && camera.isDescendantOf(cameraRoot)));
     if (!camera) warnings.push('Production scene has no Fading_StudyCamera; provisional framing is in use.');
     production.addAllToScene();
     production.animationGroups.forEach(group => group.stop());

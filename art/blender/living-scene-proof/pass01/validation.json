@@ -1,0 +1,3587 @@
+{
+  "schema_version": 1,
+  "valid": true,
+  "checks": {
+    "gltf_version_2": true,
+    "required_role_names_unique": true,
+    "role_roots_preserved": true,
+    "optional_roots_preserved": true,
+    "cup_direct_parent_is_chair": true,
+    "cup_has_independent_mesh_descendants": true,
+    "cup_meshes_separate_from_chair": true,
+    "lamp_light_socket_has_no_mesh_camera_light": true,
+    "lamp_light_socket_under_lamp": true,
+    "no_exported_lights": true,
+    "no_animations_or_skins": true,
+    "no_water_or_preview_meshes": true,
+    "only_triangle_geometry": true,
+    "no_degenerate_triangles": true,
+    "exported_normals_present": true,
+    "vertex_normals_agree_with_winding": true,
+    "scene_contains_mesh_geometry": true,
+    "all_images_embedded": true,
+    "embedded_image_dimensions_readable": true,
+    "named_camera_is_perspective": true,
+    "camera_perspective_valid": true,
+    "camera_reference_aspect_3_to_2": true,
+    "reimport_named_camera_is_CAMERA": true,
+    "reimport_lamp_light_is_EMPTY": true,
+    "reimport_has_no_actual_lights": true,
+    "reimport_required_roles_preserved": true,
+    "reimport_cup_parent_is_chair": true,
+    "reimport_instantiated_triangle_count_matches": true,
+    "no_inward_closed_bodies": true,
+    "closed_bodies_have_consistent_winding": true,
+    "Y_up_reimport_bounds_match": true,
+    "chair_pivot_at_contact_height": true,
+    "Y_up_camera_direction_matches": true,
+    "camera_reimport_projection_matches": true,
+    "validation_completed": true
+  },
+  "failed_checks": [],
+  "warnings": [
+    "StudyLampFoot: open surface; watertight-volume certification does not apply.",
+    "StudyWetRock: open surface; watertight-volume certification does not apply."
+  ],
+  "file": "C:\\Users\\lbsa7\\Documents\\Codex\\2026-10-03\\he\\work\\fading-bedside-git\\art\\blender\\living-scene-proof\\pass01\\living-scene.glb",
+  "bytes": 16301920,
+  "sha256": "d0e116dc354fbc144c99c1f03919adcd10aa2f9ed272fea4d969bf42d0c605e1",
+  "chunks": [
+    {
+      "type": 1313821514,
+      "bytes": 18424
+    },
+    {
+      "type": 5130562,
+      "bytes": 16283468
+    }
+  ],
+  "asset": {
+    "generator": "Khronos glTF Blender I/O v5.2.40",
+    "version": "2.0"
+  },
+  "extensions_used": [],
+  "forbidden_meshes": [],
+  "scene": {
+    "index": 0,
+    "roots": [
+      "Fading_StudyBackdrop",
+      "Fading_StudyCamera",
+      "Fading_StudyChair",
+      "Fading_StudyCurtain",
+      "Fading_StudyLamp",
+      "Fading_StudyShore"
+    ],
+    "active_nodes": 21,
+    "all_node_names": [
+      "StudyBridgeArch",
+      "Fading_StudyBackdrop",
+      "Fading_StudyCamera",
+      "StudyCupBody",
+      "StudyCupHandle",
+      "StudyCupRim",
+      "Fading_StudyCup",
+      "StudyBackPost",
+      "StudyClothFringe",
+      "Fading_StudyChair",
+      "StudyBedRail",
+      "StudyPartialCurtain",
+      "Fading_StudyCurtain",
+      "Fading_StudyLampLight",
+      "StudyLampFilament",
+      "StudyLampFoot",
+      "StudyLampShade",
+      "StudyShadePivot",
+      "Fading_StudyLamp",
+      "StudyWetRock",
+      "Fading_StudyShore"
+    ]
+  },
+  "transforms_gltf_Y_up": {
+    "Fading_StudyLamp": {
+      "parent": null,
+      "local_matrix_rows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          1.1699999570846558
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.14499999582767487
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.11999999731779099
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_matrix_rows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          1.1699999570846558
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.14499999582767487
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.11999999731779099
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_position": [
+        1.1699999570846558,
+        0.14499999582767487,
+        0.11999999731779099
+      ]
+    },
+    "Fading_StudyChair": {
+      "parent": null,
+      "local_matrix_rows": [
+        [
+          0.9992001056671143,
+          0.0,
+          -0.03998933359980583,
+          1.649999976158142
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.14499999582767487
+        ],
+        [
+          0.03998933359980583,
+          0.0,
+          0.9992001056671143,
+          0.800000011920929
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_matrix_rows": [
+        [
+          0.9992001056671143,
+          0.0,
+          -0.03998933359980583,
+          1.649999976158142
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.14499999582767487
+        ],
+        [
+          0.03998933359980583,
+          0.0,
+          0.9992001056671143,
+          0.800000011920929
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_position": [
+        1.649999976158142,
+        0.14499999582767487,
+        0.800000011920929
+      ]
+    },
+    "Fading_StudyShore": {
+      "parent": null,
+      "local_matrix_rows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_matrix_rows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_position": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "Fading_StudyCup": {
+      "parent": "Fading_StudyChair",
+      "local_matrix_rows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -0.2300000786781311
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.5849999785423279
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.14999999105930328
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_matrix_rows": [
+        [
+          0.9992001056671143,
+          0.0,
+          -0.03998933359980583,
+          1.4141855239868164
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.7299999594688416
+        ],
+        [
+          0.03998933359980583,
+          0.0,
+          0.9992001056671143,
+          0.9406824707984924
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_position": [
+        1.4141855239868164,
+        0.7299999594688416,
+        0.9406824707984924
+      ]
+    },
+    "Fading_StudyCamera": {
+      "parent": null,
+      "local_matrix_rows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.9814906120300293,
+          0.19151028990745544,
+          2.299999952316284
+        ],
+        [
+          0.0,
+          -0.19151028990745544,
+          0.9814906120300293,
+          8.199999809265137
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_matrix_rows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.9814906120300293,
+          0.19151028990745544,
+          2.299999952316284
+        ],
+        [
+          0.0,
+          -0.19151028990745544,
+          0.9814906120300293,
+          8.199999809265137
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_position": [
+        0.0,
+        2.299999952316284,
+        8.199999809265137
+      ]
+    },
+    "Fading_StudyLampLight": {
+      "parent": "Fading_StudyLamp",
+      "local_matrix_rows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          1.4900000095367432
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.01499999314546585
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_matrix_rows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          1.1699999570846558
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          1.6349999904632568
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.13499999046325684
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_position": [
+        1.1699999570846558,
+        1.6349999904632568,
+        0.13499999046325684
+      ]
+    },
+    "Fading_StudyBackdrop": {
+      "parent": null,
+      "local_matrix_rows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_matrix_rows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_position": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "Fading_StudyCurtain": {
+      "parent": null,
+      "local_matrix_rows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          2.950000047683716
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.14000000059604645
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -0.8500000238418579
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_matrix_rows": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          2.950000047683716
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.14000000059604645
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -0.8500000238418579
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_position": [
+        2.950000047683716,
+        0.14000000059604645,
+        -0.8500000238418579
+      ]
+    }
+  },
+  "geometry": {
+    "instantiated_triangles": 47056,
+    "instantiated_primitives": 11,
+    "unique_meshes": 11,
+    "mesh_nodes": 11,
+    "primitives": [
+      {
+        "node": "StudyBridgeArch",
+        "mesh_index": 0,
+        "primitive_index": 0,
+        "mode": 4,
+        "vertices": 13752,
+        "triangles": 6932,
+        "material_index": 0,
+        "degenerate_triangles": 0,
+        "normal_winding_opposed_triangles": 0,
+        "bounds_gltf_Y_up": {
+          "min": [
+            -2.549999952316284,
+            -5.749589443206787,
+            -43.272705078125
+          ],
+          "max": [
+            12.438982963562012,
+            12.996479034423828,
+            -6.945344924926758
+          ],
+          "dimensions": [
+            14.988982915878296,
+            18.746068477630615,
+            36.32736015319824
+          ],
+          "center": [
+            4.944491505622864,
+            3.6234447956085205,
+            -25.10902500152588
+          ]
+        }
+      },
+      {
+        "node": "StudyCupBody",
+        "mesh_index": 1,
+        "primitive_index": 0,
+        "mode": 4,
+        "vertices": 392,
+        "triangles": 768,
+        "material_index": 1,
+        "degenerate_triangles": 0,
+        "normal_winding_opposed_triangles": 0,
+        "bounds_gltf_Y_up": {
+          "min": [
+            1.3622270822525024,
+            0.7299999594688416,
+            0.8887240886688232
+          ],
+          "max": [
+            1.4661439657211304,
+            0.8279999494552612,
+            0.9926408529281616
+          ],
+          "dimensions": [
+            0.10391688346862793,
+            0.09799998998641968,
+            0.10391676425933838
+          ],
+          "center": [
+            1.4141855239868164,
+            0.7789999544620514,
+            0.9406824707984924
+          ]
+        }
+      },
+      {
+        "node": "StudyCupHandle",
+        "mesh_index": 2,
+        "primitive_index": 0,
+        "mode": 4,
+        "vertices": 424,
+        "triangles": 524,
+        "material_index": 1,
+        "degenerate_triangles": 0,
+        "normal_winding_opposed_triangles": 0,
+        "bounds_gltf_Y_up": {
+          "min": [
+            1.4550901651382446,
+            0.747000515460968,
+            0.9379056096076965
+          ],
+          "max": [
+            1.4956203699111938,
+            0.809999406337738,
+            0.9482580423355103
+          ],
+          "dimensions": [
+            0.04053020477294922,
+            0.06299889087677002,
+            0.01035243272781372
+          ],
+          "center": [
+            1.4753552675247192,
+            0.778499960899353,
+            0.9430818259716034
+          ]
+        }
+      },
+      {
+        "node": "StudyBackPost",
+        "mesh_index": 3,
+        "primitive_index": 0,
+        "mode": 4,
+        "vertices": 6528,
+        "triangles": 3196,
+        "material_index": 2,
+        "degenerate_triangles": 0,
+        "normal_winding_opposed_triangles": 0,
+        "bounds_gltf_Y_up": {
+          "min": [
+            1.3049298524856567,
+            0.14455604553222656,
+            0.487063467502594
+          ],
+          "max": [
+            1.9950700998306274,
+            1.3849999904632568,
+            1.1129364967346191
+          ],
+          "dimensions": [
+            0.6901402473449707,
+            1.2404439449310303,
+            0.6258730292320251
+          ],
+          "center": [
+            1.649999976158142,
+            0.7647780179977417,
+            0.7999999821186066
+          ]
+        }
+      },
+      {
+        "node": "StudyClothFringe",
+        "mesh_index": 4,
+        "primitive_index": 0,
+        "mode": 4,
+        "vertices": 4650,
+        "triangles": 5400,
+        "material_index": 3,
+        "degenerate_triangles": 0,
+        "normal_winding_opposed_triangles": 0,
+        "bounds_gltf_Y_up": {
+          "min": [
+            1.8126890659332275,
+            0.214697927236557,
+            0.4750228226184845
+          ],
+          "max": [
+            2.139756441116333,
+            1.4298501014709473,
+            0.7321531772613525
+          ],
+          "dimensions": [
+            0.32706737518310547,
+            1.2151521742343903,
+            0.25713035464286804
+          ],
+          "center": [
+            1.9762227535247803,
+            0.8222740143537521,
+            0.6035879999399185
+          ]
+        }
+      },
+      {
+        "node": "StudyBedRail",
+        "mesh_index": 5,
+        "primitive_index": 0,
+        "mode": 4,
+        "vertices": 197,
+        "triangles": 188,
+        "material_index": 4,
+        "degenerate_triangles": 0,
+        "normal_winding_opposed_triangles": 0,
+        "bounds_gltf_Y_up": {
+          "min": [
+            2.437999963760376,
+            0.14000000059604645,
+            -0.8630000352859497
+          ],
+          "max": [
+            3.562000036239624,
+            2.6030001640319824,
+            -0.7380000352859497
+          ],
+          "dimensions": [
+            1.124000072479248,
+            2.463000163435936,
+            0.125
+          ],
+          "center": [
+            3.0,
+            1.3715000823140144,
+            -0.8005000352859497
+          ]
+        }
+      },
+      {
+        "node": "StudyPartialCurtain",
+        "mesh_index": 6,
+        "primitive_index": 0,
+        "mode": 4,
+        "vertices": 5586,
+        "triangles": 6464,
+        "material_index": 3,
+        "degenerate_triangles": 0,
+        "normal_winding_opposed_triangles": 0,
+        "bounds_gltf_Y_up": {
+          "min": [
+            2.549201726913452,
+            0.3999999761581421,
+            -0.909000039100647
+          ],
+          "max": [
+            3.450000047683716,
+            2.5300002098083496,
+            -0.8320000171661377
+          ],
+          "dimensions": [
+            0.9007983207702637,
+            2.1300002336502075,
+            0.07700002193450928
+          ],
+          "center": [
+            2.999600887298584,
+            1.4650000929832458,
+            -0.8705000281333923
+          ]
+        }
+      },
+      {
+        "node": "StudyLampFilament",
+        "mesh_index": 7,
+        "primitive_index": 0,
+        "mode": 4,
+        "vertices": 920,
+        "triangles": 440,
+        "material_index": 5,
+        "degenerate_triangles": 0,
+        "normal_winding_opposed_triangles": 0,
+        "bounds_gltf_Y_up": {
+          "min": [
+            1.1429998874664307,
+            1.6380000114440918,
+            0.09299997985363007
+          ],
+          "max": [
+            1.1969999074935913,
+            1.691999912261963,
+            0.1469999998807907
+          ],
+          "dimensions": [
+            0.054000020027160645,
+            0.053999900817871094,
+            0.054000020027160645
+          ],
+          "center": [
+            1.169999897480011,
+            1.6649999618530273,
+            0.11999998986721039
+          ]
+        }
+      },
+      {
+        "node": "StudyLampFoot",
+        "mesh_index": 8,
+        "primitive_index": 0,
+        "mode": 4,
+        "vertices": 3205,
+        "triangles": 3352,
+        "material_index": 4,
+        "degenerate_triangles": 0,
+        "normal_winding_opposed_triangles": 0,
+        "bounds_gltf_Y_up": {
+          "min": [
+            1.0099999904632568,
+            0.14499999582767487,
+            -0.03999999910593033
+          ],
+          "max": [
+            1.3299999237060547,
+            1.6150000095367432,
+            0.2800000011920929
+          ],
+          "dimensions": [
+            0.31999993324279785,
+            1.4700000137090683,
+            0.3200000002980232
+          ],
+          "center": [
+            1.1699999570846558,
+            0.880000002682209,
+            0.12000000104308128
+          ]
+        }
+      },
+      {
+        "node": "StudyLampShade",
+        "mesh_index": 9,
+        "primitive_index": 0,
+        "mode": 4,
+        "vertices": 3717,
+        "triangles": 4576,
+        "material_index": 6,
+        "degenerate_triangles": 0,
+        "normal_winding_opposed_triangles": 0,
+        "bounds_gltf_Y_up": {
+          "min": [
+            0.914098858833313,
+            1.5548272132873535,
+            -0.13594353199005127
+          ],
+          "max": [
+            1.4258900880813599,
+            1.9705055952072144,
+            0.3759500980377197
+          ],
+          "dimensions": [
+            0.5117912292480469,
+            0.41567838191986084,
+            0.511893630027771
+          ],
+          "center": [
+            1.1699944734573364,
+            1.762666404247284,
+            0.12000328302383423
+          ]
+        }
+      },
+      {
+        "node": "StudyWetRock",
+        "mesh_index": 10,
+        "primitive_index": 0,
+        "mode": 4,
+        "vertices": 22739,
+        "triangles": 15216,
+        "material_index": 7,
+        "degenerate_triangles": 0,
+        "normal_winding_opposed_triangles": 0,
+        "bounds_gltf_Y_up": {
+          "min": [
+            -1.9870736598968506,
+            -0.14585022628307343,
+            -9.30000114440918
+          ],
+          "max": [
+            6.800001621246338,
+            0.24369312822818756,
+            2.818939208984375
+          ],
+          "dimensions": [
+            8.787075281143188,
+            0.389543354511261,
+            12.118940353393555
+          ],
+          "center": [
+            2.4064639806747437,
+            0.04892145097255707,
+            -3.2405309677124023
+          ]
+        }
+      }
+    ],
+    "bounds_gltf_Y_up": {
+      "min": [
+        -2.549999952316284,
+        -5.749589443206787,
+        -43.272705078125
+      ],
+      "max": [
+        12.438982963562012,
+        12.996479034423828,
+        2.818939208984375
+      ],
+      "dimensions": [
+        14.988982915878296,
+        18.746068477630615,
+        46.091644287109375
+      ],
+      "center": [
+        4.944491505622864,
+        3.6234447956085205,
+        -20.226882934570312
+      ]
+    }
+  },
+  "materials": [
+    {
+      "index": 0,
+      "name": "cliff",
+      "doubleSided": true,
+      "extras": {
+        "authored_source": "Procedural detail baked to portable PNG maps; not scanned materials",
+        "surface_description": "Cool stratified distant stone, matte mineral layers and subtle cellular fissures"
+      },
+      "normalTexture": {
+        "index": 0
+      },
+      "occlusionTexture": {
+        "index": 1
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 2
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    },
+    {
+      "index": 1,
+      "name": "porcelain",
+      "doubleSided": true,
+      "extras": {
+        "authored_source": "Procedural detail baked to portable PNG maps; not scanned materials",
+        "surface_description": "Warm white glossy porcelain with sparse original cobalt floral sprigs and a separate blue material for rim decoration"
+      },
+      "normalTexture": {
+        "index": 3
+      },
+      "occlusionTexture": {
+        "index": 4
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 5
+        },
+        "metallicRoughnessTexture": {
+          "index": 4
+        }
+      }
+    },
+    {
+      "index": 2,
+      "name": "wood",
+      "doubleSided": true,
+      "extras": {
+        "authored_source": "Procedural detail baked to portable PNG maps; not scanned materials",
+        "surface_description": "Worn dark walnut family: directional grain along V, soft satin wear and recessed pores"
+      },
+      "normalTexture": {
+        "index": 6
+      },
+      "occlusionTexture": {
+        "index": 7
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 8
+        },
+        "metallicRoughnessTexture": {
+          "index": 7
+        }
+      }
+    },
+    {
+      "index": 3,
+      "name": "cloth",
+      "doubleSided": true,
+      "extras": {
+        "authored_source": "Procedural detail baked to portable PNG maps; not scanned materials",
+        "surface_description": "Woven ivory flax with soft yarn crossings; broad physical folds supplied by mesh"
+      },
+      "normalTexture": {
+        "index": 9
+      },
+      "occlusionTexture": {
+        "index": 10
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 11
+        },
+        "metallicRoughnessTexture": {
+          "index": 10
+        }
+      }
+    },
+    {
+      "index": 4,
+      "name": "brass",
+      "doubleSided": true,
+      "extras": {
+        "authored_source": "Procedural detail baked to portable PNG maps; not scanned materials",
+        "surface_description": "Weathered satin brass: subdued green-brown oxidation islands and fine directional brushing"
+      },
+      "normalTexture": {
+        "index": 12
+      },
+      "occlusionTexture": {
+        "index": 13
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 14
+        },
+        "metallicRoughnessTexture": {
+          "index": 13
+        }
+      }
+    },
+    {
+      "index": 5,
+      "name": "StudyWarmFilament",
+      "doubleSided": true,
+      "emissiveFactor": [
+        1,
+        0.550000011920929,
+        0.15000000596046448
+      ],
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.800000011920929,
+          0.4000000059604645,
+          0.10000000149011612,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.5
+      }
+    },
+    {
+      "index": 6,
+      "name": "linen",
+      "doubleSided": true,
+      "emissiveFactor": [
+        0.30000001192092896,
+        0.15000000596046448,
+        0.04500000357627876
+      ],
+      "extras": {
+        "authored_source": "Procedural detail baked to portable PNG maps; not scanned materials",
+        "surface_description": "Woven ivory flax with soft yarn crossings; broad physical folds supplied by mesh",
+        "emission_note": "Warm core glTF emissive factor for illuminated shade; runtime may modulate"
+      },
+      "normalTexture": {
+        "index": 15
+      },
+      "occlusionTexture": {
+        "index": 16
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 17
+        },
+        "metallicRoughnessTexture": {
+          "index": 16
+        }
+      }
+    },
+    {
+      "index": 7,
+      "name": "rock",
+      "doubleSided": true,
+      "extras": {
+        "authored_source": "Procedural detail baked to portable PNG maps; not scanned materials",
+        "surface_description": "Wet dark slate with soft mineral layers, fissures and varied water-polished roughness"
+      },
+      "normalTexture": {
+        "index": 18
+      },
+      "occlusionTexture": {
+        "index": 19
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 20
+        },
+        "metallicRoughnessTexture": {
+          "index": 19
+        }
+      }
+    }
+  ],
+  "textures": {
+    "texture_count": 21,
+    "image_count": 21,
+    "embedded_image_bytes": 13709361,
+    "images": [
+      {
+        "index": 0,
+        "name": "cliff_normal",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 1832478,
+        "sha256": "3173e7a4c2a43ef3dbf67bca11d7a5b26dbf5ffd23da62538c7632c70eb88ae9",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 1,
+        "name": "cliff_orm",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 442906,
+        "sha256": "b70d3158ad8e8638872c30bbbe060ecb600aebcadb5ecaf16fce992c4e62c718",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 2,
+        "name": "cliff_basecolor",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 326006,
+        "sha256": "0da4b8964ce1005ba2c85b675e756ce353f33eeb7b90fa171fa8b0aaa41fc015",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 3,
+        "name": "porcelain_normal",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 189071,
+        "sha256": "6710fec4f7d7e618cf4ec6b06603d724e7e8b60876bd0e882d98d0f10b9520c7",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 4,
+        "name": "porcelain_orm",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 109768,
+        "sha256": "d85c50d985c3498b6cef980de63a2cafef24c468ac634861a5b8c3e187719959",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 5,
+        "name": "porcelain_basecolor",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 121064,
+        "sha256": "43c1f921046117ceb6bd692086c454be251234b7430634bb9b2b51f4babba385",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 6,
+        "name": "wood_normal",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 1434634,
+        "sha256": "954679b7b1142ea9d6d00a1a570467be9df53429c85a8ca9cbe0fcc14c592cbc",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 7,
+        "name": "wood_orm",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 576629,
+        "sha256": "99a98fde2e7cb17c901b023e856de4275e1174895c91eb7c7a73e9962985e1ce",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 8,
+        "name": "wood_basecolor",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 436569,
+        "sha256": "592964155eca6d75fd44fd5316c70cd73c2d4c23bb7ad06144fc633b97f7a225",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 9,
+        "name": "cloth_normal",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 1096180,
+        "sha256": "bdc661f7bc5f6ba750f794adddb668d895acd4b47192d137953bca0e766912bc",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 10,
+        "name": "cloth_orm",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 503711,
+        "sha256": "d25dfe3913341c0ec359fd451155b7a51fbba9b59eb12071c467109f70a700ac",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 11,
+        "name": "cloth_basecolor",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 499514,
+        "sha256": "5adc50784a7cefef34d65d605e261bebf37b94ff712a8d31eb4a6974d33a70c8",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 12,
+        "name": "brass_normal",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 886832,
+        "sha256": "c53b254df86f5b8ed32368e3482ae7458473e6d3ea7d2fe946bcf184e5fb0d37",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 13,
+        "name": "brass_orm",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 296030,
+        "sha256": "7b896994863dbaa82f7b8c7376cc336007913fb04e0a28e479ad3438ee41e9d7",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 14,
+        "name": "brass_basecolor",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 258690,
+        "sha256": "c4bb60d0903a320b8d16d9d9cbc3058e7ce3d10ebbb57252bedfa98f49dd5e9d",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 15,
+        "name": "linen_normal",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 1157224,
+        "sha256": "9aa89896a88549cadae8b36afba361562ed318049c7fadadfa090ec27020150f",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 16,
+        "name": "linen_orm",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 507217,
+        "sha256": "e44e6f40a2d8ec871ad99b2f6412008c22c8231a27e9ac1abe3b64d69103826a",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 17,
+        "name": "linen_basecolor",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 653895,
+        "sha256": "d15b3b09f6423bdce29bf9ae88ab5e02c944b56afedc4a4b2d77fbb5f843ece0",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 18,
+        "name": "rock_normal",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 1672164,
+        "sha256": "c62807cd1c1ecba67c1d5f648dd78ceb1428327417c5e9c56d90ca57bff4ad7b",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 19,
+        "name": "rock_orm",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 442444,
+        "sha256": "ca74d8d5799b124a0eb96901b3f3e50e1c1cbfc203eba5b61511e62b39b5b979",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      },
+      {
+        "index": 20,
+        "name": "rock_basecolor",
+        "mime_type": "image/png",
+        "embedded": true,
+        "bytes": 266335,
+        "sha256": "94673f11a3e8a752d3c9b6b431e334567957db6cff05416a0695ec6eadc127eb",
+        "dimensions": [
+          1024,
+          1024
+        ],
+        "uri": null
+      }
+    ],
+    "texture_definitions": [
+      {
+        "sampler": 0,
+        "source": 0
+      },
+      {
+        "sampler": 0,
+        "source": 1
+      },
+      {
+        "sampler": 0,
+        "source": 2
+      },
+      {
+        "sampler": 0,
+        "source": 3
+      },
+      {
+        "sampler": 0,
+        "source": 4
+      },
+      {
+        "sampler": 0,
+        "source": 5
+      },
+      {
+        "sampler": 0,
+        "source": 6
+      },
+      {
+        "sampler": 0,
+        "source": 7
+      },
+      {
+        "sampler": 0,
+        "source": 8
+      },
+      {
+        "sampler": 0,
+        "source": 9
+      },
+      {
+        "sampler": 0,
+        "source": 10
+      },
+      {
+        "sampler": 0,
+        "source": 11
+      },
+      {
+        "sampler": 0,
+        "source": 12
+      },
+      {
+        "sampler": 0,
+        "source": 13
+      },
+      {
+        "sampler": 0,
+        "source": 14
+      },
+      {
+        "sampler": 0,
+        "source": 15
+      },
+      {
+        "sampler": 0,
+        "source": 16
+      },
+      {
+        "sampler": 0,
+        "source": 17
+      },
+      {
+        "sampler": 0,
+        "source": 18
+      },
+      {
+        "sampler": 0,
+        "source": 19
+      },
+      {
+        "sampler": 0,
+        "source": 20
+      }
+    ],
+    "samplers": [
+      {
+        "magFilter": 9729,
+        "minFilter": 9987
+      }
+    ]
+  },
+  "camera": {
+    "name": "Fading_StudyCamera",
+    "definition": {
+      "name": "Camera",
+      "perspective": {
+        "aspectRatio": 1.5,
+        "yfov": 0.42963078519973297,
+        "zfar": 200,
+        "znear": 0.05000000074505806
+      },
+      "type": "perspective"
+    },
+    "projection_aspect": 1.5,
+    "position_gltf": [
+      0.0,
+      2.299999952316284,
+      8.199999809265137
+    ],
+    "forward_gltf": [
+      0.0,
+      -0.19151028990745544,
+      -0.9814906120300293
+    ],
+    "up_gltf": [
+      0.0,
+      0.9814906120300293,
+      -0.19151028990745544
+    ],
+    "landmarks": [
+      {
+        "name": "Fading_StudyLamp",
+        "node": "Fading_StudyLamp",
+        "position_gltf": [
+          1.1699944734573364,
+          1.0577527955174446,
+          0.12000328302383423
+        ],
+        "uv": [
+          0.7188315922317841,
+          0.4079363755171106
+        ],
+        "depth": 8.168343544006348,
+        "in_frame": true,
+        "reimport_uv": [
+          0.7188315987586975,
+          0.4079362750053406
+        ]
+      },
+      {
+        "name": "Fading_StudyChair",
+        "node": "Fading_StudyChair",
+        "position_gltf": [
+          1.7223431468009949,
+          0.7872030735015869,
+          0.7939796596765518
+        ],
+        "uv": [
+          0.8481251426103383,
+          0.520151726708323
+        ],
+        "depth": 7.55865478515625,
+        "in_frame": true,
+        "reimport_uv": [
+          0.848125159740448,
+          0.5201515853404999
+        ]
+      },
+      {
+        "name": "Fading_StudyShore",
+        "node": "Fading_StudyShore",
+        "position_gltf": [
+          2.4064639806747437,
+          0.04892145097255707,
+          -3.2405309677124023
+        ],
+        "uv": [
+          0.815315699086359,
+          0.5036228843912494
+        ],
+        "depth": 11.65987777709961,
+        "in_frame": true,
+        "reimport_uv": [
+          0.8153156638145447,
+          0.5036227703094482
+        ]
+      },
+      {
+        "name": "Fading_StudyCup",
+        "node": "Fading_StudyCup",
+        "position_gltf": [
+          1.4289237260818481,
+          0.7789999544620514,
+          0.9406824707984924
+        ],
+        "uv": [
+          0.7943645775138156,
+          0.5317081918669357
+        ],
+        "depth": 7.416238784790039,
+        "in_frame": true,
+        "reimport_uv": [
+          0.7943645715713501,
+          0.5317080616950989
+        ]
+      },
+      {
+        "name": "Fading_StudyBackdrop",
+        "node": "Fading_StudyBackdrop",
+        "position_gltf": [
+          4.944491505622864,
+          3.6234447956085205,
+          -25.10902500152588
+        ],
+        "uv": [
+          0.7328701490740852,
+          -0.04241268272380494
+        ],
+        "depth": 32.43904113769531,
+        "in_frame": false,
+        "reimport_uv": [
+          0.7328701615333557,
+          -0.04241287708282471
+        ]
+      },
+      {
+        "name": "Fading_StudyCurtain",
+        "node": "Fading_StudyCurtain",
+        "position_gltf": [
+          3.0,
+          1.3715000823140144,
+          -0.8235000371932983
+        ],
+        "uv": [
+          1.0073259723898653,
+          0.29281333489470074
+        ],
+        "depth": 9.034296989440918,
+        "in_frame": false,
+        "reimport_uv": [
+          1.0073258876800537,
+          0.292813241481781
+        ]
+      }
+    ],
+    "reimport_projection_max_error": 1.943590197672762e-07
+  },
+  "reimport": {
+    "blender": "5.2.2 LTS",
+    "objects": 21,
+    "mesh_objects": 11,
+    "triangles": 47056,
+    "bounds_blender_Z_up": {
+      "min": [
+        -2.549999952316284,
+        -2.818939208984375,
+        -5.749589443206787
+      ],
+      "max": [
+        12.438982963562012,
+        43.272705078125,
+        12.996479034423828
+      ],
+      "dimensions": [
+        14.988982915878296,
+        46.091644287109375,
+        18.746068477630615
+      ],
+      "center": [
+        4.944491505622864,
+        20.226882934570312,
+        3.6234447956085205
+      ]
+    },
+    "meshes": [
+      {
+        "name": "StudyBridgeArch",
+        "triangles": 6932,
+        "boundary_edges_after_weld": 0,
+        "nonmanifold_edges_after_weld": 0,
+        "inconsistent_winding_edges": 0,
+        "open_surface": false,
+        "components": [
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.363707520688574,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.45900577679276444,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.41174361451218394,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 145.36358276009565,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 160.97221960127348,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 142.8728168408076,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 112.22947708268956,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.4482572289804614,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.2711107251234354,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.38577596618172977,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 524,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.10624013997619364,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 114.08336668275297,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 85.1777017285737,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 88.56382888058818,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.6529257560614458,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 93.43455617378153,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.44537722901441334,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.30659129945949304,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.5494792624376724,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 56.6840826996292,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.2773868381981784,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.27738877845695237,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.27739692449055575,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 524,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.10622788104228661,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 524,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.10624167206682003,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 263.9456965625287,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 61.25895501549044,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 60.08718360867348,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 311.56239447245997,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 56.887812862172694,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 271.7632839083672,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.6703473901143324,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 307.64148467282456,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.31687009225909946,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.4295471731262901,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.49439730153729466,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.552825164243891,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.3538442272692911,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.2773803047530228,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 172.61767025291928,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 190.41596166292834,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 150.54458661874136,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 191.50578759113944,
+            "inward_closed_body": false
+          }
+        ],
+        "bounds_blender_Z_up": {
+          "min": [
+            -2.549999952316284,
+            6.945344924926758,
+            -5.749589443206787
+          ],
+          "max": [
+            12.438982963562012,
+            43.272705078125,
+            12.996479034423828
+          ],
+          "dimensions": [
+            14.988982915878296,
+            36.32736015319824,
+            18.746068477630615
+          ],
+          "center": [
+            4.944491505622864,
+            25.10902500152588,
+            3.6234447956085205
+          ]
+        }
+      },
+      {
+        "name": "StudyCupBody",
+        "triangles": 768,
+        "boundary_edges_after_weld": 0,
+        "nonmanifold_edges_after_weld": 0,
+        "inconsistent_winding_edges": 0,
+        "open_surface": false,
+        "components": [
+          {
+            "faces": 768,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.00023232841228507223,
+            "inward_closed_body": false
+          }
+        ],
+        "bounds_blender_Z_up": {
+          "min": [
+            1.3622270822525024,
+            -0.9926408529281616,
+            0.7299999594688416
+          ],
+          "max": [
+            1.4661439657211304,
+            -0.8887240886688232,
+            0.8279999494552612
+          ],
+          "dimensions": [
+            0.10391688346862793,
+            0.10391676425933838,
+            0.09799998998641968
+          ],
+          "center": [
+            1.4141855239868164,
+            -0.9406824707984924,
+            0.7789999544620514
+          ]
+        }
+      },
+      {
+        "name": "StudyCupHandle",
+        "triangles": 524,
+        "boundary_edges_after_weld": 0,
+        "nonmanifold_edges_after_weld": 0,
+        "inconsistent_winding_edges": 0,
+        "open_surface": false,
+        "components": [
+          {
+            "faces": 524,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 5.185692638918915e-06,
+            "inward_closed_body": false
+          }
+        ],
+        "bounds_blender_Z_up": {
+          "min": [
+            1.4550901651382446,
+            -0.9482580423355103,
+            0.747000515460968
+          ],
+          "max": [
+            1.4956203699111938,
+            -0.9379056096076965,
+            0.809999406337738
+          ],
+          "dimensions": [
+            0.04053020477294922,
+            0.01035243272781372,
+            0.06299889087677002
+          ],
+          "center": [
+            1.4753552675247192,
+            -0.9430818259716034,
+            0.778499960899353
+          ]
+        }
+      },
+      {
+        "name": "StudyBackPost",
+        "triangles": 3196,
+        "boundary_edges_after_weld": 0,
+        "nonmanifold_edges_after_weld": 0,
+        "inconsistent_winding_edges": 0,
+        "open_surface": false,
+        "components": [
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0026549259246166895,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.002163913135670251,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0020229870009824684,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0020229869608433177,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0021639117593300248,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.002654917279607831,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.001271036697422309,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0026549202578394224,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0003922718278800786,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.001271037007590792,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 2.7936178724985374e-05,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0026549206676615227,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0012710332818339036,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0012710357654934041,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0020229860994192004,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0026549198400675294,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 188,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0003922799357977935,
+            "inward_closed_body": false
+          }
+        ],
+        "bounds_blender_Z_up": {
+          "min": [
+            1.3049298524856567,
+            -1.1129364967346191,
+            0.14455604553222656
+          ],
+          "max": [
+            1.9950700998306274,
+            -0.487063467502594,
+            1.3849999904632568
+          ],
+          "dimensions": [
+            0.6901402473449707,
+            0.6258730292320251,
+            1.2404439449310303
+          ],
+          "center": [
+            1.649999976158142,
+            -0.7999999821186066,
+            0.7647780179977417
+          ]
+        }
+      },
+      {
+        "name": "StudyClothFringe",
+        "triangles": 5400,
+        "boundary_edges_after_weld": 0,
+        "nonmanifold_edges_after_weld": 0,
+        "inconsistent_winding_edges": 0,
+        "open_surface": false,
+        "components": [
+          {
+            "faces": 4896,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.000695029890740304,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8166385492198367e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.81536146707606e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.815268622825271e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8154298686568096e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8166309700973216e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8144337824802886e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8144010975144294e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8167136772717492e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8168300878566433e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8164794823860633e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8167034454563606e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8154381109525254e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.816187194710506e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8145273846433598e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8165703371172027e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8179421612529765e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8158210934870958e-07,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8193049792595492e-07,
+            "inward_closed_body": false
+          }
+        ],
+        "bounds_blender_Z_up": {
+          "min": [
+            1.8126890659332275,
+            -0.7321531772613525,
+            0.214697927236557
+          ],
+          "max": [
+            2.139756441116333,
+            -0.4750228226184845,
+            1.4298501014709473
+          ],
+          "dimensions": [
+            0.32706737518310547,
+            0.25713035464286804,
+            1.2151521742343903
+          ],
+          "center": [
+            1.9762227535247803,
+            -0.6035879999399185,
+            0.8222740143537521
+          ]
+        }
+      },
+      {
+        "name": "StudyBedRail",
+        "triangles": 188,
+        "boundary_edges_after_weld": 0,
+        "nonmanifold_edges_after_weld": 0,
+        "inconsistent_winding_edges": 0,
+        "open_surface": false,
+        "components": [
+          {
+            "faces": 60,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0008313189579591083,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.000130588405833502,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.000130588567117229,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 44,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0014280095590596892,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.00013058814511168748,
+            "inward_closed_body": false
+          }
+        ],
+        "bounds_blender_Z_up": {
+          "min": [
+            2.437999963760376,
+            0.7380000352859497,
+            0.14000000059604645
+          ],
+          "max": [
+            3.562000036239624,
+            0.8630000352859497,
+            2.6030001640319824
+          ],
+          "dimensions": [
+            1.124000072479248,
+            0.125,
+            2.463000163435936
+          ],
+          "center": [
+            3.0,
+            0.8005000352859497,
+            1.3715000823140144
+          ]
+        }
+      },
+      {
+        "name": "StudyPartialCurtain",
+        "triangles": 6464,
+        "boundary_edges_after_weld": 0,
+        "nonmanifold_edges_after_weld": 0,
+        "inconsistent_winding_edges": 0,
+        "open_surface": false,
+        "components": [
+          {
+            "faces": 6464,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0025698449169570896,
+            "inward_closed_body": false
+          }
+        ],
+        "bounds_blender_Z_up": {
+          "min": [
+            2.549201726913452,
+            0.8320000171661377,
+            0.3999999761581421
+          ],
+          "max": [
+            3.450000047683716,
+            0.909000039100647,
+            2.5300002098083496
+          ],
+          "dimensions": [
+            0.9007983207702637,
+            0.07700002193450928,
+            2.1300002336502075
+          ],
+          "center": [
+            2.999600887298584,
+            0.8705000281333923,
+            1.4650000929832458
+          ]
+        }
+      },
+      {
+        "name": "StudyLampFilament",
+        "triangles": 440,
+        "boundary_edges_after_weld": 0,
+        "nonmanifold_edges_after_weld": 0,
+        "inconsistent_winding_edges": 0,
+        "open_surface": false,
+        "components": [
+          {
+            "faces": 440,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 7.971678193520474e-05,
+            "inward_closed_body": false
+          }
+        ],
+        "bounds_blender_Z_up": {
+          "min": [
+            1.1429998874664307,
+            -0.1469999998807907,
+            1.6380000114440918
+          ],
+          "max": [
+            1.1969999074935913,
+            -0.09299997985363007,
+            1.691999912261963
+          ],
+          "dimensions": [
+            0.054000020027160645,
+            0.054000020027160645,
+            0.053999900817871094
+          ],
+          "center": [
+            1.169999897480011,
+            -0.11999998986721039,
+            1.6649999618530273
+          ]
+        }
+      },
+      {
+        "name": "StudyLampFoot",
+        "triangles": 3352,
+        "boundary_edges_after_weld": 640,
+        "nonmanifold_edges_after_weld": 640,
+        "inconsistent_winding_edges": 0,
+        "open_surface": true,
+        "components": [
+          {
+            "faces": 640,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0034318576897334214,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 384,
+            "closed": false,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 3.622087856551087e-05,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 384,
+            "closed": false,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 3.5527432089566017e-06,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 384,
+            "closed": false,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 3.976709031879487e-05,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 384,
+            "closed": false,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.5645143610261873e-05,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 28,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 2.0511730555217445e-06,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 764,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0006043274706514775,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 384,
+            "closed": false,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 6.034092262533857e-05,
+            "inward_closed_body": false
+          }
+        ],
+        "bounds_blender_Z_up": {
+          "min": [
+            1.0099999904632568,
+            -0.2800000011920929,
+            0.14499999582767487
+          ],
+          "max": [
+            1.3299999237060547,
+            0.03999999910593033,
+            1.6150000095367432
+          ],
+          "dimensions": [
+            0.31999993324279785,
+            0.3200000002980232,
+            1.4700000137090683
+          ],
+          "center": [
+            1.1699999570846558,
+            -0.12000000104308128,
+            0.880000002682209
+          ]
+        }
+      },
+      {
+        "name": "StudyLampShade",
+        "triangles": 4576,
+        "boundary_edges_after_weld": 0,
+        "nonmanifold_edges_after_weld": 0,
+        "inconsistent_winding_edges": 0,
+        "open_surface": false,
+        "components": [
+          {
+            "faces": 1536,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 3.522498675782778e-05,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 1536,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.8518771251345535e-05,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 1152,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0025114811273473014,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 44,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.182585488431051e-06,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 44,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.1827055572432235e-06,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 44,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.182583481875423e-06,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 44,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.1825876595228333e-06,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 44,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.1825889875030506e-06,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 44,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.1826192891134451e-06,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 44,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.1825836629283669e-06,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 44,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 1.1826193031050276e-06,
+            "inward_closed_body": false
+          }
+        ],
+        "bounds_blender_Z_up": {
+          "min": [
+            0.914098858833313,
+            -0.3759500980377197,
+            1.5548272132873535
+          ],
+          "max": [
+            1.4258900880813599,
+            0.13594353199005127,
+            1.9705055952072144
+          ],
+          "dimensions": [
+            0.5117912292480469,
+            0.511893630027771,
+            0.41567838191986084
+          ],
+          "center": [
+            1.1699944734573364,
+            -0.12000328302383423,
+            1.762666404247284
+          ]
+        }
+      },
+      {
+        "name": "StudyWetRock",
+        "triangles": 15216,
+        "boundary_edges_after_weld": 272,
+        "nonmanifold_edges_after_weld": 272,
+        "inconsistent_winding_edges": 0,
+        "open_surface": true,
+        "components": [
+          {
+            "faces": 9216,
+            "closed": false,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 5.880708200934872,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.008144929679281706,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.03674211129449152,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.10007596549898302,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.007145429472757314,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0036308182000842275,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.05569524042463551,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0044848046163679135,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.04063979559578002,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.002007860312005506,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.016804594137890188,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.027395535847366162,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0034424327701951052,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.053117940124745196,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.05469741207101227,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.007595151173518393,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.026395530371549594,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.011804066424398723,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.031431542010977864,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.013210315470738941,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.004730523680336776,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.07756521232780261,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.006494750159617978,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.019504234587657262,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.02313066725097694,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.04925522779861541,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.024830004915808487,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.07477317303225091,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.011802069461509747,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.04044923993448414,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.06102826745094108,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0025456810059646747,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.03508758611678786,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.03183670251382865,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.12064649723470205,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.002627843990921975,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0483387760371746,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.006744226260276304,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.019754044684428127,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.038883649491860225,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.010405593414664812,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.006716368713872115,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.01723636428747946,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.10731154535703051,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.03142747409341004,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.014611675142077727,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.03147869429085404,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.050043250334056225,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.040424189530313,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.04222481076916057,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.012178287176235852,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.009421284128999712,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.012302698737281998,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0035538376208326867,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.09445437470018685,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.004234715101726271,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.048713791184127386,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.010780992528452773,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.07550320773164762,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.016736786386900345,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0038337160340233827,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.021737643165882514,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.010145034431843671,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0028408644769797324,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0448597308519917,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.003420995451354733,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.010565469928072467,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.016404007173453774,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.10855026973877102,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.04778394806392802,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.01907141099362282,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.03186422865837814,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0020006059300309684,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.06081669897927591,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.06183652436205493,
+            "inward_closed_body": false
+          },
+          {
+            "faces": 80,
+            "closed": true,
+            "inconsistent_winding_edges": 0,
+            "signed_volume_m3": 0.0973495636232353,
+            "inward_closed_body": false
+          }
+        ],
+        "bounds_blender_Z_up": {
+          "min": [
+            -1.9870736598968506,
+            -2.818939208984375,
+            -0.14585022628307343
+          ],
+          "max": [
+            6.800001621246338,
+            9.30000114440918,
+            0.24369312822818756
+          ],
+          "dimensions": [
+            8.787075281143188,
+            12.118940353393555,
+            0.389543354511261
+          ],
+          "center": [
+            2.4064639806747437,
+            3.2405309677124023,
+            0.04892145097255707
+          ]
+        }
+      }
+    ],
+    "role_transforms_blender_Z_up": {
+      "Fading_StudyLamp": {
+        "type": "EMPTY",
+        "parent": null,
+        "world_position": [
+          1.1699999570846558,
+          -0.11999999731779099,
+          0.14499999582767487
+        ],
+        "world_matrix_rows": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            1.1699999570846558
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            -0.11999999731779099
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.14499999582767487
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "Fading_StudyChair": {
+        "type": "EMPTY",
+        "parent": null,
+        "world_position": [
+          1.649999976158142,
+          -0.800000011920929,
+          0.14499999582767487
+        ],
+        "world_matrix_rows": [
+          [
+            0.9992001056671143,
+            0.03998933359980583,
+            0.0,
+            1.649999976158142
+          ],
+          [
+            -0.03998933359980583,
+            0.9992001056671143,
+            0.0,
+            -0.800000011920929
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.14499999582767487
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "Fading_StudyShore": {
+        "type": "EMPTY",
+        "parent": null,
+        "world_position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "world_matrix_rows": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "Fading_StudyCup": {
+        "type": "EMPTY",
+        "parent": "Fading_StudyChair",
+        "world_position": [
+          1.4141855239868164,
+          -0.9406824707984924,
+          0.7299999594688416
+        ],
+        "world_matrix_rows": [
+          [
+            0.9992001056671143,
+            0.03998933359980583,
+            0.0,
+            1.4141855239868164
+          ],
+          [
+            -0.03998933359980583,
+            0.9992001056671143,
+            0.0,
+            -0.9406824707984924
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.7299999594688416
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "Fading_StudyCamera": {
+        "type": "CAMERA",
+        "parent": null,
+        "world_position": [
+          0.0,
+          -8.199999809265137,
+          2.299999952316284
+        ],
+        "world_matrix_rows": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.19151034951210022,
+            -0.9814906120300293,
+            -8.199999809265137
+          ],
+          [
+            0.0,
+            0.9814906120300293,
+            0.19151034951210022,
+            2.299999952316284
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "Fading_StudyLampLight": {
+        "type": "EMPTY",
+        "parent": "Fading_StudyLamp",
+        "world_position": [
+          1.1699999570846558,
+          -0.13499999046325684,
+          1.6349999904632568
+        ],
+        "world_matrix_rows": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            1.1699999570846558
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            -0.13499999046325684
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            1.6349999904632568
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      }
+    }
+  },
+  "chair_ground_pivot": {
+    "position_blender_Z_up": [
+      1.649999976158142,
+      -0.800000011920929,
+      0.14499999582767487
+    ],
+    "chair_bounds_blender_Z_up": {
+      "min": [
+        1.3049298524856567,
+        -1.1129364967346191,
+        0.14455604553222656
+      ],
+      "max": [
+        2.139756441116333,
+        -0.4750228226184845,
+        1.4298501014709473
+      ],
+      "dimensions": [
+        0.8348265886306763,
+        0.6379136741161346,
+        1.2852940559387207
+      ],
+      "center": [
+        1.7223431468009949,
+        -0.7939796596765518,
+        0.7872030735015869
+      ]
+    },
+    "pivot_height_above_chair_min_m": 0.0004439502954483032
+  }
+}
