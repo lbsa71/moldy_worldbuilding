@@ -9,7 +9,9 @@ import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
 import { BindFogParameters } from '@babylonjs/core/Materials/materialHelper.functions';
 import type { Effect } from '@babylonjs/core/Materials/effect';
 import { SpotLight } from '@babylonjs/core/Lights/spotLight';
-import { configureStudyFog, createStudyBulbSource, getStudyLampPosition, getStudyShadowCasters } from './SceneStudySurfaces';
+import { MirrorTexture } from '@babylonjs/core/Materials/Textures/mirrorTexture';
+import { SceneStudyObjects } from './SceneStudyObjects';
+import { configureStudyFog, configureStudySkyMeshes, createStudyBulbSource, getStudyLampPosition, getStudyShadowCasters } from './SceneStudySurfaces';
 
 it('anchors warm lighting to the authored socket world transform before manifest or bounds hints', () => {
   const engine = new NullEngine();
@@ -35,6 +37,68 @@ it('anchors warm lighting to the authored socket world transform before manifest
     expect(position.equals(socket.position)).toBe(false);
     position.x = 99;
     expect(socket.getAbsolutePosition().equalsWithEpsilon(expectedWorld, 0.00001)).toBe(true);
+  } finally { scene.dispose(); engine.dispose(); }
+});
+
+it('binds an authored low or zero browser fog coefficient without replacing it with a density floor', () => {
+  const engine = new NullEngine();
+  const scene = new Scene(engine);
+  try {
+    for (const density of [0.012, 0]) {
+      configureStudyFog(scene, { environment: { fog_density: density, fog_density_suggestion: 0.1 } });
+      let boundDensity: number | undefined;
+      const effect = { setFloat4: (_name: string, _mode: number, _start: number, _end: number, coefficient: number) => { boundDensity = coefficient; }, setColor3: () => {} } as unknown as Effect;
+      BindFogParameters(scene, undefined, effect, true);
+      expect(boundDensity).toBe(density);
+    }
+    configureStudyFog(scene, {});
+    expect(scene.fogDensity).toBe(0.018);
+  } finally { scene.dispose(); engine.dispose(); }
+});
+
+it('reflects the authored sky and new foreground objects once while excluding sky from both shadow lists through cup changes', () => {
+  const engine = new NullEngine();
+  const scene = new Scene(engine);
+  try {
+    const skyRoot = new TransformNode('Fading_StudySky', scene);
+    const sky = CreateBox('authored sky surface', { size: 10 }, scene);
+    sky.parent = skyRoot;
+    sky.receiveShadows = true;
+    const lampRoot = new TransformNode('Fading_StudyLamp', scene);
+    const chair = new TransformNode('Fading_StudyChair', scene);
+    const cup = new TransformNode('Fading_StudyCup', scene);
+    const porcelain = CreateBox('cup porcelain', { size: 0.1 }, scene);
+    porcelain.parent = cup;
+    const books = CreateBox('Fading_StudyBooks', { size: 0.3 }, scene);
+    const paving = CreateBox('Fading_StudyPaving', { size: 1 }, scene);
+    const meshes = [sky, porcelain, books, paving];
+    configureStudySkyMeshes(meshes);
+    const mirror = new MirrorTexture('live mirror fixture', 64, scene);
+    const spot = new SpotLight('downlight', new Vector3(1, 2, 0), Vector3.Down(), 2.65, 1.1, scene);
+    const bulb = createStudyBulbSource(scene, spot);
+    let spotCasters: string[] = [];
+    const objects = new SceneStudyObjects(chair, cup, meshes, visible => {
+      mirror.renderList = [...visible];
+      const casters = getStudyShadowCasters(visible, lampRoot);
+      spotCasters = casters.map(mesh => mesh.name);
+      bulb.shadows.getShadowMap()!.renderList = [...casters];
+    });
+    objects.setCupVisible(false);
+    objects.setChairTurned(true);
+    objects.setCupVisible(true);
+    expect(mirror.renderList?.filter(mesh => mesh === sky)).toHaveLength(1);
+    expect(mirror.renderList).toContain(books);
+    expect(mirror.renderList).toContain(paving);
+    expect(mirror.renderList).toContain(porcelain);
+    expect(spotCasters).toEqual(['cup porcelain', 'Fading_StudyBooks', 'Fading_StudyPaving']);
+    expect(bulb.shadows.getShadowMap()!.renderList).not.toContain(sky);
+    expect(sky.applyFog).toBe(false);
+    expect(sky.receiveShadows).toBe(false);
+    expect(sky.isEnabled()).toBe(true);
+    objects.setCupVisible(false);
+    expect(mirror.renderList).not.toContain(porcelain);
+    expect(bulb.shadows.getShadowMap()!.renderList).not.toContain(porcelain);
+    expect(mirror.renderList?.filter(mesh => mesh === sky)).toHaveLength(1);
   } finally { scene.dispose(); engine.dispose(); }
 });
 

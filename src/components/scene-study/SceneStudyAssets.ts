@@ -12,7 +12,7 @@ import type { StudyCameraHint } from './SceneStudyCamera';
 export type StudyManifest = {
   camera?: StudyCameraHint;
   lampLight?: { position?: number[]; intensity?: number; color?: number[]; range?: number };
-  environment?: { url?: string; intensity?: number; fog_color?: number[]; fog_density_suggestion?: number };
+  environment?: { url?: string; intensity?: number; fog_color?: number[]; fog_density?: number; fog_density_suggestion?: number };
   water?: { roughness_suggestion?: number; IOR?: number };
 };
 export type StudyAssets = {
@@ -47,7 +47,12 @@ async function importContainer(scene: Scene, root: string, file: string, signal?
 }
 
 export async function loadStudyAssets(scene: Scene, onStatus: (message: string) => void, signal?: AbortSignal): Promise<StudyAssets> {
-  await (registerLoader ??= import('@babylonjs/loaders/glTF/2.0/glTFLoader'));
+  await (registerLoader ??= (async () => {
+    await import('@babylonjs/loaders/glTF/2.0/glTFLoader');
+    // Authored sky meshes can use the standard glTF unlit extension; the minimal
+    // loader entrypoint does not register optional extensions by itself.
+    await import('@babylonjs/loaders/glTF/2.0/Extensions/KHR_materials_unlit');
+  })());
   ensureActive(scene, signal);
   let manifest: StudyManifest = {};
   const warnings: string[] = [];

@@ -14,6 +14,7 @@ import { CubeMapToSphericalPolynomialTools } from '@babylonjs/core/Misc/HighDyna
 import '@babylonjs/core/Materials/Textures/baseTexture.polynomial';
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import type { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
+import type { Node } from '@babylonjs/core/node';
 import { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
 import { SpotLight } from '@babylonjs/core/Lights/spotLight';
@@ -23,9 +24,26 @@ import '@babylonjs/core/Lights/Shadows/shadowGeneratorSceneComponent';
 import { Scene } from '@babylonjs/core/scene';
 import type { StudyAssets, StudyManifest } from './SceneStudyAssets';
 
+export function isStudySkyMesh(mesh: AbstractMesh): boolean {
+  for (let node: Node | null = mesh; node; node = node.parent) {
+    if (node.name === 'Fading_StudySky') return true;
+  }
+  return false;
+}
+
+/** The authored sky remains visible to the main view and mirror, with no local haze or shadows. */
+export function configureStudySkyMeshes(meshes: readonly AbstractMesh[]): void {
+  meshes.filter(isStudySkyMesh).forEach(mesh => {
+    mesh.applyFog = false;
+    mesh.receiveShadows = false;
+    mesh.isPickable = false;
+  });
+}
+
 /** Emissive shade geometry represents light leaving the fixture, not an opaque blocker. */
 export function getStudyShadowCasters(meshes: AbstractMesh[], lamp: StudyAssets['lamp']): AbstractMesh[] {
   return meshes.filter(mesh => {
+    if (isStudySkyMesh(mesh)) return false;
     if (!mesh.isDescendantOf(lamp)) return true;
     const emission = mesh.material instanceof PBRMaterial ? mesh.material.emissiveColor : undefined;
     const luminousMaterial = emission && (emission.r > 0 || emission.g > 0 || emission.b > 0);
@@ -56,9 +74,11 @@ export function configureStudyFog(scene: Scene, manifest: StudyManifest): void {
   const linearColor = displayColor.toLinearSpace(scene.getEngine().useExactSrgbConversions);
   scene.clearColor = new Color4(linearColor.r, linearColor.g, linearColor.b, 1);
   scene.fogMode = Scene.FOGMODE_EXP2;
-  // A Cycles volume density is not an exp2 coefficient. This bounded calibration
-  // keeps foreground surfaces readable while distant water converges to the sky.
-  scene.fogDensity = Math.max(0.035, Math.min(0.055, (manifest.environment?.fog_density_suggestion ?? 0.017) * 2.4));
+  // Browser fog is an authored coefficient, independent of Cycles volume units.
+  // PBR additionally linearizes transmittance; a forced 0.035 floor erased distant
+  // city silhouettes. Preserve explicit low/zero density and use a modest fallback.
+  const density = manifest.environment?.fog_density;
+  scene.fogDensity = typeof density === 'number' && Number.isFinite(density) && density >= 0 ? density : 0.018;
 }
 
 export function createStudyBulbSource(scene: Scene, downwardLight: SpotLight) {
@@ -238,6 +258,7 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
   water.material = waterMaterial;
   water.receiveShadows = true;
   assets.meshes.forEach(mesh => { mesh.receiveShadows = true; mesh.isPickable = false; });
+  configureStudySkyMeshes(assets.meshes);
 
   const applyRenderLists = (meshes: AbstractMesh[]) => {
     mirror.renderList = [...meshes];
