@@ -1,0 +1,108 @@
+# Fading living scene production plan
+
+Accepted direction, 5 October 2026. Reconstruct the praised opening image as a fixed, high-fidelity scene whose objects and spatial relationships respond to choices. The successful text and sound remain the emotional foundation. The first deliverable is a browser proof; the current chapter remains available while that proof is developed.
+
+## Why the direction changed
+
+Playtesting found the sound and writing emotionally effective and meditative, with the caring situation sufficiently clear. Traversal through the crude landscape broke immersion. The previous correction restored literal travel without establishing its expressive purpose. New prose, travel, atmosphere changes and arrival framing ran on competing clocks. Better assets alone would not resolve that conflict.
+
+The new direction preserves emotional geography through proximity, enclosure, openness, visibility and remembered traces within one composition. It replaces routine locomotion with deliberate changes around a stable viewpoint. Photorealistic materials serve a surreal setting: a tender bedside fragment exposed on an impossible shore.
+
+## Reference and visual rules
+
+The visual reference is [the original opening image](../public/assets/fading-title.png). The existing [provenance record](asset-provenance.md) documents its origin. It is concept artwork, not evidence of current runtime fidelity.
+
+- Preserve the right-side lamp, worn chair, draped cloth and partial bedside arrangement. Broad cool water and mist occupy the left side, leaving quiet space for text.
+- Keep one warm center: the shade, nearby worn surfaces and the lamp's water reflection. Surrounding water, cliffs and mist remain blue-grey; avoid whole-scene mood recoloring.
+- Use a coherent material family: weathered brass, woven ivory cloth, worn dark wood, porcelain with blue decoration, wet dark stone and still water. Resolve the existing blue-glaze wording when integrating the scene.
+- Preserve an absent person's place. Do not add a humanoid or a floating wire hand merely to demonstrate technical detail.
+- Lock the camera during dialogue. Approve desktop and portrait framing separately. No automatic orbit, arrival zoom, travel marker or drifting camera.
+- Keep object scale and identity consistent. Introductions and transformations change the same arrangement instead of spawning another set of furniture.
+- Water, shadows and reflections must agree with object presence except for an explicitly authored, reviewed memory effect. Rendering mistakes must not stand in for ambiguity.
+- Every settled state must be a convincing still image and remain comfortable indefinitely.
+
+## Rendering approach
+
+Use Blender for editable modeling, material authoring, reference lighting, camera matching and offline renders. Use Babylon for the interactive foreground, its contact shadows, water reflections and narrative changes. A layered rendered background with coarse depth proxies can supply sky, distant cliffs, bridge and atmospheric depth. Background treatment must remain compatible with the fixed viewpoint and approved responsive framing.
+
+The permanent background must exclude changeable objects and their shadows, reflections, occlusion and bounced light. The existing title image cannot be used unchanged behind removable copies of its objects. Bake stable lighting only where the underlying arrangement is stable. Use dynamic effects or complete authored state renders for interactions that independent baked layers cannot represent.
+
+Export supported physically based surface maps and documented materials. Blender shader graphs, area lights, volumetric effects and display transforms do not automatically become equivalent Babylon effects. Match exposure, environment lighting, roughness, normals, shadow softness and highlight handling in the browser. A display-rendered background must not receive a second incompatible tone transform.
+
+Existing bedside GLBs are starting studies, not final quality assets. They contain useful silhouettes and sockets but lack the texture and lighting treatment required by the reference. Texture and mesh budgets will follow projected size and measured browser cost, not the previous study's arbitrary limits. Prefer licensed scanned surface detail or authored material maps when they improve the actual shot; record provenance for every acquired asset.
+
+## Milestones and acceptance gates
+
+### 1 Camera and composition
+
+Match the reference's 3:2 camera composition in Blender and Babylon. Use lamp, chair, shoreline, curtain and bridge landmarks to compare overlays. Establish portrait framing without simply center-cropping the furniture out of view.
+
+Deliver: explicit camera and scene coordinate contract, composition guide, and matched screenshots. Acceptance concerns silhouette, relative scale, depth and negative space before surface detail.
+
+### 2 Browser proof of fidelity
+
+Build a small foreground with lamp, chair, draped cloth, cup, wet shore and water. Add suitable environment lighting, lamp illumination, contact shadows and responsive reflection. Include controlled chair rotation, cup removal/restoration and reset. The proof is independently accessible at `/scene-study/`; it does not replace the current game yet.
+
+Deliver: editable Blender source, portable models and maps, offline reference render, browser scene, asset manifest and comparison captures. The offline render, browser capture and original artwork must be compared at matching composition. Successful export or tests alone do not establish photorealism.
+
+Acceptance: a convincing image at the target view; objects remain grounded; cup removal also removes its shadow/reflection; chair rotation updates both; reset and rapid repeated changes settle correctly. No full-scene camera movement is required. Any fidelity gaps are recorded candidly before expanding production.
+
+### 3 Coherent environment
+
+Create the clean distant environment, depth/occlusion layers, shoreline continuity and final atmosphere. Match the foreground and background color pipeline. Test edge blending, exposed surfaces, water continuity, light changes and all removable-object combinations needed by authored states.
+
+### 4 Authored emotional states
+
+Create a contact sheet from the same camera for opening, intimacy, uncertainty, boundary, quiet, recollection and keep/carry/rest. Each state preserves the reference's composition and material language. Review images together before animating transitions.
+
+Define a cue sheet per passage: narrative intention, affected object, transformation, settled state, any synchronized audio event, reduced-motion state, and what persists into later passages. Specific effects remain proposals until reviewed against the writing.
+
+### 5 Story integration
+
+One scene director applies complete states and owns transitions. One response causes one dominant visual event; the scene settles for reading. Transitions are interruptible and cannot block choices. Never infer reading progress from elapsed time. Synchronize the two rail taps to the actual sound onsets. Save and restore the settled state deterministically, including with reduced motion or a muted soundtrack.
+
+Retain the eleven decisions and three legitimate endings. Revise walking-specific prose only where necessary to describe the new staging. Silence and reassurance receive different but equally considered responses; avoid a trust-to-brightness reward meter. Ultimately the title and chapter share the reconstructed view, once it meets the opening artwork's quality.
+
+### 6 Verification and playtest
+
+Inspect real WebGPU and WebGL browsers, desktop and portrait layouts, failed/late asset loads, rapid choices, restart, restored progress and reduced motion. Measure texture memory, loading, frame time and reflection/shadow pass costs on available hardware; distinguish desktop viewport checks from physical phone testing.
+
+Compare a short unchanged text/audio sequence with the current scene, the new scene and a text/audio-only control. Ask whether visuals sustain attention, acknowledge care and communicate emotional space. Do not substitute beauty ratings or passing technical tests for emotional success.
+
+## Initial expression vocabulary
+
+| Narrative intention | Candidate scene response | Constraint |
+| --- | --- | --- |
+| Attend to a memory | Reveal an existing surface detail through light or local obscurity. | Keep the camera still; avoid advertising a model. |
+| Permit closeness | Turn the chair toward the partial bedside arrangement. | Shadows and reflection follow; no forced touch. |
+| Ask for space | Alter the curtain gap or leave an open interval beside the chair. | Preserve a reassuring place; do not punish the boundary. |
+| Tap twice | Two localized metal or reflected-light impulses. | Share the authored sound timing; no repeating pulse. |
+| Accept uncertainty | Allow a part of the setting to remain unresolved. | Do not imply damage, failure or horror. |
+| Choose quiet | Reveal more still water or reduce competing detail. | Companionship remains; no countdown or deterioration. |
+| Keep, carry, rest | Three complete arrangements of presence, trace and space. | No visual ranking by brightness, completeness or spectacle. |
+
+## Work ownership and model selection
+
+The primary agent owns this plan, integration, asset transfer, browser review and the acceptance decision. Existing local changes from the spatial pass must be preserved.
+
+| Work package | Owner and model | Files and boundaries |
+| --- | --- | --- |
+| Babylon proof renderer | Dedicated subagent, GPT-6.1 Sol at high reasoning | New `src/components/scene-study/` rendering modules; no changes to active story or GameScene. |
+| Composition and visual review | Dedicated subagent, GPT-6 Astra at high reasoning | New art-direction specification and read-only review; does not concurrently rewrite renderer code. |
+| Expression and state contract | Dedicated subagent, GPT-6.1 Sol at medium reasoning | New cue/state specification and small pure state module with meaningful tests; no edits to current Ink chapter. |
+| Blender assets and renders | Existing **Manage Blender work in repo** chat, GPT-6.1 Sol at high reasoning | Separate production branch; new source, textures, GLBs, camera manifest and reference renders only. |
+| Review page and integration | Primary agent | New Astro study route and controls, imported delivery verification, documentation and final browser checks. |
+
+The model mix reserves the more costly review capacity for visual reasoning while using Sol for bounded implementation. This follows [OpenAI model-selection guidance](https://developers.openai.com/api/docs/guides/model-selection); performance is judged by the delivered work, not the model label. Escalate only if a concrete unresolved task benefits.
+
+## Progress
+
+- [x] Plan persisted before implementation, 5 October 2026.
+- [ ] Camera and asset interface agreed across Blender and Babylon.
+- [ ] Browser proof and review controls implemented.
+- [ ] First detailed Blender delivery imported and validated.
+- [ ] Browser images compared with the reference; remaining fidelity gaps recorded.
+- [ ] Emotional state contact sheet reviewed.
+- [ ] Story integration and comparative playtest complete.
+
+No milestone should be marked complete on the strength of planned work, placeholder assets or an offline render alone. Subsequent implementation evidence belongs here and in [implementation status](implementation-status.md).
