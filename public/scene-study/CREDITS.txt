@@ -1,0 +1,17 @@
+Fading scene study environment
+
+overcast.hdr
+Asset: Overcast Soil (Pure Sky), 1K HDR
+Authors: Jarod Guest (sky edits), Sergej Majboroda (original)
+Source: https://polyhaven.com/a/overcast_soil_puresky
+Download: https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/overcast_soil_puresky_1k.hdr
+License: CC0 1.0 Universal
+License information: https://polyhaven.com/license
+Legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+Retrieved: 2026-10-05
+Bytes: 1195816
+SHA-256: 2dbbbbb1323a8e8989db2e8306bd13099b215539e5adba41b85738a250a7904e
+Modifications: Original HDR bytes unchanged; filename shortened. Runtime converts
+the image to an environment cubemap and adjusts lighting intensity.
+Use: Foreground material illumination and specular environment, not a visible
+replacement for the opening artwork or an offline fidelity reference.

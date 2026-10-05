@@ -7,25 +7,23 @@ import { VertexData } from "@babylonjs/core/Meshes/mesh.vertexData";
 import { CreateGround } from "@babylonjs/core/Meshes/Builders/groundBuilder";
 import { RawTexture } from "@babylonjs/core/Materials/Textures/rawTexture";
 import { material, palette } from "./VisualStyle";
+import { EmotionalLandscape, emotionalGroundHeight } from "./EmotionalLandscape";
 
 export class TerrainSystem {
   public terrain: Mesh;
   private surface: StandardMaterial;
   private stoneTexture: RawTexture;
+  private landscape: EmotionalLandscape;
   private readonly size = 220;
-  private readonly subdivisions = 88;
+  private readonly subdivisions = 220;
   private heights: Float32Array;
-  constructor(private scene: Scene) {
+  constructor(scene: Scene) {
     this.terrain = CreateGround("slateBasin", { width: this.size, height: this.size, subdivisions: this.subdivisions, updatable: false }, scene);
     const positions = this.terrain.getVerticesData(VertexBuffer.PositionKind)!;
     this.heights = new Float32Array(positions.length / 3);
     for (let i = 0; i < positions.length; i += 3) {
       const x = positions[i], z = positions[i + 2];
-      const distance = Math.hypot(x, z);
-      // The room's center is quiet; the landscape gathers into distant folds.
-      const ripple = Math.sin(x * 0.055) * Math.cos(z * 0.06) * 0.55;
-      const rim = Math.pow(Math.max(0, distance - 32) / 60, 2) * 2.2;
-      positions[i + 1] = ripple + rim;
+      positions[i + 1] = emotionalGroundHeight(x, z);
       this.heights[i / 3] = positions[i + 1];
     }
     this.terrain.setVerticesData(VertexBuffer.PositionKind, positions);
@@ -52,6 +50,7 @@ export class TerrainSystem {
     this.surface.diffuseTexture = this.stoneTexture;
     this.terrain.material = this.surface; this.terrain.isPickable = true;
     this.terrain.refreshBoundingInfo(); this.terrain.computeWorldMatrix(true);
+    this.landscape = new EmotionalLandscape(scene, (x, z) => this.getHeightAtPoint(x, z), this.stoneTexture);
   }
   async waitForReady(): Promise<void> { /* Procedural geometry is immediately available. */ }
   getHeightAtPoint(x: number, z: number): number {
@@ -71,5 +70,5 @@ export class TerrainSystem {
     const e = 0.1;
     return new Vector3(this.getHeightAtPoint(x-e,z)-this.getHeightAtPoint(x+e,z), 2*e, this.getHeightAtPoint(x,z-e)-this.getHeightAtPoint(x,z+e)).normalize();
   }
-  dispose(): void { this.terrain.dispose(); this.surface.dispose(); this.stoneTexture.dispose(); }
+  dispose(): void { this.landscape.dispose(); this.terrain.dispose(); this.surface.dispose(); this.stoneTexture.dispose(); }
 }

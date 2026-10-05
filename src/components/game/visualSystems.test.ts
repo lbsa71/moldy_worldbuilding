@@ -47,7 +47,8 @@ describe("directed visual systems", () => {
     const chairPosition = chair.position.clone();
     environment.createObjectsFromTag(["lamp", "chair"], terrain.terrain, { x: 25, z: 1 });
     expect(scene.getTransformNodeByName("chairMemory")).toBe(chair);
-    expect(chair.position.asArray()).toEqual(chairPosition.asArray());
+    expect(chair.position.x - chairPosition.x).toBeCloseTo(13);
+    expect(chair.position.z - chairPosition.z).toBeCloseTo(-7);
     environment.createObjectsFromTag([], terrain.terrain, { x: -20, z: 0 });
     expect(scene.getTransformNodeByName("persistentLamp")).toBe(lamp);
     expect(scene.getMeshByName("chairSeat")).toBeNull();
@@ -56,6 +57,31 @@ describe("directed visual systems", () => {
     expect(scene.lights).toHaveLength(0);
     expect(scene.effectLayers).toHaveLength(0);
     terrain.dispose();
+  });
+
+  it("places memories along the voyage and leaves a subdued trace without moving earlier places", () => {
+    const scene = world(), terrain = new TerrainSystem(scene), environment = new EnvironmentSystem(scene);
+    environment.setReducedMotion(true); environment.populate(terrain.terrain, []);
+    const lamp = scene.getTransformNodeByName("persistentLamp")!;
+    environment.setNarrativeScene("chair");
+    environment.createObjectsFromTag(["lamp", "chair"], terrain.terrain, { x: 4, z: -2 });
+    const first = scene.getTransformNodeByName("chairMemory")!;
+    const footprint = first.position.clone();
+    expect(first.position.x).toBeGreaterThan(4);
+    const chairSeat = scene.getMeshByName("chairSeat")!;
+    environment.setNarrativeScene("cup");
+    environment.createObjectsFromTag(["lamp", "chair", "cup"], terrain.terrain, { x: 9, z: 3 });
+    expect(first.position.asArray()).toEqual(footprint.asArray());
+    expect(chairSeat.visibility).toBeCloseTo(0.2);
+    expect(scene.getTransformNodeByName("cupMemory")!.position.x).toBeGreaterThan(9);
+    expect(scene.transformNodes.filter(node => node.name === "chairMemory")).toHaveLength(2);
+    expect(lamp.position.x).toBe(0);
+    expect(lamp.position.z).toBe(0);
+    environment.resetJourney();
+    expect(scene.getTransformNodeByName("chairMemory")).toBeNull();
+    expect(scene.getTransformNodeByName("cupMemory")).toBeNull();
+    expect(scene.getTransformNodeByName("persistentLamp")).toBe(lamp);
+    environment.dispose(); terrain.dispose();
   });
 
   it("parents the warm light to the bulb at nonzero world coordinates", () => {
@@ -77,7 +103,7 @@ describe("directed visual systems", () => {
     ea.populate(ta.terrain, []); eb.populate(tb.terrain, []);
     expect(ta.terrain.getBoundingInfo().boundingBox.maximum.x).toBeGreaterThan(95);
     expect(ta.getHeightAtPoint(95, 20)).toBeGreaterThan(0);
-    expect(a.getMeshByName("floorFragment3")!.position.asArray()).toEqual(b.getMeshByName("floorFragment3")!.position.asArray());
+    expect(a.getMeshByName("landscape_refuge_0")!.position.asArray()).toEqual(b.getMeshByName("landscape_refuge_0")!.position.asArray());
     expect(ta.getHeightAtPoint(22, -31)).toEqual(tb.getHeightAtPoint(22, -31));
     ea.dispose(); eb.dispose(); ta.dispose(); tb.dispose();
   });

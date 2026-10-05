@@ -1,6 +1,8 @@
 # Fading
 
-A quiet, choice-driven 3D story about memory, care, and a place beside a lamp. The current chapter has eleven decisions and three resolutions. It runs locally as a static Astro site with Babylon.js and Ink.
+The next visual direction is documented in the [living scene production plan](docs/living-scene-plan.md): reconstruct the opening image as a fixed scene that responds to choices. The existing chapter remains available while the browser proof is developed.
+
+A quiet, choice-driven 3D journey through memory and care. Replies carry you through an emotional landscape: refuge, constriction, room to breathe, and a return or departure. The current chapter has eleven decisions and three resolutions. It runs locally as a static Astro site with Babylon.js and Ink.
 
 ## Play locally
 
@@ -12,6 +14,10 @@ npm run dev
 ```
 
 Open the local URL printed by Astro. Choose with the mouse, touch, Tab/Enter, or keys 1–4. The camera follows the story. Settings include sound, volume, reduced motion, larger text and conversation history. Progress and audio/motion preferences are saved in this browser when local storage is available. Begin again resets the story.
+
+The separate `/scene-study/` route previews the new fixed-view renderer. It has chair/cup controls and an opening-image comparison. Asset status explicitly distinguishes the provisional studies from the detailed Blender delivery; loading a model does not mean its visual fidelity has been accepted. Use `/scene-study/?renderer=webgl` to exercise the fallback renderer.
+
+The spatial edition uses a new save slot because its Ink content structure changed. Earlier saves remain stored, but this edition starts a fresh passage. New saves retain the memory landmarks visited along the way.
 
 ```sh
 npm run validate  # tests, type checking, production build

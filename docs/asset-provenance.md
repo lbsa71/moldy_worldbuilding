@@ -1,9 +1,10 @@
 # Fading asset provenance
 
-Updated 3 October 2026. A file being present in the repository does not establish permission to distribute it. This ledger separates assets authored during this pass from inherited material whose origin is not recorded.
+Updated 5 October 2026. A file being present in the repository does not establish permission to distribute it. This ledger separates assets authored during this pass from inherited material whose origin is not recorded.
 
 | Asset | Origin and active use | Release status |
 | --- | --- | --- |
+| `public/scene-study/overcast.hdr` | [Overcast Soil (Pure Sky)](https://polyhaven.com/a/overcast_soil_puresky), 1K HDR by Jarod Guest / Sergej Majboroda, downloaded 5 October 2026 for illumination in the new scene proof. Original bytes retained; local filename shortened. | [CC0](https://polyhaven.com/license). Exact source URL, license link, size and SHA-256 are recorded in [distributed credits](../public/scene-study/CREDITS.txt). It is not the visible background or proof of photorealism. |
 | `public/assets/fading-title.png` | Created for Fading with the built-in OpenAI image generation tool on 3 October 2026; original output preserved. Prompt below. | Generated artwork. Review under the applicable generation service terms; no third-party source artwork was supplied. Do not label it CC0 or as a realtime screenshot. |
 | `public/assets/fading-title.webp` | WebP encoding of the original title PNG, quality 86, without resizing. Used by the launch screen. | Same origin as PNG. |
 | `public/assets/fading-hushed.mp3`, `fading-warm.mp3`, `fading-uneasy.mp3`, `fading-resolved.mp3` | Original deterministic additive-synthesis compositions authored in `scripts/generate-score.mjs`. Each is a 48-second stereo loop rendered at 44.1 kHz, encoded with ffmpeg/libmp3lame at 160 kbps. No samples or existing compositions are incorporated. | Project-authored score studies. Human musical/mix review remains; no third-party sample license required. |

@@ -21,7 +21,7 @@ VAR keepsake = ""
 # position: (0, 0)
 # fog: 0.82
 # audio soundtrack_1.mp3
-A lamp stands on bare stone. Its shade is crooked. Beyond its small circle of light, the fog has no edges.
+A lamp stands at a crossroads of bare stone. Its shade is crooked. Beyond its small circle of light, the paths disappear into fog.
 
 "Before you answer—was it you who moved the chair?"
 
@@ -45,21 +45,29 @@ The voice seems to come from the empty place beside it.
 # chapter: A place for someone
 # mood: hushed
 # objects: lamp, chair
-# position: (4, -2)
+{
+    - last_response == "looked":
+        # position: (5, -1)
+    - last_response == "quiet":
+        # position: (3, -2.5)
+    - else:
+        # position: (4, -2)
+}
 # fog: 0.74
 {last_response == "arrived":
+    The stone gives you a little way forward, as if making room for an arrival.
     "Then someone else was here. I thought I'd hear them leave."
 }
 {last_response == "looked":
-    Where you look, four pale chair legs gather out of the mist.
+    Your attention draws a thin path out of the mist. Four pale chair legs wait at its bend.
     "There. It used to face the light. Someone turned it toward me."
 }
 {last_response == "quiet":
-    You wait. A chair takes shape without anyone sitting down.
+    The hush opens a wider verge. You follow it to a chair without anyone sitting down.
     "You don't have to explain yourself. That helps."
 }
 
-One side of the seat is worn smoother than the other.
+One side of the seat is worn smoother than the other. Behind you, the lamp marks where the path began.
 
 * ["May I sit with you?"]
     ~ connection += 1
@@ -79,19 +87,29 @@ One side of the seat is worn smoother than the other.
 # chapter: What was left behind
 # mood: warm
 # objects: lamp, chair, cup
-# position: (9, 3)
+{
+    - last_response == "sit":
+        # position: (9, 3.5)
+    - last_response == "who":
+        # position: (10, 3)
+    - else:
+        # position: (8, 2.5)
+}
 # fog: 0.63
 {last_response == "sit":
-    "Yes. Just don't straighten the shade. I like knowing which way the light falls."
+    As you settle, the ground stretches toward a warmer hollow. The chair's outline remains behind.
+    "Yes. I remember knowing which way the light fell."
 }
 {last_response == "who":
+    The question draws you around the bend, toward a shape without a face.
     "I remember their sleeve. Dark at the cuff, as if they'd come through rain. The face won't stay."
 }
 {last_response == "empty":
+    You leave the seat empty. The path curves on, keeping a little distance from the hollow.
     "They waited like that too. Close enough to be there. Far enough that I could sleep."
 }
 
-A cup forms near the chair: blue glaze, a little chip at the rim.
+A cup gathers in the hollow: blue glaze, a little chip at the rim. A pale echo of the chair stands near it.
 
 "There was tea. By the time I wanted it, it had gone cold. Such a small thing to keep remembering."
 
@@ -117,6 +135,8 @@ A cup forms near the chair: blue glaze, a little chip at the rim.
 # objects: lamp, cup, rail
 # position: (14, 7)
 # fog: 0.58
+The hollow narrows into a ledge. The blue of the cup stays behind you, small but distinct.
+
 {last_response == "cup":
     "They always turned the chip away from my mouth. Even when I didn't drink."
 }
@@ -124,11 +144,11 @@ A cup forms near the chair: blue glaze, a little chip at the rim.
     "Yes. I couldn't always answer. They brought it anyway."
 }
 {last_response == "cup_quiet":
-    The cup holds its shape while you watch.
+    In memory, the cup holds its shape while you watch.
     "The chip went on the far side. I hadn't remembered that until now."
 }
 
-A short metal rail emerges. Two small taps sound against it, then a pause.
+A short metal rail emerges along the ledge. Two small taps sound against it, then a pause.
 
 "Before they touched my hand, they did that. So I would know they were there."
 
@@ -153,17 +173,26 @@ A short metal rail emerges. Two small taps sound against it, then a pause.
 # chapter: Permission
 # mood: warm
 # objects: lamp, rail, hand, hospital
-# position: (17, 9)
+{
+    - last_response == "hospital":
+        # position: (18, 9)
+    - last_response == "tapped":
+        # position: (17, 9.5)
+    - else:
+        # position: (16, 8)
+}
 # fog: 0.49
 {last_response == "hospital":
+    The ledge draws straighter. Beyond the rail, a curtain leaves a gap you cannot see through.
     "It could have been. There were wheels under the bed. A curtain that never quite closed. But that isn't what I miss."
 }
 {last_response == "tapped":
+    The stone widens toward your answer.
     A pale hand gathers beside the rail, its fingers held open.
     "You waited for me to answer. Thank you."
 }
 {last_response == "pause":
-    Nothing interrupts the pause.
+    The path leaves room beside the rail. Nothing interrupts the pause.
     "That was the part I trusted. They could have reached for me. They waited instead."
 }
 
@@ -204,7 +233,7 @@ The hand stays where it is.
 
 "Wait. I remember bringing the tea. I remember rain running off my sleeve."
 
-The chair turns a little, now facing the rail.
+The ground folds into two edges that will not meet. Across the split, an echo of the chair faces the rail.
 
 "I thought I was the one in the bed. How can I remember both sides?"
 
@@ -226,17 +255,29 @@ The chair turns a little, now facing the rail.
 # chapter: A story that can remain open
 # mood: uneasy
 # objects: lamp, chair, geometric
-# position: (25, 1)
+{
+    - last_response == "follow":
+        # position: (26, 1)
+    - last_response == "uncertain":
+        # position: (24, 0)
+    - else:
+        # position: (25, 1.5)
+}
 # fog: 0.66
 {last_response == "follow":
+    You follow the firmer edge. Its stones hold separate shapes, without joining them.
     "The cup. The rail. The chair. Those stay when the faces don't. Let's keep those."
 }
 {last_response == "uncertain":
+    You move between the edges. The gap remains; you no longer have to choose a side.
     "I'd like that. I've been trying to make the pieces agree. It hurts less when I stop."
 }
 {last_response == "stay":
+    You keep beside the voice as the path draws inward.
     "You can't promise to stay forever. But you are here now. I can work with now."
 }
+
+Ahead, the stone pinches to a seam. There is room to stand, but not to force a way through.
 
 "If you tell me who I am, I might believe you. Please don't give me an answer just because I'm asking."
 
@@ -259,7 +300,14 @@ The chair turns a little, now facing the rail.
 # chapter: Room to breathe
 # mood: hushed
 # objects: lamp, chair
-# position: (21, -5)
+{
+    - last_response == "known":
+        # position: (20, -4)
+    - last_response == "unanswered":
+        # position: (21.5, -6)
+    - else:
+        # position: (21, -5)
+}
 # fog: 0.51
 {last_response == "honest":
     "Then I can stop trying to sound certain."
@@ -271,7 +319,7 @@ The chair turns a little, now facing the rail.
     "You let it remain a question. I didn't know I could ask for that."
 }
 
-For a moment, the only sound is the lamp's low hum.
+The edges draw back. You find yourself on open stone, with nothing asking to be crossed. Far behind the mist, the lamp is a small, steady point.
 
 {silence_count >= 3:
     "You've made room for these pauses from the beginning. I notice them now."
@@ -299,6 +347,8 @@ For a moment, the only sound is the lamp's low hum.
 # objects: lamp, cup, rail, chair
 # position: (16, -7)
 # fog: 0.38
+The open ground curves back toward the places you passed. Across the curve, the cup and rail remain where memory first gave them weight.
+
 {last_response == "shared_quiet":
     The pause belongs to neither of you alone.
     "I heard the two taps again. This time, I wasn't waiting for anything after them."
@@ -307,7 +357,7 @@ For a moment, the only sound is the lamp's low hum.
     "I know. You don't have to keep proving it."
 }
 {last_response == "look_back":
-    The objects hold still beneath your attention. The rest of the room stays unfinished.
+    Their shapes hold still beneath your attention. The space between them stays unfinished.
 }
 
 {memory_cup:
@@ -343,6 +393,8 @@ For a moment, the only sound is the lamp's low hum.
 # position: (8, -3)
 # fog: 0.29
 # audio soundtrack_3.mp3
+As you turn toward the light, the chosen memory travels with you. Its place on the path remains behind.
+
 {keepsake == "cup":
     The cup turns, putting its chip on the far side.
     "A small kindness. Small enough to do again."
@@ -356,7 +408,7 @@ For a moment, the only sound is the lamp's low hum.
     "A place someone can take. Or leave empty."
 }
 
-The lamp flickers once. The voice does not disappear.
+Ahead, the lamp flickers once. The voice does not disappear.
 
 "I don't know if this room can stay. I don't want to make that your responsibility."
 
@@ -375,7 +427,14 @@ The lamp flickers once. The voice does not disappear.
 # chapter: A way to leave
 # mood: resolved
 # objects: lamp, chair, cup, rail
-# position: (3, 0)
+{
+    - last_response == "next":
+        # position: (2, 0)
+    - last_response == "elsewhere":
+        # position: (4, -1)
+    - else:
+        # position: (2.5, 0.5)
+}
 # fog: 0.23
 {last_response == "next":
     "Yes. It doesn't have to be a promise that I return. It can simply be a light."
@@ -387,7 +446,7 @@ The lamp flickers once. The voice does not disappear.
     "I'm ready to stop searching tonight. Thank you for asking."
 }
 
-The fog opens around the lamp. The cup, chair, and rail hold their shapes a little longer.
+You reach the crossroads again. The fog opens around the lamp; beyond it, the path you made holds the cup, chair, and rail a little longer.
 
 "How shall we leave this place?"
 
@@ -410,7 +469,7 @@ The fog opens around the lamp. The cup, chair, and rail hold their shapes a litt
 # position: (0, 0)
 # fog: 0.18
 # audio end_credits.mp3
-You turn the chair toward the lamp. You leave the shade crooked.
+You cross back into the lamp's circle and turn the chair toward it. You leave the shade crooked.
 
 "Not a summons," the voice says. "A place."
 
@@ -439,17 +498,17 @@ You leave without closing a door. Behind you, the lamp keeps its small circle.
 # mood: resolved
 # ending: carry
 # objects: lamp, hand
-# position: (0, 0)
+# position: (30, -12)
 # fog: 0.12
 # audio end_credits.mp3
-The room loosens at its edges. The light rests briefly against your open hand.
+You take the outward path. The stone opens ahead; behind you, the lamp remains at the crossroads. Its remembered warmth rests briefly against your open hand.
 
 {keepsake == "cup":
     In another room, on another morning, you will turn a chipped cup so someone can drink from the smooth side.
     "That's enough to take," the voice says.
 }
 {keepsake == "taps":
-    You tap twice against the rail. Then you wait.
+    You tap twice against the stone, remembering the rail. Then you wait.
     "There," the voice says. "You can do that anywhere."
 }
 {keepsake == "chair":
@@ -475,7 +534,7 @@ When you lower your hand, it is your own again. The small act remains possible.
 # position: (0, 0)
 # fog: 0.34
 # audio end_credits.mp3
-You stay beside the chair. The light softens until the stone holds only a pale circle.
+You return to the chair inside the lamp's circle. The light softens until the stone holds only a pale circle.
 
 "We can stop here," the voice says.
 

@@ -5,7 +5,7 @@ import { GameScene, SAVE_KEY } from "./GameScene";
 
 const harness = vi.hoisted(() => ({
   engines: [] as any[], scenes: [] as any[], interfaces: [] as any[],
-  atmosphere: null as any, environment: null as any, audio: null as any,
+  atmosphere: null as any, environment: null as any, audio: null as any, camera: null as any, character: null as any,
   gpuSupported: false, gpuFailure: false, gpuWait: null as Promise<void> | null,
   terrainWait: null as Promise<void> | null,
 }));
@@ -49,11 +49,12 @@ vi.mock("./game/TerrainSystem", () => ({ TerrainSystem: class {
 } }));
 vi.mock("./game/AtmosphereSystem", () => ({ AtmosphereSystem: class {
   updateFog = vi.fn(); setReducedMotion = vi.fn(); toggleDebug = vi.fn(); dispose = vi.fn();
+  setNarrativeScene = vi.fn(); updateListenerPosition = vi.fn();
   constructor() { harness.atmosphere = this; }
 } }));
 vi.mock("./game/EnvironmentSystem", () => ({ EnvironmentSystem: class {
   populate = vi.fn(); createObjectsFromTag = vi.fn(); updateObjectVisibilities = vi.fn();
-  setNarrativeScene = vi.fn();
+  setNarrativeScene = vi.fn(); resetJourney = vi.fn();
   setReducedMotion = vi.fn(); toggleDebug = vi.fn(); dispose = vi.fn();
   constructor() { harness.environment = this; }
 } }));
@@ -61,10 +62,12 @@ vi.mock("./game/Character", () => ({ Character: class {
   setPosition = vi.fn(); setReducedMotion = vi.fn(); dispose = vi.fn();
   getPosition = () => ({ x: 0, y: 0, z: 0 });
   moveTo = vi.fn().mockResolvedValue(undefined);
+  constructor() { harness.character = this; }
 } }));
 vi.mock("./game/CameraSystem", () => ({ CameraSystem: class {
   updatePosition = vi.fn(); setCameraTarget = vi.fn(); setReducedMotion = vi.fn(); resize = vi.fn(); dispose = vi.fn();
   setNarrativeScene = vi.fn();
+  constructor() { harness.camera = this; }
 } }));
 vi.mock("./game/AudioSystem", () => ({ AudioSystem: class {
   setEnabled = vi.fn(); setVolume = vi.fn(); setPaused = vi.fn(); setMood = vi.fn(); dispose = vi.fn();
@@ -216,6 +219,10 @@ describe("story and world contract", () => {
     expect(harness.audio.setMood).toHaveBeenLastCalledWith("warm");
     expect(harness.audio.playAudio).not.toHaveBeenCalled();
     expect(harness.environment.setNarrativeScene).toHaveBeenLastCalledWith("rail");
+    expect(harness.atmosphere.setNarrativeScene).toHaveBeenLastCalledWith("rail");
+    expect(harness.camera.setNarrativeScene).toHaveBeenLastCalledWith("rail", expect.objectContaining({ x: 10, z: 0 }));
+    expect(harness.character.moveTo).toHaveBeenLastCalledWith(expect.objectContaining({ x: 10, z: 0 }), expect.anything());
+    expect(harness.camera.setNarrativeScene.mock.invocationCallOrder.at(-1)).toBeLessThan(harness.character.moveTo.mock.invocationCallOrder.at(-1));
     expect(harness.audio.playTapCue).toHaveBeenCalledOnce();
     currentUI().callbacks.onChoice(0);
     expect(currentUI().render.mock.lastCall[0]).toMatchObject({ ending: "keep", choices: [] });
@@ -236,12 +243,29 @@ describe("story and world contract", () => {
     const restored = currentUI().render.mock.lastCall[0];
     expect(restored.text).toBe(before.text);
     expect(restored.choices.map((choice: any) => choice.text)).toEqual(before.choices.map((choice: any) => choice.text));
+    expect(harness.environment.createObjectsFromTag.mock.calls.map((call: any[]) => call[0])).toEqual([["lamp"], ["geometric"]]);
     expect(currentUI().setNotice).toHaveBeenLastCalledWith(expect.stringContaining("restored"));
     resumed.restart();
+    expect(harness.environment.resetJourney).toHaveBeenCalledOnce();
+    expect(harness.camera.setNarrativeScene).toHaveBeenLastCalledWith("lamp", expect.objectContaining({ x: 0, z: 0 }));
+    expect(harness.camera.setNarrativeScene.mock.invocationCallOrder.at(-1)).toBeLessThan(harness.camera.setCameraTarget.mock.invocationCallOrder.at(-1));
     expect(currentUI().render.mock.lastCall[0].text).toContain("The first room.");
     expect(harness.environment.updateObjectVisibilities).toHaveBeenLastCalledWith(0, false);
     currentUI().callbacks.onChoice(0);
     expect(currentUI().setNotice).toHaveBeenLastCalledWith("");
+    resumed.dispose();
+  });
+
+  it("rejects malformed saved world coordinates before rebuilding a memory trail", async () => {
+    const first = game(); await first.run();
+    const saved = JSON.parse(localStorage.getItem(SAVE_KEY)!);
+    saved.journey = [{ scene: "chair", objects: ["chair"], position: { x: 900, z: 0 } }];
+    localStorage.setItem(SAVE_KEY, JSON.stringify(saved));
+    first.dispose();
+    const resumed = game(); await resumed.run();
+    expect(currentUI().setNotice).toHaveBeenLastCalledWith(expect.stringContaining("could not be read"));
+    expect(harness.environment.createObjectsFromTag).toHaveBeenCalledOnce();
+    expect(harness.environment.createObjectsFromTag.mock.lastCall[2]).toEqual({ x: 0, z: 0 });
     resumed.dispose();
   });
 

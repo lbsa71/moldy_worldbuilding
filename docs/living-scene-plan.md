@@ -98,11 +98,13 @@ The model mix reserves the more costly review capacity for visual reasoning whil
 ## Progress
 
 - [x] Plan persisted before implementation, 5 October 2026.
-- [ ] Camera and asset interface agreed across Blender and Babylon.
-- [ ] Browser proof and review controls implemented.
+- [x] Camera and asset interface agreed across Blender and Babylon; visual camera match awaits the delivery.
+- [x] Browser proof framework and review controls implemented and exercised with clearly labelled provisional assets in WebGPU and WebGL.
 - [ ] First detailed Blender delivery imported and validated.
 - [ ] Browser images compared with the reference; remaining fidelity gaps recorded.
 - [ ] Emotional state contact sheet reviewed.
 - [ ] Story integration and comparative playtest complete.
 
 No milestone should be marked complete on the strength of planned work, placeholder assets or an offline render alone. Subsequent implementation evidence belongs here and in [implementation status](implementation-status.md).
+
+Initial work includes the [art-direction specification](living-scene-art-direction.md), [proposed narrative cue sheet](living-scene-cues.md), isolated `/scene-study/` review route and an asset inspector (`node scripts/inspect-scene-study.mjs`). The scene supports complete chair/cup states, reset, reduced motion, dynamic shadow/reflection participation and a verified CC0 overcast HDR for material illumination. The inspector reports structural validity separately from visual acceptance. Blender delivery and photographic fidelity remain pending.

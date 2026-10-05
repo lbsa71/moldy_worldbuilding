@@ -20,14 +20,14 @@ export class Character {
   private completeMovement?: () => void;
   private readonly updateFrame = () => this.update();
 
-  constructor(private scene: Scene) {
+  constructor(private scene: Scene, private readonly heightAt?: (x: number, z: number) => number) {
     this.root = new TransformNode("characterRoot", scene);
-    // A quiet point of attention, rather than an embodied avatar suggesting free movement.
+    // A point of attention makes each reply's passage through the landscape legible.
     const surface = new StandardMaterial("listenerSurface", scene);
     surface.diffuseColor = new Color3(0.58, 0.61, 0.62);
-    surface.emissiveColor = new Color3(0.035, 0.042, 0.05);
+    surface.emissiveColor = new Color3(0.32, 0.25, 0.14);
     surface.specularColor = Color3.Black();
-    surface.alpha = 0.4;
+    surface.alpha = 0.68;
     const ring = CreateTorus("listenerRing", { diameter: 0.65, thickness: 0.025, tessellation: 32 }, scene);
     ring.parent = this.root;
     ring.material = surface;
@@ -59,6 +59,11 @@ export class Character {
   }
 
   private groundPosition(position: Vector3): void {
+    const sampledHeight = this.heightAt?.(position.x, position.z);
+    if (sampledHeight !== undefined && Number.isFinite(sampledHeight)) {
+      position.y = sampledHeight + 0.04;
+      return;
+    }
     if (!this.terrain) return;
     const hit = this.scene.pickWithRay(
       new Ray(new Vector3(position.x, 100, position.z), Vector3.Down(), 200),

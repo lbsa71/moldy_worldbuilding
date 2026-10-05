@@ -2,7 +2,7 @@
 import '../game/experience/experience.css';
 ---
 <div id="game-container" class="game-container">
-  <canvas id="gameCanvas" tabindex="-1" aria-label="The lamp and its surrounding memories. Use the dialogue controls to play."></canvas>
+  <canvas id="gameCanvas" tabindex="-1" aria-label="A landscape of memories that changes as you travel through the conversation. Choose a reply to move through it."></canvas>
   <div id="statsOverlay" hidden>
     <div>Renderer: <span id="rendererType">Loading…</span></div>
     <div>FPS: <span id="fpsCounter">0</span></div>
@@ -16,7 +16,7 @@ import '../game/experience/experience.css';
       <p id="launch-copy" class="launch-copy">Someone left the lamp on.<br />Someone is still trying to remember why.</p>
       <button id="start-button" class="start-button" type="button">Enter the quiet</button>
       <p id="launch-status" class="launch-status" aria-live="polite"></p>
-      <p class="launch-guidance">A short story you shape through conversation. Take your time. Sound is optional; headphones invite you closer.</p>
+      <p class="launch-guidance">Each reply carries you through a landscape of memory. Take your time. Sound is optional; headphones invite you closer.</p>
     </div>
     <p class="launch-footer">Memory, care, and the things we leave unfinished.</p>
   </section>
@@ -34,7 +34,7 @@ import '../game/experience/experience.css';
   const statusText = document.getElementById('launch-status');
   if (new URLSearchParams(location.search).has('debug')) document.getElementById('statsOverlay')!.hidden = false;
   try {
-    if (localStorage.getItem('fading:chapter-one:save:v1')) startButton.textContent = 'Return to the light';
+    if (localStorage.getItem('fading:chapter-one:save:v2')) startButton.textContent = 'Return to the light';
   } catch { /* Storage is optional. */ }
   const launch = createLaunchExperience({
     canvas, launchScreen, startButton, rendererType, fpsCounter, statusText,

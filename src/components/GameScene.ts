@@ -11,13 +11,16 @@ import { Character } from "./game/Character";
 import { AudioSystem } from "./game/AudioSystem";
 import { CameraSystem } from "./game/CameraSystem";
 import { DialogueUI } from "../game/experience/DialogueUI";
-import { getCurrentDialogue, choose } from "../utils/ink";
+import { getCurrentDialogue, choose, parseDialogueTags } from "../utils/ink";
 import type { Story } from "../inkjs/engine/Story";
 
-export const SAVE_KEY = "fading:chapter-one:save:v1";
+// Ink's internal content indices changed with the spatial edition. Keep old saves
+// intact under their prior key instead of interpreting them against a new script.
+export const SAVE_KEY = "fading:chapter-one:save:v2";
 const PREFERENCES_KEY = "fading:preferences:v1";
 
 type Preferences = { audio: boolean; volume: number; reducedMotion: boolean };
+type JourneyStop = { scene: string; objects: string[]; position: { x: number; z: number } };
 
 export class GameScene {
   private engine!: Engine;
@@ -37,6 +40,7 @@ export class GameScene {
   private changingChoice = false;
   private preferences: Preferences;
   private storageNotice = "";
+  private journey: JourneyStop[] = [];
   private readonly renderFrame = () => { if (!this.disposed) this.scene.render(); };
   private readonly resize = () => {
     if (!this.disposed) {
@@ -77,10 +81,11 @@ export class GameScene {
         this.ensureActive();
         this.environment = new EnvironmentSystem(this.scene, { heroAssets: true });
         this.environment.populate(this.terrain.terrain, []);
-        this.character = new Character(this.scene);
+        this.character = new Character(this.scene, (x, z) => this.terrain.getHeightAtPoint(x, z));
         this.character.setPosition(new Vector3(0, this.terrain.getHeightAtPoint(0, 0) + 0.04, 0));
         this.scene.registerBeforeRender(() => {
           this.cameraSystem.updatePosition(this.character.getPosition());
+          this.atmosphere.updateListenerPosition(this.character.getPosition());
         });
         const host = document.getElementById("experience-ui");
         if (!host) throw new Error("The story interface is missing.");
@@ -151,9 +156,13 @@ export class GameScene {
         if (!this.disposed) this.dialogueUI.setNotice("Use the sound control to enable audio.");
       });
     }
-    if (dialogue.position) {
-      const { x, z } = dialogue.position;
-      const destination = new Vector3(x, this.terrain.getHeightAtPoint(x, z) + 0.04, z);
+    this.environment.setNarrativeScene(dialogue.scene);
+    this.atmosphere.setNarrativeScene(dialogue.scene);
+    const destination = dialogue.position
+      ? new Vector3(dialogue.position.x, this.terrain.getHeightAtPoint(dialogue.position.x, dialogue.position.z) + 0.04, dialogue.position.z)
+      : undefined;
+    this.cameraSystem.setNarrativeScene(dialogue.scene, destination);
+    if (destination) {
       if (immediate) {
         this.character.setPosition(destination);
         this.cameraSystem.setCameraTarget(destination);
@@ -164,12 +173,14 @@ export class GameScene {
     if (dialogue.fog !== null) this.atmosphere.updateFog(dialogue.fog);
     if (dialogue.objects !== null) {
       this.environment.createObjectsFromTag(dialogue.objects, this.terrain.terrain, dialogue.position || undefined);
+      if (dialogue.scene && dialogue.position) {
+        this.journey = this.journey.filter(stop => stop.scene !== dialogue.scene);
+        this.journey.push({ scene: dialogue.scene, objects: dialogue.objects, position: dialogue.position });
+      }
     }
     const connection = Number(this.currentStory.variablesState.$("connection")) || 0;
     const clarity = Boolean(this.currentStory.variablesState.$("hospital_clarity"));
     this.environment.updateObjectVisibilities(connection, clarity);
-    this.environment.setNarrativeScene(dialogue.scene);
-    this.cameraSystem.setNarrativeScene(dialogue.scene);
   }
 
   private handleChoice(index: number): void {
@@ -187,6 +198,8 @@ export class GameScene {
   public restart(): void {
     if (!this.currentStory || this.disposed) return;
     this.currentStory.ResetState();
+    this.environment.resetJourney();
+    this.journey = [];
     this.storageNotice = "";
     this.progressStory(true);
     this.dialogueUI.setNotice(this.storageNotice || "A fresh passage. Your previous choices have been cleared.");
@@ -225,7 +238,7 @@ export class GameScene {
   private saveStory(): void {
     if (!this.currentStory) return;
     try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({ version: 1, state: this.currentStory.state.ToJson() }));
+      localStorage.setItem(SAVE_KEY, JSON.stringify({ version: 2, state: this.currentStory.state.ToJson(), journey: this.journey }));
     } catch {
       this.storageNotice = "Progress cannot be saved in this browser. Keep this tab open to finish.";
       this.dialogueUI?.setNotice(this.storageNotice);
@@ -238,12 +251,28 @@ export class GameScene {
       const raw = localStorage.getItem(SAVE_KEY);
       if (!raw) return;
       const stored = JSON.parse(raw);
-      if (stored.version !== 1 || typeof stored.state !== "string") throw new Error("Unsupported saved passage.");
+      if (stored.version !== 2 || typeof stored.state !== "string") throw new Error("Unsupported saved passage.");
       this.currentStory.state.LoadJson(stored.state);
       if (!this.currentStory.canContinue) throw new Error("The saved passage has no readable entrance.");
+      // Rebuild visited places before displaying the saved entrance, preserving
+      // the same faint landmarks after a reload without replaying choices/audio.
+      const trail = stored.journey ?? [];
+      if (!Array.isArray(trail) || trail.length > 14) throw new Error("Invalid memory trail.");
+      const restored: JourneyStop[] = trail.map(stop => {
+        if (!stop || typeof stop.scene !== "string" || !Array.isArray(stop.objects) || !stop.position) throw new Error("Invalid memory stop.");
+        const parsed = parseDialogueTags([`scene: ${stop.scene}`, `objects: ${stop.objects.join(",")}`, `position: (${stop.position.x}, ${stop.position.z})`]);
+        return { scene: parsed.scene!, objects: parsed.objects!, position: parsed.position! };
+      });
+      this.journey = restored;
+      for (const stop of restored) {
+        this.environment.setNarrativeScene(stop.scene);
+        this.environment.createObjectsFromTag(stop.objects, this.terrain.terrain, stop.position);
+      }
       this.storageNotice = "Your last passage has been restored.";
     } catch {
       this.currentStory.ResetState();
+      this.environment.resetJourney();
+      this.journey = [];
       this.storageNotice = "Your saved passage could not be read. A fresh passage has opened.";
     }
   }

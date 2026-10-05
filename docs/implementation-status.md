@@ -4,6 +4,24 @@
 
 ## What changed
 
+### Living scene production started 5 October 2026
+
+Playtesting found that sound and text sustain an emotional, meditative experience while movement through the crude landscape disrupts it. The [living scene production plan](living-scene-plan.md) supersedes traversal as the target visual direction. It reconstructs the opening image as a fixed scene with deliberate changes in objects and spatial relationships. The current chapter remains available while a separate `/scene-study/` proof is built.
+
+The plan is committed at `3aec137` on `codex/fixed-scene-proof`. New renderer, expression-contract and art-direction work is delegated with distinct file ownership. The [art direction](living-scene-art-direction.md) and [cue sheet](living-scene-cues.md) define the composition and proposed narrative behavior. Blender production is underway in the existing management chat on `codex/living-scene-assets-20261005`; delivery and browser fidelity have not yet been accepted. The earlier verification records below apply to their respective implementation waves.
+
+The initial study framework passes **166 tests in 17 files**, type checking with **0 errors and 0 warnings** (24 existing hints), and the production build. Actual browsers exercised WebGPU and explicit WebGL, chair/cup state changes, reset and reduced motion; a 390×844 viewport confirmed accessible controls and normal page scrolling. The verified CC0 HDR environment is used for lighting only. Browser testing exposed a Babylon 7.34.4 lazy shader-registration issue in HDR prefiltering; explicit registration of the installed GLSL/WGSL filtering modules fixes startup in both backends. The framework currently identifies existing low-detail assets as provisional. The renderer chunk-size advisory remains; physical-device performance and scene fidelity are unverified.
+
+### Spatial correction — 4 October 2026
+
+The first upgraded version lost an essential part of the original: dialogue was supposed to be a voyage through emotional space. Story coordinates still changed, but camera targets were clamped around the origin and every prop was placed beside the same lamp. That produced a bedside composition instead of a journey.
+
+The correction restores actual camera travel, terrain-relative framing, and distinct places. The lamp remains a fixed point of return; the active memory appears at the current destination, and one subdued motif remains at each visited place. Fractured slate creates shelter, divided sightlines and constriction; lower edges and a broader horizon make quiet and recollection feel open. Sky color and directional lighting change with the emotional state. Six passages vary their approach according to the preceding reply. Keep and rest return to the lamp; carry leads outward. The cup close-up settles only after arrival, so it does not erase the intervening journey.
+
+Reduced motion preserves the same geography while settling movement immediately. Save version 2 stores visited places alongside the Ink checkpoint and rebuilds them on resume. Earlier saves remain under their old key because their internal Ink content indices no longer match the revised script. Terrain sampling replaces per-frame ray tests against the denser ground. No new downloaded or generated media was needed.
+
+The [narrative direction](narrative-direction.md) records the spatial contract and destinations. The verification table below documents the earlier asset-integration wave; spatial-pass verification and images are recorded at the end of this document.
+
 | Area | Delivered behavior |
 | --- | --- |
 | Narrative | An eleven-decision chapter with specific cup, chair and bedside memories; a contradiction about who brought the tea; callbacks to silence, consent and a chosen keepsake; three equally available resolutions: keep, carry and rest. The old story is preserved separately. |
@@ -65,3 +83,17 @@ The [title PNG](../public/assets/fading-title.png) and its [full generation prom
 6. **Verify production delivery.** The saved Cloudflare token failed direct verification as invalid during release preparation and needs replacement in the repository's `CLOUDFLARE_API_TOKEN` secret. Confirm the resulting GitHub Actions run, R2 serving and cache behavior, exact artifact deployment, failure recovery and rollback. Files are uploaded with HTML last; this is not an atomic deployment transaction. Add release credits and save migration policy before expanding the game.
 
 The [art/audio production brief](art-and-audio-production.md) and [narrative direction](narrative-direction.md) define the next pass. The quality bar remains deliberately ambitious; further content should pass those gates rather than merely increase asset or word count.
+
+## Spatial-pass verification — 4 October 2026
+
+- Automated suite: **148 tests in 12 files**. New coverage exercises actual camera translation, arrival-only detail framing, contrasting camera distance, terrain sampling without per-frame mesh picking, reply-dependent arrival positions, the outward coda, persistent memory traces, trail restoration/rejection, restart cleanup, emotional lighting and landscape resource disposal.
+- Type checking: **0 errors, 0 warnings, 24 hints**. Production build passes; the existing renderer chunk-size advisory remains. The final light-intensity adjustment also passed its six focused landscape tests, and the final responsive-sheet adjustment was rebuilt and inspected.
+- Actual browser: traversed the chapter to Carry, inspected origin/chair/cup, contradiction/boundary and quiet, restored intermediate and terminal saves, and restarted from the outward coda. Confirmed WebGPU and explicit WebGL rendering; checked reduced-motion arrival and restored normal motion afterward. No captured warning/error messages during these final runs.
+- Layout: desktop 1440×900 and phone-width 390×844. The mobile dialogue sheet now matches the camera's reserved 58% height, with longer text scrolling inside it. This remains browser viewport testing, not a physical-device performance or accessibility certification.
+- The longer outward coda deliberately traverses the full distance (roughly seven seconds from the crossroads at the current movement speed); reading and replay controls remain responsive throughout.
+
+![The closer view within the divided landscape](evidence/spatial-boundary-desktop.png)
+
+![Broader ground in the quiet passage](evidence/spatial-quiet-desktop.png)
+
+Additional evidence: [phone-width WebGL scene](evidence/spatial-chair-mobile.png), [outward coda](evidence/spatial-carry-desktop.png), [WebGL coda](evidence/spatial-carry-webgl.png). These are real-time captures of the spatial correction, not concept renders. The spatial chapter is retained on the living-scene work branch for comparison while its replacement is developed.

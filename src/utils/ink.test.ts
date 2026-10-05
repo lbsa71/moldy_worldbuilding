@@ -47,6 +47,19 @@ describe("the story presentation contract", () => {
 });
 
 describe("Fading: The place beside the light", () => {
+  it("lets replies change the approach and gives carrying a different spatial resolution", () => {
+    const looking = play([1]), waiting = play([2]);
+    expect(looking.last.scene).toBe("chair");
+    expect(waiting.last.scene).toBe("chair");
+    expect(looking.last.position).not.toEqual(waiting.last.position);
+    const keep = play([...Array(10).fill(0), 0]).last;
+    const carry = play([...Array(10).fill(0), 1]).last;
+    const rest = play([...Array(10).fill(0), 2]).last;
+    expect(keep.position).toEqual({ x: 0, z: 0 });
+    expect(rest.position).toEqual(keep.position);
+    expect(Math.hypot(carry.position!.x, carry.position!.z)).toBeGreaterThan(25);
+  });
+
   it.each(["keep", "carry", "rest"])("makes the %s ending available on a fresh journey", (ending) => {
     const index = ["keep", "carry", "rest"].indexOf(ending);
     const { story, last, passages } = play([...Array(10).fill(0), index]);

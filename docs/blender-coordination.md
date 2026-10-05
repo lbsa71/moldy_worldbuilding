@@ -10,6 +10,16 @@ The user authorized synchronization with **Manage Blender work in repo** on 3 Oc
 
 ## Active handoff
 
+The current production job is the [living scene proof](living-scene-plan.md), authorized on 5 October 2026. The plan is committed at `3aec137` on `codex/fixed-scene-proof`. Blender management has created `codex/living-scene-assets-20261005` from that commit and is producing new assets without changing the prior bedside set or active chapter. The earlier job below remains historical evidence for the integrated study.
+
+New outputs belong in `scripts/blender/living_scene*`, `art/blender/living-scene-proof/` and `public/scene-study/`. The runtime expects `/scene-study/living-scene.glb` plus `/scene-study/manifest.json`. Required scene names are `Fading_StudyCamera`, `Fading_StudyLamp`, `Fading_StudyChair`, `Fading_StudyCup`, `Fading_StudyShore` and `Fading_StudyLampLight`; optional scene roots include `Fading_StudyBackdrop` and `Fading_StudyCurtain`. The cup remains independently removable under the chair so rotation retains its support. The chair pivot is at its ground footprint. The camera and transforms use canonical glTF Y-up with a right-handed Babylon scene.
+
+Water is live in Babylon at y=0. Offline reference water, atmosphere and lights are excluded from the GLB. The manifest provides camera position/target/vertical FOV in runtime coordinates and lamp light position/intensity suggestions. No permanent background may contain removable furniture or its light/shadow/reflection contribution. The first local review route is `/scene-study/`; production fidelity is evaluated against the opening artwork in the browser, not inferred from a successful Blender render.
+
+On 5 October, the Blender chat confirmed the production branch and export contract. Rendering and asset delivery are in progress; no new delivery has yet been imported or accepted.
+
+### Previous bedside study
+
 Job **fading-bedside-20261003-01** was dispatched through the Blender chat with the complete generator source and creative/export contract. Initial source SHA-256:
 
 ```text
