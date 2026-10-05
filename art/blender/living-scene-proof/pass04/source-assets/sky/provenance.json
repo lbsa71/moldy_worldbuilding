@@ -1,0 +1,14 @@
+{
+  "asset": "kloofendal_overcast_puresky",
+  "title": "Kloofendal Overcast (Pure Sky)",
+  "author": "Greg Zaal",
+  "source": "https://polyhaven.com/a/kloofendal_overcast_puresky",
+  "license": "CC0",
+  "license_url": "https://polyhaven.com/license",
+  "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/4k/kloofendal_overcast_puresky_4k.hdr",
+  "md5": "6678d8e9a87f9b8cdfc4fc4038591d59",
+  "sha256": "77ade807bd208195073a51b970dea574fa70cd80cf666aeedf5cd416ab5c8abd",
+  "bytes": 16953534,
+  "usage": "Visible sky texture only; existing Overcast Soil HDR remains illumination",
+  "source_resolution": "4k"
+}

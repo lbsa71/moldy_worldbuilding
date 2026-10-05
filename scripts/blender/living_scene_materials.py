@@ -3,8 +3,9 @@
 Run inside Blender: create_materials(Path('.../textures')). UV coordinates are
 untransformed, and all maps tile in both axes. Geometry supplies larger folds,
 chips and silhouette wear; these maps supply restrained surface detail. They are
-analytically authored materials, except sand/wet_sand sourced from the documented
-CC0 Poly Haven Sand 03 scan. No source scan is claimed as project-authored.
+analytically authored materials, except sand/wet_sand and the shore rock family
+sourced from documented CC0 Poly Haven scans. No source scan is claimed as
+project-authored. Large rock fractures are geometry, not painted lighting.
 """
 from pathlib import Path
 import json
@@ -19,11 +20,11 @@ import numpy as np
 
 SIZE = 1024
 TEXTURE_PROVENANCE = {
-    "creator": "Fading project analytical materials; Sand 03 by Charlotte Baglioni / Poly Haven",
-    "source": "Original periodic fields, weave, grain and fissures; sand/wet_sand use acquired CC0 Sand 03 scan",
-    "method": "Original detail baked to portable PNG maps; sand uses scanned source maps with an authored wet adaptation",
+    "creator": "Fading project analytical materials; Sand 03 by Charlotte Baglioni and Seaside Rock by Dimitrios Savva / Poly Haven",
+    "source": "Original periodic fields, weave and grain; sand and shore rock families use documented acquired CC0 scans",
+    "method": "Original detail baked to portable PNG maps; acquired scans retain grain with documented charcoal and wet adaptations",
     "resolution": [SIZE, SIZE],
-    "license": "Original assets are project-authored; sand source and derivative maps are CC0 1.0",
+    "license": "Original assets are project-authored; acquired sand/rock sources and derivative maps are CC0 1.0",
     "color_spaces": {"basecolor": "sRGB", "emission": "sRGB", "normal": "linear/non-color", "orm": "linear/non-color"},
     "orm_channels": {"R": "occlusion", "G": "roughness", "B": "metalness"},
     "normal_convention": "Tangent-space OpenGL/glTF +Y; RGB encodes signed XYZ in [0,1]",
@@ -192,7 +193,7 @@ def _read_map_rgb(path):
         image.colorspace_settings.name = 'Non-Color'
         width, height = image.size[:]
         if (width, height) != (SIZE, SIZE):
-            raise ValueError(f'Sand source resolution differs from 1024px: {path}')
+            raise ValueError(f'Source resolution differs from 1024px: {path}')
         pixels = np.empty(width * height * 4, dtype=np.float32)
         image.pixels.foreach_get(pixels)
         return pixels.reshape(height, width, 4)[::-1, :, :3].copy()
@@ -242,6 +243,71 @@ def _scanned_sand_maps(texture_dir):
     return {'sand': dry, 'wet_sand': wet}
 
 
+def _scanned_shore_rock_maps(texture_dir):
+    """CC0 coastal scan adapted to rough charcoal flats and selected wet edges.
+
+    The captured normal and occlusion remain source detail; fracture silhouettes
+    and sparse grit placement belong to geometry. Assign wet material only to
+    selected edge faces. Dry rock remains the dominant surface.
+    """
+    source_dir = Path(__file__).resolve().parents[2] / 'art/blender/living-scene-proof/source-assets/rock04'
+    provenance = json.loads((source_dir / 'provenance.json').read_text(encoding='utf-8-sig'))
+    source_maps = {}
+    for entry in provenance['files']:
+        source = source_dir / entry['name']
+        data = source.read_bytes()
+        if hashlib.sha256(data).hexdigest() != entry['sha256'] or hashlib.md5(data).hexdigest() != entry['md5']:
+            raise ValueError(f'Seaside Rock source checksum mismatch: {source}')
+        source_maps[entry['role']] = source
+    normal_path = texture_dir / 'shore_rock_normal.png'
+    shutil.copy2(source_maps['normal'], normal_path)
+    encoded = _read_map_rgb(source_maps['basecolor'])
+    linear = np.where(encoded <= .04045, encoded / 12.92, ((encoded + .055) / 1.055) ** 2.4)
+    luminance = np.sum(linear * np.asarray((.2126, .7152, .0722), dtype=np.float32), axis=-1, keepdims=True)
+    # Normalize captured mineral grain to a measured charcoal albedo. The scan's
+    # warm chroma is removed; its detailed value structure remains, with bounded
+    # contrast so pale mineral flecks cannot turn the whole shore beige.
+    grain = luminance / max(float(luminance.mean()), 1e-6)
+    grain = np.clip(1 + .72 * (grain - 1), .45, 1.9)
+    grain /= float(grain.mean())
+    charcoal = grain * np.asarray((.009, .011, .014), dtype=np.float32)
+    source_orm = _read_map_rgb(source_maps['orm'])
+    result = {}
+    for name, darkening, low, high in (('shore_rock', 1.0, .78, .96), ('shore_wet_rock', .83, .48, .72)):
+        diffuse = charcoal * darkening
+        diffuse = np.where(diffuse <= .0031308, diffuse * 12.92, 1.055 * diffuse ** (1 / 2.4) - .055)
+        orm = source_orm.copy()
+        orm[:, :, 1] = low + (high - low) * np.clip(source_orm[:, :, 1], 0, 1)
+        orm[:, :, 2] = 0.0
+        paths = {'basecolor': texture_dir / f'{name}_basecolor.png', 'normal': normal_path, 'orm': texture_dir / f'{name}_orm.png'}
+        _png(paths['basecolor'], diffuse)
+        _png(paths['orm'], orm)
+        result[name] = paths
+        TEXTURE_PROVENANCE['materials'][name] = {
+            'description': ('Rough charcoal coastal rock flats with captured pitted mineral grain' if name == 'shore_rock' else
+                            'Restrained wet charcoal coastal rock for selected shoreline edges'),
+            'maps': {kind: path.name for kind, path in paths.items()},
+            'method': 'Acquired Seaside Rock scan with documented linear charcoal color and roughness adaptation',
+            'source_asset': provenance,
+            'tile_width_m': 2,
+            'tile_height_m': 2,
+            'normal_strength': .72,
+            'adaptation': {'diffuse_linear_mean_target': [.009 * darkening, .011 * darkening, .014 * darkening],
+                           'source_luminance_normalization': 'Normalized mean captured luminance; retained scan grain',
+                           'grain_contrast': .72, 'grain_relative_clip': [.45, 1.9],
+                           'wet_linear_multiplier': darkening, 'color_saturation': 0,
+                           'roughness_remap_range': [low, high],
+                           'metalness': 0, 'normal_and_ao': 'Preserved source scan detail',
+                           'placement': 'Dominant rough flats' if name == 'shore_rock' else 'Selected wet edge faces only'},
+        }
+    # Existing scattered-rock callers now receive the same dry charcoal scan.
+    # Reuse the identical maps rather than embedding an extra texture family.
+    result['rock'] = result['shore_rock']
+    TEXTURE_PROVENANCE['materials']['rock'] = dict(TEXTURE_PROVENANCE['materials']['shore_rock'])
+    TEXTURE_PROVENANCE['materials']['rock']['description'] = 'Scattered rough charcoal rocks sharing the acquired shoreline scan family'
+    return result
+
+
 def _occlusion_group():
     # This exact group/input convention is recognized by Blender's core glTF exporter.
     group = bpy.data.node_groups.get('glTF Material Output')
@@ -253,7 +319,7 @@ def _occlusion_group():
 
 
 def create_materials(texture_dir: Path) -> dict:
-    """Return the original eight materials plus scanned sand and wet_sand.
+    """Return existing keys plus shore_rock and shore_wet_rock scanned materials.
 
     Fully supported core glTF metal-rough workflow. Every node graph uses just
     UV images, normal mapping and channel splitting. PNGs remain external
@@ -262,11 +328,12 @@ def create_materials(texture_dir: Path) -> dict:
     texture_dir = Path(texture_dir).resolve()
     maps = _bake_maps(texture_dir)
     maps.update(_scanned_sand_maps(texture_dir))
+    maps.update(_scanned_shore_rock_maps(texture_dir))
     (texture_dir / 'material-provenance.json').write_text(json.dumps(TEXTURE_PROVENANCE, indent=2), encoding='utf-8')
     result = {}
     hook = _occlusion_group()
     for key, paths in maps.items():
-        material = bpy.data.materials.new({'sand': 'Sand', 'wet_sand': 'WetSand'}.get(key, key))
+        material = bpy.data.materials.new({'sand': 'Sand', 'wet_sand': 'WetSand', 'shore_rock': 'ShoreRock', 'shore_wet_rock': 'ShoreWetRock'}.get(key, key))
         material.use_nodes = True
         material['authored_source'] = TEXTURE_PROVENANCE['materials'][key].get('method', 'Original analytical detail baked to maps; not a scanned surface')
         material['surface_description'] = TEXTURE_PROVENANCE['materials'][key]['description']
@@ -307,7 +374,7 @@ def create_materials(texture_dir: Path) -> dict:
             links.new(emission_tint.outputs[2], shader.inputs['Emission Color'])
         normal = nodes.new('ShaderNodeNormalMap')
         normal.location = (-40, -80)
-        normal.inputs['Strength'].default_value = 1.0
+        normal.inputs['Strength'].default_value = TEXTURE_PROVENANCE['materials'][key].get('normal_strength', 1.0)
         links.new(textures['normal'].outputs['Color'], normal.inputs['Color'])
         links.new(normal.outputs['Normal'], shader.inputs['Normal'])
         separate = nodes.new('ShaderNodeSeparateColor')

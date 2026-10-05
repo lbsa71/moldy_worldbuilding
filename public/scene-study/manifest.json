@@ -1,15 +1,15 @@
 {
-  "status": "pass03 sand and cloth repair; full photoreal fidelity remains under review",
+  "status": "pass04 fractured rock and inhabited inlet checkpoint; browser art review required",
   "blender": "5.2.2 LTS",
   "generator": "scripts/blender/living_scene_build.py",
-  "generator_sha256": "886c04572eeef62f20d4e9fec768792e849e479e0a583c43e9c3e972e8aa3822",
+  "generator_sha256": "51b04955e403f3bf6789b55abf4feff600ff148ab2149ab122359603702969cb",
   "file": "living-scene.glb",
-  "sha256": "8754ef4d3c3a37bc7ae890d54d9d8e92da4e3737ed901f7c6f49b08a4d348750",
-  "bytes": 25704764,
-  "triangles": 78988,
-  "mesh_primitives": 14,
-  "materials": 10,
-  "embedded_images": 27,
+  "sha256": "2827291655e29033d03635cd78037d3dd777592e48b28e8f9f3a34c0d8349885",
+  "bytes": 32604672,
+  "triangles": 166036,
+  "mesh_primitives": 42,
+  "materials": 15,
+  "embedded_images": 25,
   "units": "meters",
   "coordinates": "glTF Y-up, right-handed; Blender (x,y,z) -> (x,z,-y)",
   "camera": {
@@ -56,8 +56,10 @@
       0.34,
       0.44
     ],
-    "fog_density_suggestion": 0.012,
-    "background": "real static depth geometry, no image plate",
+    "fog_density": 0.013,
+    "fog_density_suggestion": 0.01,
+    "fog_note": "Runtime EXP2 coefficient per scene meter; offline low-altitude volume has separate density, not a universal fog floor",
+    "background": "real layered terrain/bridge/settlement; separate raw unlit photographic cloud dome",
     "ibl": {
       "asset": "Overcast Soil (Pure Sky)",
       "source": "https://polyhaven.com/a/overcast_soil_puresky",
@@ -136,17 +138,35 @@
         0.14000000059604645,
         -0.8500000238418579
       ]
+    },
+    {
+      "name": "Fading_StudyBooks",
+      "parent": null,
+      "position": [
+        1.9800000190734863,
+        0.14499999582767487,
+        1.350000023841858
+      ]
+    },
+    {
+      "name": "Fading_StudySky",
+      "parent": null,
+      "position": [
+        0.0,
+        0.0,
+        -0.0
+      ]
     }
   ],
   "texture_provenance": {
-    "creator": "Fading project analytical materials; Sand 03 by Charlotte Baglioni / Poly Haven",
-    "source": "Original periodic fields, weave, grain and fissures; sand/wet_sand use acquired CC0 Sand 03 scan",
-    "method": "Original detail baked to portable PNG maps; sand uses scanned source maps with an authored wet adaptation",
+    "creator": "Fading project analytical materials; Sand 03 by Charlotte Baglioni and Seaside Rock by Dimitrios Savva / Poly Haven",
+    "source": "Original periodic fields, weave and grain; sand and shore rock families use documented acquired CC0 scans",
+    "method": "Original detail baked to portable PNG maps; acquired scans retain grain with documented charcoal and wet adaptations",
     "resolution": [
       1024,
       1024
     ],
-    "license": "Original assets are project-authored; sand source and derivative maps are CC0 1.0",
+    "license": "Original assets are project-authored; acquired sand/rock sources and derivative maps are CC0 1.0",
     "color_spaces": {
       "basecolor": "sRGB",
       "emission": "sRGB",
@@ -211,11 +231,94 @@
         }
       },
       "rock": {
-        "description": "Dark desaturated wet slate with shallow fissures and restrained rough specular variation",
+        "description": "Scattered rough charcoal rocks sharing the acquired shoreline scan family",
         "maps": {
-          "basecolor": "rock_basecolor.png",
-          "normal": "rock_normal.png",
-          "orm": "rock_orm.png"
+          "basecolor": "shore_rock_basecolor.png",
+          "normal": "shore_rock_normal.png",
+          "orm": "shore_rock_orm.png"
+        },
+        "method": "Acquired Seaside Rock scan with documented linear charcoal color and roughness adaptation",
+        "source_asset": {
+          "normal_convention": "OpenGL/glTF +Y",
+          "publisher": "Poly Haven",
+          "tile_height_m": 2,
+          "cc0_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "metadata_url": "https://api.polyhaven.com/info/seaside_rock",
+          "resolution": [
+            1024,
+            1024
+          ],
+          "method": "Acquired scanned coastal rock PBR maps; charcoal diffuse and dry/wet roughness adaptations authored for Fading reference",
+          "license_url": "https://polyhaven.com/license",
+          "file_metadata_url": "https://api.polyhaven.com/files/seaside_rock",
+          "tile_width_m": 2,
+          "author": "Dimitrios Savva",
+          "orm_channels": {
+            "R": "occlusion",
+            "B": "metalness",
+            "G": "roughness"
+          },
+          "license": "CC0 1.0",
+          "acquired_utc": "2026-10-05T13:12:53.0880662Z",
+          "files": [
+            {
+              "sha256": "7e1f1ce252c30d36fe442fcc529183b87cad112d26f6f656705172128efd936e",
+              "expected_md5": "d719765f07b7e5ec40ef7acb9b718df5",
+              "name": "seaside_rock_diff_1k.jpg",
+              "md5": "d719765f07b7e5ec40ef7acb9b718df5",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/seaside_rock/seaside_rock_diff_1k.jpg",
+              "bytes": 954872,
+              "role": "basecolor",
+              "color_space": "sRGB"
+            },
+            {
+              "sha256": "571cc58dcf6504e897e835a918919c7e9c4af1075383b8c8be62af120df326f5",
+              "expected_md5": "705c6817fdd6cb9f14af5e7f1f3f194f",
+              "name": "seaside_rock_nor_gl_1k.png",
+              "md5": "705c6817fdd6cb9f14af5e7f1f3f194f",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/seaside_rock/seaside_rock_nor_gl_1k.png",
+              "bytes": 5835087,
+              "role": "normal",
+              "color_space": "Non-Color"
+            },
+            {
+              "sha256": "fcde935ef8f21f01e1e9ce4ef17a5e363ec0c569676068ffc0526fc9fba904ca",
+              "expected_md5": "052eac2f209c6f0f0a89ae3221707089",
+              "name": "seaside_rock_arm_1k.png",
+              "md5": "052eac2f209c6f0f0a89ae3221707089",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/seaside_rock/seaside_rock_arm_1k.png",
+              "bytes": 4169375,
+              "role": "orm",
+              "color_space": "Non-Color"
+            }
+          ],
+          "asset": "Seaside Rock",
+          "asset_url": "https://polyhaven.com/a/seaside_rock"
+        },
+        "tile_width_m": 2,
+        "tile_height_m": 2,
+        "normal_strength": 0.72,
+        "adaptation": {
+          "diffuse_linear_mean_target": [
+            0.009,
+            0.011,
+            0.014
+          ],
+          "source_luminance_normalization": "Normalized mean captured luminance; retained scan grain",
+          "grain_contrast": 0.72,
+          "grain_relative_clip": [
+            0.45,
+            1.9
+          ],
+          "wet_linear_multiplier": 1.0,
+          "color_saturation": 0,
+          "roughness_remap_range": [
+            0.78,
+            0.96
+          ],
+          "metalness": 0,
+          "normal_and_ao": "Preserved source scan detail",
+          "placement": "Dominant rough flats"
         }
       },
       "cliff": {
@@ -365,6 +468,188 @@
           ],
           "normal_and_ao": "Unchanged source detail"
         }
+      },
+      "shore_rock": {
+        "description": "Rough charcoal coastal rock flats with captured pitted mineral grain",
+        "maps": {
+          "basecolor": "shore_rock_basecolor.png",
+          "normal": "shore_rock_normal.png",
+          "orm": "shore_rock_orm.png"
+        },
+        "method": "Acquired Seaside Rock scan with documented linear charcoal color and roughness adaptation",
+        "source_asset": {
+          "normal_convention": "OpenGL/glTF +Y",
+          "publisher": "Poly Haven",
+          "tile_height_m": 2,
+          "cc0_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "metadata_url": "https://api.polyhaven.com/info/seaside_rock",
+          "resolution": [
+            1024,
+            1024
+          ],
+          "method": "Acquired scanned coastal rock PBR maps; charcoal diffuse and dry/wet roughness adaptations authored for Fading reference",
+          "license_url": "https://polyhaven.com/license",
+          "file_metadata_url": "https://api.polyhaven.com/files/seaside_rock",
+          "tile_width_m": 2,
+          "author": "Dimitrios Savva",
+          "orm_channels": {
+            "R": "occlusion",
+            "B": "metalness",
+            "G": "roughness"
+          },
+          "license": "CC0 1.0",
+          "acquired_utc": "2026-10-05T13:12:53.0880662Z",
+          "files": [
+            {
+              "sha256": "7e1f1ce252c30d36fe442fcc529183b87cad112d26f6f656705172128efd936e",
+              "expected_md5": "d719765f07b7e5ec40ef7acb9b718df5",
+              "name": "seaside_rock_diff_1k.jpg",
+              "md5": "d719765f07b7e5ec40ef7acb9b718df5",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/seaside_rock/seaside_rock_diff_1k.jpg",
+              "bytes": 954872,
+              "role": "basecolor",
+              "color_space": "sRGB"
+            },
+            {
+              "sha256": "571cc58dcf6504e897e835a918919c7e9c4af1075383b8c8be62af120df326f5",
+              "expected_md5": "705c6817fdd6cb9f14af5e7f1f3f194f",
+              "name": "seaside_rock_nor_gl_1k.png",
+              "md5": "705c6817fdd6cb9f14af5e7f1f3f194f",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/seaside_rock/seaside_rock_nor_gl_1k.png",
+              "bytes": 5835087,
+              "role": "normal",
+              "color_space": "Non-Color"
+            },
+            {
+              "sha256": "fcde935ef8f21f01e1e9ce4ef17a5e363ec0c569676068ffc0526fc9fba904ca",
+              "expected_md5": "052eac2f209c6f0f0a89ae3221707089",
+              "name": "seaside_rock_arm_1k.png",
+              "md5": "052eac2f209c6f0f0a89ae3221707089",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/seaside_rock/seaside_rock_arm_1k.png",
+              "bytes": 4169375,
+              "role": "orm",
+              "color_space": "Non-Color"
+            }
+          ],
+          "asset": "Seaside Rock",
+          "asset_url": "https://polyhaven.com/a/seaside_rock"
+        },
+        "tile_width_m": 2,
+        "tile_height_m": 2,
+        "normal_strength": 0.72,
+        "adaptation": {
+          "diffuse_linear_mean_target": [
+            0.009,
+            0.011,
+            0.014
+          ],
+          "source_luminance_normalization": "Normalized mean captured luminance; retained scan grain",
+          "grain_contrast": 0.72,
+          "grain_relative_clip": [
+            0.45,
+            1.9
+          ],
+          "wet_linear_multiplier": 1.0,
+          "color_saturation": 0,
+          "roughness_remap_range": [
+            0.78,
+            0.96
+          ],
+          "metalness": 0,
+          "normal_and_ao": "Preserved source scan detail",
+          "placement": "Dominant rough flats"
+        }
+      },
+      "shore_wet_rock": {
+        "description": "Restrained wet charcoal coastal rock for selected shoreline edges",
+        "maps": {
+          "basecolor": "shore_wet_rock_basecolor.png",
+          "normal": "shore_rock_normal.png",
+          "orm": "shore_wet_rock_orm.png"
+        },
+        "method": "Acquired Seaside Rock scan with documented linear charcoal color and roughness adaptation",
+        "source_asset": {
+          "normal_convention": "OpenGL/glTF +Y",
+          "publisher": "Poly Haven",
+          "tile_height_m": 2,
+          "cc0_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "metadata_url": "https://api.polyhaven.com/info/seaside_rock",
+          "resolution": [
+            1024,
+            1024
+          ],
+          "method": "Acquired scanned coastal rock PBR maps; charcoal diffuse and dry/wet roughness adaptations authored for Fading reference",
+          "license_url": "https://polyhaven.com/license",
+          "file_metadata_url": "https://api.polyhaven.com/files/seaside_rock",
+          "tile_width_m": 2,
+          "author": "Dimitrios Savva",
+          "orm_channels": {
+            "R": "occlusion",
+            "B": "metalness",
+            "G": "roughness"
+          },
+          "license": "CC0 1.0",
+          "acquired_utc": "2026-10-05T13:12:53.0880662Z",
+          "files": [
+            {
+              "sha256": "7e1f1ce252c30d36fe442fcc529183b87cad112d26f6f656705172128efd936e",
+              "expected_md5": "d719765f07b7e5ec40ef7acb9b718df5",
+              "name": "seaside_rock_diff_1k.jpg",
+              "md5": "d719765f07b7e5ec40ef7acb9b718df5",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/seaside_rock/seaside_rock_diff_1k.jpg",
+              "bytes": 954872,
+              "role": "basecolor",
+              "color_space": "sRGB"
+            },
+            {
+              "sha256": "571cc58dcf6504e897e835a918919c7e9c4af1075383b8c8be62af120df326f5",
+              "expected_md5": "705c6817fdd6cb9f14af5e7f1f3f194f",
+              "name": "seaside_rock_nor_gl_1k.png",
+              "md5": "705c6817fdd6cb9f14af5e7f1f3f194f",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/seaside_rock/seaside_rock_nor_gl_1k.png",
+              "bytes": 5835087,
+              "role": "normal",
+              "color_space": "Non-Color"
+            },
+            {
+              "sha256": "fcde935ef8f21f01e1e9ce4ef17a5e363ec0c569676068ffc0526fc9fba904ca",
+              "expected_md5": "052eac2f209c6f0f0a89ae3221707089",
+              "name": "seaside_rock_arm_1k.png",
+              "md5": "052eac2f209c6f0f0a89ae3221707089",
+              "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/seaside_rock/seaside_rock_arm_1k.png",
+              "bytes": 4169375,
+              "role": "orm",
+              "color_space": "Non-Color"
+            }
+          ],
+          "asset": "Seaside Rock",
+          "asset_url": "https://polyhaven.com/a/seaside_rock"
+        },
+        "tile_width_m": 2,
+        "tile_height_m": 2,
+        "normal_strength": 0.72,
+        "adaptation": {
+          "diffuse_linear_mean_target": [
+            0.007469999999999999,
+            0.00913,
+            0.01162
+          ],
+          "source_luminance_normalization": "Normalized mean captured luminance; retained scan grain",
+          "grain_contrast": 0.72,
+          "grain_relative_clip": [
+            0.45,
+            1.9
+          ],
+          "wet_linear_multiplier": 0.83,
+          "color_saturation": 0,
+          "roughness_remap_range": [
+            0.48,
+            0.72
+          ],
+          "metalness": 0,
+          "normal_and_ao": "Preserved source scan detail",
+          "placement": "Selected wet edge faces only"
+        }
       }
     }
   },
@@ -373,14 +658,130 @@
     "passed": true,
     "chair_turn_test_degrees": -20
   },
-  "sand": {
+  "shore": {
     "physical_tile_width_m": 2,
-    "waterline": "gently sloping damp sand with sparse rocks; local flattened furniture deposits"
+    "family": "scanned charcoal coastal mineral rock; predominantly rough, selectively damp edges",
+    "paving_root": "Fading_StudyPaving",
+    "separate_pieces": [
+      "StudyPavingSlab_001",
+      "StudyPavingSlab_002",
+      "StudyPavingSlab_003",
+      "StudyPavingSlab_005",
+      "StudyPavingSlab_006",
+      "StudyPavingSlab_007",
+      "StudyPavingSlab_008",
+      "StudyPavingSlab_009",
+      "StudyPavingSlab_010",
+      "StudyPavingSlab_011",
+      "StudyPavingSlab_012",
+      "StudyPavingSlab_013",
+      "StudyPavingSlab_014",
+      "StudyPavingSlab_015"
+    ]
   },
+  "books": {
+    "root": "Fading_StudyBooks",
+    "individual_roots": [
+      "StudyBook_1",
+      "StudyBook_2",
+      "StudyBook_3"
+    ],
+    "static": true,
+    "no_readable_titles": true
+  },
+  "sky": {
+    "root": "Fading_StudySky",
+    "unlit": true,
+    "fog": false,
+    "castShadows": false,
+    "receiveShadows": false,
+    "reflection_membership": true,
+    "source": {
+      "asset": "kloofendal_overcast_puresky",
+      "title": "Kloofendal Overcast (Pure Sky)",
+      "author": "Greg Zaal",
+      "source": "https://polyhaven.com/a/kloofendal_overcast_puresky",
+      "license": "CC0",
+      "license_url": "https://polyhaven.com/license",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/4k/kloofendal_overcast_puresky_4k.hdr",
+      "md5": "6678d8e9a87f9b8cdfc4fc4038591d59",
+      "sha256": "77ade807bd208195073a51b970dea574fa70cd80cf666aeedf5cd416ab5c8abd",
+      "bytes": 16953534,
+      "usage": "Visible sky texture only; existing Overcast Soil HDR remains illumination",
+      "source_resolution": "4k",
+      "adaptation": {
+        "raw_linear_palette": [
+          0.085,
+          0.124,
+          0.173
+        ],
+        "cloud_contrast_power": 1.35,
+        "horizon_veil": true,
+        "dome_radius_m": 155,
+        "longitude_rotation_rad": -2.42,
+        "latitude_scale": 2.2,
+        "latitude_offset": 0.12,
+        "color_pipeline": "Scene-linear adapted raw albedo explicitly sRGB-encoded; no display transform or full-scene bake"
+      },
+      "texture_sha256": "d0c1dc730ce4a872f17e2e14705f27219f5d5e1d7cc1fd8288339256bc07451c"
+    },
+    "texture": "sky-clouds.png"
+  },
+  "environment_roles": [
+    {
+      "name": "far left irregular land",
+      "node": "StudyFarLeftLayer",
+      "static_depth_layer": 108,
+      "require_in_frame": true
+    },
+    {
+      "name": "bridge left bank",
+      "node": "StudyLeftBankLayer",
+      "static_depth_layer": 45,
+      "require_in_frame": true
+    },
+    {
+      "name": "bridge right bank",
+      "node": "StudyRightBankLayer",
+      "static_depth_layer": 49,
+      "require_in_frame": true
+    },
+    {
+      "name": "right cliff and quiet settlement",
+      "node": "StudySettlementLayer",
+      "static_depth_layer": 29,
+      "require_in_frame": true
+    },
+    {
+      "name": "nearer right outcrop",
+      "node": "StudyNearOutcropLayer",
+      "static_depth_layer": 17,
+      "require_in_frame": true
+    },
+    {
+      "name": "connected distant bridge",
+      "node": "StudyInletBridge",
+      "static_depth_layer": 56,
+      "require_in_frame": true
+    }
+  ],
+  "terrain_connections": [
+    {
+      "name": "left abutment overlap",
+      "anchor": "StudyBridgeAnchorLeft",
+      "terrain": "StudyLeftLand",
+      "tolerance_m": 0.04
+    },
+    {
+      "name": "right abutment overlap",
+      "anchor": "StudyBridgeAnchorRight",
+      "terrain": "StudyRightLand",
+      "tolerance_m": 0.04
+    }
+  ],
   "known_limits": [
-    "Offline AgX, volume and preview lights need explicit Babylon calibration",
-    "Sand is scanned; other surfaces remain authored analytic textures",
-    "Distant silhouettes and horizon are provisional",
+    "Offline AgX and low-altitude volumetric haze require browser calibration",
+    "Buildings and hidden bridge banks are reconstruction choices, not a recovered city plan",
     "Portrait camera not approved",
     "Cup follows chair and remains independently removable"
   ]

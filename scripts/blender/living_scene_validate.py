@@ -5,7 +5,11 @@ blender --background --factory-startup --python-exit-code 1 --python \
 
 The optional manifest can supply camera.aspect_ratio, camera.yfov_radians,
 camera.position_gltf, camera.target_gltf, camera.up_gltf and
-landmarks: [{name, node, position_gltf?, uv?, tolerance?}]. Projection uses
+landmarks / environment_landmarks: [{name, node, position_gltf?, uv?, tolerance?}].
+Optional environment_roles: [node_name | {name, node | nodes}] supplies projected
+actual mesh bounds. terrain_connections: [{name, anchor, terrain, tolerance_m}]
+checks named anchor heights against actual evaluated terrain after reimport.
+Projection uses
 top-left normalized image coordinates. Expectations are checked only when
 explicitly supplied. This certifies transport and geometry, not visual fidelity.
 """
@@ -30,7 +34,8 @@ ROLE_ROOTS = ("Fading_StudyLamp", "Fading_StudyChair", "Fading_StudyShore")
 CUP = "Fading_StudyCup"
 CAMERA = "Fading_StudyCamera"
 SOCKET = "Fading_StudyLampLight"
-OPTIONAL_ROOTS = ("Fading_StudyBackdrop", "Fading_StudyCurtain")
+OPTIONAL_ROOTS = ("Fading_StudyBackdrop", "Fading_StudyCurtain", "Fading_StudyBooks")
+OPTIONAL_CHILD_ROLES = ("Fading_StudySky", "Fading_StudyPaving")
 COMPONENTS = {5120: "i1", 5121: "u1", 5122: "<i2", 5123: "<u2",
               5125: "<u4", 5126: "<f4"}
 WIDTHS = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4,
@@ -541,6 +546,40 @@ def audit_blender_contacts(chair, shore, lamp, output_path):
     return report
 
 
+def audit_environment_connections(connections, objects=None):
+    """Check explicit bridge/terrain anchor contacts in source or imported scene.
+
+    Each specification supplies name, anchor, terrain and optional tolerance_m.
+    Anchor is an object name; terrain is a mesh/root object name. A world-Z ray
+    hits the actual evaluated terrain. This measures authored connection points,
+    not overall bridge structural or visual acceptance.
+    """
+    objects = bpy.context.scene.objects if objects is None else objects
+    bpy.context.view_layer.update()
+    items, checks = [], {}
+    for spec in connections:
+        name = spec.get("name", spec.get("anchor", "unnamed_connection"))
+        anchor, terrain = objects.get(spec.get("anchor", "")), objects.get(spec.get("terrain", ""))
+        tolerance = float(spec.get("tolerance_m", .02))
+        item = {"name": name, "anchor": spec.get("anchor"), "terrain": spec.get("terrain"), "tolerance_m": tolerance,
+                "anchor_position_blender_Z_up": values(anchor.matrix_world.translation) if anchor else None,
+                "terrain_hit_blender_Z_up": None, "vertical_gap_m": None, "passed": False}
+        if anchor is not None and terrain is not None:
+            tree, owners = _combined_bvh(_evaluated_parts(terrain))
+            if tree is not None:
+                point = anchor.matrix_world.translation
+                hit, normal, index, _ = tree.ray_cast(point + Vector((0, 0, 100)), Vector((0, 0, -1)), 200)
+                if hit is not None:
+                    gap = point.z - hit.z
+                    item.update({"terrain_hit_blender_Z_up": values(hit), "terrain_normal_blender_Z_up": values(normal),
+                                 "terrain_object": owners[index][0], "terrain_triangle": owners[index][1],
+                                 "vertical_gap_m": gap, "passed": abs(gap) <= tolerance + 1e-7})
+        items.append(item)
+        checks["connection_" + str(name)] = item["passed"]
+    return {"checks": checks, "valid": all(checks.values()), "connections": items,
+            "method": "Named anchor downward raycast against actual evaluated named terrain geometry."}
+
+
 def validate(path, manifest, report):
     glb = GLB(path)
     doc = glb.doc
@@ -593,6 +632,26 @@ def validate(path, manifest, report):
     checks["required_role_names_unique"] = all(named_index(name) is not None for name in (*ROLE_ROOTS, CUP, CAMERA, SOCKET))
     checks["role_roots_preserved"] = all(named_index(name) in roots for name in ROLE_ROOTS)
     checks["optional_roots_preserved"] = all(named_index(name) in roots for name in OPTIONAL_ROOTS if name in named)
+    sky, paving, books = (named_index(name) for name in ("Fading_StudySky", "Fading_StudyPaving", "Fading_StudyBooks"))
+    semantic_books = [i for i in active if nodes[i].get("name", "").startswith("StudyBook_")
+                      and nodes[i]["name"][len("StudyBook_"):].isdigit()]
+    semantic_slabs = [i for i in active if nodes[i].get("name", "").startswith("StudyPavingSlab_")
+                      and nodes[i]["name"][len("StudyPavingSlab_"):].isdigit()]
+    checks["optional_role_names_unique"] = all(len(named.get(name, [])) == 1 for name in (*OPTIONAL_ROOTS, *OPTIONAL_CHILD_ROLES) if name in named)
+    if "Fading_StudyBooks" in named or semantic_books:
+        book_mesh_sets = [{nodes[i]["mesh"] for i in descendants(book) if "mesh" in nodes[i]} for book in semantic_books]
+        checks["books_named_hierarchies_preserved"] = books is not None and bool(semantic_books) and all(book in descendants(books) and named_index(nodes[book]["name"]) == book for book in semantic_books)
+        checks["books_have_separate_mesh_hierarchies"] = all(book_mesh_sets) and len(set().union(*book_mesh_sets)) == sum(len(meshes) for meshes in book_mesh_sets) if book_mesh_sets else False
+    if "Fading_StudyPaving" in named or semantic_slabs:
+        checks["paving_parent_is_shore"] = paving is not None and parents.get(paving) == named_index("Fading_StudyShore")
+        checks["paving_semantic_slab_meshes_preserved"] = paving is not None and bool(semantic_slabs) and all(index in descendants(paving) and "mesh" in nodes[index] and named_index(nodes[index]["name"]) == index for index in semantic_slabs)
+        checks["paving_slabs_use_distinct_meshes"] = all("mesh" in nodes[index] for index in semantic_slabs) and len({nodes[index].get("mesh") for index in semantic_slabs}) == len(semantic_slabs) and bool(semantic_slabs)
+    if "Fading_StudySky" in named:
+        backdrop = named_index("Fading_StudyBackdrop")
+        checks["sky_root_or_backdrop_child"] = sky is not None and (sky in roots or parents.get(sky) == backdrop and backdrop is not None)
+    report["optional_semantic_roles"] = {"books": [nodes[i]["name"] for i in semantic_books],
+                                         "paving_slabs": [nodes[i]["name"] for i in semantic_slabs],
+                                         "sky": nodes[sky].get("name") if sky is not None else None}
     chair, cup, lamp = named_index("Fading_StudyChair"), named_index(CUP), named_index("Fading_StudyLamp")
     checks["cup_direct_parent_is_chair"] = cup is not None and chair is not None and parents.get(cup) == chair
     checks["cup_has_independent_mesh_descendants"] = cup is not None and any("mesh" in nodes[i] for i in descendants(cup))
@@ -618,9 +677,9 @@ def validate(path, manifest, report):
                                                 "local_matrix_rows": [values(row) for row in node_matrix(nodes[index])],
                                                 "world_matrix_rows": [values(row) for row in world[index]],
                                                 "world_position": values(world[index].translation)}
-                                     for name in (*ROLE_ROOTS, CUP, CAMERA, SOCKET, *OPTIONAL_ROOTS)
+                                     for name in (*ROLE_ROOTS, CUP, CAMERA, SOCKET, *OPTIONAL_ROOTS, *OPTIONAL_CHILD_ROLES)
                                      if (index := named_index(name)) is not None}
-    all_points, primitive_report = [], []
+    all_points, primitive_report, node_points = [], [], {}
     for index in active:
         node = nodes[index]
         if "mesh" not in node:
@@ -651,6 +710,7 @@ def validate(path, manifest, report):
                 normal_mismatches = int(np.count_nonzero(valid & (dot < -0.05)))
             points = [values(world[index] @ Vector(point)) for point in xyz]
             all_points.extend(points)
+            node_points.setdefault(index, []).extend(points)
             primitive_report.append({"node": node.get("name"), "mesh_index": node["mesh"], "primitive_index": primitive_index,
                                      "mode": mode, "vertices": len(xyz), "triangles": len(tri), "material_index": primitive.get("material"),
                                      "degenerate_triangles": degenerate, "normal_winding_opposed_triangles": normal_mismatches,
@@ -678,6 +738,27 @@ def validate(path, manifest, report):
                           "texture_definitions": doc.get("textures", []), "samplers": doc.get("samplers", [])}
     checks["all_images_embedded"] = all(item["embedded"] and item["bytes"] > 0 for item in images)
     checks["embedded_image_dimensions_readable"] = all(item["dimensions"] and min(item["dimensions"]) > 0 for item in images)
+    if sky is not None:
+        sky_nodes = descendants(sky)
+        sky_primitives = [item for item in primitive_report if named_index(item["node"]) in sky_nodes]
+        sky_material_indices = sorted({item["material_index"] for item in sky_primitives if item["material_index"] is not None})
+        sky_materials = [doc["materials"][index] for index in sky_material_indices]
+        checks["sky_mesh_geometry_present"] = bool(sky_primitives)
+        checks["sky_uses_unlit_material"] = bool(sky_materials) and all("KHR_materials_unlit" in material.get("extensions", {}) for material in sky_materials) and all(item["material_index"] is not None for item in sky_primitives)
+        checks["sky_uses_core_embedded_base_color_texture"] = bool(sky_materials)
+        for material in sky_materials:
+            texture_info = material.get("pbrMetallicRoughness", {}).get("baseColorTexture")
+            texture = doc.get("textures", [])[texture_info["index"]] if texture_info is not None else {}
+            source = texture.get("source")
+            checks["sky_uses_core_embedded_base_color_texture"] &= source is not None and source < len(images) and images[source]["embedded"]
+        sky_extras = nodes[sky].get("extras", {})
+        def disabled_hint(false_keys, true_keys=()):
+            return any(sky_extras.get(key) is False for key in false_keys) or any(sky_extras.get(key) is True for key in true_keys)
+        checks["sky_has_fog_exemption_hint"] = disabled_hint(("fog", "applyFog", "receivesFog", "receive_fog", "apply_fog"), ("disableFog", "fogExempt"))
+        checks["sky_has_cast_shadow_exemption_hint"] = disabled_hint(("castShadows", "castShadow", "cast_shadows"))
+        checks["sky_has_receive_shadow_exemption_hint"] = disabled_hint(("receiveShadows", "receiveShadow", "receive_shadows"))
+        report["sky_transport"] = {"material_indices": sky_material_indices, "extras": sky_extras,
+                                     "note": "Unlit texture and explicit runtime exemptions; browser appearance still requires visual review."}
     camera_index = named_index(CAMERA)
     camera_node = nodes[camera_index] if camera_index is not None else {}
     camera = doc.get("cameras", [])[camera_node["camera"]] if "camera" in camera_node else {}
@@ -704,13 +785,68 @@ def validate(path, manifest, report):
                 return {"uv": None, "depth": depth, "in_frame": False}
             half_height = math.tan(yfov / 2) * depth
             uv = [0.5 + local.x / (2 * half_height * aspect), 0.5 - local.y / (2 * half_height)]
-            return {"uv": uv, "depth": depth, "in_frame": depth > 0 and all(0 <= value <= 1 for value in uv)}
+            return {"uv": uv, "depth": depth, "in_frame": perspective.get("znear", 0) <= depth <= perspective.get("zfar", float("inf")) and all(0 <= value <= 1 for value in uv)}
 
-        landmarks = manifest.get("landmarks", [])
-        if isinstance(landmarks, dict):
-            landmarks = [{"name": name, **spec} for name, spec in landmarks.items()]
+        def normalized_specs(specs):
+            if isinstance(specs, dict):
+                return [{"name": name, **spec} if isinstance(spec, dict) else {"name": name, "node": spec} for name, spec in specs.items()]
+            return [{"name": spec, "node": spec} if isinstance(spec, str) else spec for spec in specs]
+
+        # These bounds use actual transported vertices, rather than projecting
+        # the corners of world AABBs. They do not account for occlusion.
+        role_specs = [{"name": name, "node": name} for name in (*ROLE_ROOTS, CUP, *OPTIONAL_ROOTS, *OPTIONAL_CHILD_ROLES) if name in named]
+        for label, prefix in (("bridge", "StudyBridge"), ("books", "StudyBook_"), ("paving", "StudyPavingSlab_")):
+            matching = [nodes[index].get("name") for index in active if nodes[index].get("name", "").startswith(prefix)]
+            if matching:
+                role_specs.append({"name": label, "nodes": matching})
+        role_specs.extend(normalized_specs(manifest.get("environment_roles", [])))
+        role_specs = list({spec.get("name", spec.get("node", "unnamed")): spec for spec in role_specs}.values())
+        report["projected_environment_roles"] = []
+        for spec in role_specs:
+            role_names = spec.get("nodes", [spec.get("node", spec.get("name"))])
+            selected = set()
+            for name in role_names:
+                index = named_index(name)
+                if index is not None:
+                    selected.update(descendants(index))
+            points = [point for index in selected for point in node_points.get(index, [])]
+            projections = [project(point) for point in points]
+            positive = [item for item in projections if item["uv"] is not None and item["depth"] > 0]
+            rectangle = {"min": [min(item["uv"][axis] for item in positive) for axis in range(2)],
+                         "max": [max(item["uv"][axis] for item in positive) for axis in range(2)]} if positive else None
+            intersects = bool(rectangle and rectangle["max"][0] >= 0 and rectangle["min"][0] <= 1 and rectangle["max"][1] >= 0 and rectangle["min"][1] <= 1)
+            role = {"name": spec.get("name", spec.get("node")), "nodes": role_names,
+                    "bounds_gltf_Y_up": bounds(points), "projected_uv_bounds": rectangle,
+                    "depth_min_m": min((item["depth"] for item in projections), default=None),
+                    "depth_max_m": max((item["depth"] for item in projections), default=None),
+                    "vertices": len(points), "vertices_in_frame": sum(item["in_frame"] for item in projections),
+                    "projected_bounds_intersect_frame": intersects,
+                    "semantic_node_positions_gltf": {nodes[index].get("name"): values(world[index].translation) for index in selected if "mesh" not in nodes[index]},
+                    "semantic_node_extras": {nodes[index].get("name"): nodes[index].get("extras", {}) for index in selected if "mesh" not in nodes[index]},
+                    "static_depth_layer": spec.get("static_depth_layer"),
+                    "transport_depth_layers": {nodes[index].get("name"): nodes[index].get("extras", {}).get("static_depth_layer", nodes[index].get("extras", {}).get("staticDepthLayer", nodes[index].get("extras", {}).get("depth_layer")))
+                                               for index in selected if any(key in nodes[index].get("extras", {}) for key in ("static_depth_layer", "staticDepthLayer", "depth_layer"))},
+                    "note": "Actual vertex projection, before occlusion; approximate composition evidence."}
+            if "expected_uv_bounds" in spec:
+                role["expected_uv_bounds"] = spec["expected_uv_bounds"]
+            if spec.get("require_in_frame") is True:
+                checks["environment_role_" + str(role["name"]) + "_in_frame"] = intersects and any(perspective.get("znear", 0) <= item["depth"] <= perspective.get("zfar", float("inf")) for item in projections)
+            report["projected_environment_roles"].append(role)
+        if sky is not None:
+            sky_points = [point for index in descendants(sky) for point in node_points.get(index, [])]
+            depths = [project(point)["depth"] for point in sky_points]
+            far = min(200.0, perspective.get("zfar", 200.0))
+            checks["sky_geometry_inside_200m_far_plane"] = bool(depths) and max(depths) < far and any(depth > perspective.get("znear", 0) for depth in depths)
+            report["sky_transport"].update({"camera_depth_min_m": min(depths, default=None), "camera_depth_max_m": max(depths, default=None),
+                                             "camera_far_limit_m": far, "max_camera_radial_distance_m": max(((Vector(point) - matrix.translation).length for point in sky_points), default=None)})
+
+        landmarks = normalized_specs(manifest.get("landmarks", []))
         if not landmarks:
-            landmarks = [{"name": name, "node": name} for name in (*ROLE_ROOTS, CUP, *OPTIONAL_ROOTS) if name in named]
+            landmarks = [{"name": name, "node": name} for name in (*ROLE_ROOTS, CUP, *OPTIONAL_ROOTS, *OPTIONAL_CHILD_ROLES) if name in named]
+        landmarks.extend(normalized_specs(manifest.get("environment_landmarks", [])))
+        landmarks.extend({"name": spec.get("name", spec.get("anchor")), "node": spec.get("anchor")}
+                         for spec in manifest.get("terrain_connections", []) if spec.get("anchor")
+                         and not any(item.get("node") == spec["anchor"] for item in landmarks))
         for landmark in landmarks:
             name, node_name = landmark.get("name", landmark.get("node")), landmark.get("node", landmark.get("name"))
             index = named_index(node_name)
@@ -720,6 +856,7 @@ def validate(path, manifest, report):
                 role_bounds = bounds([corner for item in selected if item for corner in (item["min"], item["max"])])
                 point = role_bounds["center"] if role_bounds else values(world[index].translation)
             item = {"name": name, "node": node_name, "position_gltf": point,
+                    "static_depth_layer": landmark.get("static_depth_layer", nodes[index].get("extras", {}).get("static_depth_layer", nodes[index].get("extras", {}).get("staticDepthLayer")) if index is not None else None),
                     **(project(point) if point is not None else {"uv": None, "depth": None, "in_frame": False})}
             if "uv" in landmark:
                 tolerance = landmark.get("tolerance", 0.05)
@@ -744,6 +881,11 @@ def validate(path, manifest, report):
     imported = bpy.context.scene.objects
     meshes = [obj for obj in imported if obj.type == "MESH"]
     topology = [mesh_topology(obj) for obj in meshes]
+    imported_sky = imported.get("Fading_StudySky")
+    sky_mesh_names = {obj.name for obj in [imported_sky, *imported_sky.children_recursive] if obj.type == "MESH"} if imported_sky is not None else set()
+    for item in topology:
+        if item["name"] in sky_mesh_names:
+            item["topology_role_exemption"] = "Unlit environment sky surface may intentionally face inward."
     imported_camera = imported.get(CAMERA)
     checks["reimport_named_camera_is_CAMERA"] = imported_camera is not None and imported_camera.type == "CAMERA"
     checks["reimport_lamp_light_is_EMPTY"] = imported.get(SOCKET) is not None and imported.get(SOCKET).type == "EMPTY"
@@ -751,7 +893,7 @@ def validate(path, manifest, report):
     checks["reimport_required_roles_preserved"] = all(imported.get(name) is not None for name in (*ROLE_ROOTS, CUP))
     checks["reimport_cup_parent_is_chair"] = imported.get(CUP) is not None and imported.get(CUP).parent is not None and imported.get(CUP).parent.name == "Fading_StudyChair"
     checks["reimport_instantiated_triangle_count_matches"] = sum(item["triangles"] for item in topology) == report["geometry"]["instantiated_triangles"]
-    checks["no_inward_closed_bodies"] = not any(component["inward_closed_body"] for item in topology for component in item["components"])
+    checks["no_inward_closed_bodies"] = not any(component["inward_closed_body"] for item in topology if item["name"] not in sky_mesh_names for component in item["components"])
     checks["closed_bodies_have_consistent_winding"] = not any(component["closed"] and component["inconsistent_winding_edges"] for item in topology for component in item["components"])
     for item in topology:
         if item["open_surface"]:
@@ -777,6 +919,16 @@ def validate(path, manifest, report):
         report["reimport_contacts"] = _audit_contacts(chair_obj, shore_obj, lamp_obj)
         for name, passed in report["reimport_contacts"]["checks"].items():
             checks["reimport_contact_" + name] = passed
+    if books is not None:
+        imported_books = imported.get("Fading_StudyBooks")
+        checks["reimport_books_semantic_hierarchies_preserved"] = imported_books is not None and all(imported.get(nodes[i]["name"]) is not None for i in semantic_books)
+    if paving is not None:
+        imported_paving = imported.get("Fading_StudyPaving")
+        checks["reimport_paving_slab_meshes_distinct"] = imported_paving is not None and imported_paving.parent is not None and imported_paving.parent.name == "Fading_StudyShore" and all(imported.get(nodes[i]["name"]) is not None and imported[nodes[i]["name"]].type == "MESH" for i in semantic_slabs) and len({imported[nodes[i]["name"]].data.as_pointer() for i in semantic_slabs if imported.get(nodes[i]["name"]) is not None and imported[nodes[i]["name"]].type == "MESH"}) == len(semantic_slabs)
+    if manifest.get("terrain_connections"):
+        report["terrain_connections"] = audit_environment_connections(manifest["terrain_connections"], imported)
+        for name, passed in report["terrain_connections"]["checks"].items():
+            checks["reimport_terrain_" + name] = passed
     if chair_obj is not None:
         chair_objects = [chair_obj, *chair_obj.children_recursive]
         cup_obj = imported.get(CUP)

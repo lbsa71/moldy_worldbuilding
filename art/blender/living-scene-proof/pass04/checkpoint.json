@@ -1,0 +1,64 @@
+{
+  "stage": "EARLY BROWSER REVIEW CHECKPOINT; final packed source/evidence delivery pending",
+  "asset_branch": "codex/living-scene-assets-20261005",
+  "image": "review-reference.png",
+  "manifest": "review-manifest.json",
+  "validation": "review-validation.json",
+  "metrics": {
+    "sha256": "2827291655e29033d03635cd78037d3dd777592e48b28e8f9f3a34c0d8349885",
+    "bytes": 32604672,
+    "triangles": 166036,
+    "mesh_primitives": 42,
+    "materials": 15,
+    "embedded_images": 25
+  },
+  "structural_contacts_transport_valid": true,
+  "sky": "Separate Fading_StudySky raw unlit sRGB texture, KHR_materials_unlit; CC0 Greg Zaal Kloofendal Overcast 4k HDR adapted to visible cloud RGB; original Overcast Soil lighting unchanged",
+  "sky_exemptions": {
+    "fog": false,
+    "castShadows": false,
+    "receiveShadows": false,
+    "mirror": true
+  },
+  "fog_density_EXP2": 0.013,
+  "semantics": {
+    "books": {
+      "root": "Fading_StudyBooks",
+      "individual_roots": [
+        "StudyBook_1",
+        "StudyBook_2",
+        "StudyBook_3"
+      ],
+      "static": true,
+      "no_readable_titles": true
+    },
+    "paving": [
+      "StudyPavingSlab_001",
+      "StudyPavingSlab_002",
+      "StudyPavingSlab_003",
+      "StudyPavingSlab_005",
+      "StudyPavingSlab_006",
+      "StudyPavingSlab_007",
+      "StudyPavingSlab_008",
+      "StudyPavingSlab_009",
+      "StudyPavingSlab_010",
+      "StudyPavingSlab_011",
+      "StudyPavingSlab_012",
+      "StudyPavingSlab_013",
+      "StudyPavingSlab_014",
+      "StudyPavingSlab_015"
+    ]
+  },
+  "remaining_art_review": [
+    "cliff face/roofline detail and atmospheric contrast",
+    "bridge recession and connection at target framing",
+    "warm-lit foreground stone color and fracture readability",
+    "books visibility near right crop",
+    "sky cloud softness/contrast in actual Babylon"
+  ],
+  "remaining_delivery": [
+    "packed final .blend",
+    "opening/turned contact inspection evidence",
+    "final checksums and scope-preservation report"
+  ]
+}
