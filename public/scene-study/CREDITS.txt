@@ -16,7 +16,7 @@ the image to an environment cubemap and adjusts lighting intensity.
 Use: Foreground material illumination and specular environment, not a visible
 replacement for the opening artwork or an offline fidelity reference.
 
-Sand material embedded in living-scene.glb
+Historical pass03 sand material (source retained; replaced by rock in pass04)
 Asset: Sand 03, 1K surface maps, 2m physical tile width
 Author: Charlotte Baglioni
 Source: https://polyhaven.com/a/sand_03
@@ -31,3 +31,38 @@ Use: Scanned sand detail for the shoreline. Exported wet/dry material variants
 adjust tone and roughness; geometry provides the shallow beach slope and support
 under furniture. The photograph-derived material is separate from the original
 analytically authored rock, wood, fabric and other scene materials.
+
+Coastal rock materials embedded in living-scene.glb
+Asset: Seaside Rock, 1K surface maps, 2m physical tile width/height
+Author: Dimitrios Savva
+Source: https://polyhaven.com/a/seaside_rock
+License: CC0 1.0 Universal
+License information: https://polyhaven.com/license
+Legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+Retrieved: 2026-10-05
+Original diffuse, OpenGL normal and AO/roughness/metal files, source URLs and
+checksums are retained in art/blender/living-scene-proof/source-assets/rock04/.
+Modifications: Captured mineral values are normalized to a cool charcoal albedo;
+roughness is remapped for rough flats and selected damp edges, with zero metalness.
+Normal and occlusion detail come from the original scan. Exact derivations are
+recorded in the scene manifest and material generator. Fractured slab geometry,
+terrain, buildings, bridge, furniture and books are project-authored.
+
+Visible cloud sky embedded in living-scene.glb
+Asset: Kloofendal Overcast (Pure Sky), 4K HDR
+Author: Greg Zaal
+Source: https://polyhaven.com/a/kloofendal_overcast_puresky
+License: CC0 1.0 Universal
+License information: https://polyhaven.com/license
+Legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+Retrieved: 2026-10-05
+Original source, URL and checksum are retained in
+art/blender/living-scene-proof/pass04/source-assets/sky/.
+SHA-256: 77ade807bd208195073a51b970dea574fa70cd80cf666aeedf5cd416ab5c8abd
+Bytes: 16953534
+Modifications: Cloud luminance is normalized and adapted to a cool linear palette
+with a quiet horizon, then sRGB-encoded for an unlit sky dome. Dome orientation and
+latitude mapping are authored for the shot. The exact derivation is in the scene
+manifest and generator. It contains no furniture, terrain or baked lamp effects.
+Use: Visible sky and its live water reflection. The separate Overcast Soil HDR
+above remains the material illumination source.

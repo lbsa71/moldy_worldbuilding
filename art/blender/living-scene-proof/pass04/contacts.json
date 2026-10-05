@@ -1,0 +1,553 @@
+{
+  "schema_version": 1,
+  "coordinate_system": "Blender world Z up, metres",
+  "evaluated_geometry": true,
+  "checks": {
+    "evaluated_wood_present": true,
+    "evaluated_cloth_present": true,
+    "actual_seat_surface_present": true,
+    "actual_sand_surface_present": true,
+    "zero_cloth_wood_triangle_crossings": true,
+    "all_wood_components_closed_for_inside_test": true,
+    "zero_cloth_vertices_inside_wood_beyond_half_mm": true,
+    "front_to_seat_clearance": true,
+    "rear_to_wood_clearance": true,
+    "chair_supported_by_actual_sand": true,
+    "chair_minus_20_degrees_supported_by_actual_sand": true,
+    "chair_plus_20_degrees_supported_by_actual_sand": true,
+    "lamp_supported_by_actual_sand": true
+  },
+  "failed_checks": [],
+  "valid": true,
+  "tolerances_m": {
+    "crossing_plane_epsilon": 1e-07,
+    "inside_penetration": 0.0005,
+    "front_seat_clearance": 0.01,
+    "rear_wood_clearance": 0.002,
+    "sand_gap_min": -0.002,
+    "sand_gap_max": 0.003
+  },
+  "classification_chair_local": {
+    "front": "y < .2175 and z < 1.05",
+    "rear": "y > .2825 and z < .92",
+    "wrap": "excluded from clearance only"
+  },
+  "parts": [
+    {
+      "object": "StudyCupBody",
+      "material": "porcelain",
+      "category": "other",
+      "evaluated_triangles": 768
+    },
+    {
+      "object": "StudyCupHandle",
+      "material": "porcelain",
+      "category": "other",
+      "evaluated_triangles": 524
+    },
+    {
+      "object": "StudyBackPost",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudyBackPost.001",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudyBroadWornTopRail",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudyChairLeg",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudyChairLeg.001",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudyChairLeg.002",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudyChairLeg.003",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudyChairStretcher",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudyChairStretcher.001",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudyClothFrontFringe",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.001",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.002",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.003",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.004",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.005",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.006",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.007",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.008",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.009",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.010",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.011",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.012",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.013",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.014",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.015",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.016",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.017",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontFringe.018",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothFrontHem",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 524
+    },
+    {
+      "object": "StudyClothRearFringe",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.001",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.002",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.003",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.004",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.005",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.006",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.007",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.008",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.009",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.010",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.011",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.012",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.013",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.014",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.015",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.016",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.017",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearFringe.018",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 44
+    },
+    {
+      "object": "StudyClothRearHem",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 524
+    },
+    {
+      "object": "StudyDrapedCloth",
+      "material": "cloth",
+      "category": "cloth",
+      "evaluated_triangles": 12008
+    },
+    {
+      "object": "StudyFrontWear",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudyLowerBackRail",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudySeatSlat",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudySeatSlat.001",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudySeatSlat.002",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudySeatSlat.003",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudySeatSlat.004",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudyVerticalBackSlat",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudyVerticalBackSlat.001",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    },
+    {
+      "object": "StudyVerticalBackSlat.002",
+      "material": "wood",
+      "category": "wood",
+      "evaluated_triangles": 188
+    }
+  ],
+  "triangle_crossings": {
+    "bvh_candidate_pairs": 0,
+    "confirmed_triangle_pairs": 0,
+    "offenders": [],
+    "offender_records_truncated": false
+  },
+  "cloth_vertices_inside_wood": {
+    "count": 0,
+    "closed_wood_components": 19,
+    "open_wood_components": 0,
+    "offenders": [],
+    "offender_records_truncated": false
+  },
+  "surface_distances": {
+    "all_cloth_to_wood": {
+      "minimum_m": 0.004624128341674805,
+      "samples": 44266,
+      "offending_samples": 0,
+      "offenders": [],
+      "minimum_location": {
+        "cloth_object": "StudyDrapedCloth",
+        "cloth_triangle": 7628,
+        "position_world": [
+          1.5329986810684204,
+          -1.3503201007843018,
+          1.2121241092681885
+        ],
+        "position_chair_local": [
+          0.003003764897584915,
+          0.25000008940696716,
+          1.0671241283416748
+        ],
+        "surface_object": "StudyBroadWornTopRail",
+        "surface_triangle": 183,
+        "nearest_surface_world": [
+          1.5329986810684204,
+          -1.3503201007843018,
+          1.2074999809265137
+        ],
+        "distance_m": 0.004624128341674805
+      }
+    },
+    "front_to_seat": {
+      "minimum_m": 0.12840580940246582,
+      "samples": 9770,
+      "offending_samples": 0,
+      "offenders": [],
+      "minimum_location": {
+        "cloth_object": "StudyClothFrontFringe.014",
+        "cloth_triangle": 0,
+        "position_world": [
+          1.6843851804733276,
+          -1.39755117893219,
+          0.8587121367454529
+        ],
+        "position_chair_local": [
+          0.15615788102149963,
+          0.20886066555976868,
+          0.7137121558189392
+        ],
+        "surface_object": "StudySeatSlat.003",
+        "surface_triangle": 182,
+        "nearest_surface_world": [
+          1.6843851804733276,
+          -1.39755117893219,
+          0.7303063273429871
+        ],
+        "distance_m": 0.12840580940246582
+      }
+    },
+    "rear_to_wood": {
+      "minimum_m": 0.02553645707666874,
+      "samples": 19173,
+      "offending_samples": 0,
+      "offenders": [],
+      "minimum_location": {
+        "cloth_object": "StudyDrapedCloth",
+        "cloth_triangle": 10142,
+        "position_world": [
+          1.6095366477966309,
+          -1.2777862548828125,
+          0.7253531813621521
+        ],
+        "position_chair_local": [
+          0.07657988369464874,
+          0.3255366086959839,
+          0.5803532004356384
+        ],
+        "surface_object": "StudySeatSlat.003",
+        "surface_triangle": 184,
+        "nearest_surface_world": [
+          1.6085155010223389,
+          -1.30330228805542,
+          0.7253531813621521
+        ],
+        "distance_m": 0.02553645707666874
+      }
+    }
+  },
+  "surface_distance_sampling": "Evaluated triangle vertices, all edge midpoints, and all face centroids against actual surface BVHs. Crossings additionally tested for every overlapping triangle pair.",
+  "turn_degrees": -20,
+  "footprints": {
+    "chair": {
+      "additional_rotation_degrees": 0,
+      "samples": 88,
+      "min_gap_m": -0.00044536590576171875,
+      "max_gap_m": 0.0015362352132797241,
+      "offending_samples": 0,
+      "offenders": [],
+      "offender_records_truncated": false,
+      "sampling": "Actual downward underside triangle vertices and face centroids, excluding higher curved bevel faces."
+    },
+    "chair_minus_20_degrees": {
+      "additional_rotation_degrees": -20,
+      "samples": 88,
+      "min_gap_m": -0.0004444122314453125,
+      "max_gap_m": 0.0015362352132797241,
+      "offending_samples": 0,
+      "offenders": [],
+      "offender_records_truncated": false,
+      "sampling": "Actual downward underside triangle vertices and face centroids, excluding higher curved bevel faces."
+    },
+    "chair_plus_20_degrees": {
+      "additional_rotation_degrees": 20,
+      "samples": 88,
+      "min_gap_m": -0.00044536590576171875,
+      "max_gap_m": 0.0015362352132797241,
+      "offending_samples": 0,
+      "offenders": [],
+      "offender_records_truncated": false,
+      "sampling": "Actual downward underside triangle vertices and face centroids, excluding higher curved bevel faces."
+    },
+    "lamp": {
+      "additional_rotation_degrees": 0,
+      "samples": 129,
+      "min_gap_m": -2.3692846298217773e-06,
+      "max_gap_m": 1.4454126358032227e-06,
+      "offending_samples": 0,
+      "offenders": [],
+      "offender_records_truncated": false,
+      "sampling": "Actual downward underside triangle vertices and face centroids, excluding higher curved bevel faces."
+    }
+  },
+  "passed": true
+}

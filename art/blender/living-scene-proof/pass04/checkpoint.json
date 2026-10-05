@@ -1,0 +1,75 @@
+{
+  "stage": "FINAL OFFLINE DELIVERY COMPLETE; final browser art review pending",
+  "asset_branch": "codex/living-scene-assets-20261005",
+  "image": "reference.png",
+  "turned_image": "turned-reference.png",
+  "manifest": "manifest.json",
+  "validation": "validation.json",
+  "editable_source": "living-scene.blend",
+  "runtime_glb": "public/scene-study/living-scene.glb",
+  "metrics": {
+    "sha256": "39fb89379cd0b38d1ae5b89d70522e92e4019fcc8e54dba0d8a1e7d1dc870106",
+    "bytes": 31827168,
+    "triangles": 155600,
+    "mesh_primitives": 42,
+    "materials": 15,
+    "embedded_images": 25
+  },
+  "estimated_RGBA8_with_mips_MiB": 170.66666666666666,
+  "structural_contacts_transport_valid": true,
+  "scope_preservation_against_pass03": true,
+  "fog_density_EXP2": 0.02,
+  "offline_volume_density": 0.01,
+  "sky": "Separate Fading_StudySky; raw unlit sRGB cloud texture; KHR_materials_unlit; original illumination unchanged",
+  "sky_exemptions": {
+    "fog": false,
+    "castShadows": false,
+    "receiveShadows": false,
+    "mirror": true
+  },
+  "semantics": {
+    "books": {
+      "root": "Fading_StudyBooks",
+      "individual_roots": [
+        "StudyBook_1",
+        "StudyBook_2",
+        "StudyBook_3"
+      ],
+      "static": true,
+      "no_readable_titles": true
+    },
+    "paving": [
+      "StudyPavingSlab_001",
+      "StudyPavingSlab_002",
+      "StudyPavingSlab_003",
+      "StudyPavingSlab_005",
+      "StudyPavingSlab_006",
+      "StudyPavingSlab_007",
+      "StudyPavingSlab_008",
+      "StudyPavingSlab_009",
+      "StudyPavingSlab_010",
+      "StudyPavingSlab_011",
+      "StudyPavingSlab_012",
+      "StudyPavingSlab_013",
+      "StudyPavingSlab_014",
+      "StudyPavingSlab_015"
+    ]
+  },
+  "corrections_since_early_checkpoint": [
+    "20 broader houses in five unequal groups with exposed cliff intervals and flat/gable/hip roofs",
+    "Brighter muted paper, stronger cover overhang, small separations and rotations",
+    "Runtime fog coefficient .020 as agreed with main session",
+    "Packed source, fixed-camera turned reference and final contact/scope/checksum evidence delivered"
+  ],
+  "main_browser_review": {
+    "early_checkpoint_commit": "eaa6cb6592e3c790ff9e18adb75c5059f46b242f",
+    "shore": "Accepted as dark rough charcoal in main browser review; no further recoloring",
+    "latest_city_books": "Awaiting main browser review",
+    "integration_owner": "Main session; runtime mirror refinement and deployment outside this asset delivery"
+  },
+  "remaining_art_review": [
+    "Final settlement/books in Babylon",
+    "Photoreal fidelity and portrait framing remain open"
+  ],
+  "remaining_delivery": []
+}

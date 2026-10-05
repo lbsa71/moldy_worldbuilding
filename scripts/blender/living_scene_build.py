@@ -3,7 +3,7 @@
 blender --background --factory-startup --python scripts/blender/living_scene_build.py -- --render
 GLB includes the authored camera and role roots, never preview water/lights/fog.
 """
-import argparse, hashlib, importlib.util, json, math, random, struct, sys
+import argparse, hashlib, importlib.util, json, math, random, struct, sys, types
 from pathlib import Path
 import bpy, bmesh
 from mathutils import Vector
@@ -216,26 +216,26 @@ def coastline(y):
     return -.50+.90*max(0,-y)+.70*max(0,y)+.045*math.sin(y*3.1)+.025*math.sin(y*7.3)
 
 def sand_coastline(y):
-    # A modest sand deposit supports the chair footprint, including its turn.
-    return coastline(y)-.38*math.exp(-((y+1.60)/.65)**4)
+    # Retain the support footprint; break the exposed mineral shoreline into inlets.
+    return coastline(y)-.38*math.exp(-((y+1.60)/.65)**4)+.025*math.sin(y*17)+.040*math.sin(y*4.3)
 
 def sand_height(x,y):
     distance=max(0,x-sand_coastline(y))
     q=min(1,distance/.85)
     height=-.006+.151*q*q*(3-2*q)
-    # Flattened furniture contact areas blend into shallow deposited sand.
-    for cx,cy,inner,outer in [(1.52,-1.60,.48,.83),(1.17,-.12,.29,.60)]:
+    # Broad rough stone flats retain the validated furniture contact datum.
+    for cx,cy,inner,outer in [(1.52,-1.60,.48,.83),(1.17,-.12,.29,.60),(1.98,-1.35,.32,.50)]:
         radius=math.hypot(x-cx,y-cy)
         t=max(0,min(1,(radius-inner)/(outer-inner)))
         weight=1-t*t*(3-2*t)
         height=height*(1-weight)+.145*weight
-    contact=min(math.hypot(x-1.52,y+1.60)-.48,math.hypot(x-1.17,y+.12)-.29)
-    ripple=.0018*math.sin(y*22+x*7+.9*math.sin(x*4))+.0008*math.sin(x*37-y*19)
-    return height+ripple*min(1,max(0,contact/.30))*min(1,distance/.30)
+    contact=min(math.hypot(x-1.52,y+1.60)-.48,math.hypot(x-1.17,y+.12)-.29,math.hypot(x-1.98,y+1.35)-.32)
+    ripple=.004*math.sin(y*22+x*7+.9*math.sin(x*4))+.002*math.sin(x*37-y*19)
+    return height+(ripple-.024)*min(1,max(0,contact/.20))*min(1,distance/.30)
 
 def build_shore(m):
     root=empty('Fading_StudyShore');root['role']='permanent wet foreground';root['water_level_blender_Z']=0.0
-    root['surface']='scanned 2m-tile sand; shallow wet ramp and deposited furniture contact areas'
+    root['surface']='rough charcoal coastal rock; broken paving, granular seams and selective wet edges'
     verts=[];faces=[];nx,ny=113,161
     for row in range(ny):
         y=-2.7+row/(ny-1)*12
@@ -246,13 +246,14 @@ def build_shore(m):
     for row in range(ny-1):
         for col in range(nx-1):
             a=row*nx+col;faces.append((a,a+1,a+nx+1,a+nx))
-    shore=mesh('StudyWetShore',verts,faces,root,m['sand']);uv_planar(shore,.5)
-    shore.data.materials.append(m['wet_sand'])
+    shore=mesh('StudyWetShore',verts,faces,root,m['shore_rock']);uv_planar(shore,.5)
+    shore.data.materials.append(m['shore_wet_rock'])
     for polygon in shore.data.polygons:
         center=polygon.center
         edge=center.x-sand_coastline(center.y)
-        band=.26+.045*math.sin(center.y*2.9)+.025*math.sin(center.y*7)
-        polygon.material_index=1 if edge<band else 0
+        band=.055+.020*math.sin(center.y*2.9)+.020*math.sin(center.y*7)
+        puddle=math.sin(center.x*7+center.y*2)*math.sin(center.y*9-center.x*3)
+        polygon.material_index=1 if edge<band or (edge<.25 and puddle>.80) else 0
     locations=[]
     for i in range(62):
         y=RNG.uniform(-1.9,5.5)
@@ -265,17 +266,13 @@ def build_shore(m):
         scale=(RNG.uniform(1,1.8),RNG.uniform(.8,1.4),RNG.uniform(.40,.8))
         rotation=(RNG.uniform(-.2,.2),RNG.uniform(-.2,.2),RNG.random()*math.tau)
         if i<62 and i%6:continue
-        if i%3:
-            bpy.ops.mesh.primitive_cube_add(size=r*1.6,location=(x,y,z))
-        else:
-            bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2,radius=r,location=(x,y,z))
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2,radius=r,location=(x,y,z))
         o=finish(bpy.context.object,'StudyWetRock',root,m['rock']);o.scale=scale
         for v in o.data.vertices:
-            v.co*=1+.09*math.sin(v.co.x*30+v.co.z*12)*math.sin(v.co.y*35-v.co.x*20)
-        for p in o.data.polygons:p.use_smooth=i%3==0
-        if i%3:bevel(o,r*.18,3)
+            v.co*=1+.19*math.sin(v.co.x*30+v.co.z*12)*math.sin(v.co.y*35-v.co.x*20)
+        for p in o.data.polygons:p.use_smooth=False
         o.rotation_euler=rotation
-        uv_planar(o,2)
+        uv_planar(o,.5)
     return root
 
 def build_backdrop(m):
@@ -382,16 +379,20 @@ def preview(roots,m,samples,environment):
     bump=mat.node_tree.nodes.new('ShaderNodeBump');bump.inputs['Strength'].default_value=.35;bump.inputs['Distance'].default_value=.03
     mat.node_tree.links.new(tex.outputs['Fac'],bump.inputs['Height']);mat.node_tree.links.new(bump.outputs['Normal'],bs.inputs['Normal']);water.data.materials.append(mat)
     # Preview volume is not exported; runtime receives density/color guidance.
-    bpy.ops.mesh.primitive_cube_add(size=1,location=(0,80,35));fog=bpy.context.object;fog.name='PreviewAtmosphere_RUNTIME_ONLY';fog.dimensions=(300,300,80)
+    bpy.ops.mesh.primitive_cube_add(size=1,location=(0,65,1.6));fog=bpy.context.object;fog.name='PreviewAtmosphere_RUNTIME_ONLY';fog.dimensions=(300,160,5.2)
     mat=bpy.data.materials.new('PreviewAtmosphere');mat.use_nodes=True;mat.node_tree.nodes.clear()
     out=mat.node_tree.nodes.new('ShaderNodeOutputMaterial');vol=mat.node_tree.nodes.new('ShaderNodeVolumePrincipled')
-    vol.inputs['Density'].default_value=.012;vol.inputs['Color'].default_value=(.24,.34,.44,1);vol.inputs['Anisotropy'].default_value=.1
+    vol.inputs['Density'].default_value=.010;vol.inputs['Color'].default_value=(.24,.34,.44,1);vol.inputs['Anisotropy'].default_value=.1
     mat.node_tree.links.new(vol.outputs['Volume'],out.inputs['Volume']);fog.data.materials.append(mat)
     scene.view_settings.view_transform='AgX';scene.view_settings.exposure=.0
     scene.render.image_settings.file_format='PNG'
 
 def inspection_renders(output,chair,camera):
     scene=bpy.context.scene
+    original=chair.rotation_euler.z
+    chair.rotation_euler.z=original-math.radians(20);bpy.context.view_layer.update()
+    scene.render.filepath=str(output/'turned-reference.png');bpy.ops.render.render(write_still=True)
+    chair.rotation_euler.z=original;bpy.context.view_layer.update()
     width,height=scene.render.resolution_x,scene.render.resolution_y
     scene.render.resolution_x=1024;scene.render.resolution_y=1024
     data=bpy.data.cameras.new('InspectionCamera');data.type='ORTHO';data.ortho_scale=1.52
@@ -416,14 +417,22 @@ def main():
     spec=importlib.util.spec_from_file_location('living_scene_materials',Path(__file__).with_name('living_scene_materials.py'))
     helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(helper)
     m=helper.create_materials(a.output/'textures')
-    lamp=build_lamp(m);chair=build_chair(m);cup=build_cup(m,chair);shore=build_shore(m);backdrop=build_backdrop(m);curtain=build_curtain(m)
-    roots=[lamp,chair,cup,shore,backdrop,curtain]
+    lamp=build_lamp(m);chair=build_chair(m);cup=build_cup(m,chair);shore=build_shore(m)
+    camera,target=camera_setup();bpy.context.view_layer.update()
+    spec=importlib.util.spec_from_file_location('living_scene_environment',Path(__file__).with_name('living_scene_environment.py'))
+    environment_helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(environment_helper)
+    api=types.SimpleNamespace(empty=empty,mesh=mesh,box=box,tube=tube,uv_planar=uv_planar,sand_height=sand_height,write_png=helper._png)
+    backdrop,sky,books,environment_contract=environment_helper.create_environment(api,m,camera,a.output)
+    paving=environment_helper.create_paving(api,shore,m);curtain=build_curtain(m)
+    roots=[lamp,chair,cup,shore,backdrop,curtain,books,sky]
     bpy.context.view_layer.update()
     spec=importlib.util.spec_from_file_location('living_scene_validate',Path(__file__).with_name('living_scene_validate.py'))
     validator=importlib.util.module_from_spec(spec);spec.loader.exec_module(validator)
     contacts=validator.audit_blender_contacts(chair,shore,lamp,a.output/'contacts.json')
+    connections=validator.audit_environment_connections(environment_contract['terrain_connections'])
+    (a.output/'terrain-connections.json').write_text(json.dumps(connections,indent=2)+'\n',encoding='utf-8',newline='\n')
+    if not connections['valid']:raise RuntimeError('Bridge terrain connections failed')
     for root in roots:join_role_materials(root)
-    camera,target=camera_setup()
     bpy.ops.object.select_all(action='DESELECT')
     for root in roots:
         root.select_set(True)
@@ -434,8 +443,10 @@ def main():
                               export_extras=True,export_cameras=True,export_lights=False,export_animations=False)
     raw=glb.read_bytes();length=struct.unpack_from('<I',raw,12)[0];doc=json.loads(raw[20:20+length])
     triangles=sum(doc['accessors'][p['indices']]['count']//3 for n in doc['nodes'] if 'mesh' in n for p in doc['meshes'][n['mesh']]['primitives'])
-    manifest={'status':'pass03 sand and cloth repair; full photoreal fidelity remains under review','blender':bpy.app.version_string,
+    manifest={'status':'pass04 fractured rock and inhabited inlet checkpoint; browser art review required','blender':bpy.app.version_string,
         'generator':'scripts/blender/living_scene_build.py','generator_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        'generator_modules_sha256':{name:hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+                                   for name in ['living_scene_environment.py','living_scene_materials.py','living_scene_validate.py']},
         'file':'living-scene.glb','sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'triangles':triangles,
         'mesh_primitives':sum(len(doc['meshes'][n['mesh']]['primitives']) for n in doc['nodes'] if 'mesh' in n),
         'materials':len(doc.get('materials',[])),'embedded_images':len(doc.get('images',[])),
@@ -443,13 +454,20 @@ def main():
         'camera':{'name':camera.name,'position':yup(camera.location),'target':yup(target),'fov':camera.data.angle_y,'aspect':1.5,'near':.05,'far':200},
         'lampLight':{'socket':'Fading_StudyLampLight','position':yup(bpy.data.objects['Fading_StudyLampLight'].matrix_world.translation),
                      'intensity':10,'color':[1,.64,.31],'range':6,'note':'Babylon intensity is an initial calibration suggestion, not Cycles watts'},
-        'environment':{'cool_color':[.19,.27,.35],'fog_color':[.24,.34,.44],'fog_density_suggestion':.012,'background':'real static depth geometry, no image plate'},
+        'environment':{'cool_color':[.19,.27,.35],'fog_color':[.24,.34,.44],'fog_density':.020,'fog_density_suggestion':.010,
+                       'fog_note':'Runtime EXP2 coefficient per scene meter; offline low-altitude volume has separate density, not a universal fog floor',
+                       'background':'real layered terrain/bridge/settlement; separate raw unlit photographic cloud dome'},
         'water':{'runtime_only':True,'level':0,'roughness_suggestion':.075,'IOR':1.333,'reflection_membership':'all visible foreground roles; no furniture baked into permanent reflection'},
         'roles':[{'name':r.name,'parent':r.parent.name if r.parent else None,'position':yup(r.matrix_world.translation)} for r in roots],
         'texture_provenance':getattr(helper,'TEXTURE_PROVENANCE','Original procedural authored maps; no acquired assets'),
         'contacts':{'report':'contacts.json','passed':contacts.get('passed',False),'chair_turn_test_degrees':-20},
-        'sand':{'physical_tile_width_m':2,'waterline':'gently sloping damp sand with sparse rocks; local flattened furniture deposits'},
-        'known_limits':['Offline AgX, volume and preview lights need explicit Babylon calibration','Sand is scanned; other surfaces remain authored analytic textures','Distant silhouettes and horizon are provisional','Portrait camera not approved','Cup follows chair and remains independently removable']}
+        'shore':{'physical_tile_width_m':2,'family':'scanned charcoal coastal mineral rock; predominantly rough, selectively damp edges','paving_root':paving.name,
+                 'separate_pieces':[o.name for o in paving.children if o.type=='MESH']},
+        'books':{'root':books.name,'individual_roots':[o.name for o in books.children],'static':True,'no_readable_titles':True},
+        'sky':{'root':sky.name,'unlit':True,'fog':False,'castShadows':False,'receiveShadows':False,'reflection_membership':True,
+               'source':environment_contract['sky_provenance'],'texture':'sky-clouds.png'},
+        'environment_roles':environment_contract['environment_roles'],'terrain_connections':environment_contract['terrain_connections'],
+        'known_limits':['Offline AgX and low-altitude volumetric haze require browser calibration','Buildings and hidden bridge banks are reconstruction choices, not a recovered city plan','Portrait camera not approved','Cup follows chair and remains independently removable']}
     if a.environment.exists():
         manifest['environment']['ibl']={'asset':'Overcast Soil (Pure Sky)','source':'https://polyhaven.com/a/overcast_soil_puresky','license':'CC0',
             'authors':['Jarod Guest','Sergej Majboroda'],'sha256':hashlib.sha256(a.environment.read_bytes()).hexdigest(),'offline_strength':.23,'offline_tint':[.50,.62,.76]}

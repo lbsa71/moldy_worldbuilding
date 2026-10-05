@@ -230,6 +230,9 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
   mirror.mirrorPlane = new Plane(0, -1, 0, 0);
   mirror.clearColor = scene.clearColor.clone();
   mirror.level = 0.88;
+  // Restrained separable blur softens distant arch edges without baking or
+  // removing any object from the live reflection. Keep full reflection resolution.
+  mirror.blurKernel = 6;
   // The water plane is always runtime geometry and never appears in its own pass.
   const water = MeshBuilder.CreateGround('living water at y=0', { width: 300, height: 300, subdivisions: 1 }, scene);
   water.position.y = 0;

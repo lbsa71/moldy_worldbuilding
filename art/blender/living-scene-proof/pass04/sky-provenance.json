@@ -1,0 +1,29 @@
+{
+  "asset": "kloofendal_overcast_puresky",
+  "title": "Kloofendal Overcast (Pure Sky)",
+  "author": "Greg Zaal",
+  "source": "https://polyhaven.com/a/kloofendal_overcast_puresky",
+  "license": "CC0",
+  "license_url": "https://polyhaven.com/license",
+  "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/4k/kloofendal_overcast_puresky_4k.hdr",
+  "md5": "6678d8e9a87f9b8cdfc4fc4038591d59",
+  "sha256": "77ade807bd208195073a51b970dea574fa70cd80cf666aeedf5cd416ab5c8abd",
+  "bytes": 16953534,
+  "usage": "Visible sky texture only; existing Overcast Soil HDR remains illumination",
+  "source_resolution": "4k",
+  "adaptation": {
+    "raw_linear_palette": [
+      0.085,
+      0.124,
+      0.173
+    ],
+    "cloud_contrast_power": 1.35,
+    "horizon_veil": true,
+    "dome_radius_m": 155,
+    "longitude_rotation_rad": -2.42,
+    "latitude_scale": 2.2,
+    "latitude_offset": 0.12,
+    "color_pipeline": "Scene-linear adapted raw albedo explicitly sRGB-encoded; no display transform or full-scene bake"
+  },
+  "texture_sha256": "d0c1dc730ce4a872f17e2e14705f27219f5d5e1d7cc1fd8288339256bc07451c"
+}

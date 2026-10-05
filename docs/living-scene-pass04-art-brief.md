@@ -78,4 +78,13 @@ Review the original, pass04 offline image and actual browser image at matching 3
 8. **Retained fixes:** front/rear/turned inspection or existing clearance checks still show the towel outside the chair; camera and chair arrangement match the accepted pass03 baseline. Scenery changes do not invalidate the interaction state.
 9. **Books and object structure:** the subordinate worn books are visible at lower right with credible contact, neutral covers and no invented readable titles. Books and meaningful slabs exist as separate named geometry for future changes, while remaining static in this delivery.
 
-Current status: brief based on direct source/pass03 comparison; pass04 assets and browser output have not yet been reviewed.
+## Final browser review — 5 October 2026
+
+Final asset `5a5706d` is reviewed in actual WebGPU and WebGL. See the [opening](evidence/living-scene-pass04-opening-webgpu.png) and [review page](evidence/living-scene-pass04-review-page.png). Independent art review accepts the **bounded correction at study quality**. This is not approval of photographic fidelity or a match to the reference.
+
+- The shore now reads as dark, mostly matte fractured mineral slabs. Real gaps and uneven edges communicate the user's breakup motif; the glossy beige beach is gone. Its large flat pieces still simplify the source's shore detail.
+- Three worn books read as a subordinate lower-right stack through pale page edges and separated covers. Separate book roots and fourteen named slab meshes survive export for later authored cues.
+- Low enclosing ridges, a tall right cliff and stepped settlement silhouettes supply the missing context. Both bridge ends connect to terrain and read as a crossing within it.
+- The cloud dome restores sky structure and participates in the live reflection. Explicit fog retains scenery contrast. Camera/furniture scope checks and the cloth/ground validators pass; live chair/cup changes and reset work in both backends.
+
+Remaining visible defects are **fidelity limits, not absent requested elements**. The buildings merge into a coarse wall at this display scale; cliff profiles are too regular; distant edges and reflections are too crisp for the reference's misty depth; the bridge's reflected arch remains an obvious oval. Subsequent work should improve irregular cliff massing, settlement gaps and depth-dependent water/mist integration from this fixed camera before introducing additional scene complexity. Preserve the accepted rough charcoal identity, grounded props and meaningful structural fractures. No further asset iteration is running for this bounded delivery.
