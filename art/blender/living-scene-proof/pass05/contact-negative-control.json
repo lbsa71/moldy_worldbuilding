@@ -1,0 +1,644 @@
+{
+  "passed": true,
+  "method": "Hide all five visible contact rock blocks with submerged StudyWetShore still present; both furniture and book support audits must fail",
+  "hidden_objects": [
+    "StudyPavingSlab_001",
+    "StudyPavingSlab_002",
+    "StudyPavingSlab_003",
+    "StudyPavingSlab_004",
+    "StudyPavingSlab_005"
+  ],
+  "furniture_failed_checks": [
+    "chair_supported_by_actual_sand",
+    "chair_minus_20_degrees_supported_by_actual_sand",
+    "chair_plus_20_degrees_supported_by_actual_sand",
+    "lamp_supported_by_actual_sand",
+    "chair_minus_2_degrees_supported_by_actual_sand",
+    "chair_minus_4_degrees_supported_by_actual_sand",
+    "chair_minus_6_degrees_supported_by_actual_sand",
+    "chair_minus_8_degrees_supported_by_actual_sand",
+    "chair_minus_10_degrees_supported_by_actual_sand",
+    "chair_minus_12_degrees_supported_by_actual_sand",
+    "chair_minus_14_degrees_supported_by_actual_sand",
+    "chair_minus_16_degrees_supported_by_actual_sand",
+    "chair_minus_18_degrees_supported_by_actual_sand"
+  ],
+  "book_offenders": [
+    {
+      "position_world": [
+        1.7766392230987549,
+        -1.2630020380020142,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 104,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.8203225135803223,
+        -1.5030598640441895,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 104,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.820076823234558,
+        -1.503104567527771,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 104,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.8056795597076416,
+        -1.4230555295944214,
+        0.14502227306365967
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 104,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.7763936519622803,
+        -1.2630467414855957,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 105,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.791036605834961,
+        -1.3430511951446533,
+        0.14504453539848328
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 105,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        2.1396775245666504,
+        -1.1969401836395264,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 128,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.7765945196151733,
+        -1.2627564668655396,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 128,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.897637128829956,
+        -1.2408995628356934,
+        0.14502227306365967
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 128,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        2.1396329402923584,
+        -1.1966944932937622,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 129,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        2.0186352729797363,
+        -1.2187970876693726,
+        0.14504453539848328
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 129,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        2.1833608150482178,
+        -1.4369980096817017,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 146,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        2.139923095703125,
+        -1.1968954801559448,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 146,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        2.154320478439331,
+        -1.276944637298584,
+        0.14502227306365967
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 146,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        2.1836063861846924,
+        -1.4369533061981201,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 147,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        2.1689634323120117,
+        -1.3569488525390625,
+        0.14504453539848328
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 147,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        2.1834053993225098,
+        -1.4372435808181763,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 164,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        2.0623629093170166,
+        -1.4591004848480225,
+        0.14502227306365967
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 164,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.8203672170639038,
+        -1.5033055543899536,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 165,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.941365122795105,
+        -1.4812029600143433,
+        0.14504453539848328
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 165,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        2.0332260131835938,
+        -1.2989801168441772,
+        0.14500001072883606
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 176,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.926774263381958,
+        -1.4010200500488281,
+        0.14500001072883606
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 177,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.778383493423462,
+        -1.2642091512680054,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 480,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.8215296268463135,
+        -1.5013154745101929,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 480,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.8205469846725464,
+        -1.501494288444519,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 480,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.8068201541900635,
+        -1.422339677810669,
+        0.1450890600681305
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 480,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.7774008512496948,
+        -1.2643879652023315,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 481,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.7921104431152344,
+        -1.3433637619018555,
+        0.14517812430858612
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 481,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.7813349962234497,
+        -1.263672113418579,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 504,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.7782046794891357,
+        -1.2632266283035278,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 504,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.7793077230453491,
+        -1.263702630996704,
+        0.1450890600681305
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 504,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.7811561822891235,
+        -1.2626895904541016,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 505,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.7802319526672363,
+        -1.2631962299346924,
+        0.14517812430858612
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 505,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.8244811296463013,
+        -1.5007784366607666,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 522,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.7823175191879272,
+        -1.263493299484253,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 522,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.7960445880889893,
+        -1.342647910118103,
+        0.1450890600681305
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 522,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.8254636526107788,
+        -1.5005996227264404,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 523,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.8107541799545288,
+        -1.421623945236206,
+        0.14517812430858612
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 523,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.8246599435806274,
+        -1.5017609596252441,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 540,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.823556900024414,
+        -1.5012849569320679,
+        0.1450890600681305
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 540,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.8217084407806396,
+        -1.5022979974746704,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 541,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.8226327896118164,
+        -1.5017914772033691,
+        0.14517812430858612
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 541,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.7947332859039307,
+        -1.3428866863250732,
+        0.14500001072883606
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 552,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    },
+    {
+      "position_world": [
+        1.8081315755844116,
+        -1.4221010208129883,
+        0.14500001072883606
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 553,
+      "support_hit_world": null,
+      "support_object": null,
+      "support_triangle": null,
+      "gap_m": null,
+      "passed": false
+    }
+  ]
+}

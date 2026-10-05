@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "unchanged_source_preview": {
+    "world": true,
+    "lights": true,
+    "preview_geometry_materials": true,
+    "display_transform": true
+  },
+  "method": "Exact world node inputs/links and packed IBL bytes; light transforms/type/energy/color/size; preview water/fog geometry and material node inputs/links; display transform",
+  "lights": [
+    "PreviewBulb",
+    "PreviewWarmDown",
+    "PreviewCoolSky",
+    "PreviewCloudOpening"
+  ]
+}

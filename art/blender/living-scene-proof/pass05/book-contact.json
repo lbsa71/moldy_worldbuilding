@@ -2,7 +2,7 @@
   "valid": true,
   "samples": 44,
   "min_gap_m": -1.4007091522216797e-06,
-  "max_gap_m": 0.00026673078536987305,
+  "max_gap_m": 0.0002676844596862793,
   "method": "Actual evaluated bottom cover/spine vertices and triangle centroids raycast against visible exported rock support meshes, -2mm..+3mm tolerance",
   "records": [
     {
@@ -404,32 +404,32 @@
     {
       "position_world": [
         1.778383493423462,
-        -1.264209270477295,
+        -1.2642091512680054,
         0.14499999582767487
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 104,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 480,
       "support_hit_world": [
         1.778383493423462,
-        -1.264209270477295,
-        0.14499950408935547
+        -1.2642091512680054,
+        0.14500045776367188
       ],
       "support_object": "StudyPavingSlab_004",
       "support_triangle": 7,
-      "gap_m": 4.917383193969727e-07,
+      "gap_m": -4.6193599700927734e-07,
       "passed": true
     },
     {
       "position_world": [
         1.8215296268463135,
-        -1.5013155937194824,
+        -1.5013154745101929,
         0.14499999582767487
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 104,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 480,
       "support_hit_world": [
         1.8215296268463135,
-        -1.5013155937194824,
+        -1.5013154745101929,
         0.14500045776367188
       ],
       "support_object": "StudyPavingSlab_004",
@@ -439,15 +439,15 @@
     },
     {
       "position_world": [
-        1.820547103881836,
-        -1.5014944076538086,
+        1.8205469846725464,
+        -1.501494288444519,
         0.14526718854904175
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 104,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 480,
       "support_hit_world": [
-        1.820547103881836,
-        -1.5014944076538086,
+        1.8205469846725464,
+        -1.501494288444519,
         0.14500045776367188
       ],
       "support_object": "StudyPavingSlab_004",
@@ -458,14 +458,14 @@
     {
       "position_world": [
         1.8068201541900635,
-        -1.4223397970199585,
+        -1.422339677810669,
         0.1450890600681305
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 104,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 480,
       "support_hit_world": [
         1.8068201541900635,
-        -1.4223397970199585,
+        -1.422339677810669,
         0.14500141143798828
       ],
       "support_object": "StudyPavingSlab_004",
@@ -475,15 +475,15 @@
     },
     {
       "position_world": [
-        1.7774009704589844,
-        -1.264388084411621,
+        1.7774008512496948,
+        -1.2643879652023315,
         0.14526718854904175
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 105,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 481,
       "support_hit_world": [
-        1.7774009704589844,
-        -1.264388084411621,
+        1.7774008512496948,
+        -1.2643879652023315,
         0.14500045776367188
       ],
       "support_object": "StudyPavingSlab_004",
@@ -494,31 +494,31 @@
     {
       "position_world": [
         1.7921104431152344,
-        -1.3433640003204346,
+        -1.3433637619018555,
         0.14517812430858612
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 105,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 481,
       "support_hit_world": [
         1.7921104431152344,
-        -1.3433640003204346,
-        0.14500045776367188
+        -1.3433637619018555,
+        0.14499950408935547
       ],
       "support_object": "StudyPavingSlab_004",
       "support_triangle": 7,
-      "gap_m": 0.0001776665449142456,
+      "gap_m": 0.00017862021923065186,
       "passed": true
     },
     {
       "position_world": [
-        1.7813351154327393,
+        1.7813349962234497,
         -1.263672113418579,
         0.14499999582767487
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 128,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 504,
       "support_hit_world": [
-        1.7813351154327393,
+        1.7813349962234497,
         -1.263672113418579,
         0.14500045776367188
       ],
@@ -529,50 +529,50 @@
     },
     {
       "position_world": [
-        1.7782047986984253,
-        -1.2632267475128174,
+        1.7782046794891357,
+        -1.2632266283035278,
         0.14526718854904175
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 128,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 504,
       "support_hit_world": [
-        1.7782047986984253,
-        -1.2632267475128174,
-        0.14500045776367188
-      ],
-      "support_object": "StudyPavingSlab_004",
-      "support_triangle": 7,
-      "gap_m": 0.00026673078536987305,
-      "passed": true
-    },
-    {
-      "position_world": [
-        1.7793078422546387,
-        -1.2637027502059937,
-        0.1450890600681305
-      ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 128,
-      "support_hit_world": [
-        1.7793078422546387,
-        -1.2637027502059937,
+        1.7782046794891357,
+        -1.2632266283035278,
         0.14499950408935547
       ],
       "support_object": "StudyPavingSlab_004",
       "support_triangle": 7,
-      "gap_m": 8.955597877502441e-05,
+      "gap_m": 0.0002676844596862793,
       "passed": true
     },
     {
       "position_world": [
-        1.781156301498413,
+        1.7793077230453491,
+        -1.263702630996704,
+        0.1450890600681305
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 504,
+      "support_hit_world": [
+        1.7793077230453491,
+        -1.263702630996704,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 8.860230445861816e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.7811561822891235,
         -1.2626895904541016,
         0.14526718854904175
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 129,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 505,
       "support_hit_world": [
-        1.781156301498413,
+        1.7811561822891235,
         -1.2626895904541016,
         0.14500045776367188
       ],
@@ -583,14 +583,14 @@
     },
     {
       "position_world": [
-        1.7802321910858154,
+        1.7802319526672363,
         -1.2631962299346924,
         0.14517812430858612
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 129,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 505,
       "support_hit_world": [
-        1.7802321910858154,
+        1.7802319526672363,
         -1.2631962299346924,
         0.14500045776367188
       ],
@@ -601,14 +601,14 @@
     },
     {
       "position_world": [
-        1.8244812488555908,
+        1.8244811296463013,
         -1.5007784366607666,
         0.14499999582767487
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 146,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 522,
       "support_hit_world": [
-        1.8244812488555908,
+        1.8244811296463013,
         -1.5007784366607666,
         0.14500045776367188
       ],
@@ -619,14 +619,14 @@
     },
     {
       "position_world": [
-        1.7823176383972168,
+        1.7823175191879272,
         -1.263493299484253,
         0.14526718854904175
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 146,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 522,
       "support_hit_world": [
-        1.7823176383972168,
+        1.7823175191879272,
         -1.263493299484253,
         0.14500045776367188
       ],
@@ -637,14 +637,14 @@
     },
     {
       "position_world": [
-        1.7960447072982788,
+        1.7960445880889893,
         -1.342647910118103,
         0.1450890600681305
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 146,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 522,
       "support_hit_world": [
-        1.7960447072982788,
+        1.7960445880889893,
         -1.342647910118103,
         0.14499950408935547
       ],
@@ -655,14 +655,14 @@
     },
     {
       "position_world": [
-        1.8254637718200684,
+        1.8254636526107788,
         -1.5005996227264404,
         0.14526718854904175
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 147,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 523,
       "support_hit_world": [
-        1.8254637718200684,
+        1.8254636526107788,
         -1.5005996227264404,
         0.14500045776367188
       ],
@@ -677,8 +677,8 @@
         -1.421623945236206,
         0.14517812430858612
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 147,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 523,
       "support_hit_world": [
         1.8107541799545288,
         -1.421623945236206,
@@ -695,8 +695,8 @@
         -1.5017609596252441,
         0.14526718854904175
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 164,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 540,
       "support_hit_world": [
         1.8246599435806274,
         -1.5017609596252441,
@@ -713,8 +713,8 @@
         -1.5012849569320679,
         0.1450890600681305
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 164,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 540,
       "support_hit_world": [
         1.823556900024414,
         -1.5012849569320679,
@@ -728,55 +728,55 @@
     {
       "position_world": [
         1.8217084407806396,
-        -1.50229811668396,
+        -1.5022979974746704,
         0.14526718854904175
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 165,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 541,
       "support_hit_world": [
         1.8217084407806396,
-        -1.50229811668396,
+        -1.5022979974746704,
+        0.14499950408935547
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 0.0002676844596862793,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.8226327896118164,
+        -1.5017914772033691,
+        0.14517812430858612
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 541,
+      "support_hit_world": [
+        1.8226327896118164,
+        -1.5017914772033691,
         0.14500141143798828
       ],
       "support_object": "StudyPavingSlab_004",
       "support_triangle": 3,
-      "gap_m": 0.0002657771110534668,
+      "gap_m": 0.00017671287059783936,
       "passed": true
     },
     {
       "position_world": [
-        1.8226327896118164,
-        -1.5017917156219482,
-        0.14517812430858612
-      ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 165,
-      "support_hit_world": [
-        1.8226327896118164,
-        -1.5017917156219482,
-        0.14500045776367188
-      ],
-      "support_object": "StudyPavingSlab_004",
-      "support_triangle": 3,
-      "gap_m": 0.0001776665449142456,
-      "passed": true
-    },
-    {
-      "position_world": [
-        1.7947334051132202,
+        1.7947332859039307,
         -1.3428866863250732,
         0.14500001072883606
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 176,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 552,
       "support_hit_world": [
-        1.7947334051132202,
+        1.7947332859039307,
         -1.3428866863250732,
-        0.14500045776367188
+        0.14499950408935547
       ],
       "support_object": "StudyPavingSlab_004",
       "support_triangle": 7,
-      "gap_m": -4.470348358154297e-07,
+      "gap_m": 5.066394805908203e-07,
       "passed": true
     },
     {
@@ -785,8 +785,8 @@
         -1.4221010208129883,
         0.14500001072883606
       ],
-      "book_object": "StudyBookSpine_1",
-      "book_triangle": 177,
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 553,
       "support_hit_world": [
         1.8081315755844116,
         -1.4221010208129883,
