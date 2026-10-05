@@ -112,7 +112,7 @@ function inspect(bytes) {
     requireCondition(matches.length === 1 && reachable.has(matches[0]), `${name} is not in the active scene`);
     return { name, indices: matches, parent: nodes[parents.get(matches[0])]?.name ?? null };
   });
-  report.optionalNodes = ['Backdrop', 'Curtain'].map(suffix => {
+  report.optionalNodes = ['Backdrop', 'Curtain', 'Sky', 'Books'].map(suffix => {
     const name = `Fading_Study${suffix}`;
     const indices = nodes.flatMap((node, index) => node.name === name ? [index] : []);
     return { name, indices, note: indices.length ? 'Optional node present' : 'Optional node not delivered' };
@@ -127,6 +127,25 @@ function inspect(bytes) {
   report.cupDescendsFromChair = ancestor !== undefined && ancestor === named('Chair');
   requireCondition(report.cupDescendsFromChair, 'Cup must descend from chair so rotation carries it');
   const meshes = gltf.meshes ?? [];
+  const skyRoot = named('Sky');
+  if (skyRoot >= 0) {
+    const skyNodes = new Set();
+    const collectSky = index => {
+      if (skyNodes.has(index)) return;
+      skyNodes.add(index);
+      (nodes[index]?.children ?? []).forEach(collectSky);
+    };
+    collectSky(skyRoot);
+    const primitives = [...skyNodes].flatMap(index => meshes[nodes[index]?.mesh]?.primitives ?? []);
+    report.sky = {
+      nodes: [...skyNodes].map(index => nodes[index]?.name),
+      materialIndices: [...new Set(primitives.map(primitive => primitive.material))],
+      unlit: primitives.length > 0 && primitives.every(primitive =>
+        gltf.materials?.[primitive.material]?.extensions?.KHR_materials_unlit !== undefined),
+    };
+    requireCondition(reachable.has(skyRoot), 'Fading_StudySky is not in the active scene');
+    requireCondition(report.sky.unlit, 'Every authored sky primitive must use KHR_materials_unlit');
+  }
   const meshTriangles = meshes.map((mesh, index) => ({ index, name: mesh.name ?? null, triangles: (mesh.primitives ?? []).reduce((sum, primitive) => {
     const count = accessors[primitive.indices ?? primitive.attributes?.POSITION]?.count;
     requireCondition(integer(count), `Mesh ${index} primitive has no valid count accessor`);
