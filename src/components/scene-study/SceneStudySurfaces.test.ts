@@ -8,7 +8,8 @@ import { Color3 } from '@babylonjs/core/Maths/math.color';
 import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
 import { BindFogParameters } from '@babylonjs/core/Materials/materialHelper.functions';
 import type { Effect } from '@babylonjs/core/Materials/effect';
-import { configureStudyFog, getStudyLampPosition, getStudyShadowCasters } from './SceneStudySurfaces';
+import { SpotLight } from '@babylonjs/core/Lights/spotLight';
+import { configureStudyFog, createStudyBulbSource, getStudyLampPosition, getStudyShadowCasters } from './SceneStudySurfaces';
 
 it('anchors warm lighting to the authored socket world transform before manifest or bounds hints', () => {
   const engine = new NullEngine();
@@ -34,6 +35,28 @@ it('anchors warm lighting to the authored socket world transform before manifest
     expect(position.equals(socket.position)).toBe(false);
     position.x = 99;
     expect(socket.getAbsolutePosition().equalsWithEpsilon(expectedWorld, 0.00001)).toBe(true);
+  } finally { scene.dispose(); engine.dispose(); }
+});
+
+it('preserves the calibrated bulb energy at the fixture and provides cube shadows for broad illumination', () => {
+  const engine = new NullEngine();
+  const scene = new Scene(engine);
+  try {
+    const down = new SpotLight('fixture downlight', new Vector3(1.17, 1.635, 0.135), Vector3.Down(), 2.65, 1.1, scene);
+    down.intensity = 10;
+    down.range = 6;
+    down.diffuse = new Color3(1, 0.64, 0.31);
+    const bulb = createStudyBulbSource(scene, down);
+    expect(bulb.light.getScaledIntensity()).toBe(10);
+    expect(bulb.light.position.equals(down.position)).toBe(true);
+    expect(bulb.light.range).toBe(6);
+    expect(bulb.light.needCube()).toBe(true);
+    expect(new Set(Array.from({ length: 6 }, (_, index) => bulb.light.getShadowDirection(index).asArray().join(','))).size).toBe(6);
+    expect(bulb.shadows.getShadowMap()?.getSize().width).toBeLessThanOrEqual(256);
+    expect(bulb.light.getShadowGenerator()).toBe(bulb.shadows);
+    expect(bulb.shadows.usePoissonSampling).toBe(true);
+    bulb.light.position.x = 99;
+    expect(down.position.x).toBe(1.17);
   } finally { scene.dispose(); engine.dispose(); }
 });
 

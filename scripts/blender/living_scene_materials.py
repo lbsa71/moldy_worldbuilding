@@ -21,7 +21,7 @@ TEXTURE_PROVENANCE = {
     "method": "Procedural detail baked to portable PNG maps; not scanned materials",
     "resolution": [SIZE, SIZE],
     "license": "Project-authored original assets; no third-party asset license requirements",
-    "color_spaces": {"basecolor": "sRGB", "normal": "linear/non-color", "orm": "linear/non-color"},
+    "color_spaces": {"basecolor": "sRGB", "emission": "sRGB", "normal": "linear/non-color", "orm": "linear/non-color"},
     "orm_channels": {"R": "occlusion", "G": "roughness", "B": "metalness"},
     "normal_convention": "Tangent-space OpenGL/glTF +Y; RGB encodes signed XYZ in [0,1]",
     "uv": "Tileable [0,1] UV; no Blender-only texture transforms",
@@ -94,13 +94,16 @@ def _bake_maps(texture_dir):
     u, v = np.meshgrid(np.arange(SIZE, dtype=np.float32) / SIZE, np.arange(SIZE, dtype=np.float32) / SIZE)
     maps = {}
 
-    def bake(name, color, height, rough, metal=0, ao=None, normal_strength=5, description=''):
+    def bake(name, color, height, rough, metal=0, ao=None, normal_strength=5, description='', emission=None):
         normal = _normal(height, normal_strength)
         if ao is None:
             ao = np.ones((SIZE, SIZE), dtype=np.float32)
         orm = np.stack((ao, np.broadcast_to(rough, (SIZE, SIZE)), np.broadcast_to(metal, (SIZE, SIZE))), axis=-1)
         paths = {}
-        for suffix, data in (('basecolor', color), ('normal', normal), ('orm', orm)):
+        images = [('basecolor', color), ('normal', normal), ('orm', orm)]
+        if emission is not None:
+            images.append(('emission', emission))
+        for suffix, data in images:
             path = texture_dir / f'{name}_{suffix}.png'
             _png(path, data)
             paths[suffix] = path
@@ -120,20 +123,27 @@ def _bake_maps(texture_dir):
     latewood = np.power(.5 + .5 * grain, 10)
     pores = np.power(.5 + .5 * np.sin(2 * np.pi * (u * 165 + warp * 28)), 16)
     wear = np.clip(medium + .20, 0, .75)
-    wood_color = _rgb((.205, .125, .070), 1 + .14 * broad + .12 * grain - .17 * latewood + .09 * wear)
-    bake('wood', wood_color, .07 * grain - .05 * pores + .035 * medium, .48 + .09 * medium - .045 * wear,
-         ao=1 - .05 * pores, normal_strength=7,
-         description='Worn dark walnut family: directional grain along V, soft satin wear and recessed pores')
+    wood_color = _rgb((.175, .108, .062), 1 + .07 * broad + .014 * grain - .022 * latewood + .028 * wear)
+    bake('wood', wood_color, .009 * grain - .012 * pores + .015 * medium, .62 + .04 * medium - .022 * wear,
+         ao=1 - .025 * pores, normal_strength=3.5,
+         description='Worn dark walnut family: subdued directional grain along V, broad satin variation and shallow pores; edge wear is localized geometry')
 
     # Each weave has a restrained crossing highlight and relief, with alternating over/under threads.
-    for name, density, tint in (('linen', 126, (.82, .79, .70)), ('cloth', 92, (.70, .715, .70))):
+    for name, density, tint in (('linen', 126, (.85, .78, .65)), ('cloth', 92, (.70, .715, .70))):
         sx = np.cos(2 * np.pi * u * density)
         sy = np.cos(2 * np.pi * v * density)
         weave = .35 * (sx + sy) + .16 * sx * sy
         relief = .055 * weave + .045 * medium + .012 * fine
-        color = _rgb(tint, 1 + .028 * broad + .017 * medium + .018 * weave)
+        color = _rgb(tint, 1 + .045 * broad + .022 * medium + .018 * weave)
+        emission = None
+        if name == 'linen':
+            # Thin warm fabric retains yarn/slub variation in its emitted light.
+            # A grayscale sRGB image multiplies the core glTF emissive factor.
+            glow = np.clip(.94 + .043 * broad + .027 * medium + .026 * weave, .82, .995)
+            emission = np.repeat(glow[:, :, None], 3, axis=-1)
         bake(name, color, relief, .82 + .035 * medium, ao=1 - .035 * np.maximum(-weave, 0), normal_strength=3.5,
-             description='Woven ivory flax with soft yarn crossings; broad physical folds supplied by mesh')
+             description=('Thin illuminated warm flax with soft yarn/slub variation baked into emissive texture' if name == 'linen' else
+                          'Neutral cool-grey woven flax with soft yarn crossings; broad physical folds supplied by mesh'), emission=emission)
 
     glaze = _rgb((.90, .91, .89), 1 + .007 * broad + .003 * medium)
     # Sparse hand-authored underglaze flower sprigs. Toroidal distances keep
@@ -160,12 +170,12 @@ def _bake_maps(texture_dir):
 
     cracks = _fissures(rng)
     layers = np.sin(2 * np.pi * (v * 10 + .20 * broad + .035 * medium))
-    stone_height = .35 * broad + .16 * medium + .042 * fine + .035 * layers - .25 * cracks
-    for name, tint, wet in (('rock', (.115, .140, .160), True), ('cliff', (.185, .205, .220), False)):
-        color = _rgb(tint, 1 + .17 * broad + .08 * medium + .022 * layers - .22 * cracks)
-        rough = (.30 if wet else .64) + .085 * medium + .055 * cracks
-        bake(name, color, stone_height, rough, ao=1 - .15 * cracks, normal_strength=8 if wet else 10,
-             description=('Wet dark slate with soft mineral layers, fissures and varied water-polished roughness' if wet else
+    stone_height = .10 * broad + .045 * medium + .013 * fine + .010 * layers - .038 * cracks
+    for name, tint, wet in (('rock', (.064, .071, .077), True), ('cliff', (.12, .13, .14), False)):
+        color = _rgb(tint, 1 + .09 * broad + .04 * medium + .012 * layers - .10 * cracks)
+        rough = (.52 if wet else .74) + .035 * medium + .018 * fine + .025 * cracks
+        bake(name, color, stone_height, rough, ao=1 - .07 * cracks, normal_strength=3 if wet else 4,
+             description=('Dark desaturated wet slate with shallow fissures and restrained rough specular variation' if wet else
                           'Cool stratified distant stone, matte mineral layers and subtle cellular fissures'))
 
     (texture_dir / 'material-provenance.json').write_text(json.dumps(TEXTURE_PROVENANCE, indent=2), encoding='utf-8')
@@ -205,14 +215,14 @@ def create_materials(texture_dir: Path) -> dict:
         shader = nodes.new('ShaderNodeBsdfPrincipled')
         shader.location = (330, 80)
         if key == 'linen':
-            shader.inputs['Emission Color'].default_value = (1.0, .50, .15, 1.0)
-            shader.inputs['Emission Strength'].default_value = .30
-            material['emission_note'] = 'Warm core glTF emissive factor for illuminated shade; runtime may modulate'
+            shader.inputs['Emission Color'].default_value = (.85, .40, .10, 1.0)
+            shader.inputs['Emission Strength'].default_value = 1.0
+            material['emission_note'] = 'Core glTF emissiveFactor [.85,.40,.10] times baked yarn/slub emission texture; runtime may modulate'
         links.new(shader.outputs['BSDF'], output.inputs['Surface'])
         textures = {}
         for i, (kind, path) in enumerate(paths.items()):
             image = bpy.data.images.load(str(path), check_existing=True)
-            image.colorspace_settings.name = 'sRGB' if kind == 'basecolor' else 'Non-Color'
+            image.colorspace_settings.name = 'sRGB' if kind in ('basecolor', 'emission') else 'Non-Color'
             node = nodes.new('ShaderNodeTexImage')
             node.name = f'{key}_{kind}'
             node.label = kind.upper()
@@ -222,6 +232,17 @@ def create_materials(texture_dir: Path) -> dict:
             node.location = (-500, 260 - i * 270)
             textures[kind] = node
         links.new(textures['basecolor'].outputs['Color'], shader.inputs['Base Color'])
+        if 'emission' in textures:
+            # Recognized by Blender's exporter as texture * constant factor;
+            # it becomes standard emissiveTexture + emissiveFactor in glTF.
+            emission_tint = nodes.new('ShaderNodeMix')
+            emission_tint.data_type = 'RGBA'
+            emission_tint.blend_type = 'MULTIPLY'
+            emission_tint.inputs[0].default_value = 1.0
+            emission_tint.inputs[7].default_value = (.85, .40, .10, 1.0)
+            emission_tint.location = (0, 330)
+            links.new(textures['emission'].outputs['Color'], emission_tint.inputs[6])
+            links.new(emission_tint.outputs[2], shader.inputs['Emission Color'])
         normal = nodes.new('ShaderNodeNormalMap')
         normal.location = (-40, -80)
         normal.inputs['Strength'].default_value = 1.0

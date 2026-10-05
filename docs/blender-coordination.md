@@ -20,6 +20,10 @@ On 5 October, the Blender chat delivered pass01 at `ab523ca70297e13e28e9c0833ca0
 
 The scene loads in Babylon with the authored camera, but the art review does not accept its visual fidelity. The next revision targets shoreline/depth composition, chair construction, cloth asymmetry, shade luminosity and the warm water reflection. Source and offline-image success are not final scene acceptance.
 
+The bounded pass02b revision is imported from `509bb87cb0630bb869acea1351541481468e6577` on the same asset branch. All ten delivered SHA-256 entries pass locally, and the independent GLB inspector reports no structural issues. Current GLB: SHA-256 `fd5eb0382f9d29dd9c1ec1c5c6d0b07c04436360e70bf725fec751dd28389cb9`, 12,573,260 bytes, 51,544 triangles, 12 primitives, 8 materials and 22 embedded 1024px maps. The lower camera is at Y-up `[0, 1, 8.2]`, target `[0, .7, 0]`, vertical FOV `.429630816`; the cup remains a separate child of the restaged chair. Packed editable source, reference render, manifest, validation and checksums are preserved under `pass02b/`. The packed source also contains the verified CC0 overcast HDR; local distributed HDR and credits were preserved during import.
+
+The revised chair, shorter promontory and quieter wood improve the composition. Offline lighting now creates a broken amber water reflection, but initial Babylon review loses much of that warmth. Both versions still need foreground material detail, background depth and shoreline blending; portrait framing is unapproved. The 22 maps imply roughly 117.3 MiB if decoded as RGBA with full mipmaps, before render targets and format optimization; this is an estimate, not a device-memory measurement. Decorative open surfaces are not collision solids. Blender production has stopped at this reviewed delivery, without merging or deploying.
+
 ### Previous bedside study
 
 Job **fading-bedside-20261003-01** was dispatched through the Blender chat with the complete generator source and creative/export contract. Initial source SHA-256:

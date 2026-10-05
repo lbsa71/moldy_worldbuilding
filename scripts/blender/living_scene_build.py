@@ -16,8 +16,10 @@ def args():
     p.add_argument('--output',type=Path,default=PROJECT/'art/blender/living-scene-proof/pass01')
     p.add_argument('--render',action='store_true')
     p.add_argument('--samples',type=int,default=48)
+    p.add_argument('--environment',type=Path,default=PROJECT/'public/scene-study/overcast.hdr')
     a=p.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
     a.output=a.output.resolve()
+    a.environment=a.environment.resolve()
     if (a.output/'living-scene.glb').exists():p.error('Use a new output directory; prior passes are preserved.')
     return a
 
@@ -84,13 +86,25 @@ def uv_planar(obj,scale=1):
             uv.data[li].uv=(co[axes[0]]*scale,co[axes[1]]*scale)
 
 def uv_revolve(obj):
-    uv=obj.data.uv_layers.new(name='PortableUV')
+    uv=obj.data.uv_layers.active if obj.data.uv_layers else obj.data.uv_layers.new(name='PortableUV')
     for p in obj.data.polygons:
         angles=[math.atan2(obj.data.vertices[obj.data.loops[li].vertex_index].co.y,obj.data.vertices[obj.data.loops[li].vertex_index].co.x)/math.tau for li in p.loop_indices]
         if max(angles)-min(angles)>.5:angles=[a+1 if a<0 else a for a in angles]
         for li,a in zip(p.loop_indices,angles):
             v=obj.data.vertices[obj.data.loops[li].vertex_index].co
             uv.data[li].uv=(a,v.z*2.5)
+
+def uv_wood_member(obj):
+    uv=obj.data.uv_layers.active if obj.data.uv_layers else obj.data.uv_layers.new(name='PortableUV')
+    extents=[max(v.co[i] for v in obj.data.vertices)-min(v.co[i] for v in obj.data.vertices) for i in range(3)]
+    grain=max(range(3),key=lambda i:extents[i])
+    for polygon in obj.data.polygons:
+        normal_axis=max(range(3),key=lambda i:abs(polygon.normal[i]))
+        axes=[i for i in range(3) if i!=normal_axis]
+        if grain in axes:axes=[next(i for i in axes if i!=grain),grain]
+        for li in polygon.loop_indices:
+            v=obj.data.vertices[obj.data.loops[li].vertex_index].co
+            uv.data[li].uv=(v[axes[0]]*1.2,v[axes[1]]*1.2)
 
 def build_lamp(m):
     root=empty('Fading_StudyLamp',location=(1.17,-.12,.145));root['role']='lamp';root['anchor']='persistent warm center'
@@ -101,7 +115,7 @@ def build_lamp(m):
     pivot=empty('StudyShadePivot',root,(0,0,1.42));pivot.rotation_euler=(.015,-.025,0)
     shade=revolve('StudyLampShade',[(.255,0),(.21,.20),(.135,.40),(.130,.40),(.205,.20),(.250,0),(.255,0)],pivot,m['linen'],96)
     for z,r in [(0,.253),(.399,.133)]:
-        tube('StudyShadeHem',[(r*math.cos(i/96*math.tau),r*math.sin(i/96*math.tau),z) for i in range(96)],.0028,pivot,m['linen'],True)
+        tube('StudyShadeHem',[(r*math.cos(i/96*math.tau),r*math.sin(i/96*math.tau),z) for i in range(96)],.0023,pivot,m['brass'],True)
     for i in range(8):
         a=i/8*math.tau
         tube('StudyShadeSeam',[(r*math.cos(a),r*math.sin(a),z) for r,z in [(.255,0),(.21,.20),(.135,.40)]],.001,pivot,m['linen'])
@@ -118,7 +132,7 @@ def build_lamp(m):
     return root
 
 def build_chair(m):
-    root=empty('Fading_StudyChair',location=(1.65,-.80,.145));root['role']='chair';root['pivot']='ground footprint center';root.rotation_euler.z=-.04
+    root=empty('Fading_StudyChair',location=(1.52,-1.60,.145));root['role']='chair';root['pivot']='ground footprint center';root.rotation_euler.z=-.04
     for x in [-.29,.29]:
         for y in [-.25,.25]:
             leg=box('StudyChairLeg',(.045,.052,.55),(x,y,.275),root,m['wood'],.005)
@@ -126,9 +140,11 @@ def build_chair(m):
     for i in range(5):
         box('StudySeatSlat',(.127,.60,.035),(-.27+i*.135,0,.566+RNG.uniform(-.002,.002)),root,m['wood'])
     for x in [-.29,.29]:
-        box('StudyBackPost',(.052,.06,.70),(x,.25,.89),root,m['wood'],.005)
-    for z in [.77,1.05,1.21]:
-        box('StudyBackRail',(.64,.055,.058),(0,.25,z),root,m['wood'],.005)
+        box('StudyBackPost',(.052,.06,.51),(x,.25,.80),root,m['wood'],.005)
+    box('StudyBroadWornTopRail',(.64,.065,.145),(0,.25,.99),root,m['wood'],.008)
+    box('StudyLowerBackRail',(.59,.045,.046),(0,.25,.67),root,m['wood'],.004)
+    for x in [-.17,0,.17]:
+        box('StudyVerticalBackSlat',(.062,.034,.30),(x,.252,.815),root,m['wood'],.003)
     for x in [-.29,.29]:box('StudyChairStretcher',(.025,.53,.030),(x,0,.24),root,m['wood'],.003)
     box('StudyFrontWear',(.50,.012,.005),(0,-.297,.585),root,m['wood'],.002)
     vertices=[];faces=[];nx,nr=25,49
@@ -136,14 +152,14 @@ def build_chair(m):
         t=row/(nr-1)
         for col in range(nx):
             u=col/(nx-1);x=.16+u*.29
-            fold=.014*math.sin(u*math.tau*4+t*.7)
+            fold=.020*math.sin(u*math.tau*3.4+t*1.2)*(.35+.65*t)+.008*math.sin(u*11+t*4)
             if t<.16:
                 a=t/.16*math.pi
-                y=.25+.07*math.cos(a)+fold;z=1.215+.07*math.sin(a)
+                y=.25+.07*math.cos(a)+fold;z=1.030+.06*math.sin(a)
             else:
                 drop=(t-.16)/.84
-                y=.18-.08*drop+fold;z=1.215-drop*1.12+.017*math.sin(u*7.5)*drop
-            vertices.append((x+.035*math.sin(t*2),y,z))
+                y=.18-.09*drop+fold;z=1.030-drop*(.915-.055*math.sin(u*3.1))+.020*math.sin(u*12)*drop
+            vertices.append((x+.035*math.sin(t*2)+.04*t*u,y,z))
     for row in range(nr-1):
         for col in range(nx-1):
             a=row*nx+col;faces.append((a,a+1,a+nx+1,a+nx))
@@ -153,7 +169,9 @@ def build_chair(m):
         x=.16+i/17*.29
         tube('StudyClothFringe',[(x,.105,.102),(x+.005,.11,.07)],.0014,root,m['cloth'])
     for o in root.children_recursive:
-        if o.type=='MESH':uv_planar(o,3 if 'Cloth' in o.name else 1.2)
+        if o.type=='MESH':
+            if o.data.materials[0]==m['wood']:uv_wood_member(o)
+            else:uv_planar(o,3)
     return root
 
 def build_cup(m,chair):
@@ -165,38 +183,50 @@ def build_cup(m,chair):
         distance=abs(math.atan2(math.sin(a+.8),math.cos(a+.8)))
         if v.co.z>.08:v.co.z-=max(0,1-distance/.16)*.006
     body.data.update();uv_revolve(body)
+    for coordinate in body.data.uv_layers.active.data:coordinate.uv.y/=(2.5*.098)
     pts=[(.043+.034*math.sin(i/32*math.pi),0,.021+i/32*.055) for i in range(33)]
     handle=tube('StudyCupHandle',pts,.0045,root,m['porcelain']);uv_planar(handle,2)
     empty('StudyCupRim',root,(0,0,.098))
     return root
+
+def coastline(y):
+    return -.50+.90*max(0,-y)+.70*max(0,y)+.045*math.sin(y*3.1)+.025*math.sin(y*7.3)
 
 def build_shore(m):
     root=empty('Fading_StudyShore');root['role']='permanent wet foreground';root['water_level_blender_Z']=0.0
     verts=[];faces=[];nx,ny=65,73
     for row in range(ny):
         y=-2.7+row/(ny-1)*12
-        coast=-.50+.72*max(0,-y)+.10*math.sin(y*3.1)+.08*math.sin(y*7.3)
+        coast=coastline(y)
         for col in range(nx):
             t=col/(nx-1);x=coast+t*(6.8-coast)
-            z=.145*(1-math.exp(-t*35))+.014*math.sin(x*9+y*4)*math.sin(y*11-x*3)*min(1,t*10)
+            distance=x-coast
+            detail=.030*math.sin(x*13+y*4)*math.sin(y*11-x*3)+.013*math.sin(x*23-y*17)
+            contact=min(math.hypot(x-1.17,y+.12),math.hypot(x-1.52,y+1.60))
+            detail*=min(1,max(0,(contact-.30)/.35))
+            z=.145*(1-math.exp(-max(0,distance)/.025))+detail*min(1,t*10)
             verts.append((x,y,z-.006))
     for row in range(ny-1):
         for col in range(nx-1):
             a=row*nx+col;faces.append((a,a+1,a+nx+1,a+nx))
     shore=mesh('StudyWetShore',verts,faces,root,m['rock']);uv_planar(shore,.6)
     locations=[]
-    for i in range(70):
-        y=RNG.uniform(-2.6,5.5)
-        coast=-.50+.72*max(0,-y)+.10*math.sin(y*3.1)+.08*math.sin(y*7.3)
-        x=coast+RNG.uniform(-.09,.65)
-        locations.append((x,y,RNG.uniform(.025,.06),RNG.uniform(.07,.25)))
-    locations.extend([(-1.80,-2.55,.025,.22),(-1.65,-2.58,.018,.11),(-1.35,-2.70,.01,.08),(-.13,-.1,.05,.30),(.55,-1.3,.06,.26)])
+    for i in range(62):
+        y=RNG.uniform(-1.9,5.5)
+        coast=coastline(y)
+        x=coast+RNG.uniform(-.06,.35)
+        locations.append((x,y,RNG.uniform(.015,.035),RNG.uniform(.045,.17)))
+    locations.extend([(-1.80,-2.55,.015,.17),(-1.65,-2.58,.012,.08),(-1.35,-2.70,.005,.05),(-.32,-.1,.025,.17),(.75,-.69,.028,.14)])
     for i,(x,y,z,r) in enumerate(locations):
-        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2,radius=r,location=(x,y,z))
+        if i%3:
+            bpy.ops.mesh.primitive_cube_add(size=r*1.6,location=(x,y,z))
+        else:
+            bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2,radius=r,location=(x,y,z))
         o=finish(bpy.context.object,'StudyWetRock',root,m['rock']);o.scale=(RNG.uniform(1,1.8),RNG.uniform(.8,1.4),RNG.uniform(.40,.8))
         for v in o.data.vertices:
-            v.co*=RNG.uniform(.83,1.12)
-        for p in o.data.polygons:p.use_smooth=False
+            v.co*=1+.09*math.sin(v.co.x*30+v.co.z*12)*math.sin(v.co.y*35-v.co.x*20)
+        for p in o.data.polygons:p.use_smooth=i%3==0
+        if i%3:bevel(o,r*.18,3)
         o.rotation_euler=(RNG.uniform(-.2,.2),RNG.uniform(-.2,.2),RNG.random()*math.tau)
         uv_planar(o,2)
     return root
@@ -209,16 +239,18 @@ def build_backdrop(m):
             bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2,radius=1,location=(cx,cy,height*.30))
             rock=finish(bpy.context.object,'StudyDistantCliff',root,m['cliff']);rock.scale=(width,RNG.uniform(1.7,2.8),height*.75)
             for v in rock.data.vertices:v.co*=RNG.uniform(.86,1.1)
+            for polygon in rock.data.polygons:polygon.use_smooth=True
             uv_planar(rock,1)
         for tower in range(3):
             obj=box('StudyDistantArchitecture',(RNG.uniform(.55,.8),.65,RNG.uniform(.5,1.4)),(x+(tower-1)*.75,y,height*.83),root,m['cliff'],.015)
             uv_planar(obj,.6)
-    for x in [-2.4,-.6,1.2,3.0]:
-        o=box('StudyBridgePier',(.28,.42,2.4),(x,26,1.2),root,m['cliff'],.04);uv_planar(o,.6)
-    for center in [-1.5,.3,2.1]:
-        points=[(center+.76*math.cos(math.pi-i/32*math.pi),26,1.38+.90*math.sin(math.pi-i/32*math.pi)) for i in range(33)]
-        o=tube('StudyBridgeArch',points,.12,root,m['cliff']);uv_planar(o,.6)
-    top=box('StudyBridgeDeck',(5.7,.50,.23),(.3,26,2.55),root,m['cliff'],.02);uv_planar(top,.6)
+    # Fixed-view depth proxy: subdued bridge, calibrated to the reference rectangle.
+    for x in [-1.00,-.56,-.12,.32]:
+        o=box('StudyBridgePier',(.06,.12,1.25),(x,8,.625),root,m['cliff'],.008);uv_planar(o,.6)
+    for center in [-.78,-.34,.10]:
+        points=[(center+.19*math.cos(math.pi-i/32*math.pi),8,.95+.21*math.sin(math.pi-i/32*math.pi)) for i in range(33)]
+        o=tube('StudyBridgeArch',points,.025,root,m['cliff']);uv_planar(o,.6)
+    top=box('StudyBridgeDeck',(1.40,.15,.055),(-.34,8,1.27),root,m['cliff'],.005);uv_planar(top,.6)
     return root
 
 def build_curtain(m):
@@ -263,12 +295,12 @@ def yup(point):return [point[0],point[2],-point[1]]
 
 def camera_setup():
     scene=bpy.context.scene;scene.render.resolution_x=1536;scene.render.resolution_y=1024;scene.render.resolution_percentage=100
-    bpy.ops.object.camera_add(location=(0,-8.2,2.30));camera=bpy.context.object;camera.name='Fading_StudyCamera'
+    bpy.ops.object.camera_add(location=(0,-8.2,1.0));camera=bpy.context.object;camera.name='Fading_StudyCamera'
     camera.data.lens=55;camera.data.sensor_width=36;camera.data.clip_end=200;camera.data.clip_start=.05
     target=(0,0,.70);aim(camera,target);scene.camera=camera
     return camera,target
 
-def preview(roots,m,samples):
+def preview(roots,m,samples,environment):
     scene=bpy.context.scene;scene.render.engine='CYCLES';scene.cycles.samples=samples;scene.cycles.use_denoising=True
     preferences=bpy.context.preferences.addons['cycles'].preferences
     try:
@@ -278,29 +310,35 @@ def preview(roots,m,samples):
     except Exception:scene.cycles.device='CPU'
     scene.world=bpy.data.worlds.new('PreviewCoolSky');scene.world.use_nodes=True
     nodes=scene.world.node_tree.nodes;links=scene.world.node_tree.links
-    nodes['Background'].inputs['Color'].default_value=(.19,.27,.35,1);nodes['Background'].inputs['Strength'].default_value=.32
+    nodes['Background'].inputs['Color'].default_value=(.19,.27,.35,1);nodes['Background'].inputs['Strength'].default_value=.20
+    if environment.exists():
+        tex=nodes.new('ShaderNodeTexEnvironment');tex.image=bpy.data.images.load(str(environment))
+        tint=nodes.new('ShaderNodeMixRGB');tint.blend_type='MULTIPLY';tint.inputs[0].default_value=1;tint.inputs[2].default_value=(.50,.62,.76,1)
+        links.new(tex.outputs['Color'],tint.inputs[1]);links.new(tint.outputs['Color'],nodes['Background'].inputs['Color'])
+        nodes['Background'].inputs['Strength'].default_value=.23
     for name,kind,loc,power,color,size,target in [
-        ('PreviewBulb','POINT',(1.17,-.135,1.635),48,(1,.64,.31),.035,(1.17,0,0)),
-        ('PreviewWarmDown','AREA',(1.17,-.12,1.60),22,(1,.61,.27),.18,(1.17,-.12,.1)),
-        ('PreviewCoolSky','AREA',(-3,-3,7),600,(.55,.68,.82),8,(0,0,0)),
-        ('PreviewCloudOpening','AREA',(-2,6,8),1100,(.68,.76,.86),10,(0,0,0))]:
+        ('PreviewBulb','POINT',(1.17,-.135,1.635),120,(1,.56,.24),.035,(1.17,0,0)),
+        ('PreviewWarmDown','AREA',(1.17,-.12,1.60),60,(1,.56,.24),.18,(1.17,-.12,.1)),
+        ('PreviewCoolSky','AREA',(-3,-3,7),100,(.55,.68,.82),8,(0,0,0)),
+        ('PreviewCloudOpening','AREA',(-2,6,8),180,(.68,.76,.86),10,(0,0,0))]:
         data=bpy.data.lights.new(name,kind);data.energy=power;data.color=color
         if kind=='AREA':data.shape='DISK';data.size=size
         else:data.shadow_soft_size=size
         obj=bpy.data.objects.new(name,data);scene.collection.objects.link(obj);obj.location=loc;aim(obj,target)
-    bpy.ops.mesh.primitive_plane_add(size=200,location=(0,30,0))
+    bpy.ops.mesh.primitive_plane_add(size=2000,location=(0,0,0))
     water=bpy.context.object;water.name='PreviewWater_RUNTIME_ONLY'
     mat=bpy.data.materials.new('PreviewWater');mat.use_nodes=True;bs=mat.node_tree.nodes.get('Principled BSDF')
-    bs.inputs['Base Color'].default_value=(.022,.048,.068,1);bs.inputs['Roughness'].default_value=.15;bs.inputs['IOR'].default_value=1.333
+    bs.inputs['Base Color'].default_value=(.018,.033,.043,1);bs.inputs['Roughness'].default_value=.075;bs.inputs['IOR'].default_value=1.333
     bs.inputs['Metallic'].default_value=.0
-    tex=mat.node_tree.nodes.new('ShaderNodeTexNoise');tex.inputs['Scale'].default_value=55;tex.inputs['Detail'].default_value=2
-    bump=mat.node_tree.nodes.new('ShaderNodeBump');bump.inputs['Strength'].default_value=.18;bump.inputs['Distance'].default_value=.025
+    tex=mat.node_tree.nodes.new('ShaderNodeTexNoise');tex.inputs['Scale'].default_value=25;tex.inputs['Detail'].default_value=2
+    coords=mat.node_tree.nodes.new('ShaderNodeTexCoord');mat.node_tree.links.new(coords.outputs['Object'],tex.inputs['Vector'])
+    bump=mat.node_tree.nodes.new('ShaderNodeBump');bump.inputs['Strength'].default_value=.35;bump.inputs['Distance'].default_value=.03
     mat.node_tree.links.new(tex.outputs['Fac'],bump.inputs['Height']);mat.node_tree.links.new(bump.outputs['Normal'],bs.inputs['Normal']);water.data.materials.append(mat)
     # Preview volume is not exported; runtime receives density/color guidance.
-    bpy.ops.mesh.primitive_cube_add(size=1,location=(0,24,8));fog=bpy.context.object;fog.name='PreviewAtmosphere_RUNTIME_ONLY';fog.dimensions=(110,60,30)
+    bpy.ops.mesh.primitive_cube_add(size=1,location=(0,80,35));fog=bpy.context.object;fog.name='PreviewAtmosphere_RUNTIME_ONLY';fog.dimensions=(300,300,80)
     mat=bpy.data.materials.new('PreviewAtmosphere');mat.use_nodes=True;mat.node_tree.nodes.clear()
     out=mat.node_tree.nodes.new('ShaderNodeOutputMaterial');vol=mat.node_tree.nodes.new('ShaderNodeVolumePrincipled')
-    vol.inputs['Density'].default_value=.017;vol.inputs['Color'].default_value=(.34,.44,.52,1);vol.inputs['Anisotropy'].default_value=.1
+    vol.inputs['Density'].default_value=.012;vol.inputs['Color'].default_value=(.24,.34,.44,1);vol.inputs['Anisotropy'].default_value=.1
     mat.node_tree.links.new(vol.outputs['Volume'],out.inputs['Volume']);fog.data.materials.append(mat)
     scene.view_settings.view_transform='AgX';scene.view_settings.exposure=.0
     scene.render.image_settings.file_format='PNG'
@@ -335,13 +373,17 @@ def main():
         'camera':{'name':camera.name,'position':yup(camera.location),'target':yup(target),'fov':camera.data.angle_y,'aspect':1.5,'near':.05,'far':200},
         'lampLight':{'socket':'Fading_StudyLampLight','position':yup(bpy.data.objects['Fading_StudyLampLight'].matrix_world.translation),
                      'intensity':10,'color':[1,.64,.31],'range':6,'note':'Babylon intensity is an initial calibration suggestion, not Cycles watts'},
-        'environment':{'cool_color':[.19,.27,.35],'fog_color':[.34,.44,.52],'fog_density_suggestion':.017,'background':'real static depth geometry, no image plate'},
-        'water':{'runtime_only':True,'level':0,'roughness_suggestion':.15,'IOR':1.333,'reflection_membership':'all visible foreground roles; no furniture baked into permanent reflection'},
+        'environment':{'cool_color':[.19,.27,.35],'fog_color':[.24,.34,.44],'fog_density_suggestion':.012,'background':'real static depth geometry, no image plate'},
+        'water':{'runtime_only':True,'level':0,'roughness_suggestion':.075,'IOR':1.333,'reflection_membership':'all visible foreground roles; no furniture baked into permanent reflection'},
         'roles':[{'name':r.name,'parent':r.parent.name if r.parent else None,'position':yup(r.matrix_world.translation)} for r in roots],
         'texture_provenance':getattr(helper,'TEXTURE_PROVENANCE','Original procedural authored maps; no acquired assets'),
         'known_limits':['Offline AgX, volume and preview lights need explicit Babylon calibration','First-pass authored analytic textures, not scans','Portrait camera not approved','Cup follows chair and remains independently removable']}
-    (a.output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')
-    preview(roots,m,a.samples)
+    if a.environment.exists():
+        manifest['environment']['ibl']={'asset':'Overcast Soil (Pure Sky)','source':'https://polyhaven.com/a/overcast_soil_puresky','license':'CC0',
+            'authors':['Jarod Guest','Sergej Majboroda'],'sha256':hashlib.sha256(a.environment.read_bytes()).hexdigest(),'offline_strength':.23,'offline_tint':[.50,.62,.76]}
+    (a.output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8',newline='\n')
+    preview(roots,m,a.samples,a.environment)
+    bpy.ops.file.pack_all()
     bpy.ops.wm.save_as_mainfile(filepath=str(a.output/'living-scene.blend'))
     if a.render:
         bpy.context.scene.render.filepath=str(a.output/'reference.png');bpy.ops.render.render(write_still=True)

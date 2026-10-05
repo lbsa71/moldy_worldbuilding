@@ -17,6 +17,7 @@ import type { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
 import { SpotLight } from '@babylonjs/core/Lights/spotLight';
+import { Light } from '@babylonjs/core/Lights/light';
 import { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 import '@babylonjs/core/Lights/Shadows/shadowGeneratorSceneComponent';
 import { Scene } from '@babylonjs/core/scene';
@@ -58,6 +59,27 @@ export function configureStudyFog(scene: Scene, manifest: StudyManifest): void {
   // A Cycles volume density is not an exp2 coefficient. This bounded calibration
   // keeps foreground surfaces readable while distant water converges to the sky.
   scene.fogDensity = Math.max(0.035, Math.min(0.055, (manifest.environment?.fog_density_suggestion ?? 0.017) * 2.4));
+}
+
+export function createStudyBulbSource(scene: Scene, downwardLight: SpotLight) {
+  const light = new PointLight('shade local warmth', downwardLight.position.clone(), scene);
+  light.diffuse = downwardLight.diffuse.clone();
+  // The bulb is the fixture's broad emitter. A hardcoded 0.35 made it negligible
+  // against the authored downlight and removed the wet-shore/specular response.
+  light.intensity = downwardLight.intensity;
+  light.intensityMode = Light.INTENSITYMODE_LUMINOUSINTENSITY;
+  light.range = downwardLight.range;
+  light.falloffType = Light.FALLOFF_GLTF;
+  light.shadowMinZ = 0.04;
+  light.shadowMaxZ = light.range;
+  const shadows = new ShadowGenerator(256, light);
+  // Babylon 7.34's unfiltered WGSL cube branch omits the texture argument.
+  // Its supported Poisson cube branch passes texture + sampler correctly.
+  shadows.usePoissonSampling = true;
+  shadows.bias = 0.001;
+  shadows.normalBias = 0.01;
+  shadows.setDarkness(0.12);
+  return { light, shadows };
 }
 
 async function loadAuthoredEnvironment(scene: Scene, url: string, signal?: AbortSignal): Promise<HDRCubeTexture> {
@@ -172,12 +194,11 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
   lamp.diffuse = warmColor?.length === 3 ? Color3.FromArray(warmColor) : new Color3(1, 0.65, 0.29);
   lamp.intensity = assets.manifest.lampLight?.intensity ?? 5;
   lamp.range = assets.manifest.lampLight?.range ?? 5;
+  lamp.falloffType = Light.FALLOFF_GLTF;
+  lamp.intensityMode = Light.INTENSITYMODE_LUMINOUSINTENSITY;
   lamp.shadowMinZ = 0.04;
   lamp.shadowMaxZ = lamp.range;
-  const glow = new PointLight('shade local warmth', position, scene);
-  glow.diffuse = lamp.diffuse.clone();
-  glow.intensity = 0.35;
-  glow.range = 2.2;
+  const bulb = createStudyBulbSource(scene, lamp);
   const shadows = new ShadowGenerator(1024, lamp);
   shadows.usePercentageCloserFiltering = true;
   shadows.filteringQuality = ShadowGenerator.QUALITY_MEDIUM;
@@ -220,7 +241,10 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
 
   const applyRenderLists = (meshes: AbstractMesh[]) => {
     mirror.renderList = [...meshes];
-    shadows.getShadowMap()!.renderList = getStudyShadowCasters(meshes, assets.lamp);
+    const casters = getStudyShadowCasters(meshes, assets.lamp);
+    shadows.getShadowMap()!.renderList = [...casters];
+    bulb.shadows.getShadowMap()!.renderList = [...casters];
   };
+  warnings.push('The bulb uses six 256px cube shadow faces in addition to the downlight and mirror; browser performance remains under review.');
   return { mirror, shadows, applyRenderLists, environmentMode, environmentUrl, warnings };
 }
