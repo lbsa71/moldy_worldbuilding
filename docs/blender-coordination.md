@@ -18,6 +18,12 @@ Water is live in Babylon at y=0. Offline reference water, atmosphere and lights 
 
 The study's turned-chair pose adds **−20°** about local glTF Y to the authored opening rotation (`SceneStudyObjects.setChairTurned`). Under the coordinate conversion above, this is **−20° about Blender Z**, not +20°. Ground support validation must cover the opening, the actual negative turn, and the intervening sweep; the cloth and cup remain children of the same chair root.
 
+### Active pass04 contract — 5 October 2026
+
+The next synchronized asset pass responds to the user's correction toward fractured black stone, worn books, layered mountains and cliff settlement, and a bridge belonging to that landscape. See the [art brief](living-scene-pass04-art-brief.md). It starts from the validated pass03 assets and retains camera, furniture and cloth. Static books and meaningful slabs must retain separate named geometry/pivots for later authored changes. No story integration or automatic destruction animation is part of this pass.
+
+Use `manifest.environment.fog_density` for the explicit finite, nonnegative Babylon EXP2 coefficient in scene meters; it is independent of Blender volume `fog_density_suggestion`. The browser honors this coefficient without the prior .035 floor. `fog_color` remains a display/sRGB triplet. An optional `Fading_StudySky` root uses a dedicated core `KHR_materials_unlit` material and sky-only raw albedo texture. The renderer excludes that sky from fog and shadows, includes it in the live mirror, and preserves ordinary visibility/reflection for books and fractured slabs. Sky geometry must cover the visible background and reflected view, inside the camera's 200m far plane. Initial fog tuning is a suggestion pending actual browser images.
+
 ### Focused pass03 delivery — 5 October 2026
 
 User feedback requested a sandy beach and a towel that clears the chair. Blender management delivered `ec162d7c34a28eb8ad452c35496370d25b0adcd4` on `codex/living-scene-assets-20261005`. The integration selectively imports the build/material/validation scripts, editable pass03 source and reports, original CC0 sand maps, and public GLB/manifest. It preserves the runtime, HDR and existing scene composition. `scope-preservation.json` verifies unchanged camera, lamp, cup, backdrop and curtain geometry/transforms, projection and original material/image data.

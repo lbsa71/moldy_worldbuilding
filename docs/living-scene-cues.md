@@ -56,3 +56,19 @@ These are distinct complete arrangements, not a scale of success. Review all thr
 ## Open integration decisions
 
 The fixed composition must be approved before selecting angles, curtain gaps or local obscurity values. The blue-glaze prose and blue-decorated porcelain material need one agreed treatment. Walking, emerging duplicate furniture, splitting ground and literal hand prose will need a narrow revision when story integration is authorized; the cues above do not silently resolve those text conflicts. Audio onset evidence and editable complete-state contact sheets remain prerequisites for narrative animation. Story integration must verify each branch and ending from restored progress, muted audio and reduced motion as well as uninterrupted play.
+
+## User-authored motif: books and a place breaking apart
+
+The user identifies the original artwork's books and broken-up black rock tiles/slabs as meaningful: the shore feels as though the place is breaking apart. Preserve this stated meaning and the particular objects, as recorded in the [pass04 art brief](living-scene-pass04-art-brief.md). Pass04 authors static, distinct books and slab pieces with named roots for possible later changes; it introduces no narrative animation or new story text. Deliberately fractured slabs are an authored motif, separate from the accidental geometry damage prohibited above.
+
+The following mappings are **proposals**, not user instructions or implemented cues:
+
+| Motif | Candidate later expression | Settled-state constraint |
+| --- | --- | --- |
+| Particular books | Reveal, remove or rearrange one existing book when an authored passage attends to a specific memory or trace. Assign its meaning explicitly before integration. | Preserve recognizable identity and its exposed surface/shadow/reflection. Books are not a reward count, collectible obligation or generic proof of successful care. |
+| Fractured slabs | A passage about incompatible memories could reveal an existing seam or reposition one peripheral slab once. | Stable support remains beneath the furniture; retain a convincing, habitable shore. No crumbling loop, spreading crack or automatic deterioration while reading. |
+| Ending traces | Review book/slab arrangements alongside the existing keep, carry and rest contact sheets. A retained book, an absent book's trace, or a settled gap may express different ways of leaving. | All three endings remain equally legitimate. No ending repairs more ground, saves more books or receives more light as a verdict on the reader. |
+
+Select one dominant book **or** slab event for a given response; do not add it on top of another cue by default. Any audio accompaniment requires an authored onset shared with that event, then stillness. Reduced motion and muted audio yield the same complete settled arrangement. Save object identities and transforms explicitly; interruptible transitions settle to the newest state without consulting elapsed reading time.
+
+Silence, reassurance, inquiry and boundaries must never trigger greater destruction as a penalty. Breaking apart describes the place and its unresolved memory; it does not diagnose inadequate care or require the reader to prevent a collapse. Any chosen reveal/removal/rearrangement remains fixed until another authored passage replaces it.
