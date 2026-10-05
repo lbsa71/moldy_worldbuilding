@@ -39,3 +39,41 @@ Known first-pass visual gaps: ground reads too flat and clean; rocks need less u
 angularity; shade transmission is approximated with emission; warm vertical reflection
 is weak; distant atmosphere/architecture is provisional; wood wear is procedural rather
 than scanned; portrait camera is not approved. These are art-review tasks, not test failures.
+
+Bounded pass02 refinement (reviewed evidence in pass02b/):
+- Lower camera at Blender (0,-8.2,1.0), target (0,0,.70), same 55mm/3:2 framing;
+  exported camera/manifest are authoritative. Chair restaged to preserve right-side anchors.
+- Shorter promontory and uneven foreground surface; water remains below the lamp.
+- Dark, rougher stone with mixed rounded slabs; no permanent furniture reflections baked.
+- Broad worn chair top rail and vertical slats; grain aligned along each member;
+  subtler wood contrast and asymmetrical cloth. Porcelain UV spans its blue floral map.
+- Textured warm linen emission and thin metal shade rims. Shade emission approximates
+  transmission; full fabric scattering is not claimed. No material extension is required.
+- Preview object-space ripple normals produce the broken vertical warm reflection.
+  Live Babylon water remains responsible for reflection and dynamic object consistency.
+- Small fixed-view bridge proxy, revised layered distant masses and atmospheric lighting.
+
+Pass02b measured: 51,544 triangles, 12 primitives, 8 materials, 22 embedded 1024px
+images, 12,573,260 GLB bytes. GLB SHA256:
+fd5eb0382f9d29dd9c1ec1c5c6d0b07c04436360e70bf725fec751dd28389cb9
+All required hierarchy, camera, cup isolation and preview-exclusion checks pass after
+fresh reimport. Decorative/open shoreline surfaces remain explicitly reported warnings.
+Estimated full RGBA texture storage with mipmaps: 117.3 MiB, excluding shadow/reflection
+buffers. Browser frame time, texture format savings and parity are integration measurements.
+
+Preview now uses the same IBL selected by the integration session:
+Overcast Soil (Pure Sky), Poly Haven; Jarod Guest and Sergej Majboroda; CC0.
+Asset: https://polyhaven.com/a/overcast_soil_puresky
+License verified: https://polyhaven.com/license (5 October 2026).
+1k HDR SHA256: 2dbbbbb1323a8e8989db2e8306bd13099b215539e5adba41b85738a250a7904e
+The HDR is packed into the editable .blend for portability; it is not embedded in the
+GLB, and this branch does not replace the integration session's overcast.hdr or credits.
+Pass02 invocation adds --environment /absolute/path/overcast.hdr. Manifest records
+offline intensity/tint for calibration; Cycles watts and Babylon intensity are not equal.
+
+Remaining fidelity gates are OPEN: distant silhouettes are coarse depth proxies; hard
+horizon and scene-edge blending still need a background pass; shade/cloth are not yet
+photoreal scattering studies; foreground shore needs better layered rock/soil detail;
+wood wear remains analytical; portrait framing and actual browser photoreal parity
+need review. Pass02b is the bounded checkpoint; no further revision or deployment is
+part of this delivery. Pass01 remains preserved in Git and this evidence directory.
