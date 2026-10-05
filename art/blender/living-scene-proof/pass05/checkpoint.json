@@ -1,0 +1,27 @@
+{
+  "stage": "FIRST VISUAL CHECKPOINT; packed final source and full-quality inspection evidence pending",
+  "asset_branch": "codex/living-scene-assets-20261005",
+  "baseline": "5a5706dc2e182db780415a712eb6e3275b98d56b",
+  "non_shore_preservation": true,
+  "actual_visible_rock_contact_checks": true,
+  "chair_sweep_degrees": [
+    0,
+    -2,
+    -4,
+    -6,
+    -8,
+    -10,
+    -12,
+    -14,
+    -16,
+    -18,
+    -20
+  ],
+  "reference_samples": 32,
+  "scope": "foreground dissolving squared mineral floor only",
+  "remaining_delivery": [
+    "packed source",
+    "64-sample opening/turned/inspection evidence",
+    "checksums"
+  ]
+}

@@ -1,0 +1,802 @@
+{
+  "valid": true,
+  "samples": 44,
+  "min_gap_m": -1.4007091522216797e-06,
+  "max_gap_m": 0.00026673078536987305,
+  "method": "Actual evaluated bottom cover/spine vertices and triangle centroids raycast against visible exported rock support meshes, -2mm..+3mm tolerance",
+  "records": [
+    {
+      "position_world": [
+        1.7766392230987549,
+        -1.2630020380020142,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 104,
+      "support_hit_world": [
+        1.7766392230987549,
+        -1.2630020380020142,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": -4.6193599700927734e-07,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.8203225135803223,
+        -1.5030598640441895,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 104,
+      "support_hit_world": [
+        1.8203225135803223,
+        -1.5030598640441895,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": -4.6193599700927734e-07,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.820076823234558,
+        -1.503104567527771,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 104,
+      "support_hit_world": [
+        1.820076823234558,
+        -1.503104567527771,
+        0.14500141143798828
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 6.538629531860352e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.8056795597076416,
+        -1.4230555295944214,
+        0.14502227306365967
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 104,
+      "support_hit_world": [
+        1.8056795597076416,
+        -1.4230555295944214,
+        0.14500141143798828
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 5,
+      "gap_m": 2.086162567138672e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.7763936519622803,
+        -1.2630467414855957,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 105,
+      "support_hit_world": [
+        1.7763936519622803,
+        -1.2630467414855957,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 6.633996963500977e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.791036605834961,
+        -1.3430511951446533,
+        0.14504453539848328
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 105,
+      "support_hit_world": [
+        1.791036605834961,
+        -1.3430511951446533,
+        0.14499950408935547
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 4.503130912780762e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        2.1396775245666504,
+        -1.1969401836395264,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 128,
+      "support_hit_world": [
+        2.1396775245666504,
+        -1.1969401836395264,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 5,
+      "gap_m": -4.6193599700927734e-07,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.7765945196151733,
+        -1.2627564668655396,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 128,
+      "support_hit_world": [
+        1.7765945196151733,
+        -1.2627564668655396,
+        0.14500141143798828
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 6.538629531860352e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.897637128829956,
+        -1.2408995628356934,
+        0.14502227306365967
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 128,
+      "support_hit_world": [
+        1.897637128829956,
+        -1.2408995628356934,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 2.181529998779297e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        2.1396329402923584,
+        -1.1966944932937622,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 129,
+      "support_hit_world": [
+        2.1396329402923584,
+        -1.1966944932937622,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 5,
+      "gap_m": 6.633996963500977e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        2.0186352729797363,
+        -1.2187970876693726,
+        0.14504453539848328
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 129,
+      "support_hit_world": [
+        2.0186352729797363,
+        -1.2187970876693726,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 4.407763481140137e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        2.1833608150482178,
+        -1.4369980096817017,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 146,
+      "support_hit_world": [
+        2.1833608150482178,
+        -1.4369980096817017,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": -4.6193599700927734e-07,
+      "passed": true
+    },
+    {
+      "position_world": [
+        2.139923095703125,
+        -1.1968954801559448,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 146,
+      "support_hit_world": [
+        2.139923095703125,
+        -1.1968954801559448,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 5,
+      "gap_m": 6.633996963500977e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        2.154320478439331,
+        -1.276944637298584,
+        0.14502227306365967
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 146,
+      "support_hit_world": [
+        2.154320478439331,
+        -1.276944637298584,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 2.181529998779297e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        2.1836063861846924,
+        -1.4369533061981201,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 147,
+      "support_hit_world": [
+        2.1836063861846924,
+        -1.4369533061981201,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 6.633996963500977e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        2.1689634323120117,
+        -1.3569488525390625,
+        0.14504453539848328
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 147,
+      "support_hit_world": [
+        2.1689634323120117,
+        -1.3569488525390625,
+        0.14499950408935547
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 4.503130912780762e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        2.1834053993225098,
+        -1.4372435808181763,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 164,
+      "support_hit_world": [
+        2.1834053993225098,
+        -1.4372435808181763,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 6.633996963500977e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        2.0623629093170166,
+        -1.4591004848480225,
+        0.14502227306365967
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 164,
+      "support_hit_world": [
+        2.0623629093170166,
+        -1.4591004848480225,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 2.181529998779297e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.8203672170639038,
+        -1.5033055543899536,
+        0.14506679773330688
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 165,
+      "support_hit_world": [
+        1.8203672170639038,
+        -1.5033055543899536,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 6.633996963500977e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.941365122795105,
+        -1.4812029600143433,
+        0.14504453539848328
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 165,
+      "support_hit_world": [
+        1.941365122795105,
+        -1.4812029600143433,
+        0.14499950408935547
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 4.503130912780762e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        2.0332260131835938,
+        -1.2989801168441772,
+        0.14500001072883606
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 176,
+      "support_hit_world": [
+        2.0332260131835938,
+        -1.2989801168441772,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": -4.470348358154297e-07,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.926774263381958,
+        -1.4010200500488281,
+        0.14500001072883606
+      ],
+      "book_object": "StudyBookCover_1",
+      "book_triangle": 177,
+      "support_hit_world": [
+        1.926774263381958,
+        -1.4010200500488281,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": -4.470348358154297e-07,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.778383493423462,
+        -1.264209270477295,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 104,
+      "support_hit_world": [
+        1.778383493423462,
+        -1.264209270477295,
+        0.14499950408935547
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 4.917383193969727e-07,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.8215296268463135,
+        -1.5013155937194824,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 104,
+      "support_hit_world": [
+        1.8215296268463135,
+        -1.5013155937194824,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": -4.6193599700927734e-07,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.820547103881836,
+        -1.5014944076538086,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 104,
+      "support_hit_world": [
+        1.820547103881836,
+        -1.5014944076538086,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 0.00026673078536987305,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.8068201541900635,
+        -1.4223397970199585,
+        0.1450890600681305
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 104,
+      "support_hit_world": [
+        1.8068201541900635,
+        -1.4223397970199585,
+        0.14500141143798828
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 5,
+      "gap_m": 8.764863014221191e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.7774009704589844,
+        -1.264388084411621,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 105,
+      "support_hit_world": [
+        1.7774009704589844,
+        -1.264388084411621,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 0.00026673078536987305,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.7921104431152344,
+        -1.3433640003204346,
+        0.14517812430858612
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 105,
+      "support_hit_world": [
+        1.7921104431152344,
+        -1.3433640003204346,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 0.0001776665449142456,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.7813351154327393,
+        -1.263672113418579,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 128,
+      "support_hit_world": [
+        1.7813351154327393,
+        -1.263672113418579,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": -4.6193599700927734e-07,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.7782047986984253,
+        -1.2632267475128174,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 128,
+      "support_hit_world": [
+        1.7782047986984253,
+        -1.2632267475128174,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 0.00026673078536987305,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.7793078422546387,
+        -1.2637027502059937,
+        0.1450890600681305
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 128,
+      "support_hit_world": [
+        1.7793078422546387,
+        -1.2637027502059937,
+        0.14499950408935547
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 8.955597877502441e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.781156301498413,
+        -1.2626895904541016,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 129,
+      "support_hit_world": [
+        1.781156301498413,
+        -1.2626895904541016,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 0.00026673078536987305,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.7802321910858154,
+        -1.2631962299346924,
+        0.14517812430858612
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 129,
+      "support_hit_world": [
+        1.7802321910858154,
+        -1.2631962299346924,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 0.0001776665449142456,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.8244812488555908,
+        -1.5007784366607666,
+        0.14499999582767487
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 146,
+      "support_hit_world": [
+        1.8244812488555908,
+        -1.5007784366607666,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": -4.6193599700927734e-07,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.7823176383972168,
+        -1.263493299484253,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 146,
+      "support_hit_world": [
+        1.7823176383972168,
+        -1.263493299484253,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 0.00026673078536987305,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.7960447072982788,
+        -1.342647910118103,
+        0.1450890600681305
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 146,
+      "support_hit_world": [
+        1.7960447072982788,
+        -1.342647910118103,
+        0.14499950408935547
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": 8.955597877502441e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.8254637718200684,
+        -1.5005996227264404,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 147,
+      "support_hit_world": [
+        1.8254637718200684,
+        -1.5005996227264404,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 0.00026673078536987305,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.8107541799545288,
+        -1.421623945236206,
+        0.14517812430858612
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 147,
+      "support_hit_world": [
+        1.8107541799545288,
+        -1.421623945236206,
+        0.1450023651123047
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 5,
+      "gap_m": 0.0001757591962814331,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.8246599435806274,
+        -1.5017609596252441,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 164,
+      "support_hit_world": [
+        1.8246599435806274,
+        -1.5017609596252441,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 0.00026673078536987305,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.823556900024414,
+        -1.5012849569320679,
+        0.1450890600681305
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 164,
+      "support_hit_world": [
+        1.823556900024414,
+        -1.5012849569320679,
+        0.14499950408935547
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 8.955597877502441e-05,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.8217084407806396,
+        -1.50229811668396,
+        0.14526718854904175
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 165,
+      "support_hit_world": [
+        1.8217084407806396,
+        -1.50229811668396,
+        0.14500141143798828
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 0.0002657771110534668,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.8226327896118164,
+        -1.5017917156219482,
+        0.14517812430858612
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 165,
+      "support_hit_world": [
+        1.8226327896118164,
+        -1.5017917156219482,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 3,
+      "gap_m": 0.0001776665449142456,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.7947334051132202,
+        -1.3428866863250732,
+        0.14500001072883606
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 176,
+      "support_hit_world": [
+        1.7947334051132202,
+        -1.3428866863250732,
+        0.14500045776367188
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 7,
+      "gap_m": -4.470348358154297e-07,
+      "passed": true
+    },
+    {
+      "position_world": [
+        1.8081315755844116,
+        -1.4221010208129883,
+        0.14500001072883606
+      ],
+      "book_object": "StudyBookSpine_1",
+      "book_triangle": 177,
+      "support_hit_world": [
+        1.8081315755844116,
+        -1.4221010208129883,
+        0.14500141143798828
+      ],
+      "support_object": "StudyPavingSlab_004",
+      "support_triangle": 5,
+      "gap_m": -1.4007091522216797e-06,
+      "passed": true
+    }
+  ],
+  "offenders": []
+}

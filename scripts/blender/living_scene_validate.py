@@ -363,14 +363,51 @@ def _part_samples(part):
     return samples.values()
 
 
+def _shore_support_parts(shore):
+    """Visible exported support blocks; submerged foundation never masks a gap."""
+    parts=_evaluated_parts(shore)
+    visible=[part for part in parts if not bpy.data.objects[part['object']].hide_render and not bpy.data.objects[part['object']].hide_viewport]
+    blocks=[part for part in visible if bpy.data.objects[part['object']].get('contact_surface',False)]
+    return blocks if shore.get('block_count') else [part for part in visible if 'wetshore' in part['object'].lower()]
+
+
+def audit_book_contacts(books,shore):
+    """Bottom cover/spine underside samples against real visible support meshes."""
+    bpy.context.view_layer.update()
+    book=next(obj for obj in books.children if obj.name=='StudyBook_1')
+    tree,owners=_combined_bvh(_shore_support_parts(shore))
+    inverse=book.matrix_world.inverted();samples={}
+    for part in _evaluated_parts(book):
+        for tri_index,indices in enumerate(part['triangles']):
+            points=[part['vertices'][i] for i in indices]
+            normal=(points[1]-points[0]).cross(points[2]-points[0])
+            if normal.length<1e-12 or normal.normalized().z>-.95:continue
+            if not all((inverse@p).z<.002 for p in points):continue
+            for point in [*points,sum(points,Vector())/3]:
+                samples.setdefault(tuple(round(x,7) for x in point),(point,part['object'],part['triangle_ids'][tri_index]))
+    records=[]
+    for point,obj,triangle in samples.values():
+        hit,_,i,_=tree.ray_cast(point+Vector((0,0,10)),Vector((0,0,-1)),20) if tree else (None,None,None,None)
+        gap=point.z-hit.z if hit is not None else None
+        records.append({'position_world':values(point),'book_object':obj,'book_triangle':triangle,
+                        'support_hit_world':values(hit) if hit is not None else None,
+                        'support_object':owners[i][0] if hit is not None else None,'support_triangle':owners[i][1] if hit is not None else None,
+                        'gap_m':gap,'passed':gap is not None and -.002<=gap<=.003})
+    gaps=[record['gap_m'] for record in records if record['gap_m'] is not None]
+    return {'valid':bool(records) and all(record['passed'] for record in records),'samples':len(records),
+            'min_gap_m':min(gaps,default=None),'max_gap_m':max(gaps,default=None),
+            'method':'Actual evaluated bottom cover/spine vertices and triangle centroids raycast against visible exported rock support meshes, -2mm..+3mm tolerance',
+            'records':records,'offenders':[record for record in records if not record['passed']]}
+
+
 def _audit_contacts(chair, shore, lamp):
     """Shared source/reimport contact audit. No geometry or transform is changed."""
     bpy.context.view_layer.update()
     chair_parts, shore_parts, lamp_parts = (_evaluated_parts(root) for root in (chair, shore, lamp))
     wood = [part for part in chair_parts if part["category"] == "wood"]
     cloth = [part for part in chair_parts if part["category"] == "cloth"]
-    # A named terrain surface is mandatory: rocks must never disguise a gap in sand.
-    sand = [part for part in shore_parts if "wetshore" in part["object"].lower()]
+    # Pass05 contacts use actual visible blocks, excluding the submerged shell.
+    sand = _shore_support_parts(shore)
     # Original identifiers are preserved in source; after joining/export, use
     # actual chair-local seat-band triangles, not a seat AABB as the surface.
     chair_inverse = chair.matrix_world.inverted()
@@ -480,7 +517,7 @@ def _audit_contacts(chair, shore, lamp):
     def footprint(parts, root, angle):
         inverse = root.matrix_world.inverted()
         rotation = Matrix.Translation(root.matrix_world.translation) @ Matrix.Rotation(math.radians(angle), 4, "Z") @ Matrix.Translation(-root.matrix_world.translation)
-        sampled, failures, sample_count, min_gap, max_gap = {}, [], 0, None, None
+        sampled, failures, records, sample_count, min_gap, max_gap = {}, [], [], 0, None, None
         for part in parts:
             for tri_index, indices in enumerate(part["triangles"]):
                 points = [part["vertices"][index] for index in indices]
@@ -507,16 +544,22 @@ def _audit_contacts(chair, shore, lamp):
                       "sand_hit_world": values(hit) if hit is not None else None, "gap_m": gap,
                       "sand_object": sand_owners[sand_index][0] if hit is not None else None,
                       "sand_triangle": sand_owners[sand_index][1] if hit is not None else None}
+            records.append(record)
             if gap is None or gap < -.002 - 1e-7 or gap > .003 + 1e-7:
                 failures.append(record)
         return {"additional_rotation_degrees": angle, "samples": sample_count, "min_gap_m": min_gap, "max_gap_m": max_gap,
-                "offending_samples": len(failures), "offenders": failures[:80], "offender_records_truncated": len(failures) > 80,
+                "offending_samples": len(failures), "offenders": failures[:80], "offender_records_truncated": len(failures) > 80, "support_records": records,
                 "sampling": "Actual downward underside triangle vertices and face centroids, excluding higher curved bevel faces."}
 
     report["turn_degrees"] = -20
     report["footprints"] = {"chair": footprint(wood, chair, 0), "chair_minus_20_degrees": footprint(wood, chair, -20),
                              "chair_plus_20_degrees": footprint(wood, chair, 20),
                              "lamp": footprint(lamp_parts, lamp, 0)}
+    for angle in range(-2,-20,-2):
+        report['footprints'][f'chair_minus_{-angle}_degrees']=footprint(wood,chair,angle)
+    report['support_surfaces']=[part['object'] for part in sand]
+    report['support_method']='Actual exported visible rock support meshes; hidden objects and submerged foundation excluded for block shore'
+    report['chair_turn_sweep_degrees']=list(range(0,-21,-2))
     for name, item in report["footprints"].items():
         checks[name + "_supported_by_actual_sand"] = item["samples"] > 0 and item["offending_samples"] == 0
     report["failed_checks"] = [name for name, passed in checks.items() if not passed]
@@ -922,6 +965,9 @@ def validate(path, manifest, report):
     if books is not None:
         imported_books = imported.get("Fading_StudyBooks")
         checks["reimport_books_semantic_hierarchies_preserved"] = imported_books is not None and all(imported.get(nodes[i]["name"]) is not None for i in semantic_books)
+        if imported_books is not None and shore_obj is not None:
+            report['reimport_book_contacts']=audit_book_contacts(imported_books,shore_obj)
+            checks['reimport_books_supported_by_actual_visible_shore']=report['reimport_book_contacts']['valid']
     if paving is not None:
         imported_paving = imported.get("Fading_StudyPaving")
         checks["reimport_paving_slab_meshes_distinct"] = imported_paving is not None and imported_paving.parent is not None and imported_paving.parent.name == "Fading_StudyShore" and all(imported.get(nodes[i]["name"]) is not None and imported[nodes[i]["name"]].type == "MESH" for i in semantic_slabs) and len({imported[nodes[i]["name"]].data.as_pointer() for i in semantic_slabs if imported.get(nodes[i]["name"]) is not None and imported[nodes[i]["name"]].type == "MESH"}) == len(semantic_slabs)

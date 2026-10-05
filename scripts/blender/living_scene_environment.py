@@ -172,30 +172,8 @@ def create_books(B,m):
     return root
 
 def create_paving(B,shore,m):
-    root=B.empty('Fading_StudyPaving',shore);root['role']='separate fractured charcoal mineral slabs';root['static']=True
-    positions=[(.73,-.62,.30,.18),(.84,-.92,.37,.21),(1.00,-1.26,.35,.20),
-               (1.19,-2.05,.40,.20),(1.58,-2.30,.45,.22),(1.95,-2.35,.39,.22),
-               (2.38,-2.19,.41,.24),(2.64,-1.85,.42,.26),(2.59,-1.27,.47,.28),
-               (2.34,-.68,.48,.30),(1.80,-.68,.41,.27),(1.62,-.30,.30,.25),
-               (.56,.14,.28,.19),(.85,.52,.33,.20),(1.28,.76,.45,.25)]
-    for i,(x,y,w,d) in enumerate(positions):
-        if min(math.hypot(x-1.52,y+1.60)-.49,math.hypot(x-1.17,y+.12)-.28)<.08:continue
-        w*=1.65;d*=1.65
-        angle=R.uniform(-.65,.65);cos,sin=math.cos(angle),math.sin(angle)
-        outline=[(-.50,-.35),(-.36,-.51),(.25,-.49),(.48,-.30),(.51,.20),(.27,.48),(-.24,.50),(-.51,.22)]
-        center_z=B.sand_height(x,y);vertices=[]
-        for side in range(2):
-            for j,(a,b) in enumerate(outline):
-                a*=w*(1+R.uniform(-.11,.11));b*=d*(1+R.uniform(-.11,.11))
-                dx=a*cos-b*sin;dy=a*sin+b*cos
-                z=B.sand_height(x+dx,y+dy)+(.030+.007*math.sin(j*2+i) if side else -.030)
-                vertices.append((dx,dy,z-center_z))
-        n=len(outline);faces=[tuple(reversed(range(n))),tuple(range(n,n*2))]
-        for j in range(n):faces.append((j,(j+1)%n,(j+1)%n+n,j+n))
-        obj=B.mesh('StudyPavingSlab_'+str(i+1).zfill(3),vertices,faces,root,m['shore_rock'],False)
-        obj.location=(x,y,center_z);obj['future_role']='fractured paving piece';obj['pivot']='ground contact center';obj['preserve_semantics']=True
-        B.uv_planar(obj,.5)
-    return root
+    # Pass05 rock floor already owns its individually named substantial pieces.
+    return next(obj for obj in shore.children if obj.name=='Fading_StudyPaving')
 
 def create_sky(B,camera,output):
     source_dir=Path(__file__).resolve().parents[2]/'art/blender/living-scene-proof/pass04/source-assets/sky'
