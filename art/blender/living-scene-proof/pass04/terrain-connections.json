@@ -1,0 +1,60 @@
+{
+  "checks": {
+    "connection_left abutment overlap": true,
+    "connection_right abutment overlap": true
+  },
+  "valid": true,
+  "connections": [
+    {
+      "name": "left abutment overlap",
+      "anchor": "StudyBridgeAnchorLeft",
+      "terrain": "StudyLeftLand",
+      "tolerance_m": 0.04,
+      "anchor_position_blender_Z_up": [
+        -3.4455277919769287,
+        47.90998077392578,
+        2.0153164863586426
+      ],
+      "terrain_hit_blender_Z_up": [
+        -3.4455277919769287,
+        47.90998077392578,
+        2.0353164672851562
+      ],
+      "vertical_gap_m": -0.019999980926513672,
+      "passed": true,
+      "terrain_normal_blender_Z_up": [
+        -0.2640529274940491,
+        -0.02960607223212719,
+        0.9640536904335022
+      ],
+      "terrain_object": "StudyLeftLand",
+      "terrain_triangle": 12763
+    },
+    {
+      "name": "right abutment overlap",
+      "anchor": "StudyBridgeAnchorRight",
+      "terrain": "StudyRightLand",
+      "tolerance_m": 0.04,
+      "anchor_position_blender_Z_up": [
+        1.2829092741012573,
+        47.90998077392578,
+        2.656567096710205
+      ],
+      "terrain_hit_blender_Z_up": [
+        1.2829092741012573,
+        47.90998077392578,
+        2.6765594482421875
+      ],
+      "vertical_gap_m": -0.019992351531982422,
+      "passed": true,
+      "terrain_normal_blender_Z_up": [
+        -0.46867045760154724,
+        -0.012287426739931107,
+        0.8832876086235046
+      ],
+      "terrain_object": "StudyRightLand",
+      "terrain_triangle": 12319
+    }
+  ],
+  "method": "Named anchor downward raycast against actual evaluated named terrain geometry."
+}

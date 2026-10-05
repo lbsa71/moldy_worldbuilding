@@ -1,0 +1,8 @@
+{
+  "valid": true,
+  "samples": 44,
+  "min_gap_m": -1.4156103134155273e-06,
+  "max_gap_m": 0.0002676844596862793,
+  "method": "Actual evaluated bottom cover/spine underside vertices and triangle centroids raycast against StudyWetShore, 0.002m penetration /0.003m gap tolerance",
+  "offenders": []
+}

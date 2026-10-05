@@ -94,20 +94,23 @@ def settlement(B,parent,terrain_obj,profile,camera,depth,m):
     roof_material=plain_material('StudySettlementRoof',(.028,.035,.040),.94)
     masonry=m['cliff'].copy();masonry.name='StudySettlementMasonry'
     # Existing cool mineral maps; roofs and recesses are neutral, never emissive.
-    for i in range(58):
-        u=.518+i/57*.49+R.uniform(-.003,.003)
+    # Unequal clusters and genuine exposed cliff intervals replace the rampart.
+    groups=[(.522,.539,.552),(.597,.614,.628),(.673,.692,.710),
+            (.765,.786,.807,.826),(.879,.901,.926,.952,.978,1.007,1.034)]
+    sites=[(group_index,u) for group_index,group in enumerate(groups) for u in group]
+    for i,(group_index,u) in enumerate(sites):
+        u+=R.uniform(-.002,.002)
         projected_v=interpolate(profile,u)
-        point=frame_point(camera,u,projected_v,depth);point.y+=R.uniform(.65,2.2)
+        point=frame_point(camera,u,projected_v,depth);point.y+=[1.1,3.6,1.7,4.0,2.6][group_index]+R.uniform(-.25,.40)
         base=surface_height(terrain_obj,point.x,point.y)-.035
-        width=R.uniform(.30,.63);length=R.uniform(.45,.85)
-        height=R.uniform(.46,.91)*(1.3 if i%11==0 else 1)
+        width=R.uniform(.40,.74);length=R.uniform(.42,.79)
+        height=R.uniform(.38,.74)*(1.15 if i%7==0 else 1)
         obj=B.box('StudySettlementWall', (width,length,height),(point.x,point.y,base+height/2),parent,masonry,.012)
         B.uv_planar(obj,.5)
-        roof(B,'StudySettlementRoof', (point.x,point.y,base+height),width*1.10,length*1.08,R.uniform(.17,.38),parent,roof_material,i%4==0)
-        if i%9==2:
-            tower=B.box('StudySmallStoneTower',(.26,.32,height+.45),(point.x+width*.30,point.y+.18,base+(height+.45)/2),parent,masonry,.008)
-            B.uv_planar(tower,.5)
-            roof(B,'StudySmallTowerRoof',(point.x+width*.30,point.y+.18,base+height+.45),.31,.37,.22,parent,roof_material,True)
+        if i%4==0:
+            flat=B.box('StudyWornFlatRoof',(width*1.07,length*1.06,.055),(point.x,point.y,base+height+.022),parent,roof_material,.007);B.uv_planar(flat,.5)
+        else:
+            roof(B,'StudySettlementRoof', (point.x,point.y,base+height),width*1.10,length*1.08,R.uniform(.085,.25),parent,roof_material,i%3==0)
         if i%3==0:
             # A recessed, unlit slit is geometry and remains subordinate in haze.
             recess=B.box('StudySettlementRecess',(.035,.014,.095),(point.x-width*.15,point.y-length/2-.01,base+height*.64),parent,roof_material,.001)
@@ -152,18 +155,18 @@ def create_books(B,m):
     ground=B.sand_height(1.98,-1.35)
     root=B.empty('Fading_StudyBooks',location=(1.98,-1.35,ground));root['role']='quiet worn book stack';root['static']=True
     cover=plain_material('StudyBookCover',(.045,.032,.025),.91)
-    paper=plain_material('StudyBookPaper',(.27,.247,.211),.93)
+    paper=plain_material('StudyBookPaper',(.55,.51,.43),.93)
     z=0
-    for i,(w,d,h,angle) in enumerate([(.37,.245,.033,.14),(.32,.23,.026,-.11),(.34,.25,.022,.05)]):
+    for i,(w,d,h,angle) in enumerate([(.37,.245,.035,.18),(.32,.23,.028,-.17),(.34,.25,.024,.055)]):
         book=B.empty('StudyBook_'+str(i+1),root,(i*.008,0,z));book.rotation_euler.z=angle
         book['role']='individual worn book';book['pivot']='bottom cover footprint center';book['static']=True
-        for face in [0,h-.003]:B.box('StudyBookCover_'+str(i+1),(w,d,.003),(0,0,face+.0015),book,cover,.0005)
-        B.box('StudyBookPages_'+str(i+1),(w-.011,d-.010,h-.006),(0,.002,h/2),book,paper,.001)
+        for face in [0,h-.004]:B.box('StudyBookCover_'+str(i+1),(w,d,.004),(0,0,face+.002),book,cover,.0005)
+        B.box('StudyBookPages_'+str(i+1),(w-.024,d-.021,h-.009),(0,.002,h/2),book,paper,.001)
         B.box('StudyBookSpine_'+str(i+1),(.007,d,h),(-w/2+.0035,0,h/2),book,cover,.002)
-        for j in range(6):
+        for j in range(4):
             # Fine page seams, geometry rather than invented text or decoration.
-            B.box('StudyBookPageEdge', (w-.014,.0013,.00035),(0,-d/2+.004,h*.17+j*h*.11),book,cover,0)
-        z+=h+.0006
+            B.box('StudyBookPageEdge', (w-.025,.0013,.00022),(0,-d/2+.012,h*.24+j*h*.14),book,cover,0)
+        z+=h+.0012
     for obj in root.children_recursive:
         if obj.type=='MESH':B.uv_planar(obj,1)
     return root

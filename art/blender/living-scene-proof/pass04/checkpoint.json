@@ -1,26 +1,32 @@
 {
-  "stage": "EARLY BROWSER REVIEW CHECKPOINT; final packed source/evidence delivery pending",
+  "stage": "FINAL OFFLINE DELIVERY COMPLETE; final browser art review pending",
   "asset_branch": "codex/living-scene-assets-20261005",
-  "image": "review-reference.png",
-  "manifest": "review-manifest.json",
-  "validation": "review-validation.json",
+  "image": "reference.png",
+  "turned_image": "turned-reference.png",
+  "manifest": "manifest.json",
+  "validation": "validation.json",
+  "editable_source": "living-scene.blend",
+  "runtime_glb": "public/scene-study/living-scene.glb",
   "metrics": {
-    "sha256": "2827291655e29033d03635cd78037d3dd777592e48b28e8f9f3a34c0d8349885",
-    "bytes": 32604672,
-    "triangles": 166036,
+    "sha256": "39fb89379cd0b38d1ae5b89d70522e92e4019fcc8e54dba0d8a1e7d1dc870106",
+    "bytes": 31827168,
+    "triangles": 155600,
     "mesh_primitives": 42,
     "materials": 15,
     "embedded_images": 25
   },
+  "estimated_RGBA8_with_mips_MiB": 170.66666666666666,
   "structural_contacts_transport_valid": true,
-  "sky": "Separate Fading_StudySky raw unlit sRGB texture, KHR_materials_unlit; CC0 Greg Zaal Kloofendal Overcast 4k HDR adapted to visible cloud RGB; original Overcast Soil lighting unchanged",
+  "scope_preservation_against_pass03": true,
+  "fog_density_EXP2": 0.02,
+  "offline_volume_density": 0.01,
+  "sky": "Separate Fading_StudySky; raw unlit sRGB cloud texture; KHR_materials_unlit; original illumination unchanged",
   "sky_exemptions": {
     "fog": false,
     "castShadows": false,
     "receiveShadows": false,
     "mirror": true
   },
-  "fog_density_EXP2": 0.013,
   "semantics": {
     "books": {
       "root": "Fading_StudyBooks",
@@ -49,16 +55,21 @@
       "StudyPavingSlab_015"
     ]
   },
-  "remaining_art_review": [
-    "cliff face/roofline detail and atmospheric contrast",
-    "bridge recession and connection at target framing",
-    "warm-lit foreground stone color and fracture readability",
-    "books visibility near right crop",
-    "sky cloud softness/contrast in actual Babylon"
+  "corrections_since_early_checkpoint": [
+    "20 broader houses in five unequal groups with exposed cliff intervals and flat/gable/hip roofs",
+    "Brighter muted paper, stronger cover overhang, small separations and rotations",
+    "Runtime fog coefficient .020 as agreed with main session",
+    "Packed source, fixed-camera turned reference and final contact/scope/checksum evidence delivered"
   ],
-  "remaining_delivery": [
-    "packed final .blend",
-    "opening/turned contact inspection evidence",
-    "final checksums and scope-preservation report"
-  ]
+  "main_browser_review": {
+    "early_checkpoint_commit": "eaa6cb6592e3c790ff9e18adb75c5059f46b242f",
+    "shore": "Accepted as dark rough charcoal in main browser review; no further recoloring",
+    "latest_city_books": "Awaiting main browser review",
+    "integration_owner": "Main session; runtime mirror refinement and deployment outside this asset delivery"
+  },
+  "remaining_art_review": [
+    "Final settlement/books in Babylon",
+    "Photoreal fidelity and portrait framing remain open"
+  ],
+  "remaining_delivery": []
 }

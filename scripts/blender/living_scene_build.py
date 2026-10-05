@@ -389,6 +389,10 @@ def preview(roots,m,samples,environment):
 
 def inspection_renders(output,chair,camera):
     scene=bpy.context.scene
+    original=chair.rotation_euler.z
+    chair.rotation_euler.z=original-math.radians(20);bpy.context.view_layer.update()
+    scene.render.filepath=str(output/'turned-reference.png');bpy.ops.render.render(write_still=True)
+    chair.rotation_euler.z=original;bpy.context.view_layer.update()
     width,height=scene.render.resolution_x,scene.render.resolution_y
     scene.render.resolution_x=1024;scene.render.resolution_y=1024
     data=bpy.data.cameras.new('InspectionCamera');data.type='ORTHO';data.ortho_scale=1.52
@@ -441,6 +445,8 @@ def main():
     triangles=sum(doc['accessors'][p['indices']]['count']//3 for n in doc['nodes'] if 'mesh' in n for p in doc['meshes'][n['mesh']]['primitives'])
     manifest={'status':'pass04 fractured rock and inhabited inlet checkpoint; browser art review required','blender':bpy.app.version_string,
         'generator':'scripts/blender/living_scene_build.py','generator_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        'generator_modules_sha256':{name:hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+                                   for name in ['living_scene_environment.py','living_scene_materials.py','living_scene_validate.py']},
         'file':'living-scene.glb','sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'triangles':triangles,
         'mesh_primitives':sum(len(doc['meshes'][n['mesh']]['primitives']) for n in doc['nodes'] if 'mesh' in n),
         'materials':len(doc.get('materials',[])),'embedded_images':len(doc.get('images',[])),
@@ -448,7 +454,7 @@ def main():
         'camera':{'name':camera.name,'position':yup(camera.location),'target':yup(target),'fov':camera.data.angle_y,'aspect':1.5,'near':.05,'far':200},
         'lampLight':{'socket':'Fading_StudyLampLight','position':yup(bpy.data.objects['Fading_StudyLampLight'].matrix_world.translation),
                      'intensity':10,'color':[1,.64,.31],'range':6,'note':'Babylon intensity is an initial calibration suggestion, not Cycles watts'},
-        'environment':{'cool_color':[.19,.27,.35],'fog_color':[.24,.34,.44],'fog_density':.013,'fog_density_suggestion':.010,
+        'environment':{'cool_color':[.19,.27,.35],'fog_color':[.24,.34,.44],'fog_density':.020,'fog_density_suggestion':.010,
                        'fog_note':'Runtime EXP2 coefficient per scene meter; offline low-altitude volume has separate density, not a universal fog floor',
                        'background':'real layered terrain/bridge/settlement; separate raw unlit photographic cloud dome'},
         'water':{'runtime_only':True,'level':0,'roughness_suggestion':.075,'IOR':1.333,'reflection_membership':'all visible foreground roles; no furniture baked into permanent reflection'},
