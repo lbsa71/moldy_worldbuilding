@@ -61,6 +61,8 @@ The fixed composition must be approved before selecting angles, curtain gaps or 
 
 The user identifies the original artwork's books and broken-up black rock tiles/slabs as meaningful: the shore feels as though the place is breaking apart. Preserve this stated meaning and the particular objects, as recorded in the [pass04 art brief](living-scene-pass04-art-brief.md). Pass04 authors static, distinct books and slab pieces with named roots for possible later changes; it introduces no narrative animation or new story text. Deliberately fractured slabs are an authored motif, separate from the accidental geometry damage prohibited above.
 
+The pass05 refinement makes this an explicit spatial gradient: the tiled floor holds together around the furniture, while gaps grow progressively wider toward the sea until squared rocks separate and partly submerge. This user-directed arrangement expresses dissolution through geometry and water-filled absence. It remains a settled composition; passage-driven changes below are still proposals.
+
 The following mappings are **proposals**, not user instructions or implemented cues:
 
 | Motif | Candidate later expression | Settled-state constraint |

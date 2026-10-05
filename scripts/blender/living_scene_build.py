@@ -234,26 +234,7 @@ def sand_height(x,y):
     return height+(ripple-.024)*min(1,max(0,contact/.20))*min(1,distance/.30)
 
 def build_shore(m):
-    root=empty('Fading_StudyShore');root['role']='permanent wet foreground';root['water_level_blender_Z']=0.0
-    root['surface']='rough charcoal coastal rock; broken paving, granular seams and selective wet edges'
-    verts=[];faces=[];nx,ny=113,161
-    for row in range(ny):
-        y=-2.7+row/(ny-1)*12
-        coast=sand_coastline(y)
-        for col in range(nx):
-            t=col/(nx-1);x=coast+t*(6.8-coast)
-            verts.append((x,y,sand_height(x,y)))
-    for row in range(ny-1):
-        for col in range(nx-1):
-            a=row*nx+col;faces.append((a,a+1,a+nx+1,a+nx))
-    shore=mesh('StudyWetShore',verts,faces,root,m['shore_rock']);uv_planar(shore,.5)
-    shore.data.materials.append(m['shore_wet_rock'])
-    for polygon in shore.data.polygons:
-        center=polygon.center
-        edge=center.x-sand_coastline(center.y)
-        band=.055+.020*math.sin(center.y*2.9)+.020*math.sin(center.y*7)
-        puddle=math.sin(center.x*7+center.y*2)*math.sin(center.y*9-center.x*3)
-        polygon.material_index=1 if edge<band or (edge<.25 and puddle>.80) else 0
+    # Consume the historical stream exactly, so unchanged furniture stays exact.
     locations=[]
     for i in range(62):
         y=RNG.uniform(-1.9,5.5)
@@ -261,19 +242,12 @@ def build_shore(m):
         x=coast+RNG.uniform(-.06,.35)
         locations.append((x,y,RNG.uniform(.015,.035),RNG.uniform(.045,.17)))
     locations.extend([(-1.80,-2.55,.015,.17),(-1.65,-2.58,.012,.08),(-1.35,-2.70,.005,.05),(-.32,-.1,.025,.17),(.75,-.69,.028,.14)])
-    # Consume the same random sequence as pass02 so background geometry stays exact.
     for i,(x,y,z,r) in enumerate(locations):
         scale=(RNG.uniform(1,1.8),RNG.uniform(.8,1.4),RNG.uniform(.40,.8))
         rotation=(RNG.uniform(-.2,.2),RNG.uniform(-.2,.2),RNG.random()*math.tau)
-        if i<62 and i%6:continue
-        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2,radius=r,location=(x,y,z))
-        o=finish(bpy.context.object,'StudyWetRock',root,m['rock']);o.scale=scale
-        for v in o.data.vertices:
-            v.co*=1+.19*math.sin(v.co.x*30+v.co.z*12)*math.sin(v.co.y*35-v.co.x*20)
-        for p in o.data.polygons:p.use_smooth=False
-        o.rotation_euler=rotation
-        uv_planar(o,.5)
-    return root
+    spec=importlib.util.spec_from_file_location('living_scene_shore',Path(__file__).with_name('living_scene_shore.py'))
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    return module.create_shore(types.SimpleNamespace(empty=empty,mesh=mesh,uv_planar=uv_planar,sand_coastline=sand_coastline),m)
 
 def build_backdrop(m):
     root=empty('Fading_StudyBackdrop');root['role']='unchanging distant depth geometry';root['no_baked_foreground_effects']=True
@@ -429,6 +403,9 @@ def main():
     spec=importlib.util.spec_from_file_location('living_scene_validate',Path(__file__).with_name('living_scene_validate.py'))
     validator=importlib.util.module_from_spec(spec);spec.loader.exec_module(validator)
     contacts=validator.audit_blender_contacts(chair,shore,lamp,a.output/'contacts.json')
+    book_contact=validator.audit_book_contacts(books,shore)
+    (a.output/'book-contact.json').write_text(json.dumps(book_contact,indent=2)+'\n',encoding='utf-8',newline='\n')
+    if not book_contact['valid']:raise RuntimeError('Book block support failed')
     connections=validator.audit_environment_connections(environment_contract['terrain_connections'])
     (a.output/'terrain-connections.json').write_text(json.dumps(connections,indent=2)+'\n',encoding='utf-8',newline='\n')
     if not connections['valid']:raise RuntimeError('Bridge terrain connections failed')
@@ -443,10 +420,10 @@ def main():
                               export_extras=True,export_cameras=True,export_lights=False,export_animations=False)
     raw=glb.read_bytes();length=struct.unpack_from('<I',raw,12)[0];doc=json.loads(raw[20:20+length])
     triangles=sum(doc['accessors'][p['indices']]['count']//3 for n in doc['nodes'] if 'mesh' in n for p in doc['meshes'][n['mesh']]['primitives'])
-    manifest={'status':'pass04 fractured rock and inhabited inlet checkpoint; browser art review required','blender':bpy.app.version_string,
+    manifest={'status':'pass05 dissolving cuboidal rock floor; browser art review required','blender':bpy.app.version_string,
         'generator':'scripts/blender/living_scene_build.py','generator_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'generator_modules_sha256':{name:hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
-                                   for name in ['living_scene_environment.py','living_scene_materials.py','living_scene_validate.py']},
+                                   for name in ['living_scene_environment.py','living_scene_materials.py','living_scene_validate.py','living_scene_shore.py']},
         'file':'living-scene.glb','sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'triangles':triangles,
         'mesh_primitives':sum(len(doc['meshes'][n['mesh']]['primitives']) for n in doc['nodes'] if 'mesh' in n),
         'materials':len(doc.get('materials',[])),'embedded_images':len(doc.get('images',[])),
@@ -460,8 +437,12 @@ def main():
         'water':{'runtime_only':True,'level':0,'roughness_suggestion':.075,'IOR':1.333,'reflection_membership':'all visible foreground roles; no furniture baked into permanent reflection'},
         'roles':[{'name':r.name,'parent':r.parent.name if r.parent else None,'position':yup(r.matrix_world.translation)} for r in roots],
         'texture_provenance':getattr(helper,'TEXTURE_PROVENANCE','Original procedural authored maps; no acquired assets'),
-        'contacts':{'report':'contacts.json','passed':contacts.get('passed',False),'chair_turn_test_degrees':-20},
-        'shore':{'physical_tile_width_m':2,'family':'scanned charcoal coastal mineral rock; predominantly rough, selectively damp edges','paving_root':paving.name,
+        'contacts':{'report':'contacts.json','passed':contacts.get('passed',False),'chair_turn_test_degrees':-20,'chair_sweep_samples_degrees':list(range(0,-21,-2)),
+                    'books_report':'book-contact.json','books_passed':book_contact['valid'],'support_surface':'actual exported StudyPavingSlab block meshes; submerged foundation excluded'},
+        'shore':{'physical_tile_width_m':2,'family':'chunky squared charcoal mineral floor dissolving seaward; same scanned rough dark rock maps','paving_root':paving.name,
+                 'geometry':'closed cuboidal blocks with clipped corners and real submerged depth; no exposed continuous beach shell',
+                 'progression':'coherent furniture floor -> narrow cracks -> widening water-filled gaps -> sparse partly submerged fragments',
+                 'support_datum_blender_Z_m':.145,'submerged_foundation_top_Z_m':-.30,
                  'separate_pieces':[o.name for o in paving.children if o.type=='MESH']},
         'books':{'root':books.name,'individual_roots':[o.name for o in books.children],'static':True,'no_readable_titles':True},
         'sky':{'root':sky.name,'unlit':True,'fog':False,'castShadows':False,'receiveShadows':False,'reflection_membership':True,

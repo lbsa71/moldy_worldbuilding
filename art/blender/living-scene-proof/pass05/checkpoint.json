@@ -1,0 +1,136 @@
+{
+  "stage": "FINAL PACKED DELIVERY COMPLETE; main browser scoped pass05 accepted",
+  "asset_branch": "codex/living-scene-assets-20261005",
+  "baseline": "5a5706dc2e182db780415a712eb6e3275b98d56b",
+  "accepted_visual_checkpoint": "4dadf53ef863c55f1447d6bb47769be159c23b22",
+  "main_browser_review": "WebGPU/WebGL shore progression and chair/cup controls accepted; no must-fix",
+  "scope": "foreground dissolving squared mineral floor only; final geometry exactly matches browser checkpoint",
+  "metrics": {
+    "sha256": "1549f8a5960618973f8dbd7a68f49d96704e8831abd3ecdcc878bba247e989c3",
+    "bytes": 31446016,
+    "triangles": 125828,
+    "mesh_primitives": 236,
+    "materials": 14,
+    "embedded_images": 25
+  },
+  "RGBA8_with_mips_MiB_estimate": 170.66666666666666,
+  "semantic_rock_blocks": 210,
+  "preserved_non_shore_GLb_geometry_camera_materials_images": true,
+  "preserved_source_world_lights_water_fog_display": true,
+  "support": "actual visible exported rock meshes; hidden blocks and submerged foundation excluded",
+  "support_datum_Blender_Z_m": 0.145,
+  "chair_sweep_degrees": [
+    0,
+    -2,
+    -4,
+    -6,
+    -8,
+    -10,
+    -12,
+    -14,
+    -16,
+    -18,
+    -20
+  ],
+  "additional_chair_test_degrees": 20,
+  "footprints": {
+    "chair": {
+      "samples": 88,
+      "min_gap_m": -0.00044536590576171875,
+      "max_gap_m": 0.0015352368354797363,
+      "offending_samples": 0
+    },
+    "chair_minus_20_degrees": {
+      "samples": 88,
+      "min_gap_m": -0.00044536590576171875,
+      "max_gap_m": 0.0015352368354797363,
+      "offending_samples": 0
+    },
+    "chair_plus_20_degrees": {
+      "samples": 88,
+      "min_gap_m": -0.00044536590576171875,
+      "max_gap_m": 0.0015352368354797363,
+      "offending_samples": 0
+    },
+    "lamp": {
+      "samples": 129,
+      "min_gap_m": -2.3692846298217773e-06,
+      "max_gap_m": 1.4603137969970703e-06,
+      "offending_samples": 0
+    },
+    "chair_minus_2_degrees": {
+      "samples": 88,
+      "min_gap_m": -0.00044536590576171875,
+      "max_gap_m": 0.0015361905097961426,
+      "offending_samples": 0
+    },
+    "chair_minus_4_degrees": {
+      "samples": 88,
+      "min_gap_m": -0.00044536590576171875,
+      "max_gap_m": 0.0015352368354797363,
+      "offending_samples": 0
+    },
+    "chair_minus_6_degrees": {
+      "samples": 88,
+      "min_gap_m": -0.00044536590576171875,
+      "max_gap_m": 0.0015361905097961426,
+      "offending_samples": 0
+    },
+    "chair_minus_8_degrees": {
+      "samples": 88,
+      "min_gap_m": -0.000446319580078125,
+      "max_gap_m": 0.0015352368354797363,
+      "offending_samples": 0
+    },
+    "chair_minus_10_degrees": {
+      "samples": 88,
+      "min_gap_m": -0.00044536590576171875,
+      "max_gap_m": 0.0015352368354797363,
+      "offending_samples": 0
+    },
+    "chair_minus_12_degrees": {
+      "samples": 88,
+      "min_gap_m": -0.00044536590576171875,
+      "max_gap_m": 0.0015361905097961426,
+      "offending_samples": 0
+    },
+    "chair_minus_14_degrees": {
+      "samples": 88,
+      "min_gap_m": -0.00044536590576171875,
+      "max_gap_m": 0.0015352368354797363,
+      "offending_samples": 0
+    },
+    "chair_minus_16_degrees": {
+      "samples": 88,
+      "min_gap_m": -0.000446319580078125,
+      "max_gap_m": 0.0015361905097961426,
+      "offending_samples": 0
+    },
+    "chair_minus_18_degrees": {
+      "samples": 88,
+      "min_gap_m": -0.00044536590576171875,
+      "max_gap_m": 0.0015361905097961426,
+      "offending_samples": 0
+    }
+  },
+  "books": {
+    "valid": true,
+    "samples": 44,
+    "min_gap_m": -1.4007091522216797e-06,
+    "max_gap_m": 0.0002676844596862793
+  },
+  "contact_negative_control": "Hiding five visible support blocks while submerged foundation remains correctly fails furniture and book support",
+  "reference_samples": 64,
+  "editable_source": "living-scene.blend",
+  "reference": "reference.png",
+  "turned_reference": "turned-reference.png",
+  "fog_density_EXP2": 0.02,
+  "remaining_delivery": [],
+  "open_measurements": [
+    "236 primitives with separate semantic block identity; browser/device cost remains an integration measurement"
+  ],
+  "remaining_art_review": [
+    "Full photoreal acceptance and portrait framing remain outside this bounded pass"
+  ],
+  "generation_note": "Validation retains original checkpoint paths; final GLB hash is unchanged. Final source/renders only raise offline samples to64."
+}
