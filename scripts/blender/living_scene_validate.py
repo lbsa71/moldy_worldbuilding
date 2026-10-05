@@ -22,6 +22,7 @@ import bpy
 import bmesh
 import numpy as np
 from mathutils import Matrix, Quaternion, Vector
+from mathutils.bvhtree import BVHTree
 from bpy_extras.object_utils import world_to_camera_view
 
 
@@ -227,6 +228,317 @@ def mesh_topology(obj):
               "bounds_blender_Z_up": bounds([values(obj.matrix_world @ vert.co) for vert in mesh.vertices])}
     bm.free()
     return result
+
+
+def _evaluated_parts(root):
+    """Copy evaluated world-space triangles with material and source identifiers."""
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    parts = []
+    for obj in [root, *root.children_recursive]:
+        if obj.type not in {"MESH", "CURVE", "SURFACE", "FONT"}:
+            continue
+        evaluated = obj.evaluated_get(depsgraph)
+        mesh = evaluated.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
+        try:
+            mesh.calc_loop_triangles()
+            vertices = [evaluated.matrix_world @ vertex.co for vertex in mesh.vertices]
+            groups = {}
+            for tri in mesh.loop_triangles:
+                material = mesh.materials[tri.material_index] if tri.material_index < len(mesh.materials) else None
+                material_name = material.name if material else ""
+                token = (material_name + " " + obj.name).lower()
+                category = "cloth" if "cloth" in token or "fringe" in token else "wood" if "wood" in material_name.lower() else "other"
+                group = groups.setdefault((category, material_name), {"object": obj.name, "material": material_name,
+                                          "category": category, "vertices": vertices, "triangles": [], "triangle_ids": []})
+                group["triangles"].append(tuple(tri.vertices))
+                group["triangle_ids"].append(tri.index)
+            for group in groups.values():
+                group["bvh"] = BVHTree.FromPolygons(vertices, group["triangles"], all_triangles=True, epsilon=0)
+                parts.append(group)
+        finally:
+            evaluated.to_mesh_clear()
+    return parts
+
+
+def _combined_bvh(parts):
+    vertices, triangles, owners = [], [], []
+    for part in parts:
+        offset = len(vertices)
+        vertices.extend(part["vertices"])
+        triangles.extend(tuple(index + offset for index in triangle) for triangle in part["triangles"])
+        owners.extend((part["object"], triangle_id) for triangle_id in part["triangle_ids"])
+    return BVHTree.FromPolygons(vertices, triangles, all_triangles=True, epsilon=0) if triangles else None, owners
+
+
+def _edge_triangle_crossing(start, end, triangle, epsilon=1e-7):
+    """Strict plane crossing, then actual triangle inclusion; tangency is allowed."""
+    a, b, c = triangle
+    normal = (b - a).cross(c - a)
+    if normal.length < 1e-14:
+        return None
+    normal.normalize()
+    d0, d1 = (start - a).dot(normal), (end - a).dot(normal)
+    if not ((d0 < -epsilon and d1 > epsilon) or (d1 < -epsilon and d0 > epsilon)):
+        return None
+    point = start + (end - start) * (d0 / (d0 - d1))
+    e0, e1, relative = b - a, c - a, point - a
+    d00, d01, d11 = e0.dot(e0), e0.dot(e1), e1.dot(e1)
+    denominator = d00 * d11 - d01 * d01
+    if abs(denominator) < 1e-22:
+        return None
+    u = (d11 * relative.dot(e0) - d01 * relative.dot(e1)) / denominator
+    v = (d00 * relative.dot(e1) - d01 * relative.dot(e0)) / denominator
+    return point if u >= -1e-7 and v >= -1e-7 and u + v <= 1 + 1e-7 else None
+
+
+def _closed_components(part):
+    """Weld seams for topology only, and build a BVH for every closed wood shell."""
+    vertices, lookup, indices = [], {}, {}
+    for original in {i for tri in part["triangles"] for i in tri}:
+        point = part["vertices"][original]
+        key = tuple(round(value / 1e-7) for value in point)
+        if key not in lookup:
+            lookup[key] = len(vertices)
+            vertices.append(point)
+        indices[original] = lookup[key]
+    triangles = [tuple(indices[index] for index in tri) for tri in part["triangles"]]
+    edge_faces = {}
+    for index, tri in enumerate(triangles):
+        for i in range(3):
+            edge_faces.setdefault(tuple(sorted((tri[i], tri[(i + 1) % 3]))), []).append(index)
+    adjacency = [set() for _ in triangles]
+    for faces in edge_faces.values():
+        for face in faces:
+            adjacency[face].update(faces)
+    pending_faces, components, open_count = set(range(len(triangles))), [], 0
+    while pending_faces:
+        seed = pending_faces.pop()
+        component, pending = {seed}, [seed]
+        while pending:
+            for neighbor in adjacency[pending.pop()]:
+                if neighbor in pending_faces:
+                    pending_faces.remove(neighbor)
+                    component.add(neighbor)
+                    pending.append(neighbor)
+        edges = {tuple(sorted((triangles[index][i], triangles[index][(i + 1) % 3]))) for index in component for i in range(3)}
+        if not all(len(edge_faces[edge]) == 2 for edge in edges):
+            open_count += 1
+            continue
+        selected = [triangles[index] for index in sorted(component)]
+        components.append({"object": part["object"], "component": len(components),
+                           "bvh": BVHTree.FromPolygons(vertices, selected, all_triangles=True, epsilon=0)})
+    return components, open_count
+
+
+def _inside_ray_parity(tree, point):
+    votes = []
+    for direction in (Vector((1, .173, .317)), Vector((.231, 1, .413)), Vector((.193, .379, 1))):
+        direction.normalize()
+        origin, count = point.copy(), 0
+        for _ in range(256):
+            hit, _, _, _ = tree.ray_cast(origin, direction, 1000)
+            if hit is None:
+                break
+            count += 1
+            origin = hit + direction * 1e-6
+        else:
+            raise RuntimeError("Wood inside-test exceeded ray-intersection safety limit")
+        votes.append(bool(count % 2))
+    return sum(votes) >= 2
+
+
+def _part_samples(part):
+    """Actual triangle vertices, edge midpoints and face centroids, deduplicated."""
+    samples = {}
+    for tri_index, indices in enumerate(part["triangles"]):
+        a, b, c = (part["vertices"][index] for index in indices)
+        for point in (a, b, c, (a + b) / 2, (b + c) / 2, (c + a) / 2, (a + b + c) / 3):
+            samples.setdefault(tuple(round(value / 1e-7) for value in point),
+                               (point, part["triangle_ids"][tri_index]))
+    return samples.values()
+
+
+def _audit_contacts(chair, shore, lamp):
+    """Shared source/reimport contact audit. No geometry or transform is changed."""
+    bpy.context.view_layer.update()
+    chair_parts, shore_parts, lamp_parts = (_evaluated_parts(root) for root in (chair, shore, lamp))
+    wood = [part for part in chair_parts if part["category"] == "wood"]
+    cloth = [part for part in chair_parts if part["category"] == "cloth"]
+    # A named terrain surface is mandatory: rocks must never disguise a gap in sand.
+    sand = [part for part in shore_parts if "wetshore" in part["object"].lower()]
+    # Original identifiers are preserved in source; after joining/export, use
+    # actual chair-local seat-band triangles, not a seat AABB as the surface.
+    chair_inverse = chair.matrix_world.inverted()
+    seat_parts = []
+    for part in wood:
+        selected = [i for i, tri in enumerate(part["triangles"])
+                    if all(.52 <= (chair_inverse @ part["vertices"][index]).z <= .62 for index in tri)]
+        if selected:
+            seat_parts.append({**part, "triangles": [part["triangles"][i] for i in selected],
+                               "triangle_ids": [part["triangle_ids"][i] for i in selected]})
+    wood_tree, wood_owners = _combined_bvh(wood)
+    seat_tree, seat_owners = _combined_bvh(seat_parts)
+    sand_tree, sand_owners = _combined_bvh(sand)
+    checks = {"evaluated_wood_present": bool(wood), "evaluated_cloth_present": bool(cloth),
+              "actual_seat_surface_present": seat_tree is not None, "actual_sand_surface_present": sand_tree is not None}
+    report = {"schema_version": 1, "coordinate_system": "Blender world Z up, metres",
+              "evaluated_geometry": True, "checks": checks, "failed_checks": [], "valid": False,
+              "tolerances_m": {"crossing_plane_epsilon": 1e-7, "inside_penetration": .0005,
+                               "front_seat_clearance": .01, "rear_wood_clearance": .002,
+                               "sand_gap_min": -.002, "sand_gap_max": .003},
+              "classification_chair_local": {"front": "y < .2175 and z < 1.05",
+                                               "rear": "y > .2825 and z < .92", "wrap": "excluded from clearance only"},
+              "parts": [{"object": part["object"], "material": part["material"], "category": part["category"],
+                         "evaluated_triangles": len(part["triangles"])} for part in chair_parts]}
+    crossings, crossing_count, candidates = [], 0, 0
+    for fabric in cloth:
+        for solid in wood:
+            overlaps = fabric["bvh"].overlap(solid["bvh"])
+            candidates += len(overlaps)
+            for cloth_index, wood_index in overlaps:
+                first = [fabric["vertices"][i] for i in fabric["triangles"][cloth_index]]
+                second = [solid["vertices"][i] for i in solid["triangles"][wood_index]]
+                points = []
+                for edge_triangle, target in ((first, second), (second, first)):
+                    for i in range(3):
+                        point = _edge_triangle_crossing(edge_triangle[i], edge_triangle[(i + 1) % 3], target)
+                        if point is not None:
+                            points.append(values(point))
+                if points:
+                    crossing_count += 1
+                    if len(crossings) < 80:
+                        crossings.append({"cloth_object": fabric["object"], "cloth_triangle": fabric["triangle_ids"][cloth_index],
+                                          "wood_object": solid["object"], "wood_triangle": solid["triangle_ids"][wood_index],
+                                          "positions_world": points})
+    report["triangle_crossings"] = {"bvh_candidate_pairs": candidates, "confirmed_triangle_pairs": crossing_count,
+                                    "offenders": crossings, "offender_records_truncated": crossing_count > len(crossings)}
+    checks["zero_cloth_wood_triangle_crossings"] = crossing_count == 0
+    components, open_wood_components = [], 0
+    for part in wood:
+        closed, open_count = _closed_components(part)
+        components.extend(closed)
+        open_wood_components += open_count
+    checks["all_wood_components_closed_for_inside_test"] = bool(components) and open_wood_components == 0
+    inside_count, inside = 0, []
+    for fabric in cloth:
+        for vertex_index in sorted({index for tri in fabric["triangles"] for index in tri}):
+            point = fabric["vertices"][vertex_index]
+            for component in components:
+                nearest, normal, _, distance = component["bvh"].find_nearest(point)
+                if nearest is None or distance <= .0005:
+                    continue
+                signed = (point - nearest).dot(normal)
+                if signed < -.0005 and _inside_ray_parity(component["bvh"], point):
+                    inside_count += 1
+                    if len(inside) < 80:
+                        inside.append({"cloth_object": fabric["object"], "evaluated_vertex": vertex_index,
+                                       "wood_object": component["object"], "wood_component": component["component"],
+                                       "position_world": values(point), "penetration_m": distance,
+                                       "nearest_normal_signed_m": signed})
+                    break
+    report["cloth_vertices_inside_wood"] = {"count": inside_count, "closed_wood_components": len(components),
+                                             "open_wood_components": open_wood_components, "offenders": inside,
+                                             "offender_records_truncated": inside_count > len(inside)}
+    checks["zero_cloth_vertices_inside_wood_beyond_half_mm"] = inside_count == 0
+    distances = {name: {"minimum_m": None, "samples": 0, "offending_samples": 0, "offenders": []}
+                 for name in ("all_cloth_to_wood", "front_to_seat", "rear_to_wood")}
+    for fabric in cloth:
+        for point, triangle_id in _part_samples(fabric):
+            local = chair_inverse @ point
+            front = local.y < .2175 and local.z < 1.05
+            rear = local.y > .2825 and local.z < .92
+            for name, tree, owners, required in (("all_cloth_to_wood", wood_tree, wood_owners, None),
+                                                 ("front_to_seat", seat_tree if front else None, seat_owners, .01),
+                                                 ("rear_to_wood", wood_tree if rear else None, wood_owners, .002)):
+                if tree is None:
+                    continue
+                nearest, _, index, distance = tree.find_nearest(point)
+                if nearest is None:
+                    continue
+                item = distances[name]
+                item["samples"] += 1
+                record = {"cloth_object": fabric["object"], "cloth_triangle": triangle_id,
+                          "position_world": values(point), "position_chair_local": values(local),
+                          "surface_object": owners[index][0], "surface_triangle": owners[index][1],
+                          "nearest_surface_world": values(nearest), "distance_m": distance}
+                if item["minimum_m"] is None or distance < item["minimum_m"]:
+                    item["minimum_m"], item["minimum_location"] = distance, record
+                if required is not None and distance < required - 1e-7:
+                    item["offending_samples"] += 1
+                    if len(item["offenders"]) < 80:
+                        item["offenders"].append(record)
+    report["surface_distances"] = distances
+    report["surface_distance_sampling"] = "Evaluated triangle vertices, all edge midpoints, and all face centroids against actual surface BVHs. Crossings additionally tested for every overlapping triangle pair."
+    for name, threshold in (("front_to_seat", .01), ("rear_to_wood", .002)):
+        checks[name + "_clearance"] = distances[name]["samples"] > 0 and distances[name]["offending_samples"] == 0
+
+    def footprint(parts, root, angle):
+        inverse = root.matrix_world.inverted()
+        rotation = Matrix.Translation(root.matrix_world.translation) @ Matrix.Rotation(math.radians(angle), 4, "Z") @ Matrix.Translation(-root.matrix_world.translation)
+        sampled, failures, sample_count, min_gap, max_gap = {}, [], 0, None, None
+        for part in parts:
+            for tri_index, indices in enumerate(part["triangles"]):
+                points = [part["vertices"][index] for index in indices]
+                local = [inverse @ point for point in points]
+                # True underside faces on the ground-contact geometry. Higher
+                # curved bevel faces are not expected to touch a planar support.
+                if not all(point.z < .012 for point in local):
+                    continue
+                normal = (points[1] - points[0]).cross(points[2] - points[0])
+                if normal.length < 1e-14 or normal.normalized().z >= -.95:
+                    continue
+                for source in [*points, sum(points, Vector()) / 3]:
+                    point = rotation @ source
+                    key = (part["object"], *(round(value / 1e-7) for value in point))
+                    sampled.setdefault(key, (part["object"], part["triangle_ids"][tri_index], point))
+        for object_name, triangle_id, point in sampled.values():
+            hit, _, sand_index, _ = sand_tree.ray_cast(point + Vector((0, 0, 10)), Vector((0, 0, -1)), 20) if sand_tree else (None, None, None, None)
+            gap = point.z - hit.z if hit is not None else None
+            sample_count += 1
+            if gap is not None:
+                min_gap = gap if min_gap is None else min(min_gap, gap)
+                max_gap = gap if max_gap is None else max(max_gap, gap)
+            record = {"object": object_name, "evaluated_triangle": triangle_id, "position_world": values(point),
+                      "sand_hit_world": values(hit) if hit is not None else None, "gap_m": gap,
+                      "sand_object": sand_owners[sand_index][0] if hit is not None else None,
+                      "sand_triangle": sand_owners[sand_index][1] if hit is not None else None}
+            if gap is None or gap < -.002 - 1e-7 or gap > .003 + 1e-7:
+                failures.append(record)
+        return {"additional_rotation_degrees": angle, "samples": sample_count, "min_gap_m": min_gap, "max_gap_m": max_gap,
+                "offending_samples": len(failures), "offenders": failures[:80], "offender_records_truncated": len(failures) > 80,
+                "sampling": "Actual downward underside triangle vertices and face centroids, excluding higher curved bevel faces."}
+
+    report["turn_degrees"] = -20
+    report["footprints"] = {"chair": footprint(wood, chair, 0), "chair_minus_20_degrees": footprint(wood, chair, -20),
+                             "chair_plus_20_degrees": footprint(wood, chair, 20),
+                             "lamp": footprint(lamp_parts, lamp, 0)}
+    for name, item in report["footprints"].items():
+        checks[name + "_supported_by_actual_sand"] = item["samples"] > 0 and item["offending_samples"] == 0
+    report["failed_checks"] = [name for name, passed in checks.items() if not passed]
+    report["valid"] = not report["failed_checks"]
+    report["passed"] = report["valid"]
+    return report
+
+
+def audit_blender_contacts(chair, shore, lamp, output_path):
+    """Write evaluated contact proof before consolidation; raise on failed checks.
+
+    Roots are bpy objects. Call after all modifiers/geometry are built, before
+    join_role_materials. All coordinates and transforms remain unchanged.
+    The returned dictionary includes detailed offenders and measured distances.
+    """
+    output = Path(output_path).resolve()
+    try:
+        report = _audit_contacts(chair, shore, lamp)
+    except Exception as error:
+        report = {"schema_version": 1, "valid": False, "passed": False,
+                  "checks": {"contact_audit_completed": False}, "failed_checks": ["contact_audit_completed"],
+                  "error": {"type": type(error).__name__, "message": str(error), "traceback": traceback.format_exc()}}
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(report, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+    if not report["valid"]:
+        raise RuntimeError("Living-scene contact audit failed: " + ", ".join(report["failed_checks"]) + "; report: " + str(output))
+    return report
 
 
 def validate(path, manifest, report):
@@ -459,6 +771,12 @@ def validate(path, manifest, report):
     imported_bounds = report["reimport"]["bounds_blender_Z_up"]
     checks["Y_up_reimport_bounds_match"] = converted is not None and imported_bounds is not None and all(abs(converted[key][i] - imported_bounds[key][i]) < 1e-4 for key in ("min", "max") for i in range(3))
     chair_obj = imported.get("Fading_StudyChair")
+    shore_obj = imported.get("Fading_StudyShore")
+    lamp_obj = imported.get("Fading_StudyLamp")
+    if chair_obj is not None and shore_obj is not None and lamp_obj is not None:
+        report["reimport_contacts"] = _audit_contacts(chair_obj, shore_obj, lamp_obj)
+        for name, passed in report["reimport_contacts"]["checks"].items():
+            checks["reimport_contact_" + name] = passed
     if chair_obj is not None:
         chair_objects = [chair_obj, *chair_obj.children_recursive]
         cup_obj = imported.get(CUP)

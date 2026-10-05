@@ -1,0 +1,54 @@
+{
+  "cc0_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "asset_url": "https://polyhaven.com/a/sand_03",
+  "acquired_utc": "2026-10-05T12:44:05.1655806Z",
+  "license_url": "https://polyhaven.com/license",
+  "orm_channels": {
+    "G": "roughness",
+    "B": "metalness",
+    "R": "occlusion"
+  },
+  "resolution": [
+    1024,
+    1024
+  ],
+  "asset": "Sand 03",
+  "license": "CC0 1.0",
+  "tile_width_m": 2,
+  "publisher": "Poly Haven",
+  "normal_convention": "OpenGL/glTF +Y",
+  "method": "Scanned source material maps acquired from Poly Haven; wet variant is project-authored map adaptation",
+  "author": "Charlotte Baglioni",
+  "files": [
+    {
+      "expected_md5": "84bde2b8bea6351805f67a15682b36b2",
+      "bytes": 703132,
+      "sha256": "e72144f9d7b81bdb7bbdb34222b53431738dcef79346dd89412d2abd541e4d30",
+      "md5": "84bde2b8bea6351805f67a15682b36b2",
+      "name": "sand_03_diff_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sand_03/sand_03_diff_1k.jpg",
+      "color_space": "sRGB",
+      "role": "basecolor"
+    },
+    {
+      "expected_md5": "30f0f06ea1c2d1522b49ecd6cd0ae0c2",
+      "bytes": 5571260,
+      "sha256": "e331299950dabb749a6fe845220d645b79a174d9c6c04e9d01dde000ae7c6609",
+      "md5": "30f0f06ea1c2d1522b49ecd6cd0ae0c2",
+      "name": "sand_03_nor_gl_1k.png",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/sand_03/sand_03_nor_gl_1k.png",
+      "color_space": "Non-Color",
+      "role": "normal"
+    },
+    {
+      "expected_md5": "75ab8a42df97673ef267b519cd4f147c",
+      "bytes": 4079054,
+      "sha256": "fda0c245e487521a42b510be2eb659a146118bf1fcd6b201f27795ee2adac5e6",
+      "md5": "75ab8a42df97673ef267b519cd4f147c",
+      "name": "sand_03_arm_1k.png",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/sand_03/sand_03_arm_1k.png",
+      "color_space": "Non-Color",
+      "role": "orm"
+    }
+  ]
+}

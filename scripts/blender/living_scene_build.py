@@ -147,27 +147,50 @@ def build_chair(m):
         box('StudyVerticalBackSlat',(.062,.034,.30),(x,.252,.815),root,m['wood'],.003)
     for x in [-.29,.29]:box('StudyChairStretcher',(.025,.53,.030),(x,0,.24),root,m['wood'],.003)
     box('StudyFrontWear',(.50,.012,.005),(0,-.297,.585),root,m['wood'],.002)
-    vertices=[];faces=[];nx,nr=25,49
+    # Short front tail stays above the seat; the long tail falls behind the back.
+    # The rounded path wraps the evaluated top rail with 4--9 mm clearance.
+    path=[]
+    for i in range(15):path.append((.205,.755+i/14*(1.052-.755),'front'))
+    for i in range(1,13):
+        a=math.pi-i/12*math.pi/2
+        path.append((.224+.019*math.cos(a),1.052+.019*math.sin(a),'wrap'))
+    for i in range(1,9):path.append((.224+i/8*.052,1.071,'wrap'))
+    for i in range(1,13):
+        a=math.pi/2-i/12*math.pi/2
+        path.append((.276+.019*math.cos(a),1.052+.019*math.sin(a),'wrap'))
+    for i in range(1,45):
+        drop=i/44
+        path.append((.295+.047*(1-math.exp(-drop*5)),1.052-drop*.900,'rear'))
+    vertices=[];faces=[];nx,nr=33,len(path)
     for row in range(nr):
         t=row/(nr-1)
         for col in range(nx):
-            u=col/(nx-1);x=.16+u*.29
-            fold=.020*math.sin(u*math.tau*3.4+t*1.2)*(.35+.65*t)+.008*math.sin(u*11+t*4)
-            if t<.16:
-                a=t/.16*math.pi
-                y=.25+.07*math.cos(a)+fold;z=1.030+.06*math.sin(a)
+            u=col/(nx-1);y,z,region=path[row]
+            x=-.065+u*.278+.006*math.sin(t*3.2)+.004*math.sin(u*9+t*2)
+            fold=math.sin(u*math.tau*3.2+t*.9)+.32*math.sin(u*17+t*3)
+            if region=='wrap':
+                z+=.0018*fold
             else:
-                drop=(t-.16)/.84
-                y=.18-.09*drop+fold;z=1.030-drop*(.915-.055*math.sin(u*3.1))+.020*math.sin(u*12)*drop
-            vertices.append((x+.035*math.sin(t*2)+.04*t*u,y,z))
+                end_weight=min(1,abs(z-1.052)/.30)
+                y+=.009*fold*end_weight
+                z+=.020*math.sin(u*5+.7)*end_weight
+            vertices.append((x,y,z))
     for row in range(nr-1):
         for col in range(nx-1):
             a=row*nx+col;faces.append((a,a+1,a+nx+1,a+nx))
     cloth=mesh('StudyDrapedCloth',vertices,faces,root,m['cloth'])
     sol=cloth.modifiers.new('ClothThickness','SOLIDIFY');sol.thickness=.0015
-    for i in range(18):
-        x=.16+i/17*.29
-        tube('StudyClothFringe',[(x,.105,.102),(x+.005,.11,.07)],.0014,root,m['cloth'])
+    cloth['drape']='short front tail above seat; long rear tail outside back; rail clearance verified on evaluated triangles'
+    for end,label in [(0,'Front'),(nr-1,'Rear')]:
+        endpoints=[Vector(vertices[end*nx+i]) for i in range(nx)]
+        tube('StudyCloth'+label+'Hem',[tuple(p) for p in endpoints],.0018,root,m['cloth'])
+        for i in range(19):
+            u=i/18*(nx-1);left=int(u);frac=u-left
+            start=endpoints[left].lerp(endpoints[min(left+1,nx-1)],frac)
+            length=.018+.005*math.sin(i*2.3)
+            mid=start+Vector((.0015*math.sin(i),.001,-length*.50))
+            tip=start+Vector((.003*math.sin(i),.002,-length))
+            tube('StudyCloth'+label+'Fringe',[tuple(start),tuple(mid),tuple(tip)],.0008,root,m['cloth'])
     for o in root.children_recursive:
         if o.type=='MESH':
             if o.data.materials[0]==m['wood']:uv_wood_member(o)
@@ -192,24 +215,44 @@ def build_cup(m,chair):
 def coastline(y):
     return -.50+.90*max(0,-y)+.70*max(0,y)+.045*math.sin(y*3.1)+.025*math.sin(y*7.3)
 
+def sand_coastline(y):
+    # A modest sand deposit supports the chair footprint, including its turn.
+    return coastline(y)-.38*math.exp(-((y+1.60)/.65)**4)
+
+def sand_height(x,y):
+    distance=max(0,x-sand_coastline(y))
+    q=min(1,distance/.85)
+    height=-.006+.151*q*q*(3-2*q)
+    # Flattened furniture contact areas blend into shallow deposited sand.
+    for cx,cy,inner,outer in [(1.52,-1.60,.48,.83),(1.17,-.12,.29,.60)]:
+        radius=math.hypot(x-cx,y-cy)
+        t=max(0,min(1,(radius-inner)/(outer-inner)))
+        weight=1-t*t*(3-2*t)
+        height=height*(1-weight)+.145*weight
+    contact=min(math.hypot(x-1.52,y+1.60)-.48,math.hypot(x-1.17,y+.12)-.29)
+    ripple=.0018*math.sin(y*22+x*7+.9*math.sin(x*4))+.0008*math.sin(x*37-y*19)
+    return height+ripple*min(1,max(0,contact/.30))*min(1,distance/.30)
+
 def build_shore(m):
     root=empty('Fading_StudyShore');root['role']='permanent wet foreground';root['water_level_blender_Z']=0.0
-    verts=[];faces=[];nx,ny=65,73
+    root['surface']='scanned 2m-tile sand; shallow wet ramp and deposited furniture contact areas'
+    verts=[];faces=[];nx,ny=113,161
     for row in range(ny):
         y=-2.7+row/(ny-1)*12
-        coast=coastline(y)
+        coast=sand_coastline(y)
         for col in range(nx):
             t=col/(nx-1);x=coast+t*(6.8-coast)
-            distance=x-coast
-            detail=.030*math.sin(x*13+y*4)*math.sin(y*11-x*3)+.013*math.sin(x*23-y*17)
-            contact=min(math.hypot(x-1.17,y+.12),math.hypot(x-1.52,y+1.60))
-            detail*=min(1,max(0,(contact-.30)/.35))
-            z=.145*(1-math.exp(-max(0,distance)/.025))+detail*min(1,t*10)
-            verts.append((x,y,z-.006))
+            verts.append((x,y,sand_height(x,y)))
     for row in range(ny-1):
         for col in range(nx-1):
             a=row*nx+col;faces.append((a,a+1,a+nx+1,a+nx))
-    shore=mesh('StudyWetShore',verts,faces,root,m['rock']);uv_planar(shore,.6)
+    shore=mesh('StudyWetShore',verts,faces,root,m['sand']);uv_planar(shore,.5)
+    shore.data.materials.append(m['wet_sand'])
+    for polygon in shore.data.polygons:
+        center=polygon.center
+        edge=center.x-sand_coastline(center.y)
+        band=.26+.045*math.sin(center.y*2.9)+.025*math.sin(center.y*7)
+        polygon.material_index=1 if edge<band else 0
     locations=[]
     for i in range(62):
         y=RNG.uniform(-1.9,5.5)
@@ -217,17 +260,21 @@ def build_shore(m):
         x=coast+RNG.uniform(-.06,.35)
         locations.append((x,y,RNG.uniform(.015,.035),RNG.uniform(.045,.17)))
     locations.extend([(-1.80,-2.55,.015,.17),(-1.65,-2.58,.012,.08),(-1.35,-2.70,.005,.05),(-.32,-.1,.025,.17),(.75,-.69,.028,.14)])
+    # Consume the same random sequence as pass02 so background geometry stays exact.
     for i,(x,y,z,r) in enumerate(locations):
+        scale=(RNG.uniform(1,1.8),RNG.uniform(.8,1.4),RNG.uniform(.40,.8))
+        rotation=(RNG.uniform(-.2,.2),RNG.uniform(-.2,.2),RNG.random()*math.tau)
+        if i<62 and i%6:continue
         if i%3:
             bpy.ops.mesh.primitive_cube_add(size=r*1.6,location=(x,y,z))
         else:
             bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2,radius=r,location=(x,y,z))
-        o=finish(bpy.context.object,'StudyWetRock',root,m['rock']);o.scale=(RNG.uniform(1,1.8),RNG.uniform(.8,1.4),RNG.uniform(.40,.8))
+        o=finish(bpy.context.object,'StudyWetRock',root,m['rock']);o.scale=scale
         for v in o.data.vertices:
             v.co*=1+.09*math.sin(v.co.x*30+v.co.z*12)*math.sin(v.co.y*35-v.co.x*20)
         for p in o.data.polygons:p.use_smooth=i%3==0
         if i%3:bevel(o,r*.18,3)
-        o.rotation_euler=(RNG.uniform(-.2,.2),RNG.uniform(-.2,.2),RNG.random()*math.tau)
+        o.rotation_euler=rotation
         uv_planar(o,2)
     return root
 
@@ -343,6 +390,26 @@ def preview(roots,m,samples,environment):
     scene.view_settings.view_transform='AgX';scene.view_settings.exposure=.0
     scene.render.image_settings.file_format='PNG'
 
+def inspection_renders(output,chair,camera):
+    scene=bpy.context.scene
+    width,height=scene.render.resolution_x,scene.render.resolution_y
+    scene.render.resolution_x=1024;scene.render.resolution_y=1024
+    data=bpy.data.cameras.new('InspectionCamera');data.type='ORTHO';data.ortho_scale=1.52
+    debug=bpy.data.objects.new('InspectionCamera',data);scene.collection.objects.link(debug)
+    scene.camera=debug
+    target=chair.matrix_world.translation+Vector((0,0,.57))
+    old_angle=chair.rotation_euler.z
+    for name,offset,turn in [('inspection-front', (1.20,-1.95,.95),0),
+                              ('inspection-rear', (1.00,1.70,.95),0),
+                              ('inspection-turned20', (1.20,-1.95,.95),math.radians(-20))]:
+        chair.rotation_euler.z=old_angle+turn;bpy.context.view_layer.update()
+        debug.location=chair.matrix_world.translation+Vector(offset);aim(debug,target)
+        scene.render.filepath=str(output/(name+'.png'));bpy.ops.render.render(write_still=True)
+    chair.rotation_euler.z=old_angle;scene.camera=camera
+    scene.render.resolution_x=width;scene.render.resolution_y=height
+    bpy.data.objects.remove(debug,do_unlink=True)
+    bpy.data.cameras.remove(data)
+
 def main():
     a=args();a.output.mkdir(parents=True,exist_ok=True)
     bpy.ops.wm.read_factory_settings(use_empty=True);bpy.context.scene.unit_settings.system='METRIC'
@@ -352,6 +419,9 @@ def main():
     lamp=build_lamp(m);chair=build_chair(m);cup=build_cup(m,chair);shore=build_shore(m);backdrop=build_backdrop(m);curtain=build_curtain(m)
     roots=[lamp,chair,cup,shore,backdrop,curtain]
     bpy.context.view_layer.update()
+    spec=importlib.util.spec_from_file_location('living_scene_validate',Path(__file__).with_name('living_scene_validate.py'))
+    validator=importlib.util.module_from_spec(spec);spec.loader.exec_module(validator)
+    contacts=validator.audit_blender_contacts(chair,shore,lamp,a.output/'contacts.json')
     for root in roots:join_role_materials(root)
     camera,target=camera_setup()
     bpy.ops.object.select_all(action='DESELECT')
@@ -364,7 +434,7 @@ def main():
                               export_extras=True,export_cameras=True,export_lights=False,export_animations=False)
     raw=glb.read_bytes();length=struct.unpack_from('<I',raw,12)[0];doc=json.loads(raw[20:20+length])
     triangles=sum(doc['accessors'][p['indices']]['count']//3 for n in doc['nodes'] if 'mesh' in n for p in doc['meshes'][n['mesh']]['primitives'])
-    manifest={'status':'first living-scene proof; composition/material/browser review required','blender':bpy.app.version_string,
+    manifest={'status':'pass03 sand and cloth repair; full photoreal fidelity remains under review','blender':bpy.app.version_string,
         'generator':'scripts/blender/living_scene_build.py','generator_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'file':'living-scene.glb','sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'triangles':triangles,
         'mesh_primitives':sum(len(doc['meshes'][n['mesh']]['primitives']) for n in doc['nodes'] if 'mesh' in n),
@@ -377,7 +447,9 @@ def main():
         'water':{'runtime_only':True,'level':0,'roughness_suggestion':.075,'IOR':1.333,'reflection_membership':'all visible foreground roles; no furniture baked into permanent reflection'},
         'roles':[{'name':r.name,'parent':r.parent.name if r.parent else None,'position':yup(r.matrix_world.translation)} for r in roots],
         'texture_provenance':getattr(helper,'TEXTURE_PROVENANCE','Original procedural authored maps; no acquired assets'),
-        'known_limits':['Offline AgX, volume and preview lights need explicit Babylon calibration','First-pass authored analytic textures, not scans','Portrait camera not approved','Cup follows chair and remains independently removable']}
+        'contacts':{'report':'contacts.json','passed':contacts.get('passed',False),'chair_turn_test_degrees':-20},
+        'sand':{'physical_tile_width_m':2,'waterline':'gently sloping damp sand with sparse rocks; local flattened furniture deposits'},
+        'known_limits':['Offline AgX, volume and preview lights need explicit Babylon calibration','Sand is scanned; other surfaces remain authored analytic textures','Distant silhouettes and horizon are provisional','Portrait camera not approved','Cup follows chair and remains independently removable']}
     if a.environment.exists():
         manifest['environment']['ibl']={'asset':'Overcast Soil (Pure Sky)','source':'https://polyhaven.com/a/overcast_soil_puresky','license':'CC0',
             'authors':['Jarod Guest','Sergej Majboroda'],'sha256':hashlib.sha256(a.environment.read_bytes()).hexdigest(),'offline_strength':.23,'offline_tint':[.50,.62,.76]}
@@ -387,6 +459,7 @@ def main():
     bpy.ops.wm.save_as_mainfile(filepath=str(a.output/'living-scene.blend'))
     if a.render:
         bpy.context.scene.render.filepath=str(a.output/'reference.png');bpy.ops.render.render(write_still=True)
+        inspection_renders(a.output,chair,camera)
     print('LIVING_SCENE_READY '+str(a.output))
 
 if __name__=='__main__':main()

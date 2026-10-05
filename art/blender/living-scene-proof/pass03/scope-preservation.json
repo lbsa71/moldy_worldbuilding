@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "unchanged_geometry_transforms_camera": {
+    "Fading_StudyLamp": true,
+    "Fading_StudyCup": true,
+    "Fading_StudyBackdrop": true,
+    "Fading_StudyCurtain": true,
+    "Fading_StudyCamera": true
+  },
+  "unchanged_original_materials_and_image_bytes": {
+    "cliff": true,
+    "porcelain": true,
+    "wood": true,
+    "cloth": true,
+    "brass": true,
+    "StudyWarmFilament": true,
+    "linen": true,
+    "rock": true
+  },
+  "method": "Exact POSITION/NORMAL/used UV accessor and embedded image bytes, oriented triangle sets (order independent), node transforms, original material factors and camera projection. Unused TEXCOORD_1 ignored."
+}
