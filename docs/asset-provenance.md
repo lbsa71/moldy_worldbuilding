@@ -1,6 +1,6 @@
 # Fading asset provenance
 
-Updated 5 October 2026. A file being present in the repository does not establish permission to distribute it. This ledger separates assets authored during this pass from inherited material whose origin is not recorded.
+Updated 6 October 2026. A file being present in the repository does not establish permission to distribute it. This ledger separates assets authored during this pass from inherited material whose origin is not recorded.
 
 | Asset | Origin and active use | Release status |
 | --- | --- | --- |
@@ -13,6 +13,7 @@ Updated 5 October 2026. A file being present in the repository does not establis
 | `public/assets/fading-title.webp` | WebP encoding of the original title PNG, quality 86, without resizing. Used by the launch screen. | Same origin as PNG. |
 | `public/assets/fading-hushed.mp3`, `fading-warm.mp3`, `fading-uneasy.mp3`, `fading-resolved.mp3` | Original deterministic additive-synthesis compositions authored in `scripts/generate-score.mjs`. Each is a 48-second stereo loop rendered at 44.1 kHz, encoded with ffmpeg/libmp3lame at 160 kbps. No samples or existing compositions are incorporated. | Project-authored score studies. Human musical/mix review remains; no third-party sample license required. |
 | `public/assets/fading-taps.mp3` | Original two-tap rail cue synthesized by the same script, synchronized to the rail passage, 2.5 seconds. | Project-authored; no third-party samples. |
+| `public/assets/fading-rain-memory.mp3` | Original 12-second stereo rain loop authored in `scripts/generate-rain.mjs` from seeded periodic filtered noise; encoded with ffmpeg. SHA-256 `541bc56cdfc26b63c8f4ed2f05a1916a74b753eb58c366da16ff55a9f6ab7f42`. | Project-authored; no recordings or third-party samples. Human mix review remains. |
 | `public/models/fading/*_lod0.glb` and `art/blender/bedside-study-lod0/` | Original editable geometry authored by the project generator, corrected and validated in Blender 5.2.2 LTS by **Manage Blender work in repo**. Git revision, checksums and validation are recorded in [coordination](blender-coordination.md). | Project-authored asset study; no external geometry, textures or model services. |
 | Procedural lamp, chair, cup and rail fallbacks; doorway, reaching hand, terrain, rocks and dust | Authored procedural Babylon geometry/materials in `src/components/game`. | Project source; no downloaded geometry or textures. |
 | `public/assets/soundtrack_1.mp3`, `soundtrack_2.mp3`, `soundtrack_3.mp3`, `end_credits.mp3` | Inherited recordings. Source, author and license absent from inspected project documentation. No longer used by the active score; legacy cue tags map to the new compositions. | Confirm ownership/license or remove from a release distribution. |

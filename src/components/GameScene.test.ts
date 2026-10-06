@@ -11,7 +11,7 @@ vi.mock("./scene-study/createSceneStudy", () => ({ createSceneStudy: vi.fn(async
   harness.options.push(options);
   if (harness.wait) await harness.wait;
   if (harness.failure) throw harness.failure;
-  const state = { assetMode: harness.production ? "production" : "provisional", backend: "WebGPU", fps: 57, settled: true };
+  const state = { assetMode: harness.production ? "production" : "provisional", backend: "WebGPU", fps: 57, settled: true, weather: "none", rainIntensity: 0, antialiasing: "taa" };
   const observers = new Set<() => void>();
   const scene = {
     acceptedScene: true,
@@ -23,7 +23,12 @@ vi.mock("./scene-study/createSceneStudy", () => ({ createSceneStudy: vi.fn(async
     observers,
   };
   const handle = {
-    state, scene, applyDirection: vi.fn((direction, immediate) => { state.settled = Boolean(immediate || direction.transition.kind === "cut"); }),
+    state, scene, applyDirection: vi.fn((direction, immediate) => {
+      state.settled = Boolean(immediate || direction.transition.kind === "cut");
+      state.weather = direction.weather;
+      state.rainIntensity = direction.weather === "rain-memory" ? 1 : 0;
+      state.antialiasing = state.rainIntensity || !state.settled ? "fxaa" : "taa";
+    }),
     getScene: vi.fn(() => scene), getDiagnostics: vi.fn(() => state),
     reset: vi.fn(() => { state.settled = true; }), setReducedMotion: vi.fn((value) => { if (value) state.settled = true; }), dispose: vi.fn(),
   };
@@ -31,7 +36,7 @@ vi.mock("./scene-study/createSceneStudy", () => ({ createSceneStudy: vi.fn(async
   return handle;
 }) }));
 vi.mock("./game/AudioSystem", () => ({ AudioSystem: class {
-  setEnabled = vi.fn(); setVolume = vi.fn(); setPaused = vi.fn(); setMood = vi.fn(); dispose = vi.fn();
+  setEnabled = vi.fn(); setVolume = vi.fn(); setPaused = vi.fn(); setMood = vi.fn(); setWeather = vi.fn(); dispose = vi.fn();
   play = vi.fn().mockResolvedValue(undefined); playAudio = vi.fn().mockResolvedValue(undefined);
   playTapCue = vi.fn().mockResolvedValue(undefined);
   constructor(public scene: unknown) { harness.audios.push(this); }
@@ -52,6 +57,7 @@ VAR connection = 0
 # transition: cut 0
 # arrangement: chair=rest,cup=near,lamp=steady,trace=none
 # sound: none
+# weather: none
 The first shore.
 * [Look at the cup] -> cup
 === cup ===
@@ -61,6 +67,7 @@ The first shore.
 # transition: dissolve 0.8
 # arrangement: chair=turned,cup=away,lamp=steady,trace=none
 # sound: none
+# weather: rain-memory
 ~ connection = 10
 A cup, still warm.
 * [Wait for permission] -> taps
@@ -71,6 +78,7 @@ A cup, still warm.
 # transition: ease 1.2
 # arrangement: chair=turned,cup=near,lamp=steady,trace=none
 # sound: taps
+# weather: none
 Two taps, then a pause.
 * [Keep the light] -> ending
 === ending ===
@@ -81,6 +89,7 @@ Two taps, then a pause.
 # transition: dissolve 1.5
 # arrangement: chair=rest,cup=absent,lamp=rest,trace=cup
 # sound: none
+# weather: none
 The lamp remains.
 -> END
 `;
@@ -134,11 +143,31 @@ describe("accepted living-scene game runtime", () => {
     expect(harness.options).toHaveLength(0);
   });
 
+  it("restores remembered rain in scene and ambience, then explicitly clears both on departure and restart", async () => {
+    const first = game(); await first.run();
+    expect(audio().setWeather).toHaveBeenLastCalledWith("none", true);
+    ui().callbacks.onChoice(0);
+    expect(lastDirection()[0].weather).toBe("rain-memory");
+    expect(audio().setWeather).toHaveBeenLastCalledWith("rain-memory", false);
+    expect(document.getElementById("game-container")!.dataset).toMatchObject({ weather: "rain-memory", antialiasing: "fxaa", rainIntensity: "1" });
+    first.dispose();
+    await game().run();
+    expect(lastDirection()[0].weather).toBe("rain-memory");
+    expect(lastDirection()[1]).toBe(true);
+    expect(audio().setWeather).toHaveBeenLastCalledWith("rain-memory", true);
+    expect(audio().playTapCue).not.toHaveBeenCalled();
+    ui().callbacks.onChoice(0);
+    expect(audio().setWeather).toHaveBeenLastCalledWith("none", false);
+    ui().callbacks.onRestart();
+    expect(audio().setWeather).toHaveBeenLastCalledWith("none", true);
+    expect(lastDirection()[0].weather).toBe("none");
+  });
+
   it("uses only the opening fallback for legacy passages without direction tags", async () => {
     await game("A legacy passage.\n* [Remain] -> END").run();
     expect(passage().direction).toBeNull();
     expect(lastDirection()).toEqual([{
-      camera: "wide", transition: { kind: "cut", seconds: 0 },
+      camera: "wide", transition: { kind: "cut", seconds: 0 }, weather: "none",
       arrangement: { chair: "rest", cup: "near", lamp: "steady", trace: "none" },
     }, true]);
     expect(audio().playTapCue).not.toHaveBeenCalled();
@@ -186,7 +215,7 @@ describe("accepted living-scene game runtime", () => {
     await game().run();
     ui().callbacks.onChoice(999); expect(renderer().applyDirection).toHaveBeenCalledOnce();
     ui().callbacks.onChoice(0);
-    expect(lastDirection()[0]).toEqual({ camera: "cup", transition: { kind: "dissolve", seconds: 0.8 }, arrangement: { chair: "turned", cup: "away", lamp: "steady", trace: "none" } });
+    expect(lastDirection()[0]).toEqual({ camera: "cup", weather: "rain-memory", transition: { kind: "dissolve", seconds: 0.8 }, arrangement: { chair: "turned", cup: "away", lamp: "steady", trace: "none" } });
     expect(audio().playTapCue).not.toHaveBeenCalled(); // Scene name alone never plays taps.
     ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
     expect(passage().ending).toBe("keep"); expect(lastDirection()[0].camera).toBe("water");
@@ -202,7 +231,7 @@ describe("accepted living-scene game runtime", () => {
     expect(passage().text).toBe("Two taps, then a pause.");
     const direction = structuredClone(passage().direction);
     const saved = JSON.parse(localStorage.getItem(SAVE_KEY)!);
-    expect(saved.version).toBe(3); first.dispose();
+    expect(saved.version).toBe(4); first.dispose();
     await game().run();
     expect(passage().text).toBe("Two taps, then a pause.");
     expect(lastDirection()).toEqual([direction, true]);
@@ -222,13 +251,15 @@ describe("accepted living-scene game runtime", () => {
 
   it("recovers invalid saves and leaves earlier editions untouched", async () => {
     localStorage.setItem("fading:chapter-one:save:v2", "earlier edition");
-    localStorage.setItem(SAVE_KEY, JSON.stringify({ version: 3, state: "not Ink JSON" }));
+    localStorage.setItem("fading:chapter-one:save:v3", "living scene edition");
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ version: 4, state: "not Ink JSON" }));
     await game().run();
     expect(passage().text).toBe("The first shore.");
     expect(lastDirection()[1]).toBe(true);
     expect(ui().setNotice).toHaveBeenCalledWith(expect.stringContaining("could not be read"));
     expect(localStorage.getItem("fading:chapter-one:save:v2")).toBe("earlier edition");
-    expect(JSON.parse(localStorage.getItem(SAVE_KEY)!).version).toBe(3);
+    expect(localStorage.getItem("fading:chapter-one:save:v3")).toBe("living scene edition");
+    expect(JSON.parse(localStorage.getItem(SAVE_KEY)!).version).toBe(4);
   });
 
   it("restarts by resetting transitions, retiring audio one-shots, and settling the opening", async () => {

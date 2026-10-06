@@ -1,6 +1,6 @@
 import type { Choice } from "../inkjs/engine/Choice";
 import type { Story } from "../inkjs/engine/Story";
-import { CAMERA_CUES, type CameraCue, type SceneDirection, type SceneArrangement, type TransitionCue } from "../game/presentation/SceneDirection";
+import { CAMERA_CUES, type CameraCue, type SceneDirection, type SceneArrangement, type TransitionCue, type WeatherCue } from "../game/presentation/SceneDirection";
 
 export type Mood = "hushed" | "warm" | "uneasy" | "resolved";
 
@@ -40,9 +40,10 @@ export function parseDialogueTags(tags: readonly string[]): Presentation {
   let camera: CameraCue | undefined;
   let transition: TransitionCue | undefined;
   let arrangement: SceneArrangement | undefined;
+  let weather: WeatherCue = "none";
   for (const rawTag of tags) {
     const tag = rawTag.trim();
-    const match = tag.match(/^(position|fog|objects|scene|chapter|mood|ending|camera|transition|arrangement|sound):\s*(.*)$/)
+    const match = tag.match(/^(position|fog|objects|scene|chapter|mood|ending|camera|transition|arrangement|sound|weather):\s*(.*)$/)
       ?? tag.match(/^(audio)(?::\s*|\s+)(.+)$/);
     if (!match) throw new Error(`Unknown or malformed story tag: ${tag}`);
     const [, key, rawValue] = match;
@@ -52,6 +53,10 @@ export function parseDialogueTags(tags: readonly string[]): Presentation {
     const invalid = () => new Error(`Invalid ${key} story tag: ${tag}`);
 
     switch (key) {
+      case "weather":
+        if (value !== "none" && value !== "rain-memory") throw invalid();
+        weather = value;
+        break;
       case "camera":
         if (!(CAMERA_CUES as readonly string[]).includes(value)) throw invalid();
         camera = value as CameraCue;
@@ -122,8 +127,8 @@ export function parseDialogueTags(tags: readonly string[]): Presentation {
     }
   }
   const cueCount = [camera, transition, arrangement].filter(Boolean).length;
-  if (cueCount !== 0 && cueCount !== 3) throw new Error("Partial scene direction: camera, transition and arrangement must all be supplied.");
-  if (camera && transition && arrangement) presentation.direction = { camera, transition, arrangement };
+  if ((cueCount !== 0 && cueCount !== 3) || (seen.has("weather") && cueCount !== 3)) throw new Error("Partial scene direction: camera, transition and arrangement must all be supplied.");
+  if (camera && transition && arrangement) presentation.direction = { camera, transition, arrangement, weather };
   return presentation;
 }
 

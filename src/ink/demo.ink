@@ -20,6 +20,7 @@ VAR keepsake = ""
 # arrangement: chair=rest,cup=near,lamp=steady,trace=none
 # sound: none
 # scene: lamp
+# weather: none
 # chapter: The place beside the light
 # mood: hushed
 # audio soundtrack_1.mp3
@@ -56,6 +57,7 @@ The voice seems to come from the empty place beside it.
     # sound: none
 }
 # scene: chair
+# weather: none
 # chapter: A place for someone
 # mood: hushed
 {last_response == "arrived":
@@ -100,6 +102,11 @@ One side of the seat is worn smoother than the other. The lamp keeps a small cir
     # sound: none
 }
 # scene: cup
+{last_response == "who":
+    # weather: rain-memory
+- else:
+    # weather: none
+}
 # chapter: What was left behind
 # mood: warm
 {last_response == "sit":
@@ -148,6 +155,7 @@ A porcelain cup with a blue pattern rests on the chair: a little chip at the rim
     # sound: taps
 }
 # scene: rail
+# weather: none
 # chapter: Two small taps
 # mood: hushed
 Beside the chair, a short rail marks the edge of the bedside place. The blue pattern of the cup stays small but distinct.
@@ -197,6 +205,7 @@ Two small taps sound against the metal rail, then a pause.
     # sound: none
 }
 # scene: hand
+# weather: none
 # chapter: Permission
 # mood: warm
 {last_response == "hospital":
@@ -236,6 +245,7 @@ The empty place remains within reach.
 # arrangement: chair=rest,cup=near,lamp=steady,trace=none
 # sound: none
 # scene: contradiction
+# weather: rain-memory
 # chapter: The other side of the chair
 # mood: uneasy
 # audio soundtrack_2.mp3
@@ -275,6 +285,7 @@ The chair stands beside the rail. The cup rests where either person might have l
 # arrangement: chair=rest,cup=near,lamp=steady,trace=none
 # sound: none
 # scene: boundary
+# weather: none
 # chapter: A story that can remain open
 # mood: uneasy
 {last_response == "follow":
@@ -315,6 +326,7 @@ The curtain leaves a narrow gap. There is room to be here, but not to force an a
 # arrangement: chair=rest,cup=near,lamp=steady,trace=none
 # sound: none
 # scene: quiet
+# weather: none
 # chapter: Room to breathe
 # mood: hushed
 {last_response == "honest":
@@ -362,6 +374,7 @@ Still water leaves room beyond the stone, with nothing asking to be crossed. Bes
     # sound: none
 }
 # scene: recollection
+# weather: none
 # chapter: What holds its shape
 # mood: warm
 The cup and rail remain beside the chair, where memory first gave them weight.
@@ -423,6 +436,7 @@ The cup and rail remain beside the chair, where memory first gave them weight.
         # sound: none
 }
 # scene: preparation
+# weather: none
 # chapter: Before the light changes
 # mood: hushed
 # audio soundtrack_3.mp3
@@ -469,6 +483,7 @@ The lamp holds its small circle. The voice does not disappear.
     # sound: none
 }
 # scene: decision
+# weather: none
 # chapter: A way to leave
 # mood: resolved
 {last_response == "next":
@@ -512,6 +527,7 @@ The lamp holds the chair, cup and rail in one small arrangement. Beyond it, the 
     # sound: none
 }
 # scene: keep
+# weather: none
 # chapter: A place remains
 # mood: resolved
 # ending: keep
@@ -556,6 +572,7 @@ There is no door to close. The lamp keeps its small circle.
     # sound: none
 }
 # scene: carry
+# weather: none
 # chapter: A kindness carried
 # mood: resolved
 # ending: carry
@@ -601,6 +618,7 @@ When you lower your hand, it is your own again. The small act remains possible.
     # sound: none
 }
 # scene: rest
+# weather: none
 # chapter: A room at rest
 # mood: resolved
 # ending: rest

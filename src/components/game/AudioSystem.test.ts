@@ -132,6 +132,89 @@ afterEach(() => { music.dispose(); vi.useRealTimers(); vi.unstubAllGlobals(); })
 
 const last = () => MockAudio.instances.at(-1)!;
 
+describe('remembered rain ambience', () => {
+  it('fades a quiet independent loop in and out at the master volume', async () => {
+    await music.play();
+    const score = last();
+    music.setWeather('rain-memory');
+    const rain = last();
+    await Promise.resolve();
+    expect(rain.loop).toBe(true);
+    expect(rain.volume).toBe(0);
+    await vi.advanceTimersByTimeAsync(1520);
+    expect(rain.volume).toBeCloseTo(0.55 * 0.16);
+    music.setVolume(0.3);
+    expect(rain.volume).toBeCloseTo(0.3 * 0.16);
+    music.setWeather('none');
+    await vi.advanceTimersByTimeAsync(760);
+    expect(rain.volume).toBeGreaterThan(0);
+    await vi.advanceTimersByTimeAsync(760);
+    expect(rain.src).toBe('');
+    expect(score.src).toBe('/assets/fading-hushed.mp3');
+    expect(score.paused).toBe(false);
+  });
+
+  it('cannot resurrect a pending loop after a none cue or supersede a newer rain loop', async () => {
+    const slow = deferred(); MockAudio.nextPlay = slow.promise;
+    music.setWeather('rain-memory'); const old = last();
+    music.setWeather('none');
+    music.setWeather('rain-memory', true); const newest = last();
+    await Promise.resolve();
+    slow.resolve(); await Promise.resolve();
+    expect(old.src).toBe(''); expect(old.paused).toBe(true);
+    expect(newest.src).toBe('/assets/fading-rain-memory.mp3');
+    expect(newest.volume).toBeCloseTo(0.55 * 0.16);
+    expect(MockAudio.instances.filter(audio => audio.src)).toHaveLength(1);
+  });
+
+  it('reverses a fading loop without accumulating elements or timers', async () => {
+    music.setWeather('rain-memory'); await Promise.resolve();
+    const rain = last(); await vi.advanceTimersByTimeAsync(1520);
+    music.setWeather('none'); await vi.advanceTimersByTimeAsync(400);
+    music.setWeather('rain-memory'); await vi.advanceTimersByTimeAsync(1520);
+    expect(last()).toBe(rain);
+    expect(rain.volume).toBeCloseTo(0.55 * 0.16);
+    expect(vi.getTimerCount()).toBe(0);
+    music.setWeather('none', true); expect(rain.src).toBe('');
+  });
+
+  it.each(['mute', 'pause', 'dispose'] as const)('retires pending rain on %s and obeys the latest cue on resumption', async reason => {
+    const slow = deferred(); MockAudio.nextPlay = slow.promise;
+    music.setWeather('rain-memory'); const stale = last();
+    if (reason === 'mute') music.setEnabled(false);
+    if (reason === 'pause') music.setPaused(true);
+    if (reason === 'dispose') music.dispose();
+    music.setWeather('none');
+    slow.resolve(); await Promise.resolve();
+    music.setEnabled(true); music.setPaused(false); await Promise.resolve();
+    expect(stale.src).toBe(''); expect(stale.paused).toBe(true);
+    expect(MockAudio.instances.some(audio => audio.src === '/assets/fading-rain-memory.mp3')).toBe(false);
+    music.dispose(); expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('allows current ambience to resume while never replaying one-shot taps', async () => {
+    music.setWeather('rain-memory', true); await Promise.resolve();
+    await music.playTapCue(); const taps = last();
+    music.setPaused(true);
+    music.setVolume(0.2);
+    music.setPaused(false); await Promise.resolve();
+    const rain = MockAudio.instances.findLast(audio => audio.src === '/assets/fading-rain-memory.mp3')!;
+    expect(rain.paused).toBe(false); expect(rain.volume).toBeCloseTo(0.2 * 0.16);
+    expect(taps.src).toBe('');
+    expect(MockAudio.instances.filter(audio => audio.src === '/assets/fading-taps.mp3')).toHaveLength(0);
+  });
+
+  it('swallows denied rain playback and permits a later cue retry', async () => {
+    MockAudio.nextPlay = Promise.reject(new Error('NotAllowedError'));
+    expect(() => music.setWeather('rain-memory')).not.toThrow();
+    await Promise.resolve(); expect(last().src).toBe('');
+    music.setWeather('rain-memory', true); await Promise.resolve();
+    expect(last().src).toBe('/assets/fading-rain-memory.mp3');
+    expect(last().volume).toBeCloseTo(0.55 * 0.16);
+    music.dispose(); expect(vi.getTimerCount()).toBe(0);
+  });
+});
+
 describe('original adaptive music lifecycle', () => {
   it('sets a desired mood without playing until requested', async () => {
     music.setMood('uneasy');

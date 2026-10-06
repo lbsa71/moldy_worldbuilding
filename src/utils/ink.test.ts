@@ -22,7 +22,7 @@ describe("the story presentation contract", () => {
   const cues = ["camera: cup", "transition: ease 1.8", "arrangement: chair=rest,cup=away,lamp=steady,trace=none"];
   it("requires complete direction while preserving legacy snippets without cues", () => {
     expect(parseDialogueTags([]).direction).toBeNull();
-    expect(parseDialogueTags(cues).direction).toEqual({ camera: "cup", transition: { kind: "ease", seconds: 1.8 }, arrangement: { chair: "rest", cup: "away", lamp: "steady", trace: "none" } });
+    expect(parseDialogueTags(cues).direction).toEqual({ camera: "cup", transition: { kind: "ease", seconds: 1.8 }, weather: "none", arrangement: { chair: "rest", cup: "away", lamp: "steady", trace: "none" } });
     for (const partial of [[cues[0]], cues.slice(0, 2), cues.slice(1)]) expect(() => parseDialogueTags(partial)).toThrow("Partial scene direction");
     for (const cue of cues) expect(() => parseDialogueTags([...cues, cue])).toThrow("Multiple");
   });
@@ -46,6 +46,13 @@ describe("the story presentation contract", () => {
     for (const transition of ["cut 0", "ease 0", "dissolve 5"]) {
       expect(parseDialogueTags([cues[0], `transition: ${transition}`, cues[2]]).direction).not.toBeNull();
     }
+  });
+  it("validates weather without breaking legacy trios", () => {
+    expect(parseDialogueTags(cues).direction!.weather).toBe("none");
+    expect(parseDialogueTags([...cues, "weather: rain-memory"]).direction!.weather).toBe("rain-memory");
+    expect(() => parseDialogueTags([...cues, "weather: storm"])).toThrow();
+    expect(() => parseDialogueTags([...cues, "weather: none", "weather: rain-memory"])).toThrow("Multiple weather");
+    expect(() => parseDialogueTags(["weather: rain-memory"])).toThrow("Partial scene direction");
   });
   it("distinguishes absent objects from an explicit clear and validates every metadata field", () => {
     expect(parseDialogueTags([]).objects).toBeNull();
@@ -148,6 +155,7 @@ describe("Fading: The place beside the light", () => {
           expect(passage.position).toBeNull();
           expect(passage.fog).toBeNull();
           expect(passage.direction).not.toBeNull();
+          expect(["none", "rain-memory"]).toContain(passage.direction!.weather);
           expect(Object.keys(passage.direction!.arrangement).sort()).toEqual(["chair", "cup", "lamp", "trace"]);
           expect(passage.direction!.transition.seconds).toBeGreaterThanOrEqual(0);
           expect(passage.direction!.transition.seconds).toBeLessThanOrEqual(5);
@@ -269,5 +277,16 @@ describe("Fading: The place beside the light", () => {
     expect(passages.at(-2)!.direction!.arrangement.cup).toBe("away");
     expect(last.direction!.arrangement.cup).toBe("away");
     expect(last.text).toContain("The cup holds its chip on the far side.");
+  });
+  it("authors remembered rain only alongside the sleeve memories and ends it at the next beat", () => {
+    for (const response of [0, 1, 2]) {
+      const result = play([0, response, 0, 1, 0, 0]);
+      for (const passage of result.passages) {
+        const expectedRain = passage.scene === "contradiction" || (passage.scene === "cup" && response === 1);
+        expect(passage.direction!.weather).toBe(expectedRain ? "rain-memory" : "none");
+        if (expectedRain) expect(passage.text).toMatch(/rain.*sleeve|sleeve[\s\S]*rain/i);
+      }
+    }
+    expect(source.match(/# weather: /g)).toHaveLength(15); // 14 beats, cup has two exclusive variants.
   });
 });

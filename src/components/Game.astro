@@ -7,6 +7,8 @@ import '../game/experience/experience.css';
   <div id="statsOverlay" hidden>
     <div>Renderer: <span id="rendererType">Loading…</span></div>
     <div>FPS: <span id="fpsCounter">0</span></div>
+    <div>AA: <span id="aaType">Loading…</span></div>
+    <div>Weather: <span id="weatherType">none</span></div>
   </div>
   <div id="experience-ui" hidden></div>
   <section id="launchScreen" class="launch-screen" aria-labelledby="launch-title" aria-describedby="launch-copy launch-status">
@@ -35,7 +37,7 @@ import '../game/experience/experience.css';
   const statusText = document.getElementById('launch-status');
   if (new URLSearchParams(location.search).has('debug')) document.getElementById('statsOverlay')!.hidden = false;
   try {
-    if (localStorage.getItem('fading:chapter-one:save:v3')) startButton.textContent = 'Return to the light';
+    if (localStorage.getItem('fading:chapter-one:save:v4')) startButton.textContent = 'Return to the light';
   } catch { /* Storage is optional. */ }
   const launch = createLaunchExperience({
     canvas, launchScreen, startButton, rendererType, fpsCounter, statusText,

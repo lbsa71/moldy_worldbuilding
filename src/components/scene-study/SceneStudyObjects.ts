@@ -60,6 +60,7 @@ export class SceneStudyObjects {
   }
 
   getChairTurnAngle(): number { return this.turn; }
+  refreshPresence(): void { this.syncPresence(); }
 
   /** One director clock animates the chair, its child cup, mirror and shadows. */
   setEditorialTurn(angle: number, targetTurned: boolean): void {

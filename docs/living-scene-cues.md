@@ -86,6 +86,7 @@ Put the direction beside its dialogue in `src/ink/demo.ink`, before the next cho
 # transition: ease 1.8
 # arrangement: chair=rest,cup=near,lamp=steady,trace=none
 # sound: none
+# weather: none
 A porcelain cup with a blue pattern rests on the chair: a little chip at the rim.
 ```
 
@@ -95,14 +96,19 @@ A porcelain cup with a blue pattern rests on the chair: a little chip at the rim
 | `transition` | `cut 0`, `ease <seconds>`, `dissolve <seconds>` | Immediate change, continuous reframing, or a scene-only fade through dark. Duration is 0–5 seconds; dialogue and choices remain available. |
 | `arrangement` | All four fields shown above | `chair=rest/turned`; `cup=near/away/absent`; `lamp=steady/rest`; `trace=none/cup`. A cup trace requires an absent cup. |
 | `sound` | `none`, `taps` | One authored tap pair after the new view settles, cancelled if the reader leaves that beat. |
+| `weather` | `none`, `rain-memory` | Complete weather state: dry, or remembered drizzle, local ripples, damp edges and quiet ambient rain. Reduced motion keeps dampness and sound. |
 
 Each displayed conditional branch must emit one complete direction, not a patch to the previous arrangement. Invalid, missing-part and duplicate directions fail validation. To change choreography, edit the Ink cue; to tune a named composition, edit `LivingSceneDirector.ts`. Run `npm test` and review the affected passage in the game at both desktop and narrow widths. Test the same passage after reload: restoring an entrance applies its final view immediately and does not replay taps.
 
 Use `ease` for reframing and chair/cup rotations: they share one finite animation clock. Use `dissolve` when a cup disappears, a trace appears or the lamp changes state, so the discrete arrangement change occurs behind the scene veil. This transition is a fade through dark, not an image cross-dissolve. Both leave a stable view once complete.
 
-The living-scene edition uses save version 3. Earlier edition keys are retained but are not read against the revised Ink indices. Motion, sound and volume preferences retain their existing key.
+The remembered-rain edition uses save version 4. Earlier edition keys are retained but are not read against the revised Ink indices. Motion, sound and volume preferences retain their existing key.
 
 The production Ink now emits exactly one complete `camera`, `transition` and `arrangement` trio per displayed beat, including conditional variants. The parser exposes this as `Dialogue.direction`; legacy snippets with no trio retain `null`, partial or duplicate cues reject. Arrangement always names chair, cup, lamp and trace. Legacy travel/fog/object tags are removed from this chapter, with legacy parser support retained. `Dialogue.sound` is `taps`, `none` or `null`; every production beat authors it explicitly. These are implemented script/parser contracts, not a claim of approved browser fidelity or emotional playtest results.
+
+Remembered rain is now an explicit `weather: rain-memory` cue only in the cup passage's remembered sleeve/rain reply (`last_response == "who"`) and the common contradiction passage's rain-running-off-the-sleeve memory. Every other production beat authors `weather: none`, allowing the effect to settle out on entry. Weather is part of each complete `SceneDirection`; a legacy trio without weather defaults to `none`. Unknown/duplicate weather tags reject. It does not follow silence, care scores, time spent reading or any ending choice.
+
+`AudioSystem.setWeather(cue, immediate)` supplies a quiet independent rain loop with 1.5-second fades and gain capped at 16% of master volume. [generate-rain.mjs](../scripts/generate-rain.mjs) authors the local 12-second stereo MP3 from seeded periodic filtered noise using ffmpeg, without external recordings, samples or libraries. Music and the authored one-shot taps remain independent. Muting, pausing and disposal retire rain playback/pending requests; resumption can restore the latest ambient cue but never replays taps. Denied rain playback does not block dialogue. Restore/reduced-motion application may establish or clear the ambient state immediately; no new sound event is inferred from a timer.
 
 Script comments explain the durations: opening uses `cut 0`; gentle reframing uses `ease 1.8`; consent holds the bedside shot with `ease 1.2`; contradiction and endings use `dissolve 1.2` for editorial/complete-arrangement changes. An unchanged shot target remains still. Water gives quiet room, the shore gives carrying negative space, and the cup shot makes its chip legible. No duration estimates reading progress or blocks a choice.
 

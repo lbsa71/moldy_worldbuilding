@@ -1,4 +1,5 @@
 import type { Scene } from '@babylonjs/core';
+import type { WeatherCue } from '../../game/presentation/SceneDirection';
 
 type Mood = 'hushed' | 'warm' | 'uneasy' | 'resolved';
 type Voice = { audio: HTMLAudioElement; gain: number; from: number; target: number };
@@ -27,8 +28,93 @@ export class AudioSystem {
   private volume = 0.55;
   private disposed = false;
   private readonly fadeMs = 2200;
+  private weather: WeatherCue = 'none';
+  private rain: Voice | null = null;
+  private rainReady = false;
+  private rainRequest = 0;
+  private rainTimer: number | undefined;
+  private rainStart = 0;
+  private rainImmediate = false;
 
   constructor(_scene?: Scene) {}
+
+  /** Remembered weather is an independent quiet loop; playback failure never gates dialogue. */
+  public setWeather(cue: WeatherCue, immediate = false): void {
+    if (this.disposed) return;
+    this.weather = cue;
+    this.rainImmediate = immediate;
+    if (cue === 'none') {
+      if (!this.rainReady || immediate) this.retireRain();
+      else this.fadeRain(0);
+    } else if (this.enabled && !this.paused) {
+      if (this.rainReady) this.fadeRain(1);
+      else if (!this.rain) void this.startRain();
+    }
+  }
+
+  private async startRain(): Promise<void> {
+    if (this.disposed || this.paused || !this.enabled || this.weather !== 'rain-memory' || this.rain) return;
+    const id = ++this.rainRequest;
+    const audio = new Audio('/assets/fading-rain-memory.mp3');
+    audio.loop = true;
+    audio.preload = 'auto';
+    audio.volume = 0;
+    const voice = { audio, gain: 0, from: 0, target: 1 };
+    this.rain = voice;
+    try { await audio.play(); }
+    catch {
+      this.release(audio);
+      if (this.rain === voice) { this.rain = null; this.rainReady = false; }
+      return;
+    }
+    if (id !== this.rainRequest || this.disposed || this.paused || !this.enabled || this.weather !== 'rain-memory') {
+      this.release(audio);
+      return;
+    }
+    this.rainReady = true;
+    this.fadeRain(1);
+  }
+
+  private applyRainVolume(): void {
+    if (this.rain) this.rain.audio.volume = this.enabled && !this.paused ? this.volume * 0.16 * this.rain.gain : 0;
+  }
+
+  private fadeRain(target: number): void {
+    if (!this.rain) return;
+    clearInterval(this.rainTimer);
+    this.rainTimer = undefined;
+    const voice = this.rain;
+    voice.from = voice.gain;
+    voice.target = target;
+    if (this.rainImmediate) {
+      voice.gain = target;
+      this.applyRainVolume();
+      if (!target) this.retireRain();
+      return;
+    }
+    if (voice.gain === target) return;
+    this.rainStart = performance.now();
+    this.rainTimer = window.setInterval(() => {
+      if (this.rain !== voice) return;
+      const progress = Math.min(1, Math.max(0, (performance.now() - this.rainStart) / 1500));
+      voice.gain = voice.from + (voice.target - voice.from) * progress;
+      this.applyRainVolume();
+      if (progress === 1) {
+        clearInterval(this.rainTimer);
+        this.rainTimer = undefined;
+        if (!voice.target) this.retireRain();
+      }
+    }, 40);
+  }
+
+  private retireRain(): void {
+    ++this.rainRequest;
+    clearInterval(this.rainTimer);
+    this.rainTimer = undefined;
+    this.release(this.rain?.audio ?? null);
+    this.rain = null;
+    this.rainReady = false;
+  }
 
   public setMood(mood: Mood): void {
     this.stopTapCue();
@@ -149,6 +235,7 @@ export class AudioSystem {
     this.volume = Math.min(1, Math.max(0, value));
     this.voices.forEach(voice => this.applyVolume(voice));
     if (this.tapEffect) this.tapEffect.volume = this.enabled && !this.paused ? this.volume : 0;
+    this.applyRainVolume();
   }
 
   public setEnabled(enabled: boolean): void {
@@ -157,6 +244,8 @@ export class AudioSystem {
     this.voices.forEach(voice => { this.applyVolume(voice); if (!enabled) voice.audio.pause(); });
     if (!enabled) this.pending?.pause();
     else void this.play().catch(() => { /* A later user gesture can retry denied playback. */ });
+    if (!enabled) this.retireRain();
+    else void this.startRain();
   }
 
   public setPaused(paused: boolean): void {
@@ -165,6 +254,8 @@ export class AudioSystem {
     this.voices.forEach(voice => { this.applyVolume(voice); if (paused) voice.audio.pause(); });
     if (paused) this.pending?.pause();
     else void this.play().catch(() => { /* Tab resumption must not reject the game loop. */ });
+    if (paused) this.retireRain();
+    else void this.startRain();
   }
 
   public dispose(): void {
@@ -172,6 +263,7 @@ export class AudioSystem {
     this.disposed = true;
     ++this.request;
     this.stopTapCue();
+    this.retireRain();
     clearInterval(this.fadeTimer);
     this.fadeTimer = undefined;
     this.release(this.pending);

@@ -9,6 +9,7 @@ import { createStudySurfaces } from './SceneStudySurfaces';
 import { SceneStudyObjects } from './SceneStudyObjects';
 import { createLivingSceneCamera, LivingSceneDirector, type LivingSceneDiagnostics } from './LivingSceneDirector';
 import type { SceneDirection } from '../../game/presentation/SceneDirection';
+import { LivingSceneWeather, type LivingSceneWeatherDiagnostics } from './LivingSceneWeather';
 
 export type SceneStudyDiagnostics = {
   backend: 'WebGPU' | 'WebGL';
@@ -29,7 +30,8 @@ export type SceneStudyDiagnostics = {
   cameraName: string;
   environmentMode: 'hdr' | 'generated';
   environmentUrl: string | null;
-} & Partial<LivingSceneDiagnostics>;
+  antialiasing: 'taa' | 'fxaa' | 'off';
+} & Partial<LivingSceneDiagnostics & LivingSceneWeatherDiagnostics>;
 
 export type SceneStudyHandle = {
   setChairTurned(value: boolean): void;
@@ -55,6 +57,7 @@ export type SceneStudyOptions = {
   narrative?: boolean;
   /** Fades only the scene overlay; dialogue and choices remain interactive. */
   onTransitionOpacity?: (opacity: number) => void;
+  antialiasing?: 'auto' | 'off';
 };
 
 export async function createSceneStudy(canvas: HTMLCanvasElement, options: SceneStudyOptions = {}): Promise<SceneStudyHandle> {
@@ -66,16 +69,22 @@ export async function createSceneStudy(canvas: HTMLCanvasElement, options: Scene
   let disposed = false;
   let objects: SceneStudyObjects | undefined;
   let director: LivingSceneDirector | undefined;
+  let weather: LivingSceneWeather | undefined;
+  let antialiasing: Awaited<ReturnType<typeof createStudySurfaces>>['antialiasing'] | undefined;
   let resizeObserver: ResizeObserver | undefined;
   let renderedFrames = 0;
   const render = () => {
     if (disposed || !scene || !engine) return;
     if (director) director.update(Math.min(0.1, engine.getDeltaTime() / 1000));
     else objects?.update(engine.getDeltaTime() / 1000);
+    weather?.update(Math.min(0.1, engine.getDeltaTime() / 1000));
+    const weatherState = weather?.getDiagnostics();
+    antialiasing?.update({ settled: (director?.getDiagnostics().settled ?? objects?.getState().settled ?? true) && !weatherState?.weatherMoving,
+      rainActive: Boolean(weatherState?.weatherMoving) });
     scene.render();
     renderedFrames++;
   };
-  const resize = () => { if (!disposed) { engine?.resize(); director?.resize(); } };
+  const resize = () => { if (!disposed) { antialiasing?.reset(); engine?.resize(); director?.resize(); } };
   const visibility = () => {
     if (disposed || !engine) return;
     if (document.hidden) engine.stopRenderLoop(render);
@@ -90,6 +99,8 @@ export async function createSceneStudy(canvas: HTMLCanvasElement, options: Scene
     resizeObserver?.disconnect();
     engine?.stopRenderLoop(render);
     director?.dispose();
+    weather?.dispose();
+    antialiasing?.dispose();
     objects?.dispose();
     scene?.dispose();
     engine?.dispose();
@@ -153,8 +164,9 @@ export async function createSceneStudy(canvas: HTMLCanvasElement, options: Scene
     if (options.narrative && assets.mode !== 'production') throw new Error('The production living scene could not load. Retry to start the story.');
     const authoredCamera = selectStudyCamera(scene, assets.camera, assets.manifest.camera);
     const camera = options.narrative ? createLivingSceneCamera(scene, authoredCamera) : authoredCamera;
-    const surfaces = await createStudySurfaces(scene, assets, { environment: options.environment, signal: options.signal, onStatus: status });
+    const surfaces = await createStudySurfaces(scene, assets, { environment: options.environment, signal: options.signal, onStatus: status, antialiasing: options.antialiasing });
     ensureActive();
+    antialiasing = surfaces.antialiasing;
     warnings.push(...assets.warnings, ...surfaces.warnings, 'Browser visual acceptance remains pending.');
     objects = new SceneStudyObjects(assets.chair, assets.cup, assets.meshes, surfaces.applyRenderLists);
     if (options.narrative) {
@@ -166,8 +178,10 @@ export async function createSceneStudy(canvas: HTMLCanvasElement, options: Scene
           return { width, aspect: width / Math.max(1, height) };
         },
         setLampRest: surfaces.setLampRest,
+        setWeather: (cue, immediate) => weather?.applyCue(cue, immediate),
         onTransitionOpacity: options.onTransitionOpacity,
       });
+      weather = new LivingSceneWeather(scene, assets, () => objects?.refreshPresence());
     }
     window.addEventListener('resize', resize);
     document.addEventListener('visibilitychange', visibility);
@@ -180,11 +194,11 @@ export async function createSceneStudy(canvas: HTMLCanvasElement, options: Scene
     if (!document.hidden) engine.runRenderLoop(render);
     status(assets.message);
     return {
-      setChairTurned: value => objects?.setChairTurned(value),
-      setCupVisible: value => objects?.setCupVisible(value),
-      setReducedMotion: value => director ? director.setReducedMotion(value) : objects?.setReducedMotion(value),
-      reset: () => director ? director.reset() : objects?.reset(),
-      applyDirection: (direction, immediate) => director?.applyDirection(direction, immediate),
+      setChairTurned: value => { antialiasing?.reset(); objects?.setChairTurned(value); },
+      setCupVisible: value => { antialiasing?.reset(); objects?.setCupVisible(value); },
+      setReducedMotion: value => { antialiasing?.reset(); weather?.setReducedMotion(value); if (director) director.setReducedMotion(value); else objects?.setReducedMotion(value); },
+      reset: () => { antialiasing?.reset(); if (director) director.reset(); else objects?.reset(); },
+      applyDirection: (direction, immediate) => { antialiasing?.reset(); director?.applyDirection(direction, immediate); },
       getScene: () => scene!,
       dispose,
       getDiagnostics: () => ({
@@ -195,6 +209,8 @@ export async function createSceneStudy(canvas: HTMLCanvasElement, options: Scene
         fps: disposed ? 0 : engine!.getFps(), renderedFrames, cameraName: camera.name,
         environmentMode: surfaces.environmentMode, environmentUrl: surfaces.environmentUrl,
         ...director?.getDiagnostics(),
+        ...weather?.getDiagnostics(),
+        antialiasing: antialiasing?.getMode() ?? 'off',
       }),
     };
   } catch (error) {

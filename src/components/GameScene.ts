@@ -7,7 +7,7 @@ import type { Story } from "../inkjs/engine/Story";
 
 // The authored living scene changes Ink content indices. Preserve earlier saves
 // under their original keys instead of interpreting them against this edition.
-export const SAVE_KEY = "fading:chapter-one:save:v3";
+export const SAVE_KEY = "fading:chapter-one:save:v4";
 const PREFERENCES_KEY = "fading:preferences:v1";
 type Preferences = { audio: boolean; volume: number; reducedMotion: boolean };
 
@@ -48,6 +48,7 @@ export class GameScene {
         const renderer = await createSceneStudy(this.canvas, {
           narrative: true,
           forceWebGL: params.has("debug") && params.get("renderer") === "webgl",
+          antialiasing: params.has("debug") && params.get("aa") === "off" ? "off" : "auto",
           signal: this.loading.signal,
           onCanvasReplaced: canvas => { if (!this.disposed) this.canvas = canvas; },
           onTransitionOpacity: opacity => {
@@ -124,6 +125,7 @@ export class GameScene {
     this.syncDiagnostics();
     this.dialogueUI.render(dialogue);
     this.audioSystem.setMood(dialogue.mood || "hushed");
+    this.audioSystem.setWeather(direction.weather, immediate);
     if (playOneShot && dialogue.sound === "taps") {
       this.scheduleTap(beat);
     }
@@ -180,7 +182,20 @@ export class GameScene {
   private syncDiagnostics(): void {
     if (!this.renderer || this.disposed) return;
     const container = document.getElementById("game-container");
-    if (container) container.dataset.settled = String(this.renderer.getDiagnostics().settled);
+    const diagnostics = this.renderer.getDiagnostics();
+    if (container) {
+      container.dataset.settled = String(diagnostics.settled);
+      container.dataset.weather = diagnostics.weather ?? "none";
+      container.dataset.rainIntensity = String(diagnostics.rainIntensity ?? 0);
+      container.dataset.antialiasing = diagnostics.antialiasing ?? "off";
+      container.dataset.rainDrops = String(diagnostics.visibleRainDrops ?? 0);
+      container.dataset.ripples = String(diagnostics.rippleCount ?? 0);
+      container.dataset.dampPatches = String(diagnostics.dampPatchCount ?? 0);
+    }
+    const aaLabel = document.getElementById("aaType");
+    const weatherLabel = document.getElementById("weatherType");
+    if (aaLabel) aaLabel.textContent = (diagnostics.antialiasing ?? "off").toUpperCase();
+    if (weatherLabel) weatherLabel.textContent = diagnostics.weather ?? "none";
   }
 
   private handleChoice(index: number): void {
@@ -238,7 +253,7 @@ export class GameScene {
   }
   private saveStory(): void {
     if (!this.currentStory) return;
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ version: 3, state: this.currentStory.state.ToJson() })); }
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ version: 4, state: this.currentStory.state.ToJson() })); }
     catch {
       this.storageNotice = "Progress cannot be saved in this browser. Keep this tab open to finish.";
       this.dialogueUI?.setNotice(this.storageNotice);
@@ -250,7 +265,7 @@ export class GameScene {
       const raw = localStorage.getItem(SAVE_KEY);
       if (!raw) return false;
       const stored = JSON.parse(raw);
-      if (stored.version !== 3 || typeof stored.state !== "string") throw new Error("Unsupported saved passage.");
+      if (stored.version !== 4 || typeof stored.state !== "string") throw new Error("Unsupported saved passage.");
       this.currentStory.state.LoadJson(stored.state);
       if (!this.currentStory.canContinue) throw new Error("The saved passage has no readable entrance.");
       this.storageNotice = "Your last passage has been restored.";

@@ -23,6 +23,7 @@ import { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator'
 import '@babylonjs/core/Lights/Shadows/shadowGeneratorSceneComponent';
 import { Scene } from '@babylonjs/core/scene';
 import type { StudyAssets, StudyManifest } from './SceneStudyAssets';
+import { createSceneAntialiasing } from './SceneStudyAntialiasing';
 
 export function isStudySkyMesh(mesh: AbstractMesh): boolean {
   for (let node: Node | null = mesh; node; node = node.parent) {
@@ -43,7 +44,7 @@ export function configureStudySkyMeshes(meshes: readonly AbstractMesh[]): void {
 /** Emissive shade geometry represents light leaving the fixture, not an opaque blocker. */
 export function getStudyShadowCasters(meshes: AbstractMesh[], lamp: StudyAssets['lamp']): AbstractMesh[] {
   return meshes.filter(mesh => {
-    if (mesh.metadata?.livingSceneTrace) return false;
+    if (mesh.metadata?.livingSceneTrace || mesh.metadata?.livingSceneWeather) return false;
     if (isStudySkyMesh(mesh)) return false;
     if (!mesh.isDescendantOf(lamp)) return true;
     const emission = mesh.material instanceof PBRMaterial ? mesh.material.emissiveColor : undefined;
@@ -149,6 +150,7 @@ async function loadAuthoredEnvironment(scene: Scene, url: string, signal?: Abort
 
 export async function createStudySurfaces(scene: Scene, assets: StudyAssets, options: {
   environment?: StudyManifest['environment']; signal?: AbortSignal; onStatus?: (message: string) => void;
+  antialiasing?: 'auto' | 'off';
 } = {}) {
   const config = scene.imageProcessingConfiguration;
   config.toneMappingEnabled = true;
@@ -157,7 +159,7 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
   config.contrast = 1.05;
   // Keep all geometry and the mirror in linear space; tone-map the composed view once.
   const hdrType = scene.getEngine().getCaps().textureHalfFloatRender ? Constants.TEXTURETYPE_HALF_FLOAT : Constants.TEXTURETYPE_UNSIGNED_BYTE;
-  new ImageProcessingPostProcess('single display transform', 1, scene.activeCamera, Texture.BILINEAR_SAMPLINGMODE, scene.getEngine(), false, hdrType, config);
+  const display = new ImageProcessingPostProcess('single display transform', 1, scene.activeCamera, Texture.BILINEAR_SAMPLINGMODE, scene.getEngine(), false, hdrType, config);
   configureStudyFog(scene, assets.manifest);
 
   // Local IBL with deterministic CPU irradiance; no CDN/network image dependency.
@@ -228,6 +230,8 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
   shadows.setDarkness(0.12);
 
   const mirror = new MirrorTexture('live water reflection', 1024, scene, true, hdrType);
+  // Reflection has its own blur passes; never consume main-camera temporal history or ACES.
+  mirror.useCameraPostProcesses = false;
   mirror.mirrorPlane = new Plane(0, -1, 0, 0);
   mirror.clearColor = scene.clearColor.clone();
   mirror.level = 0.88;
@@ -278,5 +282,9 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
     lamp.intensity = steadyDownlight * (rest ? 0.9 : 1);
     bulb.light.intensity = steadyBulb * (rest ? 0.9 : 1);
   };
-  return { mirror, shadows, applyRenderLists, environmentMode, environmentUrl, warnings, setLampRest };
+  if (!scene.activeCamera) throw new Error('The living scene needs an active camera before configuring antialiasing.');
+  const antialiasing = await createSceneAntialiasing(scene, scene.activeCamera, display, {
+    off: options.antialiasing === undefined ? undefined : options.antialiasing === 'off',
+  });
+  return { mirror, shadows, applyRenderLists, environmentMode, environmentUrl, warnings, setLampRest, antialiasing };
 }

@@ -54,19 +54,33 @@ function fixture() {
   const openingCup = cup.computeWorldMatrix(true).clone();
   let viewport = { width: 1200, aspect: 1.5 };
   let lampRest = false;
+  const weatherCalls: { cue: SceneDirection['weather']; immediate: boolean }[] = [];
   const veils: number[] = [];
   const director = new LivingSceneDirector({ scene, camera, authoredCamera: authored, assets, objects,
-    viewport: () => viewport, setLampRest: value => { lampRest = value; }, onTransitionOpacity: value => veils.push(value) });
+    viewport: () => viewport, setLampRest: value => { lampRest = value; }, onTransitionOpacity: value => veils.push(value),
+    setWeather: (cue, immediate) => weatherCalls.push({ cue, immediate }) });
   cleanups.push(() => { director.dispose(); scene.dispose(); engine.dispose(); });
   return { director, camera, authored, acceptedView, chair, cup, porcelain, scene, assets, objects, openingChair, openingCup,
-    veils, getReflected: () => reflected, getLampRest: () => lampRest, resize: (width: number, aspect: number) => { viewport = { width, aspect }; director.resize(); } };
+    veils, weatherCalls, getReflected: () => reflected, getLampRest: () => lampRest, resize: (width: number, aspect: number) => { viewport = { width, aspect }; director.resize(); } };
 }
 
 function cue(camera: SceneDirection['camera'], kind: SceneDirection['transition']['kind'] = 'cut', seconds = 0, arrangement = openingDirection().arrangement): SceneDirection {
-  return { camera, transition: { kind, seconds }, arrangement: { ...arrangement } };
+  return { camera, transition: { kind, seconds }, arrangement: { ...arrangement }, weather: 'none' };
 }
 
 describe('living scene editorial direction', () => {
+  it('forwards weather-only cues without restarting the camera, including immediate preference changes and reset', () => {
+    const f = fixture();
+    const before = f.camera.getViewMatrix(true).clone();
+    f.director.applyDirection({ ...openingDirection(), weather: 'rain-memory', transition: { kind: 'ease', seconds: 2 } });
+    expect(f.weatherCalls.at(-1)).toEqual({ cue: 'rain-memory', immediate: false });
+    expect(f.director.getDiagnostics().settled).toBe(true);
+    expect(f.camera.getViewMatrix(true).equals(before)).toBe(true);
+    f.director.setReducedMotion(true);
+    expect(f.weatherCalls.at(-1)).toEqual({ cue: 'rain-memory', immediate: true });
+    f.director.reset();
+    expect(f.weatherCalls.at(-1)).toEqual({ cue: 'none', immediate: true });
+  });
   it('preserves the accepted parented camera world view and makes finite static shots at desktop and portrait aspects', () => {
     const f = fixture();
     expect(f.camera.parent).toBeNull();

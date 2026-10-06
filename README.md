@@ -17,14 +17,16 @@ Open the local URL printed by Astro. Choose with the mouse, touch, Tab/Enter, or
 
 The separate `/scene-study/` route retains chair/cup controls and an opening-image comparison for asset review. Both routes share the renderer and Blender assets. The actual chapter requires the production scene; a load failure offers retry. Use `/scene-study/?renderer=webgl` to exercise the study's fallback renderer.
 
-The living-scene edition uses save slot v3 because its Ink content structure changed. Earlier saves remain stored, but this edition starts a fresh passage. New saves restore the current passage, full object arrangement and camera immediately, including endings, without replaying taps.
+The remembered-rain edition uses save slot v4 because its Ink content structure changed. Earlier saves remain stored, but this edition starts a fresh passage. New saves restore the current passage, weather, full object arrangement and camera immediately, including endings, without replaying taps.
+
+Rain appears in the two authored sleeve memories, with quiet ambience, lamp-lit drops and water ripples. Reduced motion retains the damp surfaces and sound. Settled shots use temporal antialiasing on supported devices; camera and weather motion use FXAA to avoid temporal trails.
 
 ```sh
 npm run validate  # tests, type checking, production build
 npm run preview   # serve the production build
 ```
 
-Astro 7 runs development/preview servers in the background. Use `npm run astro -- dev stop` or `npm run astro -- preview stop` when finished. Add `?debug` to expose renderer and FPS telemetry; `?debug&renderer=webgl` explicitly exercises WebGL.
+Astro 7 runs development/preview servers in the background. Use `npm run astro -- dev stop` or `npm run astro -- preview stop` when finished. Add `?debug` to expose renderer, antialiasing, weather and FPS telemetry; `?debug&renderer=webgl` explicitly exercises WebGL. `?debug&aa=off` disables postprocess antialiasing for comparison.
 
 ## Project map
 
@@ -35,7 +37,7 @@ Astro 7 runs development/preview servers in the background. Use `npm run astro -
 - `src/game/presentation/SceneDirection.ts`: shared script-to-renderer direction contract.
 - `src/components/game/AudioSystem.ts`: music and sound playback. Other files in this folder retain the earlier traversal experiment.
 - `src/game/experience/`: launch, semantic dialogue controls and styles.
-- `public/assets/fading-*.mp3`: four original ambient compositions and a two-tap rail cue. Rebuild with `npm run score:render` (ffmpeg required).
+- `public/assets/fading-*.mp3`: four original ambient compositions, a two-tap rail cue and remembered rain. Rebuild with `npm run score:render` and `node scripts/generate-rain.mjs` (ffmpeg required).
 - `docs/assessment-and-remedy.md`: baseline critique, SWOT and staged quality plan.
 - `docs/implementation-status.md`: delivered scope, verification and remaining production work.
 - `docs/narrative-direction.md`: story structure and authoring contract.

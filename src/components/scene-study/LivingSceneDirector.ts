@@ -10,7 +10,7 @@ import { Ray } from '@babylonjs/core/Culling/ray';
 import type { Scene } from '@babylonjs/core/scene';
 import type { StudyAssets } from './SceneStudyAssets';
 import { SceneStudyObjects } from './SceneStudyObjects';
-import { openingDirection, type SceneDirection, type SceneArrangement, type CameraCue } from '../../game/presentation/SceneDirection';
+import { openingDirection, type SceneDirection, type SceneArrangement, type CameraCue, type WeatherCue } from '../../game/presentation/SceneDirection';
 
 type Pose = { position: Vector3; target: Vector3; up: Vector3; fov: number };
 export type DirectorViewport = { aspect: number; width: number };
@@ -53,7 +53,7 @@ export function createLivingSceneCamera(scene: Scene, authored: Camera): FreeCam
 }
 
 const copyDirection = (value: SceneDirection): SceneDirection => ({
-  camera: value.camera, transition: { ...value.transition }, arrangement: { ...value.arrangement },
+  camera: value.camera, transition: { ...value.transition }, arrangement: { ...value.arrangement }, weather: value.weather,
 });
 const smooth = (value: number) => value * value * (3 - 2 * value);
 
@@ -115,6 +115,7 @@ export class LivingSceneDirector {
     objects: SceneStudyObjects;
     viewport: () => DirectorViewport;
     setLampRest: (value: boolean) => void;
+    setWeather?: (cue: WeatherCue, immediate: boolean) => void;
     onTransitionOpacity?: (opacity: number) => void;
   }) {
     this.wide = sampleCamera(options.authoredCamera);
@@ -236,7 +237,8 @@ export class LivingSceneDirector {
     if (this.disposed) return;
     const next = copyDirection(value);
     const unchanged = next.camera === this.direction.camera && JSON.stringify(next.arrangement) === JSON.stringify(this.direction.arrangement);
-    if (unchanged && !immediate && !this.reducedMotion) return;
+    this.options.setWeather?.(next.weather, immediate || this.reducedMotion);
+    if (unchanged && !immediate && !this.reducedMotion) { this.direction = next; return; }
     this.direction = next;
     const duration = Number.isFinite(next.transition.seconds) ? Math.max(0, Math.min(8, next.transition.seconds)) : 0;
     if (immediate || this.reducedMotion || next.transition.kind === 'cut' || duration === 0) {
