@@ -1,5 +1,7 @@
 # Fading: The place beside the light
 
+**Historical spatial-chapter direction, 4 October 2026.** The travel coordinates, terrain transformations and some state responses below describe the retired traversal version. The shipped game now uses the fixed living scene documented in [the cue guide](living-scene-cues.md). The next 30–45 minute game is proposed in [the narrative hypotheses and production plan](narrative-experiments.md), with explicit tests for meaningful choices, emotional geography and replay. That proposal has not replaced the playable script.
+
 This playable chapter replaces the four repeated prototype routes with eleven decisions and three distinct resolutions. The earlier script is retained in `src/ink/legacy-demo.ink` for reference; it is not loaded by the game.
 
 The dramatic question is whether an unfinished memory can be cared for without inventing the missing identity. A chipped blue cup, two taps before touching a hand, a rain-darkened sleeve, and an empty chair give the uncertainty concrete anchors. The presence remembers both bringing the tea and lying beside the rail. The chapter leaves that contradiction open without turning it into a diagnosis or a surprise death reveal.

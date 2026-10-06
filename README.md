@@ -41,6 +41,7 @@ Astro 7 runs development/preview servers in the background. Use `npm run astro -
 - `docs/assessment-and-remedy.md`: baseline critique, SWOT and staged quality plan.
 - `docs/implementation-status.md`: delivered scope, verification and remaining production work.
 - `docs/narrative-direction.md`: story structure and authoring contract.
+- `docs/narrative-experiments.md`: proposed 30–45 minute game, falsifiable narrative hypotheses and production gates; companion pilot worksheet in `docs/playtests/`.
 - `docs/art-and-audio-production.md`: direction and Blender asset brief.
 - `docs/asset-provenance.md`: origin and release status of assets.
 - `scripts/blender/README.md`: original bedside asset generator and Blender handoff.

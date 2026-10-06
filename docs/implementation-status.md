@@ -1,6 +1,8 @@
 # Fading implementation and verification
 
-Updated 6 October 2026. This records the implementation waves following the [baseline critique, SWOT and remedy plan](assessment-and-remedy.md). It is a substantially improved playable chapter, not a claim of AAA production completion. The living-scene work is on `codex/fixed-scene-proof`; the requested preview is local, and this integration does not deploy the public game. Earlier verification records below apply to their respective implementation waves.
+Updated 6 October 2026. This records the implementation waves following the [baseline critique, SWOT and remedy plan](assessment-and-remedy.md). It is a substantially improved playable chapter, not a claim of AAA production completion. The living scene was developed on `codex/fixed-scene-proof` and promoted to `main` at the user's request. Earlier verification records below apply to their respective implementation waves.
+
+On 6 October, the user requested promotion of the accepted game to `main`. The branch was fast-forwarded and pushed to `ac2d314`; [GitHub validation passed](https://github.com/lbsa71/moldy_worldbuilding/actions/runs/37458757806). The automatic [R2 publication failed](https://github.com/lbsa71/moldy_worldbuilding/actions/runs/37458850881) on its first object upload with `401 Unauthorized`, so that run does not establish a published release. The next narrative phase is a [30–45 minute design with falsifiable hypotheses](narrative-experiments.md); its proposed game content is not yet implemented.
 
 ## What changed
 
