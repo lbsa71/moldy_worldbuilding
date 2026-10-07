@@ -1,13 +1,18 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "edition": "journey-2026-10-07-v2",
   "source": {
     "path": "src/ink/journey.ink",
     "sha256": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2"
   },
+  "presentationSource": {
+    "path": "src/game/experience/DialogueCards.ts",
+    "sha256": "5b73399dbdf1e630dcb49154a8e944efa6e10a1723a7996b64a09255438b0a45"
+  },
   "method": "Depth-first execution of every available choice at every reachable prefix in this acyclic Ink edition. One compiled Story state is restored for each sibling; an independent Story restores and compares every entrance, including text, choices and all presentation fields. No state equivalence pruning or random sampling.",
-  "limits": "Proves the enumerated script properties under the current compiler/parser only. No human playtime, attachment, readability, choice fairness, renderer appearance, historical replay forks or emotional response was measured. All displayed choice labels are counted, including unselected alternatives. Chapter headings and hidden prose are excluded.",
+  "limits": "Proves the enumerated script properties under the current compiler/parser and the base paragraph-grouping helper. Grouped prose-card counts precede viewport-dependent reflow or separate decision pages. No human playtime, attachment, readability, choice fairness, renderer appearance, historical replay forks or emotional response was measured. All displayed choice labels are counted, including unselected alternatives. Chapter headings and hidden prose are excluded.",
   "tokenizer": "/[\\p{L}\\p{N}]+(?:['’−-][\\p{L}\\p{N}]+)*/gu",
+  "cardTokenizer": "/\\S+/g",
   "routes": 1344,
   "visitedPrefixes": 2191,
   "stableScenes": [
@@ -58,21 +63,28 @@
       "min": 8,
       "max": 8
     },
-    "proseCards": {
+    "authoredParagraphs": {
       "min": 35,
       "max": 35
+    },
+    "groupedProseCards": {
+      "min": 9,
+      "max": 9
     }
   },
   "displayMaximums": {
     "paragraphWords": 31,
     "paragraphCharacters": 178,
+    "groupedCardWords": 93,
+    "groupedCardCharacters": 535,
+    "paragraphsPerGroupedCard": 4,
     "choiceWords": 8,
     "choiceCharacters": 48,
     "headingCharacters": 30,
-    "cardsPerBeat": 4,
+    "groupedCardsPerBeat": 1,
     "choicesPerDecision": 4
   },
-  "displayContract": "Each nonempty rendered prose line is one UI card. Paragraphs <=35 words and <=220 characters; labels <=8 words and <=48 characters; headings <=30 characters. Two to four prose cards per Ink beat, at most four choices. Continue/Back are presentation navigation and are not Ink decisions.",
+  "displayContract": "Desktop-first grouped reading cards: adjacent paragraphs share a page up to 100 whitespace-delimited words and 660 characters, preserving paragraph breaks and source offsets. Roughly 70–100 words is a reading-flow target, not a minimum or a physical fit guarantee. Labels <=8 words and <=48 characters; headings <=30 characters; at most four choices. Smaller screens and larger type may subdivide cards. Mobile fit is diagnostic, not a release-blocking gate. Continue/Back are navigation, not Ink decisions.",
   "reproduction": "npx vitest run src/ink/journey.test.ts",
   "regeneration": "JOURNEY_METRICS_WRITE=1 npx vitest run src/ink/journey.test.ts"
 }

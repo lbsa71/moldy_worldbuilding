@@ -1,0 +1,458 @@
+{
+  "reports": [
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T09:52:13.975Z",
+      "durationMs": 1100,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "visualWidth": 1440,
+        "visualHeight": 900,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed81c3e018f228ba7441169e6a302f146b16b12823d6a7147ce2a93701d9d111",
+        "dialogueUI": "0621a98035392c444f1dc21d580fea9b3b6eb9a06255f4bedb64d6bd518ba23b",
+        "dialogueCards": "5b73399dbdf1e630dcb49154a8e944efa6e10a1723a7996b64a09255438b0a45",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "17.6px",
+        "bodyLineHeight": "26.4px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "14.4px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 1125,
+        "maximumPages": 1
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0002",
+          "scene": "journey_reassurance",
+          "route": [
+            0
+          ],
+          "page": 0,
+          "pages": 1,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 565.921875,
+        "panel": {
+          "x": 56,
+          "y": 290.078125,
+          "width": 560,
+          "height": 585.921875
+        },
+        "text": "\"Yes. Put that first.\" Three books appear: Mara's manual, Rosa's paperback and Ada's notebook. Mara tries your assurance with Ada's name attached. Your comfort has become somebody else's evidence. Rosa's paperback has its cover on backwards. \"Rosa said it improved the ending. You met the murderer first. Saved an evening.\" \"A tea receipt waits inside. I haven't checked its time. Let the books go, and we lose that evidence. Keep them, and ask before opening anything.\"",
+        "choices": [
+          "1Keep them. Ask before examining evidence.",
+          "2Keep all three closed for Ada.",
+          "3Let them go, including their evidence."
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T09:52:15.285Z",
+      "durationMs": 1181,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "visualWidth": 1440,
+        "visualHeight": 900,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.4,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed81c3e018f228ba7441169e6a302f146b16b12823d6a7147ce2a93701d9d111",
+        "dialogueUI": "0621a98035392c444f1dc21d580fea9b3b6eb9a06255f4bedb64d6bd518ba23b",
+        "dialogueCards": "5b73399dbdf1e630dcb49154a8e944efa6e10a1723a7996b64a09255438b0a45",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "24.64px",
+        "bodyLineHeight": "36.96px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "20.16px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 1187,
+        "maximumPages": 2
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0077",
+          "scene": "journey_agreement",
+          "route": [
+            0,
+            0,
+            1
+          ],
+          "page": 0,
+          "pages": 1,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 750,
+        "panel": {
+          "x": 56,
+          "y": 106,
+          "width": 560,
+          "height": 770
+        },
+        "text": "A curtain and rail enter her memory. Rain darkens her sleeve. Her watch strikes the rail twice. Then the interval she asks you to leave clear. The cup disappears. \"It wasn't evidence,\" Mara says. \"It was how she drank her tea. I understand you want a larger answer.\" \"Rosa said, 'Stop fussing.' I went for tea. I can't make her words mean 'leave me', or 'don't leave'.\" \"Stop investigating now. Is that a promise for this whole visit, or will you ask again? Don't promise one and mean the other.\"",
+        "choices": [
+          "1\"No more investigating this visit. I promise.\"",
+          "2\"I may ask again. You can refuse.\""
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T09:52:51.209Z",
+      "durationMs": 1301,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 1366,
+        "height": 768,
+        "visualWidth": 1366,
+        "visualHeight": 768,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed81c3e018f228ba7441169e6a302f146b16b12823d6a7147ce2a93701d9d111",
+        "dialogueUI": "0621a98035392c444f1dc21d580fea9b3b6eb9a06255f4bedb64d6bd518ba23b",
+        "dialogueCards": "5b73399dbdf1e630dcb49154a8e944efa6e10a1723a7996b64a09255438b0a45",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "17.6px",
+        "bodyLineHeight": "26.4px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "14.4px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 1125,
+        "maximumPages": 1
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0002",
+          "scene": "journey_reassurance",
+          "route": [
+            0
+          ],
+          "page": 0,
+          "pages": 1,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 565.921875,
+        "panel": {
+          "x": 54.6328125,
+          "y": 158.078125,
+          "width": 560,
+          "height": 585.921875
+        },
+        "text": "\"Yes. Put that first.\" Three books appear: Mara's manual, Rosa's paperback and Ada's notebook. Mara tries your assurance with Ada's name attached. Your comfort has become somebody else's evidence. Rosa's paperback has its cover on backwards. \"Rosa said it improved the ending. You met the murderer first. Saved an evening.\" \"A tea receipt waits inside. I haven't checked its time. Let the books go, and we lose that evidence. Keep them, and ask before opening anything.\"",
+        "choices": [
+          "1Keep them. Ask before examining evidence.",
+          "2Keep all three closed for Ada.",
+          "3Let them go, including their evidence."
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T09:52:53.818Z",
+      "durationMs": 2212,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 1366,
+        "height": 768,
+        "visualWidth": 1366,
+        "visualHeight": 768,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.4,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed81c3e018f228ba7441169e6a302f146b16b12823d6a7147ce2a93701d9d111",
+        "dialogueUI": "0621a98035392c444f1dc21d580fea9b3b6eb9a06255f4bedb64d6bd518ba23b",
+        "dialogueCards": "5b73399dbdf1e630dcb49154a8e944efa6e10a1723a7996b64a09255438b0a45",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "24.64px",
+        "bodyLineHeight": "36.96px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "20.16px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 1768,
+        "maximumPages": 2
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0026",
+          "scene": "journey_account",
+          "route": [
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          "page": 0,
+          "pages": 1,
+          "notice": ""
+        },
+        "overflow": 0,
+        "usedHeight": 618,
+        "panel": {
+          "x": 54.6328125,
+          "y": 106,
+          "width": 560,
+          "height": 638
+        },
+        "text": "\"Then keep the disagreement. Don't write that I understood in the end.\" The chair stays turned toward you. Your promise rules out another examination. Mara starts to ask, then stops herself. Neither of you gets to search again here. \"One account. The receipt can't tell us who stayed. My belief isn't your evidence. A custom isn't proof. Let Ada question us.\"",
+        "choices": [
+          "1Teach the cup's custom, without claiming proof.",
+          "2Keep both voices in our disagreement.",
+          "3Say honestly what remains unknown."
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T09:53:16.266Z",
+      "durationMs": 1143,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "visualWidth": 1440,
+        "visualHeight": 900,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.2,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed81c3e018f228ba7441169e6a302f146b16b12823d6a7147ce2a93701d9d111",
+        "dialogueUI": "0621a98035392c444f1dc21d580fea9b3b6eb9a06255f4bedb64d6bd518ba23b",
+        "dialogueCards": "5b73399dbdf1e630dcb49154a8e944efa6e10a1723a7996b64a09255438b0a45",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "21.12px",
+        "bodyLineHeight": "31.68px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "17.28px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 1125,
+        "maximumPages": 1
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0333",
+          "scene": "journey_inquiry",
+          "route": [
+            1
+          ],
+          "page": 0,
+          "pages": 1,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 688.3515625,
+        "panel": {
+          "x": 56,
+          "y": 167.6484375,
+          "width": 560,
+          "height": 708.3515625
+        },
+        "text": "\"Establish,\" Mara repeats. \"Good sturdy word. Does it come with a chair?\" Three books appear: her manual, Rosa's paperback, Ada's notebook. Mara teaches you to loosen a binding. \"Patience. You can have dreadful hands and still learn that.\" \"Rosa glued that cover on backwards to annoy me. No hidden message. Don't make her a mystery instead of my sister.\" \"There's a tea receipt inside. It might establish a purchase, never who stayed with Rosa. Let the books go, and we lose the evidence. Keep them, but ask before opening anything.\"",
+        "choices": [
+          "1Keep them. Ask before examining evidence.",
+          "2Keep all three closed for Ada.",
+          "3Let them go, including their evidence."
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T09:53:17.757Z",
+      "durationMs": 1288,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 1366,
+        "height": 768,
+        "visualWidth": 1366,
+        "visualHeight": 768,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.2,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed81c3e018f228ba7441169e6a302f146b16b12823d6a7147ce2a93701d9d111",
+        "dialogueUI": "0621a98035392c444f1dc21d580fea9b3b6eb9a06255f4bedb64d6bd518ba23b",
+        "dialogueCards": "5b73399dbdf1e630dcb49154a8e944efa6e10a1723a7996b64a09255438b0a45",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "21.12px",
+        "bodyLineHeight": "31.68px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "17.28px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 1183,
+        "maximumPages": 2
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0289",
+          "scene": "journey_rest",
+          "route": [
+            0,
+            2,
+            1,
+            0,
+            0,
+            0,
+            0,
+            2
+          ],
+          "page": 0,
+          "pages": 1,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 611.375,
+        "panel": {
+          "x": 54.6328125,
+          "y": 112.625,
+          "width": 560,
+          "height": 631.375
+        },
+        "text": "The chair is gone. The lamp too, and everything around it. Bare stone reaches toward the water. No message travels. \"I wanted to finish it,\" Mara says. \"I still do. I don't have to pretend otherwise to let you say goodbye.\" You say goodbye to the woman who repaired books and could be difficult. \"Leave the lampshade,\" she says. It is already beyond your keeping. You tried again; Mara promised no forgiveness. The books and their evidence stayed gone. You couldn't show the cup again. Your promise held. Her corrections stay with you.",
+        "choices": [
+          "Begin again"
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { Compiler } from '../inkjs/compiler/Compiler';
 import { Story } from '../inkjs/engine/Story';
 import { choose, getCurrentDialogue, type Dialogue } from '../utils/ink';
+import { dialogueCards, CARD_WORD_LIMIT, CARD_CHARACTER_LIMIT } from '../game/experience/DialogueCards';
 
 const source = readFileSync(new URL('./journey.ink', import.meta.url), 'utf8');
 const compiler = new Compiler(source);
@@ -16,6 +17,8 @@ const tokenPattern = /[\p{L}\p{N}]+(?:['’−-][\p{L}\p{N}]+)*/gu;
 const words = (value: string) => (value.match(tokenPattern) ?? []).length;
 const choiceTexts = (dialogue: Dialogue) => dialogue.choices.map(choice => choice.text);
 const comparable = (dialogue: Dialogue) => ({ ...dialogue, choices: choiceTexts(dialogue) });
+const normalizeWhitespace = (text: string) => text.replace(/\s+/g, ' ').trim();
+const cardWords = (text: string) => (text.match(/\S+/g) ?? []).length;
 
 function route(indices: number[], account?: string, readback = 0) {
   const story = compile();
@@ -51,15 +54,17 @@ describe('the journey consequence prototype', () => {
     const endings: Record<string, number> = {};
     let prefixes = 0;
     let routes = 0;
-    const displayMaximums = { paragraphWords: 0, paragraphCharacters: 0, choiceWords: 0, choiceCharacters: 0, headingCharacters: 0, cardsPerBeat: 0, choicesPerDecision: 0 };
+    const displayMaximums = { paragraphWords: 0, paragraphCharacters: 0, groupedCardWords: 0, groupedCardCharacters: 0,
+      paragraphsPerGroupedCard: 0, choiceWords: 0, choiceCharacters: 0, headingCharacters: 0, groupedCardsPerBeat: 0, choicesPerDecision: 0 };
     const counts = {
       narrativeWords: { min: Infinity, max: 0 },
       displayedChoiceWords: { min: Infinity, max: 0 },
       totalDisplayedWords: { min: Infinity, max: 0 },
       decisions: { min: Infinity, max: 0 },
-      proseCards: { min: Infinity, max: 0 },
+      authoredParagraphs: { min: Infinity, max: 0 },
+      groupedProseCards: { min: Infinity, max: 0 },
     };
-    function visit(depth: number, narrative: number, labels: number, cardCount: number, path: number[]) {
+    function visit(depth: number, narrative: number, labels: number, paragraphCount: number, cardCount: number, path: number[]) {
       expect(depth, `Acyclic depth at ${path.join('.')}`).toBeLessThanOrEqual(8);
       const entrance = story.state.ToJson();
       const passage = getCurrentDialogue(story);
@@ -67,13 +72,21 @@ describe('the journey consequence prototype', () => {
       expect(passage.direction).not.toBeNull();
       expect(passage.sound).not.toBeNull();
       expect(passage.scene).toMatch(/^journey_/);
-      const cards = passage.text.split(/\n+/).map(line => line.trim()).filter(Boolean);
-      for (const card of cards) {
-        expect(words(card), `${passage.scene}: ${card}`).toBeLessThanOrEqual(35);
-        expect(card.length, `${passage.scene}: ${card}`).toBeLessThanOrEqual(220);
-        displayMaximums.paragraphWords = Math.max(displayMaximums.paragraphWords, words(card));
-        displayMaximums.paragraphCharacters = Math.max(displayMaximums.paragraphCharacters, card.length);
+      const paragraphs = passage.text.split(/\n+/).map(line => line.trim()).filter(Boolean);
+      const cards = dialogueCards(passage.text);
+      for (const paragraph of paragraphs) {
+        displayMaximums.paragraphWords = Math.max(displayMaximums.paragraphWords, words(paragraph));
+        displayMaximums.paragraphCharacters = Math.max(displayMaximums.paragraphCharacters, paragraph.length);
       }
+      for (const card of cards) {
+        expect(cardWords(card.text), `${passage.scene}: ${card.text}`).toBeLessThanOrEqual(CARD_WORD_LIMIT);
+        expect(card.text.length, `${passage.scene}: ${card.text}`).toBeLessThanOrEqual(CARD_CHARACTER_LIMIT);
+        expect(passage.text.slice(card.start, card.start + card.text.length)).toBe(card.text);
+        displayMaximums.groupedCardWords = Math.max(displayMaximums.groupedCardWords, cardWords(card.text));
+        displayMaximums.groupedCardCharacters = Math.max(displayMaximums.groupedCardCharacters, card.text.length);
+        displayMaximums.paragraphsPerGroupedCard = Math.max(displayMaximums.paragraphsPerGroupedCard, card.text.split(/\n+/).filter(Boolean).length);
+      }
+      expect(normalizeWhitespace(cards.map(card => card.text).join(' '))).toBe(normalizeWhitespace(passage.text));
       for (const label of choiceTexts(passage)) {
         expect(words(label), label).toBeLessThanOrEqual(8);
         expect(label.length, label).toBeLessThanOrEqual(48);
@@ -81,18 +94,17 @@ describe('the journey consequence prototype', () => {
         displayMaximums.choiceCharacters = Math.max(displayMaximums.choiceCharacters, label.length);
       }
       expect(passage.chapter!.length).toBeLessThanOrEqual(30);
-      expect(cards.length).toBeGreaterThanOrEqual(2);
-      expect(cards.length).toBeLessThanOrEqual(4);
+      expect(cards.length).toBeGreaterThanOrEqual(1);
       expect(passage.choices.length).toBeLessThanOrEqual(4);
       if (['journey_reassurance', 'journey_inquiry', 'journey_presence'].includes(passage.scene!)) {
-        expect(cards[0]).toContain('Three books appear');
+        expect(cards[0].text).toContain('Three books appear');
       }
       if (passage.direction!.weather === 'rain-memory') {
-        expect(cards[0]).toContain('Rain darkens her sleeve');
-        expect(cards[0]).toContain('strikes the rail twice');
+        expect(cards[0].text).toContain('Rain darkens her sleeve');
+        expect(cards[0].text).toContain('strikes the rail twice');
       }
       displayMaximums.headingCharacters = Math.max(displayMaximums.headingCharacters, passage.chapter!.length);
-      displayMaximums.cardsPerBeat = Math.max(displayMaximums.cardsPerBeat, cards.length);
+      displayMaximums.groupedCardsPerBeat = Math.max(displayMaximums.groupedCardsPerBeat, cards.length);
       displayMaximums.choicesPerDecision = Math.max(displayMaximums.choicesPerDecision, passage.choices.length);
       const direction = passage.direction!;
       expect(Object.keys(direction.stage ?? {}).sort()).toEqual(['books', 'chair', 'curtain', 'lamp', 'rail']);
@@ -151,7 +163,8 @@ describe('the journey consequence prototype', () => {
           expect(passage.text).toContain('Remember the jokes, too');
           expect(passage.text).not.toContain('Remember the backwards cover');
         }
-        const values = { narrativeWords: nextNarrative, displayedChoiceWords: nextLabels, totalDisplayedWords: nextNarrative + nextLabels, decisions: depth, proseCards: cardCount + cards.length };
+        const values = { narrativeWords: nextNarrative, displayedChoiceWords: nextLabels, totalDisplayedWords: nextNarrative + nextLabels, decisions: depth,
+          authoredParagraphs: paragraphCount + paragraphs.length, groupedProseCards: cardCount + cards.length };
         for (const key of Object.keys(counts) as (keyof typeof counts)[]) {
           counts[key].min = Math.min(counts[key].min, values[key]);
           counts[key].max = Math.max(counts[key].max, values[key]);
@@ -164,24 +177,26 @@ describe('the journey consequence prototype', () => {
         renderedSceneEdges.add(`${passage.scene}:${passage.choices[index].pathStringOnChoice}`);
         story.state.LoadJson(waiting);
         choose(story, index);
-        visit(depth + 1, nextNarrative, nextLabels, cardCount + cards.length, [...path, index]);
+        visit(depth + 1, nextNarrative, nextLabels, paragraphCount + paragraphs.length, cardCount + cards.length, [...path, index]);
       }
     }
-    visit(0, 0, 0, 0, []);
+    visit(0, 0, 0, 0, 0, []);
     expect(routes).toBe(1344);
     expect([...accounts].sort()).toEqual(['belief', 'custom', 'disagreement', 'pause', 'record', 'uncertainty', 'unread']);
     expect(Object.keys(endings).sort()).toEqual(['carry', 'keep', 'rest']);
     expect(new Set(Object.values(endings)).size).toBe(1);
     const report = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       edition: 'journey-2026-10-07-v2',
       source: { path: 'src/ink/journey.ink', sha256: createHash('sha256').update(source).digest('hex') },
+      presentationSource: { path: 'src/game/experience/DialogueCards.ts', sha256: createHash('sha256').update(readFileSync(new URL('../game/experience/DialogueCards.ts', import.meta.url), 'utf8')).digest('hex') },
       method: 'Depth-first execution of every available choice at every reachable prefix in this acyclic Ink edition. One compiled Story state is restored for each sibling; an independent Story restores and compares every entrance, including text, choices and all presentation fields. No state equivalence pruning or random sampling.',
-      limits: 'Proves the enumerated script properties under the current compiler/parser only. No human playtime, attachment, readability, choice fairness, renderer appearance, historical replay forks or emotional response was measured. All displayed choice labels are counted, including unselected alternatives. Chapter headings and hidden prose are excluded.',
+      limits: 'Proves the enumerated script properties under the current compiler/parser and the base paragraph-grouping helper. Grouped prose-card counts precede viewport-dependent reflow or separate decision pages. No human playtime, attachment, readability, choice fairness, renderer appearance, historical replay forks or emotional response was measured. All displayed choice labels are counted, including unselected alternatives. Chapter headings and hidden prose are excluded.',
       tokenizer: String(tokenPattern),
+      cardTokenizer: '/\\S+/g',
       routes, visitedPrefixes: prefixes, stableScenes: [...scenes].sort(), authoredChoiceEdges: edges.size,
       renderedSceneChoiceEdges: renderedSceneEdges.size, accounts: [...accounts].sort(), endings, ranges: counts, displayMaximums,
-      displayContract: 'Each nonempty rendered prose line is one UI card. Paragraphs <=35 words and <=220 characters; labels <=8 words and <=48 characters; headings <=30 characters. Two to four prose cards per Ink beat, at most four choices. Continue/Back are presentation navigation and are not Ink decisions.',
+      displayContract: `Desktop-first grouped reading cards: adjacent paragraphs share a page up to ${CARD_WORD_LIMIT} whitespace-delimited words and ${CARD_CHARACTER_LIMIT} characters, preserving paragraph breaks and source offsets. Roughly 70–100 words is a reading-flow target, not a minimum or a physical fit guarantee. Labels <=8 words and <=48 characters; headings <=30 characters; at most four choices. Smaller screens and larger type may subdivide cards. Mobile fit is diagnostic, not a release-blocking gate. Continue/Back are navigation, not Ink decisions.`,
       reproduction: 'npx vitest run src/ink/journey.test.ts',
       regeneration: 'JOURNEY_METRICS_WRITE=1 npx vitest run src/ink/journey.test.ts',
     };

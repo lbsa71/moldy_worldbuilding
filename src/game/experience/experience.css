@@ -52,6 +52,7 @@
 .dialogue-card-body { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 16px; min-height: 0; }
 .dialogue-text { min-width: 0; min-height: 0; font: 400 calc(1.1rem * var(--text-scale))/1.5 'Palatino Linotype', 'Book Antiqua', Palatino, serif; color: #e8ebe1; overflow-wrap: anywhere; }
 .dialogue-text p { margin: 0; }
+.dialogue-text p + p { margin-top: .55em; }
 .dialogue-choices { display: grid; gap: 7px; min-width: 0; align-content: start; }
 .dialogue-choice { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 46px; padding: 10px 12px; text-align: left; background: #9eb4ad0a; border: 1px solid #9aafaa3d; color: #d6e0da; font: 400 calc(.9rem * var(--text-scale))/1.4 'Avenir Next', 'Segoe UI', sans-serif; cursor: pointer; border-radius: 2px; transition: background 130ms ease, border-color 130ms ease; }
 .dialogue-choice > span:last-child { min-width: 0; overflow-wrap: anywhere; }

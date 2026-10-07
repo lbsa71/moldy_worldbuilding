@@ -1,46 +1,39 @@
-# Dialogue card budget and fit contract
+# Dialogue reading flow and fit contract
 
-7 October 2026. Applies to the compact `journey-2026-10-07-v2` episode. The previous draft's scrolling and long passages interrupted play; this contract addresses readable cards and tests their physical fit. It does not establish emotional quality or enjoyable duration.
+Updated 7 October 2026. Applies to `journey-2026-10-07-v2`. The first revision solved long scrolling passages by making each paragraph a short page. The user found that correction too fragmented and requested roughly two to three times more text at once, with desktop play taking priority. This revision groups the existing prose; story wording, choices and save edition remain unchanged.
 
-## Authoring limits
+## Current reading contract
 
-| Element | Hard limit | Writing rule |
+| Element | Bound or target | Writing and presentation rule |
 | --- | --- | --- |
-| One prose card | 35 words **and** 220 characters | One thought or exchange. Both limits include the displayed text; characters include spaces and punctuation. |
-| One choice label | 8 words **and** 48 characters | Make the intended act clear. Put necessary stakes in the preceding prose, not an essay inside the button. |
+| Grouped prose card | Target roughly 70–100 words; upper bounds **100 whitespace-delimited words and 660 characters** | Keep adjacent paragraphs together where they fit. A paragraph break preserves an expressive pause; it does not force a new page. Shorter passages are valid. |
+| Choice label | 8 words and 48 characters | Make the intended act clear; the surrounding passage supplies its stakes. |
 | Heading | 30 characters | Orient the reader without retelling the scene. |
-| One Ink beat | 2–4 prose cards, up to 4 choices | Cut repeated explanation before adding a card. The final paragraph must make sense beside the decision. |
+| Ink beat | Up to 4 choices | A complete dramatic beat may occupy one grouped card. Do not add Continue presses to simulate decisions or duration. |
 
-A nonempty authored paragraph is a card. The UI provides fallback splitting for older long paragraphs. Continue and Back are navigation: neither submits an Ink choice, changes facts/props, replays scene/audio cues, nor adds a transcript entry. The full passage appears once in history. Numeric shortcuts work only when choices are visible. Save/resume retains the Ink entrance and reading position, including endings. A real decision and restart return to the first card.
+The shared [DialogueCards helper](../src/game/experience/DialogueCards.ts) implements the grouping bounds and preserves paragraph breaks and source offsets. Browser fitting can subdivide a group when the available space or chosen text size requires it. Keep the final paragraph beside its responses when it fits; use a separate decision card as a fallback. Never discard, clip, ellipsize or shrink prose to satisfy a page count.
 
-The compact script currently reaches maxima of 31 prose words / 178 characters, 8 choice words / 48 characters, and 30 heading characters across every reachable variant. All 1,344 complete sequences retain eight decisions and the same seven possible accounts. Every route has 35 authored prose cards and 744–829 visible words including displayed options. Those figures do not count UI labels as story content and do not imply measured playtime.
+Continue and Back navigate the same Ink passage. They neither submit a choice, change facts or props, replay scene/audio cues, nor add another transcript entry. The full passage appears once in history. Numeric shortcuts act only when responses are visible. Save/resume retains the passage entrance and reading position; resizing or regrouping uses the source position to keep the reader near the same text. A real decision or restart opens the first card of its new passage.
 
-## Rendered fit is the release gate
+The [route audit](evidence/journey-01-routes.json) records **nine base grouped prose cards per route**, compared with 35 paragraph-sized pages under the superseded policy. Each group currently contains at most **93 words, 535 characters and four paragraphs**. Viewport reflow and separate decision pages can increase the number actually displayed. All 1,344 sequences retain eight decisions, seven possible accounts and 744–829 visible words including options. These measurements do not establish playtime or enjoyment.
 
-Editorial bounds are necessary but not sufficient. Font metrics, line breaks, choice count, accessibility size, safe areas and notices affect geometry. Use production `DialogueUI` and `experience.css` to check every exact reachable tuple of heading, text, ordered choice labels and ending status, retaining a witness route. Scene-ID-only sampling misses conditional text and choice variants.
+## Desktop fit and small-screen adaptation
 
-Minimum target: a **667×320 CSS-pixel landscape viewport**. Also check 812×375 and 844×390 landscape, 375×667 portrait, and 1440×900 desktop. At every size, exercise Standard, Large and Extra large text (1, 1.2 and 1.4). Use the existing local font stack; record browser and computed fonts. This is a viewport contract, not a claim to have tested every physical phone or arbitrary browser zoom.
+Desktop reading flow is the release priority. Check every exact reachable tuple of heading, prose, ordered choice labels and ending status with production `DialogueUI` and `experience.css`, retaining a witness route. Use 1440×900 as a desktop baseline and record additional desktop/laptop sizes actually reviewed. Exercise Standard, Large and Extra large text (1, 1.2 and 1.4); record browser, fonts and source hashes. Editorial word limits alone cannot establish physical fit.
 
-For every reading/decision/ending page, require:
+At the recorded desktop targets require complete, legible prose and choices, without panel/document scrolling, offscreen controls or overlap. Standard prose remains at least 16px and choices at least 14px; the larger-text settings increase them. Actionable reading/choice controls remain at least 44px in each dimension. Include terminal cards and restoration/storage notices, and check the full passage survives pagination unchanged.
 
-- No panel or document overflow in either axis; text and visible controls stay inside the panel and viewport.
-- No overlap between the card and header controls, or between reading/navigation/response controls.
-- At least 16px prose and 14px choice text at Standard; accessibility settings increase them.
-- At least 44px-wide and 44px-high actionable reading/choice targets.
-- Complete content: do not clip, ellipsize or shrink text to make measurements pass.
-- Restoration and storage notices remain readable without displacing choices offscreen.
+Small screens retain adaptive fitting, navigation and readable controls. Their results are diagnostic: **mobile compatibility and the former 667×320 minimum are not release-blocking requirements** for this desktop-first direction. Do not fragment ordinary desktop passages to satisfy a phone viewport. Record any remaining small-screen limitation honestly; no viewport audit is a claim about every physical device, font or zoom level.
 
-Larger text may need more reading pages or a dedicated decision page. Keep the final prose beside the choices when it fits. Back must remain available to reread the context. Resizing must preserve the reader's location rather than choose a response.
+## Historical evidence
 
-## Measured result
-
-The [recorded matrix](evidence/journey-02-card-fit.json) passes all **15 configurations**, covering 375 distinct variants, three notice states and 70,160 rendered page observations. Every report includes matching source hashes and its browser/font environment. Standard text uses 16px prose and 14px choices at the minimum landscape viewport. Extra large increases both by 1.4; it may subdivide paragraphs further or put all choices on an expanded decision card. A strict single-page word limit is therefore paired with responsive pagination, not treated as a universal physical guarantee.
+The [earlier fit matrix](evidence/journey-02-card-fit.json) belongs to the superseded 35-word/220-character, paragraph-per-page policy. Its 15 configurations passed across 375 distinct variants, three notice states and 70,160 rendered page observations. Preserve that record as evidence of the earlier implementation; it does **not** validate the current grouping or establish that its frequent paging was enjoyable. Current browser results are recorded with their source hashes in the [implementation status](implementation-status.md).
 
 ## Reproduce
 
-1. Run `npm run dev` and open `/__card-study/`. This audit endpoint exists only in the development server and does not ship in the static build.
-2. Set a viewport from the matrix and a text scale, then run **Run card fit audit**. The harness traverses the actual compiled Ink and renders production controls; it reports variant/page counts, geometry failures, witness routes and source hashes.
-3. Repeat the matrix and save the JSON reports under `docs/evidence/`. Investigate every failure, then replay representative cases in `/journey/` with the real scene visible.
-4. Run `npm run validate`. Narrative checks must retain consequences, permission gates, route counts and identical empty endings after prose edits. UI/save checks cover navigation, transcript uniqueness, shortcuts, stale buttons, disposal and restoration.
+1. Run `npm run dev` and open `/__card-study/`. This audit endpoint exists only in development and does not ship in the static build.
+2. Set a desktop viewport and text scale, then select **Run card fit audit**. The harness compiles the actual Ink, traverses every reachable prefix and renders the production component, checking every resulting page and notice state.
+3. Save reports under `docs/evidence/` with their viewport and source hashes. Review representative passages in `/journey/` with the real scene visible. Additional small-screen runs are useful diagnostics, not the desktop release gate.
+4. Run `npm run validate`. Route tests check grouped-card limits, text/source-offset preservation, consequences, permission gates and empty endings. UI/save tests check navigation, transcript uniqueness, shortcuts, stale controls and restored reading position.
 
-The browser report establishes fit for its recorded environment. Device testing, safe-area behavior on physical notched phones, screen-reader experience and whether paging itself becomes tedious still need human review. Do not lengthen prose or add navigation taps to meet the full game's 30–45 minute target; earn that time through meaningful interaction.
+Human review still needs to establish whether the fuller passages sustain attention and leave enough room for the scene. The complete game's 30–45 minute target must come from consequential encounters, not extra words, forced waits or navigation taps.

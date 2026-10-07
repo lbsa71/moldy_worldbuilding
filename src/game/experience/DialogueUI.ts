@@ -162,9 +162,9 @@ export class DialogueUI {
     this.navigation.hidden = this.cards.length < 2;
     this.progress.textContent = `${this.cardIndex + 1} / ${this.cards.length}`;
     this.text.replaceChildren();
-    if (card.text) {
+    for (const line of card.text.split(/\n+/).filter(line => line.trim())) {
       const paragraph = document.createElement('p');
-      paragraph.textContent = card.text;
+      paragraph.textContent = line;
       this.text.appendChild(paragraph);
     }
     this.choices.replaceChildren();
@@ -233,9 +233,18 @@ export class DialogueUI {
         if (!this.overflows()) continue;
         let card = this.cards[index];
         if (index === this.cards.length - 1 && card.text) {
-          // Preserve the final paragraph with its choices when it fits. On a
-          // short or enlarged-text layout, give the complete choice set a card.
-          this.cards.push({ text: '', start: card.start + card.text.length, decision: true });
+          // Keep the final exchange beside its responses before resorting to a
+          // decision-only page. Paragraph boundaries do not otherwise force taps.
+          const lastParagraph = /\n+([^\n]+)$/.exec(card.text);
+          if (lastParagraph) {
+            const end = lastParagraph.index;
+            const tail = card.text.slice(end), remainder = tail.trimStart();
+            this.cards.splice(index, 1, { ...card, text: card.text.slice(0, end) },
+              { text: remainder, start: card.start + end + tail.length - remainder.length });
+            card = this.cards[index];
+          } else {
+            this.cards.push({ text: '', start: card.start + card.text.length, decision: true });
+          }
           this.drawCard();
           if (!this.overflows()) continue;
         }

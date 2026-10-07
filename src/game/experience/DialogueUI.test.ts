@@ -3,7 +3,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DialogueUI } from './DialogueUI';
 import type { Dialogue } from '../../utils/ink';
 
-const passage = (text = 'The lamp remains.\n\nA cup catches the light.', ending: string | null = null): Dialogue => ({
+// Each paragraph is a realistic reading unit, long enough that two together
+// exceed the generous grouped-card limit without inventing forced page breaks.
+const readingParagraphs = [
+  'The lamp lights the empty chair and the edge of a cup. You have been asked to stay, but nobody has explained what staying will mean. Outside, the sound of water moves along the stones. You listen until the room stops feeling like a place you have entered and begins to feel like a place where someone has been waiting for you.',
+  'The water is quieter now. She remembers carrying the cup through the rain, one hand over its mouth to keep the tea warm. You can hear how carefully she chooses that detail. There are other things she could have told you, but this is the thing she wants you to hold for a moment before you decide whether to ask her another question.',
+  'The question remains between you. You could answer it quickly and let the evening become easier, or leave enough room for her to tell you what an answer would cost. The cup is still warm. Nothing in the room is asking you to hurry, and for the first time you understand that staying might mean allowing the silence to belong to someone else.',
+];
+const passage = (text = readingParagraphs.slice(0, 2).join('\n\n'), ending: string | null = null): Dialogue => ({
   text, choices: ending ? [] : [{ text: 'Wait quietly.', index: 0 }, { text: 'Ask about the cup.', index: 1 }] as Dialogue['choices'],
   scene: 'lamp', chapter: 'A place beside the light', mood: 'hushed', ending,
   position: { x: 0, z: 0 }, fog: 0.5, objects: ['lamp'], audio: null, direction: null, sound: null,
@@ -32,7 +39,7 @@ afterEach(() => { ui.dispose(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 describe('semantic narrative controls', () => {
   it('reads forward and back without choosing, repeating history or restarting any experience callback', () => {
-    const source = passage('First paragraph.\n\nSecond paragraph.\n\nLast paragraph.');
+    const source = passage(readingParagraphs.join('\n\n'));
     ui.render(source);
     nextCard();
     nextCard();
@@ -42,7 +49,7 @@ describe('semantic narrative controls', () => {
     host.querySelector<HTMLButtonElement>('[data-card-previous]')!.click();
     staleChoice.click();
     expect(ui.getCardIndex()).toBe(1);
-    expect(host.querySelector('.dialogue-text')?.textContent).toBe('Second paragraph.');
+    expect(host.querySelector('.dialogue-text')?.textContent).toBe(readingParagraphs[1]);
     expect(callbacks.onChoice).not.toHaveBeenCalled();
     expect(callbacks.onRestart).not.toHaveBeenCalled();
     expect(callbacks.onAudioToggle).not.toHaveBeenCalled();
@@ -55,8 +62,8 @@ describe('semantic narrative controls', () => {
   });
 
   it('restores the saved source anchor before the numeric page index and clamps obsolete cursors', () => {
-    const source = passage('First paragraph.\n\nSecond paragraph.\n\nLast paragraph.');
-    const start = source.text.indexOf('Second');
+    const source = passage(readingParagraphs.join('\n\n'));
+    const start = source.text.indexOf(readingParagraphs[1]);
     ui.render(source, 99, start);
     expect(ui.getCardIndex()).toBe(1);
     expect(ui.getCardAnchor()).toBe(start);
@@ -68,7 +75,7 @@ describe('semantic narrative controls', () => {
   });
 
   it('reveals all four authored responses together and enables the fourth shortcut only on that card', () => {
-    const source = passage('An invitation.\n\nA cost to consider.');
+    const source = passage();
     source.choices = ['Promise.', 'Ask permission.', 'Offer a practical task.', 'Leave the question open.']
       .map((text, index) => ({ text, index })) as Dialogue['choices'];
     ui.render(source);
@@ -84,7 +91,7 @@ describe('semantic narrative controls', () => {
   it('makes detached Continue controls inert after a new passage or disposal', () => {
     ui.render(passage());
     const first = host.querySelector<HTMLButtonElement>('[data-card-next]')!;
-    ui.render(passage('A different first paragraph.\n\nA different last paragraph.'));
+    ui.render(passage(readingParagraphs.slice(1).join('\n\n')));
     first.click();
     expect(ui.getCardIndex()).toBe(0);
     const second = host.querySelector<HTMLButtonElement>('[data-card-next]')!;
@@ -128,6 +135,29 @@ describe('semantic narrative controls', () => {
     expect(host.querySelectorAll('.conversation-history article')).toHaveLength(2);
   });
 
+  it('keeps the final paragraph beside its choices when the grouped exchange needs two cards', () => {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(500);
+    vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(function (this: HTMLElement) {
+      if (!this.classList.contains('dialogue-text')) return 500;
+      return host.querySelector('[data-story-choice]') ? 70 : 300;
+    });
+    vi.spyOn(HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(function (this: HTMLElement) {
+      return this.classList.contains('dialogue-text') ? this.textContent!.length : 0;
+    });
+    const first = 'The books have been open for some time. You can see where the paper was folded, and where her hand has smoothed it flat again.';
+    const last = '"Would you read that part to me?"';
+    const source = passage(`${first}\n\n${last}`);
+    ui.render(source);
+    expect(ui.getCardCount()).toBe(2);
+    expect(host.querySelector('.dialogue-text')?.textContent).toBe(first);
+    nextCard();
+    expect(host.querySelector('.dialogue-text')?.textContent).toBe(last);
+    expect(host.querySelector('.dialogue-panel')?.getAttribute('data-card-kind')).toBe('response');
+    expect(host.querySelectorAll('[data-story-choice]')).toHaveLength(2);
+    expect(ui.getCardAnchor()).toBe(source.text.indexOf(last));
+    expect(host.querySelector('[data-card-next]')).toBeNull();
+  });
+
   it('detects painted choice boxes crossing the notice even when every scroll dimension reports a fit', () => {
     vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(300);
     vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(500);
@@ -147,13 +177,14 @@ describe('semantic narrative controls', () => {
     expect(host.querySelectorAll('[data-story-choice]')).toHaveLength(2);
   });
 
-  it('renders story text as plain paragraphs and exposes native choices with focus', () => {
-    ui.render(passage('<img src=x onerror=alert(1)>\n\n"Will you stay?"'));
+  it('groups several short paragraphs with immediate choices, preserving line breaks and literal text', () => {
+    const paragraphs = ['The cup catches the light.', '<img src=x onerror=alert(1)>', '"Will you stay?"', 'There is time to answer.'];
+    ui.render(passage(paragraphs.join('\n\n')));
+    expect(ui.getCardCount()).toBe(1);
     expect(host.querySelector('.dialogue-text img')).toBeNull();
-    expect(host.querySelectorAll('.dialogue-text p')).toHaveLength(1);
+    expect([...host.querySelectorAll('.dialogue-text p')].map(paragraph => paragraph.textContent)).toEqual(paragraphs);
     expect(host.querySelector('.dialogue-text')?.getAttribute('aria-live')).toBe('polite');
-    expect(buttons()[0].textContent).toBe('Continue');
-    nextCard();
+    expect(host.querySelector('[data-card-next]')).toBeNull();
     expect(buttons().map(button => button.getAttribute('aria-keyshortcuts'))).toEqual(['1', '2']);
     expect(buttons()[0].querySelector('.choice-shortcut')?.getAttribute('aria-hidden')).toBe('true');
     flushFrames();
@@ -207,6 +238,7 @@ describe('semantic narrative controls', () => {
 
   it('renders a terminal coda and clears history when beginning again', () => {
     ui.render(passage());
+    lastCard();
     buttons()[0].click();
     ui.render(passage('The room rests.', 'rest'));
     expect(host.querySelector('.dialogue-panel')?.getAttribute('data-ending')).toBe('true');
@@ -229,6 +261,7 @@ describe('semantic narrative controls', () => {
 
   it('ignores detached choices from an older passage rather than selecting a new response', () => {
     ui.render(passage());
+    lastCard();
     const staleButton = buttons()[0];
     ui.render(passage('This is the next passage.'));
     staleButton.click();
@@ -239,6 +272,7 @@ describe('semantic narrative controls', () => {
 
   it('removes shortcuts and makes retained buttons inert after disposal', () => {
     ui.render(passage());
+    lastCard();
     const oldChoice = buttons()[0];
     const oldAudio = host.querySelector('[data-audio]') as HTMLButtonElement;
     ui.dispose();

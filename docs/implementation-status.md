@@ -6,7 +6,15 @@ On 6 October, the user requested promotion of the accepted game to `main`. The b
 
 ## What changed
 
-### Compact reading cards — 7 October 2026
+### Fuller desktop passages — 7 October 2026
+
+The user found the paragraph-per-card revision too fragmented and clarified that mobile support is optional. Related paragraphs now share a card, with an upper grouping budget of **100 words / 660 characters**. Paragraph breaks remain visible. The current story needs at most 93 whitespace-delimited words / 535 characters in a group; its base reading flow is **nine grouped passages per route**, replacing 35 tiny pages. Story prose, eight decisions, seven accounts, all 1,344 choice sequences and save edition v2 remain unchanged.
+
+At Standard text size, every one of the 375 story variants fits on **one card per beat with its choices**, including restore/storage notices, at both 1440×900 and 1366×768. Larger text can use two cards. When a passage needs splitting, the final paragraph stays beside its responses before falling back to a decision-only page. Stable source anchors keep older saves readable despite the changed grouping. The existing adaptive mobile layout remains available but no longer dictates desktop pacing. The [normal-window preview](evidence/journey-03-fuller-desktop.png) shows four paragraphs and all three responses together, with no Continue button; the scene remains visible alongside the card.
+
+The [new desktop report](evidence/journey-03-desktop-cards.json) passes **six configurations** (both desktop sizes at scales 1 / 1.2 / 1.4), including text preservation, controls, bounds and overlap checks. Earlier mobile matrices below are historical evidence for their earlier source versions. `npm run validate` passes **295 tests in 25 files**, type checks with **0 errors / 0 warnings / 25 hints**, and builds the same three static routes; the existing chunk advisory remains. The fuller layout still needs human pacing review; word counts and fewer Continue presses do not prove enjoyment.
+
+### Compact reading cards — 7 October 2026 (superseded grouping policy)
 
 User feedback identified long prose and scrolling as breaks in immersion. The `/journey/` revision cuts visible content to **744–829 words per route** while preserving all 1,344 choice sequences, eight decisions, seven accounts, permissions, prop consequences and common empty endings. No duration target is claimed from that word count. The earlier 8–12 minute estimate is now explicitly a playtest question; the 30–45 minute full-game goal must be earned through consequential activity rather than longer cards or more Continue taps.
 
