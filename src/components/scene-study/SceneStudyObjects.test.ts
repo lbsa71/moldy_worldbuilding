@@ -9,6 +9,7 @@ import { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator'
 import '@babylonjs/core/Lights/Shadows/shadowGeneratorSceneComponent';
 import { Quaternion, Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { SceneStudyObjects } from './SceneStudyObjects';
+import { fullStage, type StagePresence } from '../../game/presentation/SceneDirection';
 
 const cleanups: (() => void)[] = [];
 afterEach(() => cleanups.splice(0).forEach(cleanup => cleanup()));
@@ -30,6 +31,12 @@ function fixture() {
   const handle = CreateBox('handle', { size: 0.03 }, scene);
   handle.parent = cup;
   const shore = CreateBox('shore', { size: 3 }, scene);
+  const books = CreateBox('Fading_StudyBooks', { size: 0.3 }, scene);
+  const lamp = CreateBox('Fading_StudyLamp', { size: 0.3 }, scene);
+  const curtainRoot = new TransformNode('Fading_StudyCurtain', scene);
+  const curtain = CreateBox('StudyPartialCurtain', { size: 1 }, scene);
+  const rail = CreateBox('StudyBedRail', { size: 0.4 }, scene);
+  curtain.parent = rail.parent = curtainRoot;
   const mirror = new MirrorTexture('mirror', 64, scene);
   const light = new SpotLight('lamp', new Vector3(1, 2, 0), Vector3.Down(), 2, 1, scene);
   const shadow = new ShadowGenerator(64, light);
@@ -40,10 +47,33 @@ function fixture() {
     mirror.renderList = [...visible];
     shadow.getShadowMap()!.renderList = [...visible];
   });
-  return { objects, chair, cup, seat, porcelain, handle, shore, mirror, shadow, openingWorld, openingRotation };
+  return { objects, chair, cup, seat, porcelain, handle, shore, mirror, shadow, openingWorld, openingRotation, books, lamp, curtain, rail, meshes };
 }
 
 describe('scene study live object presence', () => {
+  it('independently removes fabric and rail, clears every prop from reflection/shadows, and restores the accepted stage on reset', () => {
+    const f = fixture();
+    f.meshes.push(f.books, f.lamp, f.curtain, f.rail);
+    f.objects.settleArrangement(false, true, { ...fullStage(), curtain: 'absent' });
+    expect(f.curtain.isEnabled()).toBe(false);
+    expect(f.rail.isEnabled()).toBe(true);
+    expect(f.mirror.renderList).toContain(f.rail);
+    expect(f.mirror.renderList).not.toContain(f.curtain);
+    expect(f.shadow.getShadowMap()!.renderList).not.toContain(f.curtain);
+    const empty: StagePresence = { chair: 'absent', lamp: 'absent', books: 'absent', curtain: 'absent', rail: 'absent' };
+    f.objects.settleArrangement(false, false, empty);
+    const props = [f.seat, f.porcelain, f.handle, f.books, f.lamp, f.curtain, f.rail];
+    expect(props.every(mesh => !mesh.isEnabled())).toBe(true);
+    expect(f.mirror.renderList?.map(mesh => mesh.name)).toEqual(['shore']);
+    expect(f.shadow.getShadowMap()!.renderList?.map(mesh => mesh.name)).toEqual(['shore']);
+    expect(f.objects.getState()).toMatchObject({ stage: empty, cupVisible: false });
+    f.objects.reset();
+    expect(props.every(mesh => mesh.isEnabled())).toBe(true);
+    expect(f.mirror.renderList?.map(mesh => mesh.name)).toEqual(f.meshes.map(mesh => mesh.name));
+    expect(f.shadow.getShadowMap()!.renderList?.map(mesh => mesh.name)).toEqual(f.meshes.map(mesh => mesh.name));
+    expect(f.objects.getState().stage).toEqual(fullStage());
+  });
+
   it('removes every cup descendant from the main view, reflection and dynamic shadow list, then restores them', () => {
     const f = fixture();
     f.objects.setCupVisible(false);

@@ -1,10 +1,30 @@
 # Fading implementation and verification
 
-Updated 6 October 2026. This records the implementation waves following the [baseline critique, SWOT and remedy plan](assessment-and-remedy.md). It is a substantially improved playable chapter, not a claim of AAA production completion. The living scene was developed on `codex/fixed-scene-proof` and promoted to `main` at the user's request. Earlier verification records below apply to their respective implementation waves.
+Updated 7 October 2026. This records the implementation waves following the [baseline critique, SWOT and remedy plan](assessment-and-remedy.md). It is a substantially improved playable chapter and a separate consequence episode, not a claim of AAA production completion. The living scene was developed on `codex/fixed-scene-proof` and promoted to `main` at the user's request. The new narrative work is on `codex/journey-consequences`. Earlier verification records below apply to their respective implementation waves.
 
-On 6 October, the user requested promotion of the accepted game to `main`. The branch was fast-forwarded and pushed to `ac2d314`; [GitHub validation passed](https://github.com/lbsa71/moldy_worldbuilding/actions/runs/37458757806). The automatic [R2 publication failed](https://github.com/lbsa71/moldy_worldbuilding/actions/runs/37458850881) on its first object upload with `401 Unauthorized`, so that run does not establish a published release. The next narrative phase is a [30–45 minute design with falsifiable hypotheses](narrative-experiments.md); its proposed game content is not yet implemented.
+On 6 October, the user requested promotion of the accepted game to `main`. The branch was fast-forwarded and pushed to `ac2d314`; [GitHub validation passed](https://github.com/lbsa71/moldy_worldbuilding/actions/runs/37458757806). The automatic [R2 publication failed](https://github.com/lbsa71/moldy_worldbuilding/actions/runs/37458850881) on its first object upload with `401 Unauthorized`, so that run does not establish a published release. The next narrative phase is a [30–45 minute design with falsifiable hypotheses](narrative-experiments.md); its first short consequence episode is now implemented below. No new public deployment is claimed.
 
 ## What changed
+
+### The account we leave — 7 October 2026
+
+`/journey/` is a separate playable episode about Mara, a retired bookbinder deciding what account to leave her daughter. Eight decisions establish an approach, treatment of records and the cup, an agreement, a disagreement/repair, a concrete account and a departure. Three approach scenes rejoin with persistent facts. Seven possible accounts depend on those facts; the final offer changes with the account actually made. The [consequence cards](journey-consequence-cards.md) distinguish canonical facts, uncertainty, major hinges and the expressive readback choice.
+
+Books enter when Mara introduces their work. Books and cup can be explicitly dismissed, closing later documentary or demonstrative acts. Choosing another topic or waiting does not remove anything. A promise to leave all books closed keeps the account spoken, including when a notebook is present. Repair does not restore discarded props or force agreement. The existing books, curtain and rail now participate in complete authored `stage` states; no GLB, texture or audio asset changed.
+
+All three endings clear the chair and cloth, cup and trace, books, rail, curtain and lamp. Both local lamp lights are disabled. The same shore, sea, backdrop, camera, weather and mood remain in every departure. Presence is shared with reflection/shadow lists and rain collision support. Finite dissolves conceal discrete changes; reduced motion and restoration apply the complete final state immediately. The books shot was widened after browser review exposed the asset's limits at excessive magnification.
+
+The original eleven-decision chapter stays at `/`, with its v4 save untouched by the prototype's separate `journey-2026-10-07-v1` edition and slot. Both launch pages link to the other story. Audio/motion preferences remain shared. Blender management was informed of the new direction and semantic roots; no new export was requested.
+
+Verification:
+
+- `npm run validate`: **277 tests across 23 files**, type checking with **0 errors, 0 warnings, 24 existing hints**, and a successful three-route production build. The existing large-chunk advisory remains. A final prose correction was followed by the six narrative checks and regeneration of its source-bound report.
+- The [route report](evidence/journey-01-routes.json) executes **all 1,344 acyclic choice sequences** and independently restores **2,191 passage entrances**, comparing text, choices and presentation. There are eight decisions per route and 448 sequences per ending. These are sequences through a bounded, rejoining script, not 1,344 independent stories.
+- Counterfactual tests inspect delayed available actions; stage tests cover hidden geometry, light, shadow/reflection lists, mutable rain support, interrupted transitions, reset and reduced motion. The frozen accepted-chapter audit still passes.
+- Browser checks: retained-record inquiry to Carry on WebGPU; empty ending restored on WebGL; dismissed books/cup and reassurance to Keep with reduced motion and muted sound; closed-book practical approach with maintained disagreement to Rest on 390×844 WebGL. The four-option account menu supports keyboard selection. Desktop framing checked at 1440×900. The original v4 saved passage also restored without a reset.
+- Captures: [books and available evidence](evidence/journey-books-webgpu.png), [Carry on WebGL](evidence/journey-empty-carry-webgl.png), [Keep after deliberate dismissal](evidence/journey-empty-keep-webgl.png), [Rest on mobile](evidence/journey-empty-rest-mobile-webgl.png).
+
+The full 30–45 minute game, preserved replay forks and matched H5 visual experiment remain later gates. No participant results exist: attachment, difficult-but-fair choices, replay desire, actual duration and the meaning of empty endings remain untested. In particular, acknowledgement may still look like the most rewarding approach, and grouping three books means relinquishing a record also costs Mara her manual. H2/H4/H6/H9 must test whether those costs and options read fairly before expanding the story. The current episode is the material for that test, not evidence that those hypotheses passed.
 
 ### Remembered rain and temporal antialiasing — 6 October 2026
 

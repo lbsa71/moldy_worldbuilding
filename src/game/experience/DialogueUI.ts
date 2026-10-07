@@ -26,7 +26,7 @@ export class DialogueUI {
   private revision = 0;
   private cleanup = new AbortController();
 
-  constructor(private host: HTMLElement, private callbacks: Callbacks) {
+  constructor(private host: HTMLElement, private callbacks: Callbacks, chapterLabel = 'A place beside the light') {
     host.innerHTML = `
       <header class="experience-header">
         <span class="experience-wordmark">Fading</span>
@@ -51,6 +51,7 @@ export class DialogueUI {
         <div class="dialogue-choices" role="group" aria-label="Your response"></div>
         <p class="experience-notice" role="status"></p>
       </section>`;
+    host.querySelector('.chapter-marker')!.textContent = chapterLabel;
     this.panel = host.querySelector('.dialogue-panel')!;
     this.heading = host.querySelector('#dialogue-heading')!;
     this.text = host.querySelector('.dialogue-text')!;

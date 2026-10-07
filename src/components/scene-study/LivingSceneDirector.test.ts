@@ -8,11 +8,11 @@ import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
 import { VertexBuffer } from '@babylonjs/core/Buffers/buffer';
 import { Material } from '@babylonjs/core/Materials/material';
 import { readFileSync } from 'node:fs';
-import { Vector3, Quaternion } from '@babylonjs/core/Maths/math.vector';
+import { Vector3, Quaternion, Matrix } from '@babylonjs/core/Maths/math.vector';
 import { SceneStudyObjects } from './SceneStudyObjects';
 import { createLivingSceneCamera, createCupSeatTrace, LivingSceneDirector } from './LivingSceneDirector';
 import { getStudyShadowCasters } from './SceneStudySurfaces';
-import { CAMERA_CUES, openingDirection, type SceneDirection } from '../../game/presentation/SceneDirection';
+import { CAMERA_CUES, openingDirection, fullStage, type StagePresence, type SceneDirection } from '../../game/presentation/SceneDirection';
 import type { StudyAssets } from './SceneStudyAssets';
 
 const cleanups: (() => void)[] = [];
@@ -47,21 +47,33 @@ function fixture() {
   lamp.position.set(1.17, 0.145, 0.12);
   const curtain = new TransformNode('Fading_StudyCurtain', scene);
   curtain.position.set(2.95, 0.14, -0.85);
-  const assets: StudyAssets = { mode: 'production', message: '', warnings: [], chair, cup, lamp, meshes: [wood, porcelain], manifest: {}, camera: authored };
+  const fabric = CreateBox('StudyPartialCurtain', { size: 1 }, scene);
+  fabric.parent = curtain;
+  const rail = CreateBox('StudyBedRail', { size: 0.5 }, scene);
+  rail.parent = curtain;
+  const shade = CreateBox('shade', { size: 0.4 }, scene);
+  shade.parent = lamp;
+  const books = CreateBox('Fading_StudyBooks', { width: 0.2, height: 0.09, depth: 0.3 }, scene);
+  books.position.set(1.98, 0.145, 1.35);
+  const stageMeshes = [wood, porcelain, shade, books, fabric, rail];
+  const assets: StudyAssets = { mode: 'production', message: '', warnings: [], chair, cup, lamp, meshes: [...stageMeshes], manifest: {}, camera: authored };
   let reflected = [...assets.meshes];
   const objects = new SceneStudyObjects(chair, cup, assets.meshes, value => { reflected = value; });
   const openingChair = chair.rotationQuaternion.clone();
   const openingCup = cup.computeWorldMatrix(true).clone();
   let viewport = { width: 1200, aspect: 1.5 };
   let lampRest = false;
+  let lampPresent = true;
   const weatherCalls: { cue: SceneDirection['weather']; immediate: boolean }[] = [];
   const veils: number[] = [];
   const director = new LivingSceneDirector({ scene, camera, authoredCamera: authored, assets, objects,
     viewport: () => viewport, setLampRest: value => { lampRest = value; }, onTransitionOpacity: value => veils.push(value),
+    setLampPresent: value => { lampPresent = value; },
     setWeather: (cue, immediate) => weatherCalls.push({ cue, immediate }) });
   cleanups.push(() => { director.dispose(); scene.dispose(); engine.dispose(); });
   return { director, camera, authored, acceptedView, chair, cup, porcelain, scene, assets, objects, openingChair, openingCup,
-    veils, weatherCalls, getReflected: () => reflected, getLampRest: () => lampRest, resize: (width: number, aspect: number) => { viewport = { width, aspect }; director.resize(); } };
+    veils, weatherCalls, books, stageMeshes, getReflected: () => reflected, getLampRest: () => lampRest, getLampPresent: () => lampPresent,
+    resize: (width: number, aspect: number) => { viewport = { width, aspect }; director.resize(); } };
 }
 
 function cue(camera: SceneDirection['camera'], kind: SceneDirection['transition']['kind'] = 'cut', seconds = 0, arrangement = openingDirection().arrangement): SceneDirection {
@@ -69,6 +81,52 @@ function cue(camera: SceneDirection['camera'], kind: SceneDirection['transition'
 }
 
 describe('living scene editorial direction', () => {
+  it('applies stage-only changes under a dissolve, holds them through resize, and settles the same empty ending with reduced motion or restore', () => {
+    const f = fixture();
+    const absentBooks = { ...openingDirection(), transition: { kind: 'dissolve', seconds: 2 } as const, stage: { ...fullStage(), books: 'absent' as const } };
+    f.director.applyDirection(absentBooks);
+    f.director.update(0.9);
+    expect(f.books.isEnabled()).toBe(true);
+    f.resize(980, 980 / 720);
+    expect(f.books.isEnabled()).toBe(true);
+    f.director.update(0.1);
+    expect(f.books.isEnabled()).toBe(false);
+    expect(f.getReflected()).not.toContain(f.books);
+    f.director.update(1);
+    f.resize(1200, 1.5);
+    expect(f.camera.getViewMatrix(true).equalsWithEpsilon(f.acceptedView, 0.000001)).toBe(true);
+    const empty: StagePresence = { chair: 'absent', lamp: 'absent', books: 'absent', curtain: 'absent', rail: 'absent' };
+    const ending: SceneDirection = { ...openingDirection(), transition: { kind: 'dissolve', seconds: 3 },
+      arrangement: { chair: 'rest', cup: 'absent', lamp: 'rest', trace: 'none' }, stage: empty };
+    f.director.applyDirection(ending);
+    f.director.update(0.1);
+    f.director.setReducedMotion(true);
+    expect(f.stageMeshes.every(mesh => !mesh.isEnabled())).toBe(true);
+    expect(f.getReflected()).toHaveLength(0);
+    expect(f.getLampPresent()).toBe(false);
+    expect(f.director.getDiagnostics()).toMatchObject({ stage: empty, settled: true, cameraCue: 'wide' });
+    expect(f.veils.at(-1)).toBe(0);
+    f.director.reset();
+    expect(f.stageMeshes.every(mesh => mesh.isEnabled())).toBe(true);
+    expect(f.getLampPresent()).toBe(true);
+    f.director.setReducedMotion(false);
+    f.director.applyDirection(ending, true);
+    expect(f.stageMeshes.every(mesh => !mesh.isEnabled())).toBe(true);
+    f.director.update(30);
+    expect(f.camera.getViewMatrix(true).equalsWithEpsilon(f.acceptedView, 0.000001)).toBe(true);
+  });
+
+  it('never resurrects a retired stage when a second choice interrupts its dissolve', () => {
+    const f = fixture();
+    f.director.applyDirection({ ...cue('books', 'dissolve', 2), stage: { ...fullStage(), books: 'absent' } });
+    f.director.update(0.3);
+    f.director.applyDirection({ ...cue('chair', 'cut'), stage: { ...fullStage(), curtain: 'absent', rail: 'absent' } });
+    f.director.update(60);
+    expect(f.books.isEnabled()).toBe(true);
+    expect(f.director.getDiagnostics()).toMatchObject({ stage: { ...fullStage(), curtain: 'absent', rail: 'absent' }, settled: true });
+    expect(f.veils.at(-1)).toBe(0);
+  });
+
   it('forwards weather-only cues without restarting the camera, including immediate preference changes and reset', () => {
     const f = fixture();
     const before = f.camera.getViewMatrix(true).clone();
@@ -278,6 +336,51 @@ describe('living scene editorial direction', () => {
       }
       expect(Math.min(...projected), `left cup extent at ${width}`).toBeGreaterThan(panelRight + 4);
       expect(Math.max(...projected), `right cup extent at ${width}`).toBeLessThan(width - 2);
+    }
+  });
+
+  it('keeps the delivered book stack inside the visible pane on desktop, narrow desktop and mobile', () => {
+    const f = fixture();
+    const bytes = readFileSync(new URL('../../../public/scene-study/living-scene.glb', import.meta.url));
+    const jsonLength = bytes.readUInt32LE(12);
+    const gltf = JSON.parse(bytes.subarray(20, 20 + jsonLength).toString());
+    const binary = bytes.subarray(28 + jsonLength);
+    const parents = new Map<number, number>();
+    gltf.nodes.forEach((node: { children?: number[] }, index: number) => node.children?.forEach(child => parents.set(child, index)));
+    const world = (index: number): Matrix => {
+      const node = gltf.nodes[index];
+      const local = node.matrix ? Matrix.FromArray(node.matrix) : Matrix.Compose(
+        Vector3.FromArray(node.scale ?? [1, 1, 1]), Quaternion.FromArray(node.rotation ?? [0, 0, 0, 1]), Vector3.FromArray(node.translation ?? [0, 0, 0]));
+      const parent = parents.get(index);
+      return parent === undefined ? local : local.multiply(world(parent));
+    };
+    const vertices: Vector3[] = [];
+    gltf.nodes.forEach((node: { name: string; mesh?: number }, index: number) => {
+      if (!/^StudyBook(?:Cover|Pages)_/.test(node.name) || node.mesh === undefined) return;
+      const matrix = world(index);
+      for (const primitive of gltf.meshes[node.mesh].primitives) {
+        const accessor = gltf.accessors[primitive.attributes.POSITION], view = gltf.bufferViews[accessor.bufferView];
+        for (let vertex = 0; vertex < accessor.count; vertex++) {
+          const offset = (view.byteOffset ?? 0) + (accessor.byteOffset ?? 0) + vertex * (view.byteStride ?? 12);
+          vertices.push(Vector3.TransformCoordinates(new Vector3(binary.readFloatLE(offset), binary.readFloatLE(offset + 4), binary.readFloatLE(offset + 8)), matrix));
+        }
+      }
+    });
+    expect(vertices.length).toBeGreaterThan(100);
+    for (const [width, aspect] of [[1440, 1440 / 900], [1280, 1280 / 720], [901, 901 / 720], [980, 980 / 720], [390, 1.1]]) {
+      f.resize(width, aspect);
+      f.director.applyDirection(cue('books'), true);
+      const view = f.camera.getViewMatrix(true);
+      const left = width > 900 ? (Math.min(56, Math.max(20, width * 0.04)) + 570) / width : 0;
+      for (const vertex of vertices) {
+        const p = Vector3.TransformCoordinates(vertex, view);
+        const u = (1 + p.x / (-p.z * Math.tan(f.camera.fov / 2) * aspect)) / 2;
+        const v = (1 - p.y / (-p.z * Math.tan(f.camera.fov / 2))) / 2;
+        expect(u, `book left at ${width}`).toBeGreaterThan(left + 0.01);
+        expect(u, `book right at ${width}`).toBeLessThan(0.99);
+        expect(v).toBeGreaterThan(0.03);
+        expect(v).toBeLessThan(0.97);
+      }
     }
   });
 

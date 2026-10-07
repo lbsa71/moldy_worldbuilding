@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { Story } from "../inkjs/engine/Story";
 import { Compiler } from "../inkjs/compiler/Compiler";
 import { choose, getCurrentDialogue, parseDialogueTags } from "./ink";
+import { fullStage } from "../game/presentation/SceneDirection";
 
 const source = readFileSync(new URL("../ink/demo.ink", import.meta.url), "utf8");
 const compiled = new Compiler(source).Compile().ToJson() as string;
@@ -53,6 +54,50 @@ describe("the story presentation contract", () => {
     expect(() => parseDialogueTags([...cues, "weather: storm"])).toThrow();
     expect(() => parseDialogueTags([...cues, "weather: none", "weather: rain-memory"])).toThrow("Multiple weather");
     expect(() => parseDialogueTags(["weather: rain-memory"])).toThrow("Partial scene direction");
+  });
+  it("parses complete stage presence without inventing it for legacy directions", () => {
+    const legacy = parseDialogueTags(cues).direction!;
+    expect(legacy.stage).toBeUndefined();
+    expect(Object.hasOwn(legacy, "stage")).toBe(false);
+    const stage = "stage: chair=present,lamp=absent,books=present,curtain=absent,rail=present";
+    const direction = parseDialogueTags(["camera: books", ...cues.slice(1), stage]).direction!;
+    expect(direction.camera).toBe("books");
+    expect(direction.stage).toEqual({ chair: "present", lamp: "absent", books: "present", curtain: "absent", rail: "present" });
+    expect(() => parseDialogueTags([stage])).toThrow("Partial scene direction");
+    expect(() => parseDialogueTags([...cues, stage, stage])).toThrow("Multiple stage");
+    for (const missing of cues) {
+      expect(() => parseDialogueTags([...cues.filter(cue => cue !== missing), stage])).toThrow("Partial scene direction");
+    }
+  });
+  it.each([
+    "",
+    "chair=present,lamp=present,books=present,curtain=present",
+    "chair=present,lamp=present,books=present,curtain=present,rail=present,rail=absent",
+    "chair=present,lamp=present,books=present,curtain=present,rail=present,water=absent",
+    "chair=present,lamp=present,books=remembered,curtain=present,rail=present",
+    "chair=present,lamp=present,books=present,curtain=present,rail=present,",
+    "chair=present,lamp=present,books=present,curtain=present,rail = present",
+  ])("rejects partial or malformed stage presence: %s", value => {
+    expect(() => parseDialogueTags([...cues, `stage: ${value}`])).toThrow("Invalid stage");
+  });
+  it("requires a physically coherent cleared chair independently of tag order", () => {
+    const clearedStage = "stage: chair=absent,lamp=absent,books=absent,curtain=absent,rail=absent";
+    for (const cup of ["near", "away", "absent"]) {
+      for (const trace of ["none", "cup"]) {
+        const tags = ["camera: wide", "transition: dissolve 1.2", `arrangement: chair=rest,cup=${cup},lamp=rest,trace=${trace}`, clearedStage];
+        for (const ordered of [tags, [...tags].reverse()]) {
+          if (cup === "absent" && trace === "none") {
+            const direction = parseDialogueTags(ordered).direction!;
+            expect(Object.values(direction.stage!)).toEqual(Array(5).fill("absent"));
+          } else expect(() => parseDialogueTags(ordered)).toThrow();
+        }
+      }
+    }
+  });
+  it("returns an independent full stage for each legacy default", () => {
+    const modified = fullStage();
+    modified.books = "absent";
+    expect(fullStage()).toEqual({ chair: "present", lamp: "present", books: "present", curtain: "present", rail: "present" });
   });
   it("distinguishes absent objects from an explicit clear and validates every metadata field", () => {
     expect(parseDialogueTags([]).objects).toBeNull();

@@ -1,8 +1,11 @@
 ---
 import '../game/experience/experience.css';
+type Props = { edition?: 'chapter' | 'journey' };
+const { edition = 'chapter' } = Astro.props;
+const journey = edition === 'journey';
 ---
-<div id="game-container" class="game-container">
-  <canvas id="gameCanvas" tabindex="-1" aria-label="A lamp, empty chair and chipped cup on a dissolving stone shore. The view and arrangement respond to your choices."></canvas>
+<div id="game-container" class="game-container" data-edition={edition}>
+  <canvas id="gameCanvas" tabindex="-1" aria-label="A dissolving stone shore. Its objects, light and view respond to the conversation."></canvas>
   <div id="scene-transition" aria-hidden="true"></div>
   <div id="statsOverlay" hidden>
     <div>Renderer: <span id="rendererType">Loading…</span></div>
@@ -14,12 +17,13 @@ import '../game/experience/experience.css';
   <section id="launchScreen" class="launch-screen" aria-labelledby="launch-title" aria-describedby="launch-copy launch-status">
     <img class="launch-art" src="/assets/fading-title.webp" alt="" width="1536" height="1024" fetchpriority="high" />
     <div class="launch-content">
-      <p class="launch-kicker">A place beside the light</p>
+      <p class="launch-kicker">{journey ? 'The account we leave' : 'A place beside the light'}</p>
       <h1 id="launch-title">Fading</h1>
-      <p id="launch-copy" class="launch-copy">Someone left the lamp on.<br />Someone is still trying to remember why.</p>
+      <p id="launch-copy" class="launch-copy">{journey ? <>Mara has one account left to give.<br />She would like your help choosing the words.</> : <>Someone left the lamp on.<br />Someone is still trying to remember why.</>}</p>
       <button id="start-button" class="start-button" type="button">Enter the quiet</button>
       <p id="launch-status" class="launch-status" aria-live="polite"></p>
       <p class="launch-guidance">A place changes as you listen. Take your time. Sound is optional; headphones invite you closer.</p>
+      <p class="edition-link"><a href={journey ? '/' : '/journey/'}>{journey ? 'Return to the original chapter' : 'Play the new episode: The account we leave'}</a></p>
     </div>
     <p class="launch-footer">Memory, care, and the things we leave unfinished.</p>
   </section>
@@ -28,7 +32,9 @@ import '../game/experience/experience.css';
 
 <script>
   import { createLaunchExperience } from '../game/experience/launchExperience';
-  import inkFile from '../ink/demo.ink?raw';
+  import { CHAPTER_EDITION, JOURNEY_EDITION } from '../game/experience/StoryEdition';
+  const journey = document.getElementById('game-container')!.dataset.edition === 'journey';
+  const edition = journey ? JOURNEY_EDITION : CHAPTER_EDITION;
   const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
   const launchScreen = document.getElementById('launchScreen')!;
   const startButton = document.getElementById('start-button') as HTMLButtonElement;
@@ -37,7 +43,7 @@ import '../game/experience/experience.css';
   const statusText = document.getElementById('launch-status');
   if (new URLSearchParams(location.search).has('debug')) document.getElementById('statsOverlay')!.hidden = false;
   try {
-    if (localStorage.getItem('fading:chapter-one:save:v4')) startButton.textContent = 'Return to the light';
+    if (localStorage.getItem(edition.saveKey)) startButton.textContent = 'Return to the light';
   } catch { /* Storage is optional. */ }
   const launch = createLaunchExperience({
     canvas, launchScreen, startButton, rendererType, fpsCounter, statusText,
@@ -46,10 +52,11 @@ import '../game/experience/experience.css';
     // Legacy physics WASM is not part of this narrative runtime.
     loadWasm: async () => true,
     gameFactory: async (gameCanvas) => {
-      const [{ GameScene }, { Compiler }] = await Promise.all([
+      const [{ GameScene }, { Compiler }, { default: inkFile }] = await Promise.all([
         import('./GameScene'), import('../inkjs/compiler/Compiler'),
+        journey ? import('../ink/journey.ink?raw') : import('../ink/demo.ink?raw'),
       ]);
-      const game = new GameScene(gameCanvas);
+      const game = new GameScene(gameCanvas, edition);
       game.setStory(new Compiler(inkFile).Compile());
       return game;
     },

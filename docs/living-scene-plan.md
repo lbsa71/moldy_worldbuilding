@@ -1,5 +1,7 @@
 # Fading living scene production plan
 
+> **7 October direction:** the accepted chapter remains the control at `/`. The new `/journey/` episode activates books, cup, rail and curtain as authored opportunities. Explicit disregard can remove a prop and close a later act; idle time cannot. All endings leave the same empty foreground, with no lamp illumination or keepsake. See the [current narrative plan](narrative-experiments.md#direction-agreed-on-7-october-the-journey-leaves-an-empty-stage), [consequence cards](journey-consequence-cards.md), and [cue contract](living-scene-cues.md). Historical preservation constraints below describe the earlier visual integration, not a requirement to preserve its story in the new episode.
+
 Accepted direction, 5 October 2026. Reconstruct the praised opening image as a fixed, high-fidelity scene whose objects and spatial relationships respond to choices. The successful text and sound remain the emotional foundation. After accepting the pass05 shore, the user authorized integration into the actual game with camera and transition hints embedded in the dialogue script. The earlier proof milestones below remain a record of production history.
 
 ## Why the direction changed

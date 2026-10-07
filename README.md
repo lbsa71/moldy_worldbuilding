@@ -1,5 +1,7 @@
 # Fading
 
+The new consequence episode, **The account we leave**, is at **`/journey/`**. Help Mara decide what to leave her daughter: reassurance, a bounded account of evidence, or an ordinary act of care. Deliberately dismissing a prop changes later opportunities; every departure leaves the same empty shore. This is the first short episode toward the planned 30–45 minute game. Human response and actual duration still need the [pilot](docs/playtests/narrative-pilot-01.md).
+
 The playable chapter now uses the accepted living scene: the lamp, chair and chipped cup on a stone floor dissolving into the sea. Its [production plan](docs/living-scene-plan.md) and [Ink camera/transition authoring guide](docs/living-scene-cues.md#editing-a-passage) record the direction and implementation.
 
 A quiet, choice-driven 3D story about memory and care. Replies change attention and the arrangement of one place. Six authored camera compositions settle between passages; objects retain their identity. The chapter has eleven decisions and three resolutions. It runs locally as a static Astro site with Babylon.js and Ink.
@@ -15,7 +17,7 @@ npm run dev
 
 Open the local URL printed by Astro. Choose with the mouse, touch, Tab/Enter, or keys 1–4. The camera follows the story. Settings include sound, volume, reduced motion, larger text and conversation history. Progress and audio/motion preferences are saved in this browser when local storage is available. Begin again resets the story.
 
-The separate `/scene-study/` route retains chair/cup controls and an opening-image comparison for asset review. Both routes share the renderer and Blender assets. The actual chapter requires the production scene; a load failure offers retry. Use `/scene-study/?renderer=webgl` to exercise the study's fallback renderer.
+The accepted chapter remains at `/` as the control; `/journey/` has its own edition and save slot. The separate `/scene-study/` route retains chair/cup controls and an opening-image comparison for asset review. All routes share the renderer and Blender assets. The playable stories require the production scene; a load failure offers retry. Use `/scene-study/?renderer=webgl` to exercise the study's fallback renderer.
 
 The remembered-rain edition uses save slot v4 because its Ink content structure changed. Earlier saves remain stored, but this edition starts a fresh passage. New saves restore the current passage, weather, full object arrangement and camera immediately, including endings, without replaying taps.
 
@@ -31,6 +33,9 @@ Astro 7 runs development/preview servers in the background. Use `npm run astro -
 ## Project map
 
 - `src/ink/demo.ink`: active chapter. `legacy-demo.ink` preserves the original experiment.
+- `src/ink/journey.ink`: new branching consequence episode; `journey.test.ts` checks its bounded routes, delayed opportunities and empty endings.
+- `docs/journey-consequence-cards.md`: character, stable facts, prop meanings and per-decision consequences.
+- `docs/narrative-experiments.md`: production gates and falsifiable hypotheses, including deliberate relinquishment and journey over outcome.
 - `src/utils/ink.ts`: validated story-to-world tags.
 - `src/components/GameScene.ts`: renderer, world, story, save and lifecycle coordination.
 - `src/components/scene-study/`: shared living scene, materials, object state and editorial camera director.

@@ -1,6 +1,6 @@
 # Fading: narrative hypotheses and production plan
 
-6 October 2026. Target agreed with the user: **30–45 minutes for a first playthrough**. This is a testable design proposal, not a claim that the expanded story or its emotional effects already exist. The accepted scene, sound and current chapter are preserved on `main` at `ac2d314`.
+Updated 7 October 2026. Target agreed with the user: **30–45 minutes for a first playthrough**. This is a testable design proposal, not a claim that the expanded story or its emotional effects already exist. The accepted scene, sound and current chapter were preserved at `ac2d314`; the first consequence episode is developed separately at `/journey/`.
 
 ## What we are trying to establish
 
@@ -8,7 +8,19 @@
 
 The original emotional-landscape idea remains central. Its implementation has weakened: the current camera changes attention, but few earlier decisions change what the place makes possible later. The next game should make the same place acquire a history. A return to the chair, cup or rail should expose something the player offered, withheld, promised, misunderstood or relinquished.
 
-The production priority is to test that proposition in one 8–12 minute episode before writing a full-length game. Additional scenic assets are not required for this first experiment.
+The production priority is to test that proposition in one 8–12 minute episode before writing a full-length game. Additional scenic assets are not required for this first experiment. Existing books, curtain and rail become active stage props alongside the chair, lamp and cup.
+
+## Direction agreed on 7 October: the journey leaves an empty stage
+
+Props are opportunities to attend to a particular meaning. Introduce a prop when that meaning enters the conversation; retain it across unrelated decisions; relinquish it only after an explicit action, an explicitly labelled dismissal, or the shared final departure. Looking elsewhere, declining touch, keeping a boundary, pausing and leaving a tab idle do **not** mean disregard. A closed book can remain available. A deliberately dismissed account cannot be retrieved later as though nothing happened.
+
+The consequence must be both playable and perceivable: dismissing a record closes a later evidence-based offer, not merely a mesh. Clearly distinguish losing the record from forgetting knowledge already learned. Repair changes what can be done together next; it does not restore discarded evidence or erase an invented assurance. Do not make keeping every object the optimal collection route.
+
+**Every new-edition ending leaves the same very empty foreground:** chair and cloth, cup and trace, lamp and its local lights, books, bedside rail, curtain and frame are absent. The fractured shore, water and distant landscape remain. Use the same final wide composition and weather state in all endings; no brighter reward scene, extra keepsake, repaired floor or privileged outcome. The person and the encounter matter even though the visible destination converges. Earlier choices change testimony, permissions and what was shared on the way out.
+
+Disappearance uses one finite scene dissolve, then holds a stable arrangement for reading. Text and choices remain available during the transition; there is no forced wait. No continuous erosion, floating ornaments, unexplained object teleportation or automatic loss timer. Reduced motion and restored saves show exactly the same complete state immediately. The opening artwork and accepted chapter remain available as the visual/control baseline.
+
+The [consequence cards](journey-consequence-cards.md) specify the episode's person, canonical facts, deliberate dismissals, delayed witnesses and repair limits. The [cue guide](living-scene-cues.md) defines the complete `stage` contract. A new prop is commissioned only when a consequence card needs an action or evidence the current set cannot express; match the existing Blender materials, scale, named roots and contact/shadow checks before admission.
 
 ## Baseline: what the current game actually does
 
@@ -45,6 +57,8 @@ All hypotheses below are currently **untested**. The structural baseline above h
 | H6 — Repair | Players understand repair as a new act that can change a relationship without erasing its history or compelling forgiveness. | A disagreement offers acknowledgement, a changed practical act, or a maintained boundary. The companion can decline reconciliation; the game still continues. | At least 9/12 distinguish what repair changed from what it did not undo; at most 2/12 perceive automatic forgiveness or a mandatory apology to obtain the good ending. | Rewrite agency on both sides. Do not turn “apologise” into a state-reset button or make self-erasure the optimal strategy. |
 | H7 — Replay | A different approach offers a new encounter and interpretation worth revisiting. | After an ending, offer an optional fork at an earlier decision, with time to stop or explore under identical compensation. Preserve the first run. | At least 6/12 voluntarily start another branch; at least 4/12 finish a new episode and explain one changed interpretation using new evidence. Automated route comparison confirms at least 25% new authored beats on the designated alternative path. | Improve the branch's dramatic difference before adding a completion map or collectibles. Stated willingness and another ending-button click do not count as replay. |
 | H8 — Full-length engagement | The completed arc earns 30–45 minutes without padding and leaves an intelligible resolution. | A fresh 12-player full-game pilot after the short episode passes; collect first-run timing, stops and post-run accounts. | At least 9/12 reach a resolution; median active completion time among completers is 30–45 minutes; report all non-completions and elapsed times too. At least 9/12 describe the final consequence of an earlier commitment and rate continued interest at least 4/5. | Shorten repeated material, repair a weak act, or add a missing dramatic development. Never meet the duration target with forced waits, slow text or elongated camera transitions. |
+| H9 — Deliberate relinquishment | Players can distinguish disregarding a meaning from postponing attention, and connect the loss of a prop to a later unavailable act. | Compare retained and explicitly dismissed records from the same entrance; observe the immediate change and later request. Use a prescribed contrasting exposure after the uninterrupted run. | All supported dismissal paths have executed loss-of-opportunity witnesses. At least 9/12 exposed players explain the cause and later cost; at most 2/12 believe idle time or an unrelated caring strategy erased the prop. All 12 must see both cases; otherwise inconclusive. | Clarify intent and the lost possibility; retain the prop if the action did not actually relinquish it. Never fix confusion with a hidden attention timer. |
+| H10 — Journey over outcome | The shared empty stage can close distinct relationships without making the journey seem inconsequential or ranking care. | After the first run and unaided interview, show a contrasting complete departure with its preceding commitments. Disclose no preferred interpretation. | Exact final-stage parity passes software checks. At least 9/12 exposed players explain one earlier relational difference that remains consequential despite the empty stage; at most 2/12 describe emptiness as punishment for their caring style. Missing contrast exposure is inconclusive. | Revise the farewell and history callbacks before adding divergent scenery. If parity flattens meaning, strengthen the journey, not a trophy ending. |
 
 H2 and H3 use retrospective questions in the uninterrupted run. If we need to test pre-choice expectation directly, use a separate comprehension session so prompting and think-aloud do not contaminate natural timing or emotional response. H4 and H6 require the specified contrasting or repair outcomes to have been encountered; their exposure/denominator rules are recorded in the pilot protocol. Missing exposure is inconclusive, not a failure attributed to the player.
 
@@ -114,11 +128,11 @@ flowchart TD
   D --> S[Rest]
 ```
 
-The three departures remain families of legitimate resolutions. Specific acts can become unavailable for concrete reasons: a destroyed record cannot later be read; a taken cup is not simultaneously left for another arrival; a revoked permission is not silently restored. Always preserve a coherent way onward. Earlier facts change the substance and cost of leaving, not a hidden score that awards the true ending. The final choice cannot overwrite a broken promise.
+The departure families are provisional writing labels, not different amounts of property left on stage. Specific acts can become unavailable for concrete reasons: a dismissed record cannot later be read; a relinquished cup cannot demonstrate its chip; a revoked permission is not silently restored. Always preserve a coherent way onward. Earlier facts change the substance and cost of leaving, not a hidden score that awards the true ending. The final choice cannot overwrite a broken promise. All departure families ultimately share the same sparse shore.
 
 ## The emotional landscape as playable history
 
-Restore the voyage through changes in access, proximity, possession, enclosure and shared attention. Keep the physical lamp as a reliable anchor. A camera cue directs attention; an arrangement records an action; a return to the same framing lets the player read its consequence.
+Restore the voyage through changes in access, proximity, possession, enclosure and shared attention. Keep the physical lamp as a reliable anchor during the encounter, then let it go with the other props at departure. A camera cue directs attention; an arrangement records an action; a return to the same framing lets the player read its consequence.
 
 | Anchor | Proposed emotional function | Existing support and bounded next step |
 | --- | --- | --- |
@@ -127,7 +141,8 @@ Restore the voyage through changes in access, proximity, possession, enclosure a
 | Rail and bedside | A request, a response, and permission to approach. | Stable bedside composition and taps exist. An invitation can be withdrawn in dialogue without inventing an animated hand. |
 | Water and shore | Space for uncertainty, distance and departure. | Existing compositions can widen attention or show what is left behind. Quiet is an explicit choice, not an idle timer. |
 | Rain | A specific remembered event re-entering the present. | Already script-controlled. Trigger from that memory, never from a generic sadness or failure score. |
-| Books, curtain and fractured floor | Privacy, access and incomplete accounts. | Currently static motifs. Opening a book, changing a curtain gap or moving a slab requires new saved states and asset/runtime validation. Test the narrative need before producing these changes. |
+| Books and curtain | Access to incomplete accounts and the privacy in which they are shared. | Promote existing geometry to explicitly authored presence states; books may arrive with their account and leave after deliberate dismissal. Do not depict opening pages or cloth movement the asset does not support. |
+| Fractured floor | A place coming apart, regardless of how carefully someone cares. | Keep the accepted cubes and supporting surfaces unchanged. The same shore remains after every departure. |
 
 The floor's existing dissolution belongs to the place, not to the player's moral performance. Do not destabilise furniture support or increase damage because a player refuses closeness. Changes should settle for reading. Reduced motion preserves every decision and final arrangement. If H5 fails, improve the mapping between action and place before expanding scenery.
 
@@ -145,13 +160,14 @@ Release-blocking software checks for the new edition:
 - **G2: route integrity.** The intended invariant is that every reachable supported state has a coherent continuation and resolution. Preserve explicit uncertainty; reject references to undiscovered evidence, unmade promises or unavailable objects. Exhaustively explore the declared bounded state model and report its limits. Targeted counterfactual fixtures supplement it; where exhaustive checking is impractical, state exactly which paths were tested and retain the uncovered-state risk. A sample must never be reported as a proof about every history.
 - **G3: persistence.** At Gate 1, save/resume preserves text, choices, facts, complete presentation and ending, without replaying one-shot sounds. At Gate 4, extend this guarantee to historical checkpoint forks and verify that forking leaves the original run intact.
 - **G4: presentation and pace.** Every beat has complete valid cues; motion/audio access settings preserve narrative possibilities. Idle time never changes care, consent or progress. Resource disposal and both rendering backends remain covered.
+- **G5: prop causality and departure parity.** Explicit dismissals persist across rejoins and restoration, including unavailable later actions. Disappeared props leave no shadow, reflection, rain collision or local lamp illumination. Every terminal route has the identical empty foreground, no cup trace, no rain and the same wide shot. Restart restores the authored entrance, not the preceding ending. These tests establish state invariants, not the emotional success of emptiness.
 
 ## Work order and decisions
 
 | Gate | Deliverable | Proceed only when |
 | --- | --- | --- |
 | 0 — Baseline and specification | This ledger, reproducible baseline, one-page character/situation brief, finite state dictionary and consequence cards for two linked hinges. | There is a clear player task, a companion with an independent want, and no pretend causal link. Baseline data is labelled separately from playtest evidence. |
-| 1 — Consequence prototype | One 8–12 minute episode, 6–8 decisions, three substantial approaches, one delayed consequence and one repair/renegotiation. Use current assets and retain the accepted chapter as a control. | G1–G4 for the slice; formative H1–H4 and H6 evidence. If causality or attachment fails, stop expansion and revise the episode. |
+| 1 — Consequence prototype | One 8–12 minute episode, 6–8 decisions, three substantial approaches, delayed consequences and repair/renegotiation. Activate current props, explicit relinquishment and a common empty departure. Retain the accepted chapter as a control. | G1–G5 for the slice; formative H1–H4, H6, H9 and H10 evidence. If causality or attachment fails, stop expansion and revise the episode. |
 | 2 — Spatial experiment | Matched responsive/static arrangement variants; same prose, audio and cameras. | H5 is supported directionally without distraction or moral-score readings. Otherwise simplify the scene response. |
 | 3 — Complete draft | Four movements, bounded episode branches, history-dependent departures, authored audio/camera cues. | Structural gates pass and a fresh first-run pilot meets H8. No new asset commission solely to compensate for weak stakes. |
 | 4 — Replay and finish | Historical checkpoint forks, preserved runs, optional conversation map; edit repeated prose and mix transitions. | H7, save/fork integrity and final WebGPU/WebGL/accessibility checks. A successful first run must remain satisfying even if the player never replays. |
@@ -165,3 +181,9 @@ The [pilot worksheet](playtests/narrative-pilot-01.md) defines recruitment, neut
 The implementation can use Ink's existing branches, gathers and stateful conditions; [inkle's official guide](https://github.com/inkle/ink/blob/master/Documentation/WritingWithInk.md) documents those mechanisms. No engine replacement is proposed.
 
 The distinction between changing later options, resolving actions and presenting their consequences follows [Emily Short's narrative-system discussion](https://emshort.blog/2022/04/09/what-does-your-narrative-system-need-to-do/). Our specific caring dilemmas, thresholds and production gates are project hypotheses, not results established by that article.
+
+[Short's discussion of quality-, salience- and waypoint-based structures](https://emshort.blog/2016/04/12/beyond-branching-quality-based-and-salience-based-narrative-structures/) supplies alternatives to an ever-expanding branch tree. Here we use a bounded authored episode with explicit facts and conditional opportunities after rejoins; we are not introducing procedural dialogue or a hidden virtue total.
+
+[Kurt Squire and Henry Jenkins, The Art of Contested Spaces](https://web.mit.edu/~21fms/People/henry3/contestedspaces.html), discusses game space as an art form, objects as opportunities for action, and embedded information. Our application is to make a book or cup change what can be offered in conversation. The stationary stage, deliberate relinquishment and equal empty endings are this project's artistic hypotheses, not recommendations or findings established by that essay.
+
+References checked 7 October 2026. These are design and authoring sources; none validates the pilot thresholds or promises a therapeutic effect.

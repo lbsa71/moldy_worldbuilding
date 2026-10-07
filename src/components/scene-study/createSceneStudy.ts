@@ -178,6 +178,7 @@ export async function createSceneStudy(canvas: HTMLCanvasElement, options: Scene
           return { width, aspect: width / Math.max(1, height) };
         },
         setLampRest: surfaces.setLampRest,
+        setLampPresent: surfaces.setLampPresent,
         setWeather: (cue, immediate) => weather?.applyCue(cue, immediate),
         onTransitionOpacity: options.onTransitionOpacity,
       });

@@ -1,6 +1,44 @@
 # Fixed-view scene cue study
 
-5 October 2026. Source: [current chapter](../src/ink/demo.ink) and [accepted production plan](living-scene-plan.md). The initial study proposals below remain a vocabulary for review. The later **Authored game integration** section records the script contract now implemented following the user's authorization; it supersedes earlier proposals where their mappings differ. The chapter retains eleven decisions and three legitimate endings.
+Updated 7 October 2026. Source: [control chapter](../src/ink/demo.ink), [accepted production plan](living-scene-plan.md) and [narrative experiment plan](narrative-experiments.md). The control chapter retains eleven decisions and three legitimate endings. The **Journey prototype: complete stage presence** section below is the current direction for new narrative work: deliberate attention and disregard change the stage, and every ending leaves it nearly empty. Earlier cue/contact-sheet proposals and the control chapter's retained-furniture endings are historical context, not the new ending specification.
+
+## Journey prototype: complete stage presence
+
+The shoreline remains one place. Its props carry particular meanings established by dialogue; the player can attend to those meanings, defer them or explicitly set them aside. Prop presence is authored state, not an emotional score. Never infer disregard from reading time, silence, an unvisited branch, muted sound or reduced motion. A removal must follow an intentional choice whose wording makes the abandoned meaning or opportunity legible. A later appearance needs a new authored introduction or deliberate return; it cannot silently erase the consequence of an earlier choice.
+
+New prototype passages author this complete contract on **every displayed beat**, including conditional variants and endings:
+
+```ink
+# camera: books
+# transition: dissolve 1.2
+# arrangement: chair=rest,cup=near,lamp=steady,trace=none
+# stage: chair=present,lamp=present,books=present,curtain=present,rail=present
+# sound: none
+# weather: none
+```
+
+`stage` contains exactly five named fields, each once, in any order: `chair`, `lamp`, `books`, `curtain` and `rail`. Each accepts only `present` or `absent`. The books are one staged group of the existing authored books, not a collectible count. The `books` camera cue frames that group; it does not create an object or confer importance without the corresponding dialogue.
+
+`arrangement` still names chair orientation, cup orientation/presence, lamp state and the optional cup trace. These properties are distinct from whole-prop presence. For physical consistency, `stage: chair=absent,...` requires `cup=absent,trace=none`, because both cup and trace belong to the chair seat. An absent lamp must contribute neither its mesh nor its local illumination. Every removed prop must also leave the reflection and shadow render lists; absence is not a transparent surface left in the scene.
+
+The parser rejects partial, repeated and unknown stage fields, invalid values, duplicate stage tags, and a stage without the complete `camera`/`transition`/`arrangement` trio. A legacy direction omitting `stage` retains an undefined stage in parsed output; the renderer interprets it as `fullStage()`. This preserves the accepted control chapter. New narrative scripts must **not** use omission as persistence: complete authored states carry each choice's history into every subsequent beat and restore deterministically from the saved passage entrance.
+
+Use a finite scene-only `dissolve` for discrete appearances/removals; the transition conceals the state change and settles into a stable reading image. `ease` remains available for camera and orientation changes. No second fade is scheduled while a player reads. Reduced motion applies exactly the same final stage immediately. A new passage supersedes an unfinished transition; old props cannot reappear because an earlier animation finishes late.
+
+All new prototype endings share this empty-stage invariant:
+
+```ink
+# camera: wide
+# transition: dissolve 2.4
+# arrangement: chair=rest,cup=absent,lamp=rest,trace=none
+# stage: chair=absent,lamp=absent,books=absent,curtain=absent,rail=absent
+# sound: none
+# weather: none
+```
+
+The rock, water and distant horizon remain as the place the relationship occupied. The terminal composition is equally sparse in every ending, with no cup ring, saved furniture, extra lamp light or rain as a verdict. What differs is the history the dialogue remembers: what was offered, refused, promised, disregarded or repaired. The player cannot preserve a richer final stage by choosing the supposedly correct caring strategy. The journey supplies the differences worth replaying.
+
+Verification separates mechanical and experiential claims. Parser/runtime tests can establish complete states, physical presence, deterministic restore and empty endings. Playtests must establish whether the player understands deliberate disregard, relates changes to the conversation and values journey differences despite the shared final composition. No passing software test proves those responses; see the [hypothesis register and gates](narrative-experiments.md).
 
 ## Implemented contract and proof scope
 
@@ -92,9 +130,10 @@ A porcelain cup with a blue pattern rests on the chair: a little chip at the rim
 
 | Tag | Accepted values | Meaning |
 | --- | --- | --- |
-| `camera` | `wide`, `chair`, `cup`, `bedside`, `water`, `shore` | A calibrated composition. The camera holds after the transition. |
+| `camera` | `wide`, `chair`, `cup`, `books`, `bedside`, `water`, `shore` | A calibrated composition. The camera holds after the transition. |
 | `transition` | `cut 0`, `ease <seconds>`, `dissolve <seconds>` | Immediate change, continuous reframing, or a scene-only fade through dark. Duration is 0–5 seconds; dialogue and choices remain available. |
 | `arrangement` | All four fields shown above | `chair=rest/turned`; `cup=near/away/absent`; `lamp=steady/rest`; `trace=none/cup`. A cup trace requires an absent cup. |
+| `stage` | All five fields in the journey example above | Complete whole-prop presence. Each is `present/absent`. Legacy omission means a full stage; new prototype beats author it explicitly. |
 | `sound` | `none`, `taps` | One authored tap pair after the new view settles, cancelled if the reader leaves that beat. |
 | `weather` | `none`, `rain-memory` | Complete weather state: dry, or remembered drizzle, local ripples, damp edges and quiet ambient rain. Reduced motion keeps dampness and sound. |
 

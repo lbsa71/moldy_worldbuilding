@@ -1,6 +1,8 @@
 import { Quaternion, Vector3 } from '@babylonjs/core/Maths/math.vector';
 import type { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import type { TransformNode } from '@babylonjs/core/Meshes/transformNode';
+import type { Node } from '@babylonjs/core/node';
+import { fullStage, type StagePresence } from '../../game/presentation/SceneDirection';
 
 /** One source of object presence for the main view, mirror and shadow pass. */
 export class SceneStudyObjects {
@@ -10,6 +12,8 @@ export class SceneStudyObjects {
   private reducedMotion = false;
   private cupVisible = true;
   private closed = false;
+  private stage = fullStage();
+  private readonly stageNodes: Partial<Record<keyof StagePresence, Node>>;
 
   constructor(
     private readonly chair: TransformNode,
@@ -19,6 +23,16 @@ export class SceneStudyObjects {
   ) {
     // glTF may export quaternion rotations. Retain the authored opening orientation.
     this.initialRotation = chair.rotationQuaternion?.clone() ?? Quaternion.FromEulerVector(chair.rotation);
+    const scene = chair.getScene();
+    this.stageNodes = {
+      chair,
+      lamp: scene.getNodeByName('Fading_StudyLamp') ?? scene.getNodeByName('Fading_Lamp') ?? undefined,
+      books: scene.getNodeByName('Fading_StudyBooks') ?? undefined,
+      // The accepted export groups rail and fabric beneath one curtain root.
+      // Hide their individual meshes so either can remain meaningful on its own.
+      curtain: scene.getNodeByName('StudyPartialCurtain') ?? undefined,
+      rail: scene.getNodeByName('StudyBedRail') ?? undefined,
+    };
     chair.rotationQuaternion = this.initialRotation.clone();
     chair.computeWorldMatrix(true);
     cup.computeWorldMatrix(true);
@@ -29,6 +43,9 @@ export class SceneStudyObjects {
 
   private syncPresence(): void {
     if (this.closed) return;
+    for (const key of Object.keys(this.stageNodes) as (keyof StagePresence)[]) {
+      this.stageNodes[key]?.setEnabled(this.stage[key] === 'present');
+    }
     this.cup.setEnabled(this.cupVisible);
     this.applyRenderLists(this.meshes.filter(mesh => !mesh.isDisposed() && mesh.isEnabled() && mesh.isVisible && mesh.getTotalVertices() > 0));
   }
@@ -51,10 +68,11 @@ export class SceneStudyObjects {
   }
 
   /** Editorial cuts replace the complete arrangement without a second animation clock. */
-  settleArrangement(chairTurned: boolean, cupVisible: boolean): void {
+  settleArrangement(chairTurned: boolean, cupVisible: boolean, stage: StagePresence = fullStage()): void {
     if (this.closed) return;
     this.targetTurn = this.turn = chairTurned ? -Math.PI / 9 : 0;
     this.cupVisible = cupVisible;
+    this.stage = { ...stage };
     this.applyTurn();
     this.syncPresence();
   }
@@ -88,12 +106,14 @@ export class SceneStudyObjects {
     if (this.closed) return;
     this.targetTurn = this.turn = 0;
     this.cupVisible = true;
+    this.stage = fullStage();
     this.applyTurn();
     this.syncPresence();
   }
 
-  getState(): { chairTurned: boolean; cupVisible: boolean; reducedMotion: boolean; settled: boolean } {
-    return { chairTurned: this.targetTurn !== 0, cupVisible: this.cupVisible, reducedMotion: this.reducedMotion, settled: this.turn === this.targetTurn };
+  getState(): { chairTurned: boolean; cupVisible: boolean; reducedMotion: boolean; settled: boolean; stage: StagePresence } {
+    return { chairTurned: this.targetTurn !== 0, cupVisible: this.cupVisible && this.stage.chair === 'present',
+      reducedMotion: this.reducedMotion, settled: this.turn === this.targetTurn, stage: { ...this.stage } };
   }
 
   dispose(): void { this.closed = true; }

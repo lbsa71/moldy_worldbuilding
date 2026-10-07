@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "edition": "journey-2026-10-07-v1",
+  "source": {
+    "path": "src/ink/journey.ink",
+    "sha256": "13929cfc50a3a7c2621114b7c3ca2e5f6010fc1383bcf41cf731c20a3b11a1c5"
+  },
+  "method": "Depth-first execution of every available choice at every reachable prefix in this acyclic Ink edition. One compiled Story state is restored for each sibling; an independent Story restores and compares every entrance, including text, choices and all presentation fields. No state equivalence pruning or random sampling.",
+  "limits": "Proves the enumerated script properties under the current compiler/parser only. No human playtime, attachment, readability, choice fairness, renderer appearance, historical replay forks or emotional response was measured. All displayed choice labels are counted, including unselected alternatives. Chapter headings and hidden prose are excluded.",
+  "tokenizer": "/[\\p{L}\\p{N}]+(?:['’−-][\\p{L}\\p{N}]+)*/gu",
+  "routes": 1344,
+  "visitedPrefixes": 2191,
+  "stableScenes": [
+    "journey_account",
+    "journey_agreement",
+    "journey_carry",
+    "journey_conflict",
+    "journey_cup",
+    "journey_departure",
+    "journey_inquiry",
+    "journey_invitation",
+    "journey_keep",
+    "journey_presence",
+    "journey_readback",
+    "journey_reassurance",
+    "journey_rest"
+  ],
+  "authoredChoiceEdges": 31,
+  "renderedSceneChoiceEdges": 37,
+  "endings": {
+    "carry": 448,
+    "keep": 448,
+    "rest": 448
+  },
+  "ranges": {
+    "narrativeWords": {
+      "min": 1356,
+      "max": 1537
+    },
+    "displayedChoiceWords": {
+      "min": 261,
+      "max": 307
+    },
+    "totalDisplayedWords": {
+      "min": 1622,
+      "max": 1810
+    },
+    "decisions": {
+      "min": 8,
+      "max": 8
+    }
+  },
+  "reproduction": "npx vitest run src/ink/journey.test.ts",
+  "regeneration": "JOURNEY_METRICS_WRITE=1 npx vitest run src/ink/journey.test.ts"
+}

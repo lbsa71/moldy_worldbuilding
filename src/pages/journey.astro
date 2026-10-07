@@ -1,0 +1,40 @@
+---
+import Game from '../components/Game.astro';
+---
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+            name="description"
+            content="Help Mara decide what account to leave. A short, branching Fading episode about care, uncertainty, and what can no longer be offered."
+        />
+        <title>Fading — The account we leave</title>
+    </head>
+    <body>
+        <Game edition="journey" />
+    </body>
+</html>
+
+<style is:global>
+    html,
+    body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100%;
+        background: #050705;
+        color: #f4f2e8;
+        font-family: system-ui, sans-serif;
+    }
+
+    body {
+        overflow: hidden;
+    }
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+</style>

@@ -104,6 +104,25 @@ export function createStudyBulbSource(scene: Scene, downwardLight: SpotLight) {
   return { light, shadows };
 }
 
+/** Fixture presence controls emitted light as well as its visible geometry. */
+export function createStudyLampController(downlight: SpotLight, bulb: PointLight) {
+  const steadyDownlight = downlight.intensity;
+  const steadyBulb = bulb.intensity;
+  let present = true;
+  let resting = false;
+  const apply = () => {
+    const factor = present ? (resting ? 0.9 : 1) : 0;
+    downlight.intensity = steadyDownlight * factor;
+    bulb.intensity = steadyBulb * factor;
+    downlight.setEnabled(present);
+    bulb.setEnabled(present);
+  };
+  return {
+    setLampRest: (value: boolean) => { resting = value; apply(); },
+    setLampPresent: (value: boolean) => { present = value; apply(); },
+  };
+}
+
 async function loadAuthoredEnvironment(scene: Scene, url: string, signal?: AbortSignal): Promise<HDRCubeTexture> {
   if (!url.startsWith('/scene-study/')) throw new Error('The study environment must be a local /scene-study/ asset.');
   // Babylon 7.34's EffectWrapper awaits its async initialization function without
@@ -275,16 +294,10 @@ export async function createStudySurfaces(scene: Scene, assets: StudyAssets, opt
     bulb.shadows.getShadowMap()!.renderList = [...casters];
   };
   warnings.push('The bulb uses six 256px cube shadow faces in addition to the downlight and mirror; browser performance remains under review.');
-  const steadyDownlight = lamp.intensity;
-  const steadyBulb = bulb.light.intensity;
-  const setLampRest = (rest: boolean) => {
-    // A small fixture change, independent of exposure, weather and story outcome.
-    lamp.intensity = steadyDownlight * (rest ? 0.9 : 1);
-    bulb.light.intensity = steadyBulb * (rest ? 0.9 : 1);
-  };
+  const lampController = createStudyLampController(lamp, bulb.light);
   if (!scene.activeCamera) throw new Error('The living scene needs an active camera before configuring antialiasing.');
   const antialiasing = await createSceneAntialiasing(scene, scene.activeCamera, display, {
     off: options.antialiasing === undefined ? undefined : options.antialiasing === 'off',
   });
-  return { mirror, shadows, applyRenderLists, environmentMode, environmentUrl, warnings, setLampRest, antialiasing };
+  return { mirror, shadows, applyRenderLists, environmentMode, environmentUrl, warnings, ...lampController, antialiasing };
 }

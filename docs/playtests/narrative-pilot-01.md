@@ -1,6 +1,6 @@
 # Narrative pilot 01: consequence, care and return
 
-Protocol v1, 6 October 2026. Status: **prepared; no participant results collected**.
+Protocol v2, 7 October 2026. Status: **prepared; no participant results collected**. Adds deliberate relinquishment and common empty departures (H9/H10); freeze this version with the tested build before recruitment.
 
 Use with the [hypothesis ledger](../narrative-experiments.md). The target complete game is 30–45 minutes; this first prototype is 8–12 minutes. Gate thresholds belong to that versioned ledger and must be frozen with the tested build before recruitment.
 
@@ -15,6 +15,8 @@ Use with the [hypothesis ledger](../narrative-experiments.md). The target comple
 These are successive small production gates, not one study proving the entire game. A larger confirmatory study would require a specified comparison, sample-size rationale and analysis plan after the pilot establishes workable measures.
 
 H4 and H6 use separate diagnostic exposure after the uninterrupted run and its unprompted interview, or a fresh diagnostic cohort. Fix the cohort at 12 starters and show the same prescribed contrasting requests and repair continuation to all. Record started, exposed, answered and stopped counts separately. Apply the 9/12 gate only when all 12 received the specified contexts; otherwise record it as inconclusive. Do not silently shrink the denominator or replace inconvenient routes. Flag reused participants. H4 measures comprehension of context-dependent usefulness, not spontaneous discovery. H6 measures understanding of repair; satisfaction among players who freely chose repair remains descriptive unless separately specified and tested.
+
+H9/H10 follow that same exposure rule. After the uninterrupted interview, show a retained versus deliberately dismissed record and the later request, then two complete departures with the necessary preceding commitments. Counterbalance order. Ask “What changed, and why?” and “What differences between these encounters still matter at the end?” before asking specifically about props. Record whether emptiness reads as punishment, release, futility, inevitability or something else in the player's own words. Do not teach the intended interpretation or score poetic wording as understanding. Keep these diagnostic responses separate from unaided first-run observations.
 
 ## Before the session
 
@@ -75,6 +77,8 @@ Compensation, when offered, is identical either way. Record the actual choice, t
 | H6: repair-versus-erasure explanations; forced-forgiveness reports | Not run |
 | H7: actual replay starts / new episodes / changed interpretations | Not run |
 | H8: completion, duration distribution and earned departure | Not run |
+| H9: explicit loss and later cost understood; idle-time misconceptions; exposed / started | Not run |
+| H10: consequential history despite equal stage; punishment interpretations; exposed / started | Not run |
 | Contrary observations, access issues and coding disagreements | Not run |
 | Decision: supported in pilot / revise-reject / inconclusive | Not run |
 | Exact next change and hypothesis version for retest | Not run |

@@ -2,6 +2,7 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import { Compiler } from "../inkjs/compiler/Compiler";
 import { GameScene, SAVE_KEY } from "./GameScene";
+import { CHAPTER_EDITION, JOURNEY_EDITION, type StoryEdition } from "../game/experience/StoryEdition";
 
 const harness = vi.hoisted(() => ({
   handles: [] as any[], interfaces: [] as any[], audios: [] as any[], options: [] as any[],
@@ -94,8 +95,8 @@ The lamp remains.
 -> END
 `;
 const games: GameScene[] = [];
-function game(source = script) {
-  const instance = new GameScene(document.querySelector("canvas")!);
+function game(source = script, edition: StoryEdition = CHAPTER_EDITION) {
+  const instance = new GameScene(document.querySelector("canvas")!, edition);
   instance.setStory(new Compiler(source).Compile());
   games.push(instance);
   return instance;
@@ -122,6 +123,41 @@ beforeEach(() => {
 afterEach(() => { games.splice(0).forEach(instance => instance.dispose()); vi.restoreAllMocks(); vi.useRealTimers(); });
 
 describe("accepted living-scene game runtime", () => {
+  it("keeps prototype and accepted chapter progress in independent edition slots", async () => {
+    const chapter = game(); await chapter.run();
+    ui().callbacks.onChoice(0);
+    const savedChapter = localStorage.getItem(SAVE_KEY);
+    chapter.dispose();
+    const journey = game(script, JOURNEY_EDITION); await journey.run();
+    expect(passage().text).toBe("The first shore.");
+    ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    const savedJourney = localStorage.getItem(JOURNEY_EDITION.saveKey);
+    expect(JSON.parse(savedJourney!).edition).toBe(JOURNEY_EDITION.id);
+    expect(localStorage.getItem(SAVE_KEY)).toBe(savedChapter);
+    journey.dispose();
+    const restoredChapter = game(); await restoredChapter.run();
+    expect(passage().text).toBe("A cup, still warm.");
+    expect(localStorage.getItem(JOURNEY_EDITION.saveKey)).toBe(savedJourney);
+    restoredChapter.dispose();
+    await game(script, JOURNEY_EDITION).run();
+    expect(passage().text).toBe("Two taps, then a pause.");
+    expect(audio().playTapCue).not.toHaveBeenCalled();
+    ui().callbacks.onRestart();
+    expect(passage().text).toBe("The first shore.");
+    expect(localStorage.getItem(SAVE_KEY)).toBe(savedChapter);
+  });
+
+  it("rejects an Ink save from a different edition even when its numeric version matches", async () => {
+    const first = game(script, JOURNEY_EDITION); await first.run();
+    ui().callbacks.onChoice(0); first.dispose();
+    const stored = JSON.parse(localStorage.getItem(JOURNEY_EDITION.saveKey)!);
+    stored.edition = "another-story-v1";
+    localStorage.setItem(JOURNEY_EDITION.saveKey, JSON.stringify(stored));
+    await game(script, JOURNEY_EDITION).run();
+    expect(passage().text).toBe("The first shore.");
+    expect(ui().setNotice).toHaveBeenCalledWith(expect.stringContaining("could not be read"));
+  });
+
   it("waits for accepted assets, initializes once, and constructs audio from the renderer scene", async () => {
     const pending = deferred(); harness.wait = pending.promise;
     const instance = game();

@@ -4,10 +4,11 @@ import { DialogueUI } from "../game/experience/DialogueUI";
 import { getCurrentDialogue, choose } from "../utils/ink";
 import { openingDirection } from "../game/presentation/SceneDirection";
 import type { Story } from "../inkjs/engine/Story";
+import { CHAPTER_EDITION, type StoryEdition } from "../game/experience/StoryEdition";
 
 // The authored living scene changes Ink content indices. Preserve earlier saves
 // under their original keys instead of interpreting them against this edition.
-export const SAVE_KEY = "fading:chapter-one:save:v4";
+export const SAVE_KEY = CHAPTER_EDITION.saveKey;
 const PREFERENCES_KEY = "fading:preferences:v1";
 type Preferences = { audio: boolean; volume: number; reducedMotion: boolean };
 
@@ -32,7 +33,9 @@ export class GameScene {
     }
   };
 
-  constructor(private canvas: HTMLCanvasElement) { this.preferences = this.readPreferences(); }
+  constructor(private canvas: HTMLCanvasElement, private readonly edition: StoryEdition = CHAPTER_EDITION) {
+    this.preferences = this.readPreferences();
+  }
   public setStory(story: Story): void { this.currentStory = story; }
   private ensureActive(): void {
     if (this.disposed) throw new Error("The game was closed during initialization.");
@@ -89,7 +92,7 @@ export class GameScene {
             this.dialogueUI!.setVolume(this.preferences.volume);
             this.savePreferences();
           },
-        });
+        }, this.edition.label);
         this.audioSystem.setPaused(document.hidden);
         this.audioSystem.setVolume(this.preferences.volume);
         this.audioSystem.setEnabled(this.preferences.audio);
@@ -191,6 +194,7 @@ export class GameScene {
       container.dataset.rainDrops = String(diagnostics.visibleRainDrops ?? 0);
       container.dataset.ripples = String(diagnostics.rippleCount ?? 0);
       container.dataset.dampPatches = String(diagnostics.dampPatchCount ?? 0);
+      if (diagnostics.stage) container.dataset.stage = JSON.stringify(diagnostics.stage);
     }
     const aaLabel = document.getElementById("aaType");
     const weatherLabel = document.getElementById("weatherType");
@@ -253,7 +257,7 @@ export class GameScene {
   }
   private saveStory(): void {
     if (!this.currentStory) return;
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ version: 4, state: this.currentStory.state.ToJson() })); }
+    try { localStorage.setItem(this.edition.saveKey, JSON.stringify({ version: this.edition.saveVersion, edition: this.edition.id, state: this.currentStory.state.ToJson() })); }
     catch {
       this.storageNotice = "Progress cannot be saved in this browser. Keep this tab open to finish.";
       this.dialogueUI?.setNotice(this.storageNotice);
@@ -262,10 +266,11 @@ export class GameScene {
   private restoreStory(): boolean {
     if (!this.currentStory) return false;
     try {
-      const raw = localStorage.getItem(SAVE_KEY);
+      const raw = localStorage.getItem(this.edition.saveKey);
       if (!raw) return false;
       const stored = JSON.parse(raw);
-      if (stored.version !== 4 || typeof stored.state !== "string") throw new Error("Unsupported saved passage.");
+      const legacyChapterSave = this.edition.id === CHAPTER_EDITION.id && stored.edition === undefined;
+      if (stored.version !== this.edition.saveVersion || (!legacyChapterSave && stored.edition !== this.edition.id) || typeof stored.state !== "string") throw new Error("Unsupported saved passage.");
       this.currentStory.state.LoadJson(stored.state);
       if (!this.currentStory.canContinue) throw new Error("The saved passage has no readable entrance.");
       this.storageNotice = "Your last passage has been restored.";

@@ -62,6 +62,7 @@ export class LivingSceneWeather {
   private readonly drops: Drop[] = [];
   private readonly ripples: Ripple[] = [];
   private readonly dynamic: AbstractMesh[];
+  private readonly lamp: StudyAssets['lamp'];
   private readonly rain: Mesh;
   private readonly rippleMesh: Mesh;
   private readonly damp: Mesh;
@@ -77,12 +78,21 @@ export class LivingSceneWeather {
   private readonly dampPatchCount: number;
 
   constructor(private readonly scene: Scene, assets: StudyAssets, private readonly refreshPresence: () => void) {
+    this.lamp = assets.lamp;
     assets.meshes.forEach(mesh => mesh.computeWorldMatrix(true));
     const foreground = assets.meshes.filter(mesh => {
       for (let node = mesh.parent; node; node = node.parent) if (/Fading_StudySky|Fading_StudyBackdrop/.test(node.name)) return false;
       return mesh.getTotalVertices() > 0 && !mesh.metadata?.livingSceneTrace;
     });
-    this.dynamic = foreground.filter(mesh => mesh.isDescendantOf(assets.chair));
+    this.dynamic = foreground.filter(mesh => {
+      if (mesh === assets.chair || mesh.isDescendantOf(assets.chair) || mesh === assets.lamp || mesh.isDescendantOf(assets.lamp)) return true;
+      // Books, curtain and rail can leave the stage. Treat them as mutable
+      // supports too, otherwise a cached fixed floor would stop rain in midair.
+      for (let node: typeof mesh.parent = mesh; node; node = node.parent) {
+        if (['Fading_StudyBooks', 'Fading_StudyCurtain', 'StudyPartialCurtain', 'StudyBedRail'].includes(node.name)) return true;
+      }
+      return false;
+    });
     const fixed = foreground.filter(mesh => !this.dynamic.includes(mesh));
     let seed = 71429;
     const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
@@ -206,7 +216,7 @@ export class LivingSceneWeather {
       const top = Math.min(TOP, drop.y + 0.055);
       this.dropPositions.set([drop.x - right.x, drop.y, drop.z - right.z, drop.x + right.x, drop.y, drop.z + right.z,
         drop.x + right.x, top, drop.z + right.z, drop.x - right.x, top, drop.z - right.z], base);
-      const warm = Math.max(0, 1 - Math.hypot(drop.x - 1.17, drop.y - 1.63, drop.z - 0.12) / 1.35);
+      const warm = this.lamp.isEnabled() ? Math.max(0, 1 - Math.hypot(drop.x - 1.17, drop.y - 1.63, drop.z - 0.12) / 1.35) : 0;
       for (let vertex = 0; vertex < 4; vertex++) this.dropColors.set([0.55 + warm * 0.45, 0.65 + warm * 0.13, 0.76 - warm * 0.35, vertex < 2 ? 0.85 : 0.16], index * 16 + vertex * 4);
     });
     this.rain.updateVerticesData(VertexBuffer.PositionKind, this.dropPositions);

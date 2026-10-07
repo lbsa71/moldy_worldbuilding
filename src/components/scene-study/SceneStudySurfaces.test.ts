@@ -11,7 +11,26 @@ import type { Effect } from '@babylonjs/core/Materials/effect';
 import { SpotLight } from '@babylonjs/core/Lights/spotLight';
 import { MirrorTexture } from '@babylonjs/core/Materials/Textures/mirrorTexture';
 import { SceneStudyObjects } from './SceneStudyObjects';
-import { configureStudyFog, configureStudySkyMeshes, createStudyBulbSource, getStudyLampPosition, getStudyShadowCasters } from './SceneStudySurfaces';
+import { configureStudyFog, configureStudySkyMeshes, createStudyBulbSource, createStudyLampController, getStudyLampPosition, getStudyShadowCasters } from './SceneStudySurfaces';
+
+it('removes both emitted light sources with the lamp and restores the authored energy after rest/reset', () => {
+  const engine = new NullEngine();
+  const scene = new Scene(engine);
+  try {
+    const down = new SpotLight('downlight', new Vector3(1, 2, 0), Vector3.Down(), 2, 1, scene);
+    down.intensity = 10;
+    const bulb = createStudyBulbSource(scene, down);
+    const controller = createStudyLampController(down, bulb.light);
+    controller.setLampRest(true);
+    controller.setLampPresent(false);
+    controller.setLampRest(false);
+    expect([down, bulb.light].every(light => !light.isEnabled() && light.intensity === 0)).toBe(true);
+    controller.setLampPresent(true);
+    expect([down, bulb.light].every(light => light.isEnabled() && light.intensity === 10)).toBe(true);
+    controller.setLampRest(true);
+    expect([down, bulb.light].every(light => light.intensity === 9)).toBe(true);
+  } finally { scene.dispose(); engine.dispose(); }
+});
 
 it('anchors warm lighting to the authored socket world transform before manifest or bounds hints', () => {
   const engine = new NullEngine();

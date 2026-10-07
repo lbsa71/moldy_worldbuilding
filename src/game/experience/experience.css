@@ -17,6 +17,9 @@
 .start-button:disabled { opacity: .65; cursor: wait; }
 .launch-status { min-height: 1.5em; max-width: 28rem; color: #e0bc86; font: 400 .9rem/1.5 'Avenir Next', 'Segoe UI', sans-serif; }
 .launch-guidance { margin-top: 24px; max-width: 25rem; color: #a9bcbf; font: 400 .82rem/1.6 'Avenir Next', 'Segoe UI', sans-serif; }
+.edition-link { margin: 18px 0 0; font: 400 .8rem/1.6 'Avenir Next', 'Segoe UI', sans-serif; }
+.edition-link a { color: #cbb88f; text-underline-offset: 4px; }
+.edition-link a:focus-visible { outline: 2px solid #f1d49c; outline-offset: 4px; }
 .launch-footer { position: absolute; bottom: 22px; left: clamp(28px, 7vw, 110px); z-index: 1; color: #93a5aa; font: 400 .78rem/1.4 'Avenir Next', 'Segoe UI', sans-serif; }
 #experience-ui { --text-scale: 1; position: absolute; inset: 0; z-index: 5; pointer-events: none; color: var(--linen); font-family: 'Avenir Next', 'Segoe UI', sans-serif; }
 .experience-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: max(22px, env(safe-area-inset-top)) clamp(20px, 4vw, 56px) 0; background: linear-gradient(#08141cab, transparent); min-height: 110px; }

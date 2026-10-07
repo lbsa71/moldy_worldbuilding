@@ -10,7 +10,7 @@ import { Ray } from '@babylonjs/core/Culling/ray';
 import type { Scene } from '@babylonjs/core/scene';
 import type { StudyAssets } from './SceneStudyAssets';
 import { SceneStudyObjects } from './SceneStudyObjects';
-import { openingDirection, type SceneDirection, type SceneArrangement, type CameraCue, type WeatherCue } from '../../game/presentation/SceneDirection';
+import { openingDirection, fullStage, type StagePresence, type SceneDirection, type SceneArrangement, type CameraCue, type WeatherCue } from '../../game/presentation/SceneDirection';
 
 type Pose = { position: Vector3; target: Vector3; up: Vector3; fov: number };
 export type DirectorViewport = { aspect: number; width: number };
@@ -21,6 +21,7 @@ export type LivingSceneDiagnostics = {
   transitionKind: SceneDirection['transition']['kind'];
   transitionProgress: number;
   arrangement: SceneArrangement;
+  stage: StagePresence;
   settled: boolean;
 };
 
@@ -54,6 +55,7 @@ export function createLivingSceneCamera(scene: Scene, authored: Camera): FreeCam
 
 const copyDirection = (value: SceneDirection): SceneDirection => ({
   camera: value.camera, transition: { ...value.transition }, arrangement: { ...value.arrangement }, weather: value.weather,
+  stage: { ...(value.stage ?? fullStage()) },
 });
 const smooth = (value: number) => value * value * (3 - 2 * value);
 
@@ -101,6 +103,7 @@ export class LivingSceneDirector {
   private readonly trace;
   private direction = openingDirection();
   private arrangement = { ...this.direction.arrangement };
+  private stage = fullStage();
   private pending?: Pending;
   private reducedMotion = false;
   private opacity = 0;
@@ -115,6 +118,7 @@ export class LivingSceneDirector {
     objects: SceneStudyObjects;
     viewport: () => DirectorViewport;
     setLampRest: (value: boolean) => void;
+    setLampPresent?: (value: boolean) => void;
     setWeather?: (cue: WeatherCue, immediate: boolean) => void;
     onTransitionOpacity?: (opacity: number) => void;
   }) {
@@ -147,13 +151,15 @@ export class LivingSceneDirector {
     this.pose = { position: pose.position.clone(), target: pose.target.clone(), up: pose.up.clone(), fov: pose.fov };
   }
 
-  private applyArrangement(value: SceneArrangement): void {
+  private applyArrangement(value: SceneArrangement, stage: StagePresence = fullStage()): void {
     const { assets, objects } = this.options;
     this.arrangement = { ...value };
+    this.stage = { ...stage };
     assets.cup.rotationQuaternion = this.cupRotation.multiply(Quaternion.RotationAxis(Vector3.Up(), value.cup === 'away' ? Math.PI : 0));
-    this.trace.setEnabled(value.trace === 'cup' && value.cup === 'absent');
+    this.trace.setEnabled(value.trace === 'cup' && value.cup === 'absent' && stage.chair === 'present');
     this.options.setLampRest(value.lamp === 'rest');
-    objects.settleArrangement(value.chair === 'turned', value.cup !== 'absent');
+    this.options.setLampPresent?.(stage.lamp === 'present');
+    objects.settleArrangement(value.chair === 'turned', value.cup !== 'absent', stage);
     assets.cup.computeWorldMatrix(true);
     this.trace.computeWorldMatrix(true);
   }
@@ -179,6 +185,17 @@ export class LivingSceneDirector {
     let subject: Vector3;
     let fov: number;
     switch (cue) {
+      case 'books': {
+        const books = this.options.scene.getTransformNodeByName('Fading_StudyBooks') ?? this.options.scene.getMeshByName('Fading_StudyBooks');
+        books?.computeWorldMatrix(true);
+        const anchor = books?.getAbsolutePosition() ?? chair.add(new Vector3(0.46, 0, -0.25));
+        // Keep the worn covers in their setting, with the neighbouring chair
+        // base and shore visible instead of magnifying the book geometry.
+        subject = anchor.add(new Vector3(0, 0.045, 0));
+        position = subject.add(new Vector3(0.7, 0.695, 1.05).scale(1.55));
+        fov = 0.48;
+        break;
+      }
       case 'cup': {
         // Look toward the near-facing notch from just above the rim. An editorial
         // close shot makes its exported 5.45mm chip legible without free navigation.
@@ -236,14 +253,15 @@ export class LivingSceneDirector {
   applyDirection(value: SceneDirection, immediate = false): void {
     if (this.disposed) return;
     const next = copyDirection(value);
-    const unchanged = next.camera === this.direction.camera && JSON.stringify(next.arrangement) === JSON.stringify(this.direction.arrangement);
+    const unchanged = next.camera === this.direction.camera && JSON.stringify(next.arrangement) === JSON.stringify(this.direction.arrangement)
+      && JSON.stringify(next.stage) === JSON.stringify(this.direction.stage ?? fullStage());
     this.options.setWeather?.(next.weather, immediate || this.reducedMotion);
     if (unchanged && !immediate && !this.reducedMotion) { this.direction = next; return; }
     this.direction = next;
     const duration = Number.isFinite(next.transition.seconds) ? Math.max(0, Math.min(8, next.transition.seconds)) : 0;
     if (immediate || this.reducedMotion || next.transition.kind === 'cut' || duration === 0) {
       this.pending = undefined;
-      this.applyArrangement(next.arrangement);
+      this.applyArrangement(next.arrangement, next.stage);
       this.move(this.shot(next.camera));
       this.veil(0);
       return;
@@ -252,7 +270,7 @@ export class LivingSceneDirector {
     if (next.transition.kind === 'ease') {
       const chairFrom = this.options.objects.getChairTurnAngle();
       const cupFrom = this.options.assets.cup.rotationQuaternion!.clone();
-      this.applyArrangement(next.arrangement);
+      this.applyArrangement(next.arrangement, next.stage);
       pending.to = this.shot(next.camera);
       pending.rotation = { chairFrom, chairTo: this.options.objects.getChairTurnAngle(), cupFrom, cupTo: this.options.assets.cup.rotationQuaternion!.clone() };
       // Measure the final shot under final transforms, then restore the visible
@@ -273,7 +291,7 @@ export class LivingSceneDirector {
     const progress = Math.min(1, p.elapsed / p.duration);
     if (p.direction.transition.kind === 'dissolve') {
       if (progress >= 0.5 && !p.changed) {
-        this.applyArrangement(p.direction.arrangement);
+        this.applyArrangement(p.direction.arrangement, p.direction.stage);
         p.to = this.shot(p.direction.camera);
         this.move(p.to);
         p.changed = true;
@@ -294,7 +312,7 @@ export class LivingSceneDirector {
       });
     }
     if (progress >= 1) {
-      if (p.rotation) this.applyArrangement(p.direction.arrangement);
+      if (p.rotation) this.applyArrangement(p.direction.arrangement, p.direction.stage);
       this.move(p.to ?? this.shot(p.direction.camera));
       this.pending = undefined;
       this.veil(0);
@@ -333,7 +351,7 @@ export class LivingSceneDirector {
   getDiagnostics(): LivingSceneDiagnostics {
     return { cameraCue: this.direction.camera, transitionKind: this.direction.transition.kind,
       transitionProgress: this.pending ? Math.min(1, this.pending.elapsed / this.pending.duration) : 1,
-      arrangement: { ...this.arrangement }, settled: !this.pending };
+      arrangement: { ...this.arrangement }, stage: { ...this.stage }, settled: !this.pending };
   }
 
   dispose(): void {

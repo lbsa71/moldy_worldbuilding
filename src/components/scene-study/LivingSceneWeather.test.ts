@@ -10,10 +10,11 @@ import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { LivingSceneWeather } from './LivingSceneWeather';
 import { SceneStudyObjects } from './SceneStudyObjects';
 import type { StudyAssets } from './SceneStudyAssets';
+import { fullStage } from '../../game/presentation/SceneDirection';
 
 const cleanups: (() => void)[] = [];
 afterEach(() => cleanups.splice(0).forEach(fn => fn()));
-function fixture() {
+function fixture(withBooks = false) {
   const engine = new NullEngine();
   const scene = new Scene(engine);
   scene.useRightHandedSystem = true;
@@ -32,6 +33,13 @@ function fixture() {
   const rock = new PBRMaterial('rough authored dark rock', scene);
   rock.roughness = 0.95; stone.material = rock;
   const assets: StudyAssets = { mode: 'production', message: '', warnings: [], meshes: [seat, stone, porcelain], chair, cup, lamp, manifest: {} };
+  if (withBooks) {
+    // An oversized cover guarantees deterministic rays on the removable prop.
+    const books = CreateBox('Fading_StudyBooks', { width: 3, height: 0.1, depth: 3.5 }, scene);
+    books.position.set(1.125, 1.8, 1.025);
+    books.material = new PBRMaterial('book cover', scene);
+    assets.meshes.push(books);
+  }
   let reflected = [...assets.meshes];
   const objects = new SceneStudyObjects(chair, cup, assets.meshes, meshes => { reflected = meshes; });
   const weather = new LivingSceneWeather(scene, assets, () => objects.refreshPresence());
@@ -40,6 +48,22 @@ function fixture() {
 }
 
 describe('remembered rain', () => {
+  it('invalidates supports when books leave or return, without recasting unchanged stage props every frame', () => {
+    const f = fixture(true);
+    f.weather.applyCue('rain-memory', true);
+    expect(f.weather.getRainSamples().every(drop => Math.abs(drop.surfaceY - 1.85) < 0.001)).toBe(true);
+    const initialQueries = f.weather.getDiagnostics().supportRefreshes;
+    f.objects.settleArrangement(false, true, { ...fullStage(), books: 'absent' });
+    f.weather.update(0.01);
+    expect(f.weather.getRainSamples().every(drop => drop.surfaceY < 1.4)).toBe(true);
+    expect(f.weather.getDiagnostics().supportRefreshes).toBe(initialQueries + 1);
+    f.weather.update(1);
+    expect(f.weather.getDiagnostics().supportRefreshes).toBe(initialQueries + 1);
+    f.objects.reset();
+    f.weather.update(0.01);
+    expect(f.weather.getRainSamples().every(drop => Math.abs(drop.surfaceY - 1.85) < 0.001)).toBe(true);
+  });
+
   it('fades latest-wins, holds constant through repeated beat directions, and leaves no lingering weather after reset', () => {
     const f = fixture();
     f.weather.applyCue('rain-memory');
