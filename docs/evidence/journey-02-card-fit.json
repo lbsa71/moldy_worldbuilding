@@ -1,0 +1,1095 @@
+{
+  "reports": [
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:05:40.348Z",
+      "durationMs": 3502,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 667,
+        "height": 320,
+        "visualWidth": 667,
+        "visualHeight": 320,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "16px",
+        "bodyLineHeight": "22.72px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "14px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 4532,
+        "maximumPages": 6
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0001",
+          "scene": "journey_invitation",
+          "route": [],
+          "page": 0,
+          "pages": 5,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 190,
+        "panel": {
+          "x": 0,
+          "y": 120,
+          "width": 667,
+          "height": 200
+        },
+        "text": "\"If you're straightening that lampshade, do it properly.\" A woman laughs. The chair is empty.",
+        "choices": [
+          "Continue"
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:05:45.898Z",
+      "durationMs": 5156,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 667,
+        "height": 320,
+        "visualWidth": 667,
+        "visualHeight": 320,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.2,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "19.2px",
+        "bodyLineHeight": "27.264px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "16.8px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 5661,
+        "maximumPages": 8
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0002",
+          "scene": "journey_reassurance",
+          "route": [
+            0
+          ],
+          "page": 0,
+          "pages": 7,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 246,
+        "panel": {
+          "x": 0,
+          "y": 64,
+          "width": 667,
+          "height": 256
+        },
+        "text": "\"Yes. Put that first.\" Three books appear: Mara's manual, Rosa's paperback and Ada's notebook.",
+        "choices": [
+          "Continue"
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:06:11.670Z",
+      "durationMs": 5461,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 667,
+        "height": 320,
+        "visualWidth": 667,
+        "visualHeight": 320,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.4,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "22.4px",
+        "bodyLineHeight": "31.808px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "19.6px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 6316,
+        "maximumPages": 9
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0001",
+          "scene": "journey_invitation",
+          "route": [],
+          "page": 0,
+          "pages": 9,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 246,
+        "panel": {
+          "x": 0,
+          "y": 64,
+          "width": 667,
+          "height": 256
+        },
+        "text": "\"If you're straightening that lampshade, do it properly.\" A woman laughs.",
+        "choices": [
+          "Continue"
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:06:15.448Z",
+      "durationMs": 3572,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 812,
+        "height": 375,
+        "visualWidth": 812,
+        "visualHeight": 375,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "16px",
+        "bodyLineHeight": "22.72px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "14px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 4403,
+        "maximumPages": 4
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0001",
+          "scene": "journey_invitation",
+          "route": [],
+          "page": 0,
+          "pages": 4,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 224.375,
+        "panel": {
+          "x": 0,
+          "y": 140.625,
+          "width": 812,
+          "height": 234.375
+        },
+        "text": "\"If you're straightening that lampshade, do it properly.\" A woman laughs. The chair is empty.",
+        "choices": [
+          "Continue"
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:06:19.667Z",
+      "durationMs": 4041,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 812,
+        "height": 375,
+        "visualWidth": 812,
+        "visualHeight": 375,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.2,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "19.2px",
+        "bodyLineHeight": "27.264px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "16.8px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 4501,
+        "maximumPages": 5
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0001",
+          "scene": "journey_invitation",
+          "route": [],
+          "page": 0,
+          "pages": 5,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 224.375,
+        "panel": {
+          "x": 0,
+          "y": 140.625,
+          "width": 812,
+          "height": 234.375
+        },
+        "text": "\"If you're straightening that lampshade, do it properly.\" A woman laughs. The chair is empty.",
+        "choices": [
+          "Continue"
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:06:24.042Z",
+      "durationMs": 4166,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 812,
+        "height": 375,
+        "visualWidth": 812,
+        "visualHeight": 375,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.4,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "22.4px",
+        "bodyLineHeight": "31.808px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "19.6px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 4586,
+        "maximumPages": 6
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0022",
+          "scene": "journey_departure",
+          "route": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          "page": 0,
+          "pages": 5,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 301,
+        "panel": {
+          "x": 0,
+          "y": 64,
+          "width": 812,
+          "height": 311
+        },
+        "text": "You say it together once. Mara corrects the rhythm. \"Occupational habit. A book should open without fighting you.\"",
+        "choices": [
+          "Continue"
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:06:28.502Z",
+      "durationMs": 4294,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 844,
+        "height": 390,
+        "visualWidth": 844,
+        "visualHeight": 390,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "16px",
+        "bodyLineHeight": "22.72px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "14px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 4401,
+        "maximumPages": 4
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0001",
+          "scene": "journey_invitation",
+          "route": [],
+          "page": 0,
+          "pages": 4,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 233.75,
+        "panel": {
+          "x": 0,
+          "y": 146.25,
+          "width": 844,
+          "height": 243.75
+        },
+        "text": "\"If you're straightening that lampshade, do it properly.\" A woman laughs. The chair is empty.",
+        "choices": [
+          "Continue"
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:06:33.128Z",
+      "durationMs": 4469,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 844,
+        "height": 390,
+        "visualWidth": 844,
+        "visualHeight": 390,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.2,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "19.2px",
+        "bodyLineHeight": "27.264px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "16.8px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 4427,
+        "maximumPages": 5
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0001",
+          "scene": "journey_invitation",
+          "route": [],
+          "page": 0,
+          "pages": 4,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 233.75,
+        "panel": {
+          "x": 0,
+          "y": 146.25,
+          "width": 844,
+          "height": 243.75
+        },
+        "text": "\"If you're straightening that lampshade, do it properly.\" A woman laughs. The chair is empty.",
+        "choices": [
+          "Continue"
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:06:38.259Z",
+      "durationMs": 4850,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 844,
+        "height": 390,
+        "visualWidth": 844,
+        "visualHeight": 390,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.4,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "22.4px",
+        "bodyLineHeight": "31.808px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "19.6px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 4563,
+        "maximumPages": 6
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0001",
+          "scene": "journey_invitation",
+          "route": [],
+          "page": 0,
+          "pages": 5,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 233.75,
+        "panel": {
+          "x": 0,
+          "y": 146.25,
+          "width": 844,
+          "height": 243.75
+        },
+        "text": "\"If you're straightening that lampshade, do it properly.\" A woman laughs. The chair is empty.",
+        "choices": [
+          "Continue"
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:06:51.078Z",
+      "durationMs": 4268,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 375,
+        "height": 667,
+        "visualWidth": 375,
+        "visualHeight": 667,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "16px",
+        "bodyLineHeight": "24px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "14px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 4411,
+        "maximumPages": 5
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0001",
+          "scene": "journey_invitation",
+          "route": [],
+          "page": 0,
+          "pages": 4,
+          "notice": ""
+        },
+        "overflow": 0,
+        "usedHeight": 370.859375,
+        "panel": {
+          "x": 0,
+          "y": 280.140625,
+          "width": 375,
+          "height": 386.859375
+        },
+        "text": "\"If you're straightening that lampshade, do it properly.\" A woman laughs. The chair is empty.",
+        "choices": [
+          "Continue"
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:06:55.770Z",
+      "durationMs": 4544,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 375,
+        "height": 667,
+        "visualWidth": 375,
+        "visualHeight": 667,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.2,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "19.2px",
+        "bodyLineHeight": "28.8px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "16.8px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 4504,
+        "maximumPages": 5
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0001",
+          "scene": "journey_invitation",
+          "route": [],
+          "page": 0,
+          "pages": 4,
+          "notice": ""
+        },
+        "overflow": 0,
+        "usedHeight": 370.859375,
+        "panel": {
+          "x": 0,
+          "y": 280.140625,
+          "width": 375,
+          "height": 386.859375
+        },
+        "text": "\"If you're straightening that lampshade, do it properly.\" A woman laughs. The chair is empty.",
+        "choices": [
+          "Continue"
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:07:00.867Z",
+      "durationMs": 4922,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 375,
+        "height": 667,
+        "visualWidth": 375,
+        "visualHeight": 667,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.4,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "22.4px",
+        "bodyLineHeight": "33.6px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "19.6px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 4652,
+        "maximumPages": 6
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0002",
+          "scene": "journey_reassurance",
+          "route": [
+            0
+          ],
+          "page": 4,
+          "pages": 5,
+          "notice": "Progress cannot be saved in this browser. Keep this tab open to finish."
+        },
+        "overflow": 0,
+        "usedHeight": 559,
+        "panel": {
+          "x": 0,
+          "y": 92,
+          "width": 375,
+          "height": 575
+        },
+        "text": "",
+        "choices": [
+          "1Keep them. Ask before examining evidence.",
+          "2Keep all three closed for Ada.",
+          "3Let them go, including their evidence."
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:07:06.528Z",
+      "durationMs": 5500,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "visualWidth": 1440,
+        "visualHeight": 900,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "17.6px",
+        "bodyLineHeight": "26.4px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "14.4px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 4401,
+        "maximumPages": 4
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0127",
+          "scene": "journey_account",
+          "route": [
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          "page": 2,
+          "pages": 3,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 378.6953125,
+        "panel": {
+          "x": 56,
+          "y": 477.3046875,
+          "width": 560,
+          "height": 398.6953125
+        },
+        "text": "\"One account. The receipt can't tell us who stayed. My belief isn't your evidence. A custom isn't proof. Let Ada question us.\"",
+        "choices": [
+          "1Keep Mara's belief as hers, not proof.",
+          "2Teach the cup's custom, without claiming proof.",
+          "3Offer the unread books, with no obligation.",
+          "4Say honestly what remains unknown."
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:07:12.987Z",
+      "durationMs": 6310,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "visualWidth": 1440,
+        "visualHeight": 900,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.2,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "21.12px",
+        "bodyLineHeight": "31.68px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "17.28px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 4401,
+        "maximumPages": 4
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0127",
+          "scene": "journey_account",
+          "route": [
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          "page": 2,
+          "pages": 3,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 421.6640625,
+        "panel": {
+          "x": 56,
+          "y": 434.3359375,
+          "width": 560,
+          "height": 441.6640625
+        },
+        "text": "\"One account. The receipt can't tell us who stayed. My belief isn't your evidence. A custom isn't proof. Let Ada question us.\"",
+        "choices": [
+          "1Keep Mara's belief as hers, not proof.",
+          "2Teach the cup's custom, without claiming proof.",
+          "3Offer the unread books, with no obligation.",
+          "4Say honestly what remains unknown."
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    },
+    {
+      "schemaVersion": 1,
+      "generatedAt": "2026-10-07T08:07:19.545Z",
+      "durationMs": 6435,
+      "browser": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "platform": "MacIntel",
+        "language": "en-US"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "visualWidth": 1440,
+        "visualHeight": 900,
+        "offsetLeft": 0,
+        "offsetTop": 0,
+        "scale": 1
+      },
+      "textScale": 1.4,
+      "sources": {
+        "ink": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2",
+        "css": "ed0249934481d5e05dc04af60fb9d1dfc73f75eea3cca5c9e7b2260360bbf7e9",
+        "dialogueUI": "37e4a25ae8e0ce000bb54f587db18c568dc19901d265923f45f5b3a4a66b39a8",
+        "dialogueCards": "1812c47214cfb5add166d68276d40b82449e0d3c3be0c03e5e87783011398090",
+        "audit": "225764127d8a290b38b77ec162a5fda3fc18a8a16f648fe65dbcdfcb9650bbd7",
+        "collector": "9821e7a505f15f7e0dadad12491890e5ba9292aef30e45138ac7d91856063399"
+      },
+      "fonts": {
+        "body": "\"Palatino Linotype\", \"Book Antiqua\", Palatino, serif",
+        "bodySize": "24.64px",
+        "bodyLineHeight": "36.96px",
+        "choices": "\"Avenir Next\", \"Segoe UI\", sans-serif",
+        "choiceSize": "20.16px"
+      },
+      "coverage": {
+        "prefixes": 2191,
+        "routes": 1344,
+        "uniqueVariants": 375,
+        "noticeVariantsChecked": 1125,
+        "pagesChecked": 4401,
+        "maximumPages": 4
+      },
+      "passed": true,
+      "failureCount": 0,
+      "failureCounts": {},
+      "examples": [],
+      "worst": {
+        "witness": {
+          "variant": "variant-0127",
+          "scene": "journey_account",
+          "route": [
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          "page": 2,
+          "pages": 3,
+          "notice": "Your last passage has been restored."
+        },
+        "overflow": 0,
+        "usedHeight": 455.75,
+        "panel": {
+          "x": 56,
+          "y": 400.25,
+          "width": 560,
+          "height": 475.75
+        },
+        "text": "\"One account. The receipt can't tell us who stayed. My belief isn't your evidence. A custom isn't proof. Let Ada question us.\"",
+        "choices": [
+          "1Keep Mara's belief as hers, not proof.",
+          "2Teach the cup's custom, without claiming proof.",
+          "3Offer the unread books, with no obligation.",
+          "4Say honestly what remains unknown."
+        ]
+      },
+      "limits": "Development DOM fit audit in the reported browser, viewport and font environment. Tests every rendered text/label/ending variant under three notice states. Does not establish visual quality, human reading comfort or other browser font metrics."
+    }
+  ]
+}

@@ -6,7 +6,25 @@ On 6 October, the user requested promotion of the accepted game to `main`. The b
 
 ## What changed
 
-### The account we leave — 7 October 2026
+### Compact reading cards — 7 October 2026
+
+User feedback identified long prose and scrolling as breaks in immersion. The `/journey/` revision cuts visible content to **744–829 words per route** while preserving all 1,344 choice sequences, eight decisions, seven accounts, permissions, prop consequences and common empty endings. No duration target is claimed from that word count. The earlier 8–12 minute estimate is now explicitly a playtest question; the 30–45 minute full-game goal must be earned through consequential activity rather than longer cards or more Continue taps.
+
+The [authoring contract](dialogue-card-contract.md) limits one paragraph/card to **35 words and 220 characters**, choice labels to **8 words and 48 characters**, and headings to **30 characters**. Actual prose maxima are 31 words / 178 characters. Reading uses Continue and Back; final prose shares a card with the choices where space permits. Actual DOM fitting adds smaller pages or a separate decision card for larger text. It does not shrink fonts, clip content, or submit decisions. Text, scene and audio cues remain synchronized at Ink beat entry; the book appearance and remembered-rain descriptions now appear on their respective first cards.
+
+Reading navigation saves a stable character anchor with the original Ink entrance. Reload and resizing preserve context without choosing a response or replaying one-shot cues. History records the full passage once. New decisions and restart reset reading position. The new story edition/save slot is `journey-2026-10-07-v2`; v1 and the original chapter's v4 save remain separately stored. Shared UI gives the original chapter pagination too; its prose and Ink structure are unchanged.
+
+The development-only `/__card-study/` endpoint enumerates exact reachable heading/prose/ordered-choice/ending variants and exercises production UI/CSS, including restored-save and storage-warning notices. Its [browser evidence](evidence/journey-02-card-fit.json) records source hashes, browser/font environment, viewport, text scale, witness routes and geometry results. This is a card fit test, not a claim about all devices, visual taste, screen-reader quality or human pacing. Physical notched-device safe areas and whether frequent Continue presses become tedious remain human QA tasks.
+
+Verification for the compact revision:
+
+- `npm run validate`: **294 tests in 25 files**, **0 type errors / 0 warnings**, and successful static build of the same three game routes. There are 25 non-blocking hints (24 prior hints plus deprecated `navigator.platform` metadata in the development audit), and the existing large-chunk advisory. The audit endpoint is absent from the exported build.
+- **15/15 browser configurations pass**, with **70,160 page/notice observations** across 375 distinct rendered story variants. Tested 667×320, 812×375 and 844×390 landscape, 375×667 portrait and 1440×900 desktop at text scales 1 / 1.2 / 1.4 in the recorded Chromium/macOS font environment. No overflow, clipping, internal overlap, undersized reading controls or lost prose/choices was detected.
+- In the actual game, a saved second reading card at 667×320 resumed with identical text after reloading at 812×375 (page count changed from 5 to 4). Continue retained the current scene and exposed the original three responses. The [812×375 decision screenshot](evidence/journey-02-landscape-812x375.png) records the final production layout.
+- The expanded-text portrait audit initially caught six choice/notice overlaps. Painted-bounds checks and an expanded decision-card fallback fixed them; the final report uses the corrected source hashes throughout. At the minimum viewport, accessibility text and notices may produce more cards than the authored 2–4 per beat. These additional pages are navigation, not narrative decisions.
+
+### The account we leave — 7 October 2026 (initial version)
+
 
 `/journey/` is a separate playable episode about Mara, a retired bookbinder deciding what account to leave her daughter. Eight decisions establish an approach, treatment of records and the cup, an agreement, a disagreement/repair, a concrete account and a departure. Three approach scenes rejoin with persistent facts. Seven possible accounts depend on those facts; the final offer changes with the account actually made. The [consequence cards](journey-consequence-cards.md) distinguish canonical facts, uncertainty, major hinges and the expressive readback choice.
 
@@ -19,7 +37,7 @@ The original eleven-decision chapter stays at `/`, with its v4 save untouched by
 Verification:
 
 - `npm run validate`: **277 tests across 23 files**, type checking with **0 errors, 0 warnings, 24 existing hints**, and a successful three-route production build. The existing large-chunk advisory remains. A final prose correction was followed by the six narrative checks and regeneration of its source-bound report.
-- The [route report](evidence/journey-01-routes.json) executes **all 1,344 acyclic choice sequences** and independently restores **2,191 passage entrances**, comparing text, choices and presentation. There are eight decisions per route and 448 sequences per ending. These are sequences through a bounded, rejoining script, not 1,344 independent stories.
+- The [initial route report](https://github.com/lbsa71/moldy_worldbuilding/blob/fc76ae6/docs/evidence/journey-01-routes.json) executes **all 1,344 acyclic choice sequences** and independently restores **2,191 passage entrances**, comparing text, choices and presentation. There are eight decisions per route and 448 sequences per ending. These are sequences through a bounded, rejoining script, not 1,344 independent stories.
 - Counterfactual tests inspect delayed available actions; stage tests cover hidden geometry, light, shadow/reflection lists, mutable rain support, interrupted transitions, reset and reduced motion. The frozen accepted-chapter audit still passes.
 - Browser checks: retained-record inquiry to Carry on WebGPU; empty ending restored on WebGL; dismissed books/cup and reassurance to Keep with reduced motion and muted sound; closed-book practical approach with maintained disagreement to Rest on 390×844 WebGL. The four-option account menu supports keyboard selection. Desktop framing checked at 1440×900. The original v4 saved passage also restored without a reset.
 - Captures: [books and available evidence](evidence/journey-books-webgpu.png), [Carry on WebGL](evidence/journey-empty-carry-webgl.png), [Keep after deliberate dismissal](evidence/journey-empty-keep-webgl.png), [Rest on mobile](evidence/journey-empty-rest-mobile-webgl.png).

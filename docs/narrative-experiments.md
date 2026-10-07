@@ -8,7 +8,7 @@ Updated 7 October 2026. Target agreed with the user: **30–45 minutes for a fir
 
 The original emotional-landscape idea remains central. Its implementation has weakened: the current camera changes attention, but few earlier decisions change what the place makes possible later. The next game should make the same place acquire a history. A return to the chair, cup or rail should expose something the player offered, withheld, promised, misunderstood or relinquished.
 
-The production priority is to test that proposition in one 8–12 minute episode before writing a full-length game. Additional scenic assets are not required for this first experiment. Existing books, curtain and rail become active stage props alongside the chair, lamp and cup.
+The production priority is to test that proposition in one short episode before writing a full-length game. The initial 8–12 minute estimate is unverified; the compact revision must earn its actual duration in playtests. Additional scenic assets are not required for this first experiment. Existing books, curtain and rail become active stage props alongside the chair, lamp and cup.
 
 ## Direction agreed on 7 October: the journey leaves an empty stage
 
@@ -21,6 +21,16 @@ The consequence must be both playable and perceivable: dismissing a record close
 Disappearance uses one finite scene dissolve, then holds a stable arrangement for reading. Text and choices remain available during the transition; there is no forced wait. No continuous erosion, floating ornaments, unexplained object teleportation or automatic loss timer. Reduced motion and restored saves show exactly the same complete state immediately. The opening artwork and accepted chapter remain available as the visual/control baseline.
 
 The [consequence cards](journey-consequence-cards.md) specify the episode's person, canonical facts, deliberate dismissals, delayed witnesses and repair limits. The [cue guide](living-scene-cues.md) defines the complete `stage` contract. A new prop is commissioned only when a consequence card needs an action or evidence the current set cannot express; match the existing Blender materials, scale, named roots and contact/shadow checks before admission.
+
+## Reading contract: one thought, one card
+
+The first consequence draft showed too much text at once. User feedback identified book-like pacing and scrolling that broke immersion. Shorten the writing before paginating it: remove repeated interpretation and let actions carry the meaning. The compact episode now uses 744–829 visible words per route, including displayed choices, versus 1,622–1,810 in its first draft. These are software measurements, not observed completion times.
+
+Every authored prose card has at most **35 words and 220 characters**, whichever bound is reached first. Each choice has at most **8 words and 48 characters**; each heading has at most **30 characters**. A beat normally has 2–4 short cards and up to four choices. These editorial limits must pass actual browser geometry checks; they cannot alone guarantee fit across fonts, devices and accessibility settings. The [card layout contract](dialogue-card-contract.md) defines the checks and reproduction steps.
+
+Continue and Back change reading position only. They never make a decision, change a prop, replay a camera/audio cue, or count toward the decision budget. Restore retains reading position as well as the Ink entrance. Keep final prose and choices together when space permits; use a separate decision card when larger text needs it. Never hide overflow, reduce readable font sizes or impose reading timers to meet the bound.
+
+The full-game time target remains 30–45 minutes. Earn that time through more consequential encounters and activity, not longer cards, redundant prose, extra Continue presses, or forced pauses. Test whether paging itself becomes friction; passing a no-scroll check establishes fit, not enjoyment.
 
 ## Baseline: what the current game actually does
 
@@ -105,7 +115,7 @@ Use one continuous encounter with four movements. The companion should have ordi
 | Conflict and revision | 10–15 min | Earlier care fails to meet a new need, or two commitments conflict. A misunderstanding changes what is possible; respond, repair or hold a boundary. | 7–9 |
 | Departure | 6–10 min | Act on the relationship actually formed. Resolve the practical task, acknowledge what remains unresolved, and leave a specific final image. | 5–6 |
 
-These add to 30–44 minutes as planning ranges, not runtime timers. Begin with roughly **4,500–6,000 visible words per route**, including choice labels, and 22–28 decisions, of which 6–8 are major hinges. Measure and revise: neither word count nor number of options proves enjoyable duration. Cap the first complete draft at roughly 12,000–16,000 authored words until replay evidence justifies more.
+These add to 30–44 minutes as planning ranges, not runtime timers. Use 22–28 decisions as a provisional structure, of which 6–8 are major hinges. The earlier 4,500–6,000 visible-word estimate is withdrawn as a production target after the long-text feedback. Measure actual reading, deliberation and interaction; neither word count nor number of options proves enjoyable duration. Cap the first complete draft at roughly 12,000–16,000 authored words until replay evidence justifies more.
 
 Branch for a substantive episode, then rejoin with memory. The second branch is chosen in the changed context of the first; it is not a fixed personality route.
 
@@ -160,6 +170,7 @@ Release-blocking software checks for the new edition:
 - **G2: route integrity.** The intended invariant is that every reachable supported state has a coherent continuation and resolution. Preserve explicit uncertainty; reject references to undiscovered evidence, unmade promises or unavailable objects. Exhaustively explore the declared bounded state model and report its limits. Targeted counterfactual fixtures supplement it; where exhaustive checking is impractical, state exactly which paths were tested and retain the uncovered-state risk. A sample must never be reported as a proof about every history.
 - **G3: persistence.** At Gate 1, save/resume preserves text, choices, facts, complete presentation and ending, without replaying one-shot sounds. At Gate 4, extend this guarantee to historical checkpoint forks and verify that forking leaves the original run intact.
 - **G4: presentation and pace.** Every beat has complete valid cues; motion/audio access settings preserve narrative possibilities. Idle time never changes care, consent or progress. Resource disposal and both rendering backends remain covered.
+- **G6: readable cards.** Exhaustively collect exact reachable prose/ordered-choice/heading/ending variants. Render every page with production UI and CSS at the documented viewport and text-scale matrix; reject scrolling, clipped text, offscreen controls, overlapping controls or undersized touch targets. Include terminal pages, restoration/storage notices, page-cursor restore and numeric-key guards. Preserve route consequences after edits. Human pilots separately assess whether the short-card rhythm helps immersion.
 - **G5: prop causality and departure parity.** Explicit dismissals persist across rejoins and restoration, including unavailable later actions. Disappeared props leave no shadow, reflection, rain collision or local lamp illumination. Every terminal route has the identical empty foreground, no cup trace, no rain and the same wide shot. Restart restores the authored entrance, not the preceding ending. These tests establish state invariants, not the emotional success of emptiness.
 
 ## Work order and decisions
@@ -167,7 +178,7 @@ Release-blocking software checks for the new edition:
 | Gate | Deliverable | Proceed only when |
 | --- | --- | --- |
 | 0 — Baseline and specification | This ledger, reproducible baseline, one-page character/situation brief, finite state dictionary and consequence cards for two linked hinges. | There is a clear player task, a companion with an independent want, and no pretend causal link. Baseline data is labelled separately from playtest evidence. |
-| 1 — Consequence prototype | One 8–12 minute episode, 6–8 decisions, three substantial approaches, delayed consequences and repair/renegotiation. Activate current props, explicit relinquishment and a common empty departure. Retain the accepted chapter as a control. | G1–G5 for the slice; formative H1–H4, H6, H9 and H10 evidence. If causality or attachment fails, stop expansion and revise the episode. |
+| 1 — Consequence prototype | One short episode, 6–8 decisions, three substantial approaches, delayed consequences and repair/renegotiation. Activate current props, explicit relinquishment and a common empty departure. Retain the accepted chapter as a control. | G1–G6 for the slice; formative H1–H4, H6, H9 and H10 evidence. If causality or attachment fails, stop expansion and revise the episode. |
 | 2 — Spatial experiment | Matched responsive/static arrangement variants; same prose, audio and cameras. | H5 is supported directionally without distraction or moral-score readings. Otherwise simplify the scene response. |
 | 3 — Complete draft | Four movements, bounded episode branches, history-dependent departures, authored audio/camera cues. | Structural gates pass and a fresh first-run pilot meets H8. No new asset commission solely to compensate for weak stakes. |
 | 4 — Replay and finish | Historical checkpoint forks, preserved runs, optional conversation map; edit repeated prose and mix transitions. | H7, save/fork integrity and final WebGPU/WebGL/accessibility checks. A successful first run must remain satisfying even if the player never replays. |

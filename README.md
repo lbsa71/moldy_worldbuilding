@@ -15,7 +15,9 @@ npm ci
 npm run dev
 ```
 
-Open the local URL printed by Astro. Choose with the mouse, touch, Tab/Enter, or keys 1–4. The camera follows the story. Settings include sound, volume, reduced motion, larger text and conversation history. Progress and audio/motion preferences are saved in this browser when local storage is available. Begin again resets the story.
+Open the local URL printed by Astro. Read short cards with Continue and Back, then choose with the mouse, touch, Tab/Enter, or keys 1–4. The camera follows the story. Settings include sound, volume, reduced motion, larger text and conversation history. Progress and audio/motion preferences are saved in this browser when local storage is available. Begin again resets the story.
+
+The compact `/journey/` edition uses save slot v2; its earlier v1 save is preserved separately. Reading position is saved without replaying scene or sound cues. New writing follows the [card budget and browser fit contract](docs/dialogue-card-contract.md).
 
 The accepted chapter remains at `/` as the control; `/journey/` has its own edition and save slot. The separate `/scene-study/` route retains chair/cup controls and an opening-image comparison for asset review. All routes share the renderer and Blender assets. The playable stories require the production scene; a load failure offers retry. Use `/scene-study/?renderer=webgl` to exercise the study's fallback renderer.
 

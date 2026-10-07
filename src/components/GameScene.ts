@@ -26,6 +26,9 @@ export class GameScene {
   private pendingTap?: { beat: number; cleanup: () => void };
   private preferences: Preferences;
   private storageNotice = "";
+  private passageEntrance?: string;
+  private currentCard = 0;
+  private cardAnchor?: number;
   private readonly visibilityChanged = () => {
     if (this.running && !this.disposed) {
       if (document.hidden) this.cancelPendingTap();
@@ -70,6 +73,14 @@ export class GameScene {
         if (!host) throw new Error("The story interface is missing.");
         this.dialogueUI = new DialogueUI(host, {
           onChoice: index => this.handleChoice(index),
+          onCardChange: index => {
+            if (this.disposed || !Number.isInteger(index) || index < 0) return;
+            this.currentCard = index;
+            this.cardAnchor = this.dialogueUI?.getCardAnchor();
+            // Reading navigation must retain the Ink entrance, not save the
+            // already-consumed state waiting at its choices.
+            this.saveStory();
+          },
           onRestart: () => this.restart(),
           onAudioToggle: () => {
             if (this.disposed) return;
@@ -101,7 +112,6 @@ export class GameScene {
         this.applyMotionPreference();
         const restored = this.restoreStory();
         this.progressStory(true, !restored);
-        if (this.storageNotice) this.dialogueUI.setNotice(this.storageNotice);
       } catch (error) {
         this.dispose();
         throw error;
@@ -113,7 +123,8 @@ export class GameScene {
   private progressStory(immediate = false, playOneShot = true): void {
     if (!this.currentStory || this.disposed || !this.renderer || !this.dialogueUI || !this.audioSystem) return;
     // Save the entrance, including terminal passages, before consuming this beat.
-    this.saveStory();
+    this.passageEntrance = this.currentStory.state.ToJson();
+    this.saveStory(false);
     const dialogue = getCurrentDialogue(this.currentStory);
     this.cancelPendingTap();
     const beat = ++this.beat;
@@ -126,7 +137,16 @@ export class GameScene {
       container.dataset.transition = direction.transition.kind;
     }
     this.syncDiagnostics();
-    this.dialogueUI.render(dialogue);
+    if (this.cardAnchor === undefined) this.dialogueUI.render(dialogue, this.currentCard);
+    else this.dialogueUI.render(dialogue, this.currentCard, this.cardAnchor);
+    const fittedCard = this.dialogueUI.getCardIndex();
+    const fittedAnchor = this.dialogueUI.getCardAnchor();
+    if (fittedCard !== this.currentCard || fittedAnchor !== this.cardAnchor) {
+      this.currentCard = fittedCard;
+      this.cardAnchor = fittedAnchor;
+      this.saveStory(false);
+    }
+    if (this.storageNotice) this.dialogueUI.setNotice(this.storageNotice);
     this.audioSystem.setMood(dialogue.mood || "hushed");
     this.audioSystem.setWeather(direction.weather, immediate);
     if (playOneShot && dialogue.sound === "taps") {
@@ -210,6 +230,8 @@ export class GameScene {
       this.storageNotice = "";
       this.dialogueUI.setNotice("");
       choose(this.currentStory, index);
+      this.currentCard = 0;
+      this.cardAnchor = undefined;
       this.progressStory();
     } finally { this.changingChoice = false; }
   }
@@ -220,6 +242,8 @@ export class GameScene {
     this.renderer.reset();
     this.audioSystem?.setMood("hushed"); // Retires pending one-shots before the fresh entrance.
     this.currentStory.ResetState();
+    this.currentCard = 0;
+    this.cardAnchor = undefined;
     this.storageNotice = "";
     this.progressStory(true);
     this.dialogueUI.setNotice(this.storageNotice || "A fresh passage. Your previous choices have been cleared.");
@@ -255,12 +279,14 @@ export class GameScene {
     try { localStorage.setItem(PREFERENCES_KEY, JSON.stringify(this.preferences)); }
     catch { this.dialogueUI?.setNotice("Settings apply for this visit; browser storage is unavailable."); }
   }
-  private saveStory(): void {
-    if (!this.currentStory) return;
-    try { localStorage.setItem(this.edition.saveKey, JSON.stringify({ version: this.edition.saveVersion, edition: this.edition.id, state: this.currentStory.state.ToJson() })); }
+  private saveStory(announce = true): void {
+    if (!this.passageEntrance) return;
+    try { localStorage.setItem(this.edition.saveKey, JSON.stringify({ version: this.edition.saveVersion, edition: this.edition.id, state: this.passageEntrance, card: this.currentCard, cardAnchor: this.cardAnchor })); }
     catch {
       this.storageNotice = "Progress cannot be saved in this browser. Keep this tab open to finish.";
-      this.dialogueUI?.setNotice(this.storageNotice);
+      // During a new beat, attach the notice after rendering its prose. Reflowing
+      // the previous beat here could otherwise overwrite the fresh card cursor.
+      if (announce) this.dialogueUI?.setNotice(this.storageNotice);
     }
   }
   private restoreStory(): boolean {
@@ -273,10 +299,14 @@ export class GameScene {
       if (stored.version !== this.edition.saveVersion || (!legacyChapterSave && stored.edition !== this.edition.id) || typeof stored.state !== "string") throw new Error("Unsupported saved passage.");
       this.currentStory.state.LoadJson(stored.state);
       if (!this.currentStory.canContinue) throw new Error("The saved passage has no readable entrance.");
+      this.currentCard = Number.isInteger(stored.card) && stored.card >= 0 ? stored.card : 0;
+      this.cardAnchor = Number.isInteger(stored.cardAnchor) && stored.cardAnchor >= 0 ? stored.cardAnchor : undefined;
       this.storageNotice = "Your last passage has been restored.";
       return true;
     } catch {
       this.currentStory.ResetState();
+      this.currentCard = 0;
+      this.cardAnchor = undefined;
       this.storageNotice = "Your saved passage could not be read. A fresh passage has opened.";
       return false;
     }

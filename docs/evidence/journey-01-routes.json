@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "edition": "journey-2026-10-07-v1",
+  "edition": "journey-2026-10-07-v2",
   "source": {
     "path": "src/ink/journey.ink",
-    "sha256": "13929cfc50a3a7c2621114b7c3ca2e5f6010fc1383bcf41cf731c20a3b11a1c5"
+    "sha256": "a6e4a26e798f9ca7bf24b47f28251455f52aaff4f6fe4f0f69e3fa92700635a2"
   },
   "method": "Depth-first execution of every available choice at every reachable prefix in this acyclic Ink edition. One compiled Story state is restored for each sibling; an independent Story restores and compares every entrance, including text, choices and all presentation fields. No state equivalence pruning or random sampling.",
   "limits": "Proves the enumerated script properties under the current compiler/parser only. No human playtime, attachment, readability, choice fairness, renderer appearance, historical replay forks or emotional response was measured. All displayed choice labels are counted, including unselected alternatives. Chapter headings and hidden prose are excluded.",
@@ -27,6 +27,15 @@
   ],
   "authoredChoiceEdges": 31,
   "renderedSceneChoiceEdges": 37,
+  "accounts": [
+    "belief",
+    "custom",
+    "disagreement",
+    "pause",
+    "record",
+    "uncertainty",
+    "unread"
+  ],
   "endings": {
     "carry": 448,
     "keep": 448,
@@ -34,22 +43,36 @@
   },
   "ranges": {
     "narrativeWords": {
-      "min": 1356,
-      "max": 1537
+      "min": 623,
+      "max": 702
     },
     "displayedChoiceWords": {
-      "min": 261,
-      "max": 307
+      "min": 120,
+      "max": 142
     },
     "totalDisplayedWords": {
-      "min": 1622,
-      "max": 1810
+      "min": 744,
+      "max": 829
     },
     "decisions": {
       "min": 8,
       "max": 8
+    },
+    "proseCards": {
+      "min": 35,
+      "max": 35
     }
   },
+  "displayMaximums": {
+    "paragraphWords": 31,
+    "paragraphCharacters": 178,
+    "choiceWords": 8,
+    "choiceCharacters": 48,
+    "headingCharacters": 30,
+    "cardsPerBeat": 4,
+    "choicesPerDecision": 4
+  },
+  "displayContract": "Each nonempty rendered prose line is one UI card. Paragraphs <=35 words and <=220 characters; labels <=8 words and <=48 characters; headings <=30 characters. Two to four prose cards per Ink beat, at most four choices. Continue/Back are presentation navigation and are not Ink decisions.",
   "reproduction": "npx vitest run src/ink/journey.test.ts",
   "regeneration": "JOURNEY_METRICS_WRITE=1 npx vitest run src/ink/journey.test.ts"
 }

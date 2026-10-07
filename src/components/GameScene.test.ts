@@ -44,6 +44,8 @@ vi.mock("./game/AudioSystem", () => ({ AudioSystem: class {
 } }));
 vi.mock("../game/experience/DialogueUI", () => ({ DialogueUI: class {
   render = vi.fn(); setAudioEnabled = vi.fn(); setReducedMotion = vi.fn();
+  getCardIndex = vi.fn(() => this.render.mock.calls.at(-1)?.[1] ?? 0);
+  getCardAnchor = vi.fn(() => undefined as number | undefined);
   setNotice = vi.fn(); setVolume = vi.fn(); dispose = vi.fn();
   constructor(_host: HTMLElement, public callbacks: any) { harness.interfaces.push(this); }
 } }));
@@ -276,6 +278,65 @@ describe("accepted living-scene game runtime", () => {
     ui().callbacks.onChoice(0); expect(passage().ending).toBe("keep");
   });
 
+  it("saves reading position without advancing Ink or replaying scene and audio cues", async () => {
+    const first = game(); await first.run();
+    ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
+    const entrance = JSON.parse(localStorage.getItem(SAVE_KEY)!).state;
+    const directionCalls = renderer().applyDirection.mock.calls.length;
+    const moodCalls = audio().setMood.mock.calls.length;
+    const renderCalls = ui().render.mock.calls.length;
+    const callbacks = ui().callbacks;
+    callbacks.onCardChange(2);
+    expect(JSON.parse(localStorage.getItem(SAVE_KEY)!)).toMatchObject({ state: entrance, card: 2 });
+    expect(renderer().applyDirection).toHaveBeenCalledTimes(directionCalls);
+    expect(audio().setMood).toHaveBeenCalledTimes(moodCalls);
+    expect(ui().render).toHaveBeenCalledTimes(renderCalls);
+    callbacks.onCardChange(-1); callbacks.onCardChange(NaN);
+    expect(JSON.parse(localStorage.getItem(SAVE_KEY)!).card).toBe(2);
+    first.dispose();
+    callbacks.onCardChange(3);
+    expect(JSON.parse(localStorage.getItem(SAVE_KEY)!).card).toBe(2);
+    await game().run();
+    expect(passage().text).toBe("Two taps, then a pause.");
+    expect(ui().render).toHaveBeenLastCalledWith(passage(), 2);
+    expect(audio().playTapCue).not.toHaveBeenCalled();
+    ui().callbacks.onChoice(0);
+    expect(ui().render).toHaveBeenLastCalledWith(passage(), 0);
+    ui().callbacks.onCardChange(1);
+    const terminalEntrance = JSON.parse(localStorage.getItem(SAVE_KEY)!).state;
+    games.at(-1)!.dispose();
+    await game().run();
+    expect(passage().ending).toBe("keep");
+    expect(ui().render).toHaveBeenLastCalledWith(passage(), 1);
+    expect(JSON.parse(localStorage.getItem(SAVE_KEY)!).state).toBe(terminalEntrance);
+    ui().callbacks.onRestart();
+    expect(ui().render).toHaveBeenLastCalledWith(passage(), 0);
+    expect(JSON.parse(localStorage.getItem(SAVE_KEY)!).card).toBe(0);
+  });
+
+  it("restores a stable prose anchor when viewport pagination has changed", async () => {
+    const first = game(); await first.run();
+    ui().getCardAnchor.mockReturnValue(120);
+    ui().callbacks.onCardChange(2);
+    const entrance = JSON.parse(localStorage.getItem(SAVE_KEY)!);
+    expect(entrance).toMatchObject({ card: 2, cardAnchor: 120 });
+    first.dispose();
+    await game().run();
+    expect(ui().render).toHaveBeenLastCalledWith(passage(), 2, 120);
+    ui().callbacks.onChoice(0);
+    expect(ui().render).toHaveBeenLastCalledWith(passage(), 0);
+  });
+
+  it.each([undefined, -2, 1.5, "2"])("defaults an absent or invalid reading cursor %s to the first card", async card => {
+    const first = game(); await first.run(); first.dispose();
+    const stored = JSON.parse(localStorage.getItem(SAVE_KEY)!);
+    stored.card = card;
+    localStorage.setItem(SAVE_KEY, JSON.stringify(stored));
+    await game().run();
+    expect(ui().render).toHaveBeenLastCalledWith(passage(), 0);
+    expect(passage().text).toBe("The first shore.");
+  });
+
   it("restores terminal endings without skipping their text or arrangement", async () => {
     const first = game(); await first.run();
     ui().callbacks.onChoice(0); ui().callbacks.onChoice(0); ui().callbacks.onChoice(0);
@@ -427,5 +488,12 @@ describe("accepted living-scene game runtime", () => {
     await game().run();
     expect(passage().text).toBe("The first shore.");
     expect(ui().setNotice).toHaveBeenCalledWith(expect.stringContaining("cannot be saved"));
+    const noticePassages: string[] = [];
+    ui().setNotice.mockImplementation((message: string) => {
+      if (message.includes("cannot be saved")) noticePassages.push(passage().text);
+    });
+    ui().callbacks.onChoice(0);
+    expect(noticePassages).toEqual(["A cup, still warm."]);
+    expect(ui().render).toHaveBeenLastCalledWith(passage(), 0);
   });
 });

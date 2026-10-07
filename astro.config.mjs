@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from "astro/config";
+import { cardStudyPlugin } from "./scripts/cardStudyPlugin.mjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -8,6 +9,7 @@ export default defineConfig({
     assets: "assets",
   },
   vite: {
+    plugins: [cardStudyPlugin()],
     build: {
       // Increase chunk size limit
       chunkSizeWarningLimit: 2000,

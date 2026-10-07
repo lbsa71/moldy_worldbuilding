@@ -1,8 +1,8 @@
 # Narrative pilot 01: consequence, care and return
 
-Protocol v2, 7 October 2026. Status: **prepared; no participant results collected**. Adds deliberate relinquishment and common empty departures (H9/H10); freeze this version with the tested build before recruitment.
+Protocol v3, 7 October 2026. Status: **prepared; no participant results collected**. Includes deliberate relinquishment, common empty departures (H9/H10), and compact reading cards; freeze this version with the tested build before recruitment.
 
-Use with the [hypothesis ledger](../narrative-experiments.md). The target complete game is 30–45 minutes; this first prototype is 8–12 minutes. Gate thresholds belong to that versioned ledger and must be frozen with the tested build before recruitment.
+Use with the [hypothesis ledger](../narrative-experiments.md). The target complete game is 30–45 minutes; this prototype is a short episode whose duration has not been measured. The earlier 8–12 minute estimate must not become a padding quota. Gate thresholds belong to that versioned ledger and must be frozen with the tested build before recruitment.
 
 ## Runs and participants
 
@@ -20,7 +20,7 @@ H9/H10 follow that same exposure rule. After the uninterrupted interview, show a
 
 ## Before the session
 
-Record build SHA, story edition, hypothesis versions, condition, route coverage expected, intended causal relationships, scoring rubric and session length. Label every major choice with a stable ID. The two intended action-to-later-story relationships for each H5 scene must be written down before observing players. Score the same relationships 0, 1 or 2 in both versions; do not require reference to a visual cue to earn a correct-link point. Record whether a visual cue was recognised separately.
+Record build SHA, story edition, viewport in CSS pixels, browser/font environment, text scale, hypothesis versions, condition, route coverage expected, intended causal relationships, scoring rubric and session length. Label every major choice with a stable ID. The two intended action-to-later-story relationships for each H5 scene must be written down before observing players. Score the same relationships 0, 1 or 2 in both versions; do not require reference to a visual cue to earn a correct-link point. Record whether a visual cue was recognised separately.
 
 If recording, obtain the participant's agreement. Use pseudonymous local records and collect only needed game events. No remote analytics integration is required. Do not add automated outreach or follow-up messages as part of this protocol.
 
@@ -33,6 +33,8 @@ Do not promise meaningful choices, describe the intended emotion or tell the par
 ## Record during play
 
 Use a local trace or observation sheet: session ID, build/edition, condition, beat ID, choice ID, entered/submitted timestamps, visible word count, known facts, agreement/permission changes, active presentation cue, checkpoint/ending, voluntary stop and declared break. This instrumentation is planned, not yet implemented in the game.
+
+Record any scrolling, clipped content, missed choices, repeated rereading, and frustration with Continue/Back. Navigation taps are not story decisions. After the unaided interview, ask whether the amount of text and paging helped or interrupted the encounter; retain contrary responses.
 
 Report elapsed time and active time separately. Subtract declared breaks and hidden-tab intervals according to the predeclared rule; do not silently subtract a long pause because someone might have been thinking. Never interpret idle time as a care decision. Record abandoned sessions, technical failures and incomplete exposure instead of deleting inconvenient results.
 

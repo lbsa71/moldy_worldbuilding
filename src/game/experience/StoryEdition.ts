@@ -12,6 +12,6 @@ export const CHAPTER_EDITION: StoryEdition = {
 };
 
 export const JOURNEY_EDITION: StoryEdition = {
-  id: 'journey-2026-10-07-v1', saveKey: 'fading:journey:save:v1', saveVersion: 1,
+  id: 'journey-2026-10-07-v2', saveKey: 'fading:journey:save:v2', saveVersion: 2,
   label: 'The account we leave',
 };
