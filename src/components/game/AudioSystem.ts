@@ -1,3 +1,4 @@
+import { sitePath } from '../../utils/sitePath';
 import type { Scene } from '@babylonjs/core';
 import type { WeatherCue } from '../../game/presentation/SceneDirection';
 
@@ -55,7 +56,7 @@ export class AudioSystem {
   private async startRain(): Promise<void> {
     if (this.disposed || this.paused || !this.enabled || this.weather !== 'rain-memory' || this.rain) return;
     const id = ++this.rainRequest;
-    const audio = new Audio('/assets/fading-rain-memory.mp3');
+    const audio = new Audio(sitePath('/assets/fading-rain-memory.mp3'));
     audio.loop = true;
     audio.preload = 'auto';
     audio.volume = 0;
@@ -126,7 +127,7 @@ export class AudioSystem {
     this.stopTapCue();
     if (this.disposed || this.paused || !this.enabled) return;
     const id = this.tapRequest;
-    const audio = new Audio('/assets/fading-taps.mp3');
+    const audio = new Audio(sitePath('/assets/fading-taps.mp3'));
     this.tapEffect = audio;
     audio.loop = false;
     audio.preload = 'auto';
@@ -174,7 +175,7 @@ export class AudioSystem {
     const id = ++this.request;
     const file = this.desired;
     this.release(this.pending);
-    const audio = new Audio(`/assets/${file}`);
+    const audio = new Audio(sitePath(`/assets/${file}`));
     this.pending = audio;
     audio.loop = true;
     audio.preload = 'auto';

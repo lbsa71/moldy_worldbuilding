@@ -4,6 +4,9 @@ import { cardStudyPlugin } from "./scripts/cardStudyPlugin.mjs";
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://lbsa71.github.io",
+  base: "/fading/",
+  trailingSlash: "always",
   build: {
     inlineStylesheets: "never",
     assets: "assets",

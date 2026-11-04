@@ -1,3 +1,4 @@
+import { sitePath } from '../../utils/sitePath';
 import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Plane } from '@babylonjs/core/Maths/math.plane';
@@ -159,7 +160,7 @@ async function loadAuthoredEnvironment(scene: Scene, url: string, signal?: Abort
     if (signal?.aborted || scene.isDisposed) { cancelled(); return; }
     try {
       // Babylon calls onLoad after GPU roughness prefiltering, not just file fetch.
-      texture = new HDRCubeTexture(url, scene, 512, false, true, false, true,
+      texture = new HDRCubeTexture(sitePath(url), scene, 512, false, true, false, true,
         () => queueMicrotask(() => finish()),
         message => queueMicrotask(() => finish(new Error(message || 'HDR environment failed to load.'))));
       texture.name = `authored overcast HDR IBL: ${url}`;

@@ -1,3 +1,4 @@
+import { sitePath } from '../../utils/sitePath';
 import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader';
 import type { AssetContainer } from '@babylonjs/core/assetContainer';
 import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
@@ -57,7 +58,7 @@ export async function loadStudyAssets(scene: Scene, onStatus: (message: string) 
   let manifest: StudyManifest = {};
   const warnings: string[] = [];
   try {
-    const response = await fetch('/scene-study/manifest.json', { signal });
+    const response = await fetch(sitePath('/scene-study/manifest.json'), { signal });
     if (response.ok) manifest = await response.json() as StudyManifest;
     else warnings.push('Production manifest is unavailable; the exported camera will be used when present.');
   } catch (error) {
@@ -67,7 +68,7 @@ export async function loadStudyAssets(scene: Scene, onStatus: (message: string) 
   let production: AssetContainer | undefined;
   try {
     onStatus('Loading the production living scene…');
-    production = await importContainer(scene, '/scene-study/', 'living-scene.glb', signal);
+    production = await importContainer(scene, sitePath('/scene-study/'), 'living-scene.glb', signal);
     const chair = requireRoot(production, 'Fading_StudyChair');
     const cup = requireRoot(production, 'Fading_StudyCup');
     const lamp = requireRoot(production, 'Fading_StudyLamp');
@@ -103,7 +104,7 @@ export async function loadStudyAssets(scene: Scene, onStatus: (message: string) 
     ['cup', 'Fading_Cup', [1.8, 0.59, 0.13]],
     ['bedside', 'Fading_Bedside', [2.7, 0.12, -0.7]],
   ] as const) {
-    const container = await importContainer(scene, '/models/fading/', `${asset}_lod0.glb`, signal);
+    const container = await importContainer(scene, sitePath('/models/fading/'), `${asset}_lod0.glb`, signal);
     try {
       const root = requireRoot(container, rootName);
       root.position.set(position[0], position[1], position[2]);

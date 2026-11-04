@@ -1,3 +1,4 @@
+import { sitePath } from '../../utils/sitePath';
 import type { Scene } from "@babylonjs/core/scene";
 import type { AssetContainer, InstantiatedEntries } from "@babylonjs/core/assetContainer";
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
@@ -69,7 +70,7 @@ export class HeroAssetLibrary {
         if (this.closed || this.scene.isDisposed) return null;
         container = await (this.options.loadContainer
           ? this.options.loadContainer(asset, this.scene)
-          : SceneLoader.LoadAssetContainerAsync("/models/fading/", `${asset}_lod0.glb`, this.scene, undefined, ".glb"));
+          : SceneLoader.LoadAssetContainerAsync(sitePath("/models/fading/"), `${asset}_lod0.glb`, this.scene, undefined, ".glb"));
         if (this.closed || this.scene.isDisposed) { container.dispose(); return null; }
         // Search the full imported hierarchy, not just the glTF conversion root.
         if (![...container.transformNodes, ...container.meshes].some(node => node.name === semanticRoots[asset])) {

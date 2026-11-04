@@ -1,3 +1,4 @@
+import { sitePath } from '../../utils/sitePath';
 import {
   Scene,
   Vector3,
@@ -53,7 +54,7 @@ export class CharacterSystem {
       // Load character model with animations from local file
       const result = await SceneLoader.ImportMeshAsync(
         "",
-        "/models/",
+        sitePath("/models/"),
         "character.glb",
         this.scene,
         (event) => {

@@ -128,7 +128,7 @@ describe('the one-shot bedside taps', () => {
     expect(last().loop).toBe(false);
   });
 });
-afterEach(() => { music.dispose(); vi.useRealTimers(); vi.unstubAllGlobals(); });
+afterEach(() => { music.dispose(); vi.useRealTimers(); vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
 const last = () => MockAudio.instances.at(-1)!;
 
@@ -395,4 +395,15 @@ describe('original adaptive music lifecycle', () => {
     await expect(music.playAudio('untracked.mp3')).rejects.toThrow('Unknown music cue');
     expect(MockAudio.instances).toHaveLength(0);
   });
+});
+
+// Catch root-relative URLs that work locally but escape the published game directory.
+it('loads music, taps and rain beneath the configured deployment path', async () => {
+  vi.stubEnv('BASE_URL', '/fading/');
+  await music.play();
+  expect(last().src).toBe('/fading/assets/fading-hushed.mp3');
+  await music.playTapCue();
+  expect(last().src).toBe('/fading/assets/fading-taps.mp3');
+  music.setWeather('rain-memory');
+  expect(last().src).toBe('/fading/assets/fading-rain-memory.mp3');
 });

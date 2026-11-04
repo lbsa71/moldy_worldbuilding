@@ -1,4 +1,5 @@
 ---
+import { sitePath } from '../utils/sitePath';
 // A separate art review surface keeps the playable chapter intact during look development.
 ---
 <html lang="en">
@@ -13,13 +14,13 @@
     <main>
       <header>
         <div class="heading"><h1>Fading</h1><p>A place that changes around you</p></div>
-        <a href="/">Play the current chapter</a>
+        <a href={sitePath('/')}>Play the current chapter</a>
       </header>
 
       <figure aria-labelledby="scene-caption">
         <div class="stage" id="study-stage" data-comparison="live">
           <canvas id="study-canvas" aria-label="A fixed scene of a lamp, chair and cup beside water. Use the controls below to change the arrangement."></canvas>
-          <img id="study-reference" src="/assets/fading-title.webp" alt="Opening reference: a warm brass lamp and worn chair on a wet shore, with cool water and distant cliffs." width="1536" height="1024" aria-hidden="true" />
+          <img id="study-reference" src={sitePath('/assets/fading-title.webp')} alt="Opening reference: a warm brass lamp and worn chair on a wet shore, with cool water and distant cliffs." width="1536" height="1024" aria-hidden="true" />
           <div id="study-loading" role="status">Preparing the scene…</div>
           <span id="comparison-label" hidden>Opening reference</span>
         </div>

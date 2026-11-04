@@ -1,4 +1,4 @@
-name: Deploy validated game to R2
+name: Publish Fading to GitHub Pages
 
 on:
   workflow_run:
@@ -34,35 +34,55 @@ jobs:
           else
             echo 'current=false' >> "$GITHUB_OUTPUT"
           fi
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: npm
-          cache-dependency-path: terraform/workers/package-lock.json
       - uses: actions/download-artifact@v4
+        if: steps.current.outputs.current == 'true'
         with:
           name: fading-static-site
           path: dist
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
-      - run: npm ci --no-fund
-        working-directory: terraform/workers
-      - name: Upload the validated artifact
+      - name: Check out the publishing repository
+        if: steps.current.outputs.current == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: lbsa71/lbsa71.github.io
+          ref: master
+          path: pages
+          ssh-key: ${{ secrets.PAGES_DEPLOY_KEY }}
+      - name: Publish only the Fading directory
         if: steps.current.outputs.current == 'true'
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATED_SHA: ${{ github.event.workflow_run.head_sha }}
         shell: bash
         run: |
-          while IFS= read -r -d '' file; do
-            relative_path="${file#dist/}"
-            terraform/workers/node_modules/.bin/wrangler r2 object put "moldy-worldbuilding-assets/$relative_path" --file="$file"
-          done < <(find dist -type f ! -name '*.html' -print0)
-          # Publish entrypoints only after their referenced assets are available.
-          while IFS= read -r -d '' file; do
-            relative_path="${file#dist/}"
-            terraform/workers/node_modules/.bin/wrangler r2 object put "moldy-worldbuilding-assets/$relative_path" --file="$file"
-          done < <(find dist -type f -name '*.html' -print0)
+          # Never delete or overwrite the other projects in the publishing repo.
+          test -s dist/index.html
+          test -s dist/journey/index.html
+          test -s dist/scene-study/living-scene.glb
+          mkdir -p pages/fading
+          rsync -a --delete dist/ pages/fading/
+          printf '{"source":"%s","validationRun":"%s"}\n' \
+            "$VALIDATED_SHA" '${{ github.event.workflow_run.html_url }}' > pages/fading/release.json
+          git -C pages config user.name 'Fading publishing bot'
+          git -C pages config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C pages add -- fading
+          if git -C pages diff --cached --quiet; then
+            echo 'The validated build is already published.'
+            exit 0
+          fi
+          git -C pages commit -m "Publish Fading from $VALIDATED_SHA"
+          # Rebase on concurrent updates from other projects, never force-push.
+          for attempt in 1 2 3; do
+            latest_sha="$(gh api 'repos/${{ github.repository }}/git/ref/heads/main' --jq '.object.sha')"
+            if [ "$latest_sha" != "$VALIDATED_SHA" ]; then
+              echo 'A newer source revision exists; skipping this build.'
+              exit 0
+            fi
+            git -C pages pull --rebase origin master
+            if git -C pages push origin HEAD:master; then
+              exit 0
+            fi
+          done
+          echo 'Publishing failed after three attempts.' >&2
+          exit 1

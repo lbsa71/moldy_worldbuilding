@@ -15,7 +15,7 @@ npm ci
 npm run dev
 ```
 
-Open the local URL printed by Astro. Read the grouped passages, using Continue and Back when needed, then choose with the mouse, touch, Tab/Enter, or keys 1–4. The camera follows the story. Settings include sound, volume, reduced motion, larger text and conversation history. Progress and audio/motion preferences are saved in this browser when local storage is available. Begin again resets the story.
+Open the local URL printed by Astro, under `/fading/`. All game routes below are relative to that base path. Read the grouped passages, using Continue and Back when needed, then choose with the mouse, touch, Tab/Enter, or keys 1–4. The camera follows the story. Settings include sound, volume, reduced motion, larger text and conversation history. Progress and audio/motion preferences are saved in this browser when local storage is available. Begin again resets the story.
 
 The `/journey/` edition uses save slot v2; its earlier v1 save is preserved separately. Reading position is saved without replaying scene or sound cues. Presentation now prioritizes desktop reading flow: adjacent paragraphs share a page, targeting roughly 70–100 words rather than forcing a click after every paragraph. Larger text and smaller windows can add pages; mobile support is not a release requirement. The [reading and fit contract](docs/dialogue-card-contract.md) records the bounds and checks.
 
@@ -58,8 +58,11 @@ The old WASM experiment and backup scene remain for reference. WASM is not loade
 
 ## Deployment
 
-Public game address: [Fading](https://moldy-worldbuilding-api.lbsa71.workers.dev/). Check [GitHub Actions](https://github.com/lbsa71/moldy_worldbuilding/actions) for the latest validation and deployment result.
+Public game address: [Fading](https://lbsa71.github.io/fading/). The newest episode is [The account we leave](https://lbsa71.github.io/fading/journey/). Check [GitHub Actions](https://github.com/lbsa71/moldy_worldbuilding/actions) for validation and publishing results.
 
-CI installs from the lockfile and validates the actual game. A successful push to `main` uploads the tested static artifact to the existing R2 destination. Configure `CLOUDFLARE_API_TOKEN` as a repository **secret** and `CLOUDFLARE_ACCOUNT_ID` as a repository variable. Pull-request runs do not deploy. Local development does not publish anything. The Cloudflare worker under `terraform/workers` is a separate deployment and still needs its own dependency review.
+A push to `main` runs tests, type checking and the production build. Once validation succeeds, the publishing workflow copies that exact artifact into `fading/` on the `master` branch of `lbsa71/lbsa71.github.io`. GitHub Pages serves the files; the other projects in that repository are preserved. Pull requests validate without publishing, and stale builds do not publish over newer source revisions. `fading/release.json` identifies the source revision and validation run.
 
+Cross-repository publishing uses the `PAGES_DEPLOY_KEY` Actions secret: an SSH private key whose public key is registered as a write-enabled deploy key on `lbsa71/lbsa71.github.io`. The key is dedicated to publishing Fading. To rotate it, replace both the target repository's deploy key and the source repository's secret. No Cloudflare credentials, backend, database or running Node server are needed. The old `terraform/` configuration is retained as historical infrastructure and is not used for publishing.
+
+Astro's base path is `/fading/`; public assets and page links use the same base in development and production. Use `npm run preview` to inspect the built site at `/fading/`.
 This is a substantially improved playable chapter, not a claim of AAA production completion. Final asset provenance, human music/story review, target-device performance, accessibility testing and release QA remain production gates.
